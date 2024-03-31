@@ -151,11 +151,31 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ],
                 ),
+                // custom doted line. 
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20),
-                  height: 2,
-                  width: double.infinity,
-                  color: Colors.white,
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      final boxWidth = constraints.constrainWidth();
+                      const dashWidth = 5.0;
+                      final dashCount = (boxWidth / (2 * dashWidth)).floor();
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(dashCount, (_) {
+                          return Row(
+                            children: <Widget>[
+                              Container(
+                                  width: dashWidth,
+                                  height: 2,
+                                  color: Colors.white),
+                              const SizedBox(width: dashWidth),
+                            ],
+                          );
+                        }),
+                      );
+                    },
+                  ),
                 ),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,26 +256,29 @@ class _OrderDetailsState extends State<OrderDetails> {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 170),
-                  _isVisible ? Container() : ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isVisible = true;
-                      });// Handle button press here
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.deepOrangeAccent),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              5.0), // Adjust this value as needed
+                  _isVisible
+                      ? Container()
+                      : ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isVisible = true;
+                            }); // Handle button press here
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.deepOrangeAccent),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    5.0), // Adjust this value as needed
+                              ),
+                            ),
+                          ),
+                          child: const Text('Edit'),
                         ),
-                      ),
-                    ),
-                    child: const Text('Edit'),
-                  ),
                 ],
               ),
               Row(
@@ -339,63 +362,65 @@ class _OrderDetailsState extends State<OrderDetails> {
             ),
           ),
           // Add, Decrease and Remove
-          _isVisible ? Expanded(
-            child: Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    // Empty function
-                  },
-                  child: const CircleAvatar(
-                    radius:
-                        12, // Adjust this value to change the size of the CircleAvatar
-                    backgroundColor: Colors.orange,
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.black,
-                      size: 16,
-                    ),
+          _isVisible
+              ? Expanded(
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          // Empty function
+                        },
+                        child: const CircleAvatar(
+                          radius:
+                              12, // Adjust this value to change the size of the CircleAvatar
+                          backgroundColor: Colors.orange,
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.black,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        qty,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {
+                          // Empty function
+                        },
+                        child: const CircleAvatar(
+                          radius:
+                              12, // Adjust this value to change the size of the CircleAvatar
+                          backgroundColor: Colors.orange,
+                          child: Icon(
+                            Icons.remove,
+                            color: Colors.black,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {
+                          // Empty function
+                        },
+                        child: const Icon(
+                          Icons.delete_forever_outlined,
+                          color: Colors.redAccent,
+                          size: 30,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  qty,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
-                    // Empty function
-                  },
-                  child: const CircleAvatar(
-                    radius:
-                        12, // Adjust this value to change the size of the CircleAvatar
-                    backgroundColor: Colors.orange,
-                    child: Icon(
-                      Icons.remove,
-                      color: Colors.black,
-                      size: 16,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
-                    // Empty function
-                  },
-                  child: const Icon(
-                    Icons.delete_forever_outlined,
-                    color: Colors.redAccent,
-                    size: 30,
-                  ),
-                ),
-              ],
-            ),
-          ) : Container(),
+                )
+              : Container(),
           Text(
             'x $qty',
             style: const TextStyle(

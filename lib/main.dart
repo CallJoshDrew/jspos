@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/screens/home/home.dart';
+import 'package:jspos/screens/reports/reports.dart';
+import 'package:jspos/screens/sales/sales.dart';
+import 'package:jspos/screens/settings/settings.dart';
+// import 'package:jspos/screens/home/home.dart';
+import 'package:jspos/screens/table/table.dart';
+import 'package:jspos/screens/takeOut/take_out.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,18 +34,18 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String pageActive = "Home";
+  String pageActive = "Table";
 
   _pageView(){
     switch(pageActive){
-      case 'Home': return const HomePage();
-      case 'Menu': return Container();
-      case 'History': return Container();
-      case 'Promos': return Container();
-      case 'Settings': return Container();
+      case 'Table': return const TablePage();
+      case 'Take Out': return const TakeOutPage();
+      case 'Sales': return const SalesPage();
+      case 'Reports': return const ReportsPage();
+      case 'Settings': return const SettingsPage();
 
       default:
-      return const HomePage();
+      return const TablePage();
     }
   }
 
@@ -84,11 +89,11 @@ class _MainPageState extends State<MainPage> {
       const SizedBox(height: 30),
       Expanded(
         child: ListView(children: [
-          _itemMenu(menu: 'Home', icon: Icons.rocket_sharp),
-          _itemMenu(menu: 'Menu', icon: Icons.format_list_bulleted_rounded),
-          _itemMenu(menu: 'History', icon: Icons.history_toggle_off_rounded),
-          _itemMenu(menu: 'Promos', icon: Icons.discount_outlined),
-          _itemMenu(menu: 'Settings', icon: Icons.sports_soccer_outlined),
+          _itemMenu(menu: 'Table', icon: Icons.table_bar),
+          _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
+          _itemMenu(menu: 'Sales', icon: Icons.history_sharp),
+          _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
+          _itemMenu(menu: 'Settings', icon: Icons.tune),
         ]),
       )
     ]);
