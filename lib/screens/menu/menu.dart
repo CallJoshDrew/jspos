@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/shared/order_details.dart';
+import 'package:jspos/models/menu_data.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -9,6 +10,8 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  String selectedCategory = 'All';
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -35,112 +38,49 @@ class _MenuPageState extends State<MenuPage> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    _itemTab(
-                      icon: 'assets/icons/icon-burger.png',
-                      title: 'All',
-                      isActive: true,
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedCategory = 'All';
+                        });
+                      },
+                      child: _itemTab(
+                        title: 'All',
+                        isActive: selectedCategory == 'All',
+                      ),
                     ),
-                    _itemTab(
-                      icon: 'assets/icons/icon-burger.png',
-                      title: 'Burger',
-                      isActive: false,
-                    ),
-                    _itemTab(
-                      icon: 'assets/icons/icon-noodles.png',
-                      title: 'Noodles',
-                      isActive: false,
-                    ),
-                    _itemTab(
-                      icon: 'assets/icons/icon-drinks.png',
-                      title: 'Drinks',
-                      isActive: false,
-                    ),
-                    _itemTab(
-                      icon: 'assets/icons/icon-desserts.png',
-                      title: 'Desserts',
-                      isActive: false,
-                    ),
+                    ...categories.map((category) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = category;
+                          });
+                        },
+                        child: _itemTab(
+                          title: category,
+                          isActive: selectedCategory == category,
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
+
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 4,
                   childAspectRatio: (1 / 1.2),
-                  children: [
-                    _item(
-                      image: 'assets/items/1.png',
-                      title: 'Original Burger',
-                      price: 'RM 5.99',
-                      item: '11 item',
-                    ),
-                    _item(
-                      image: 'assets/items/2.png',
-                      title: 'Double Burger',
-                      price: 'RM 8.99',
-                      item: '10 item',
-                    ),
-                    _item(
-                      image: 'assets/items/3.png',
-                      title: 'Cheese Burger',
-                      price: 'RM 6.99',
-                      item: '7 item',
-                    ),
-                    _item(
-                      image: 'assets/items/4.png',
-                      title: 'Double Cheese Burger',
-                      price: 'RM 12.99',
-                      item: '20 item',
-                    ),
-                    _item(
-                      image: 'assets/items/5.png',
-                      title: 'Spicy Burger',
-                      price: 'RM 7.39',
-                      item: '12 item',
-                    ),
-                    _item(
-                      image: 'assets/items/6.png',
-                      title: 'Special Black Burger',
-                      price: 'RM 7.39',
-                      item: '39 item',
-                    ),
-                    _item(
-                      image: 'assets/items/7.png',
-                      title: 'Special Cheese Burger',
-                      price: 'RM 8.00',
-                      item: '2 item',
-                    ),
-                    _item(
-                      image: 'assets/items/8.png',
-                      title: 'Jumbo Cheese Burger',
-                      price: 'RM 15.99',
-                      item: '2 item',
-                    ),
-                    _item(
-                      image: 'assets/items/9.png',
-                      title: 'Spicy Burger',
-                      price: 'RM 7.39',
-                      item: '12 item',
-                    ),
-                    _item(
-                      image: 'assets/items/10.png',
-                      title: 'Special Black Burger',
-                      price: 'RM 7.39',
-                      item: '39 item',
-                    ),
-                    _item(
-                      image: 'assets/items/11.png',
-                      title: 'Special Cheese Burger',
-                      price: 'RM 8.00',
-                      item: '2 item',
-                    ),
-                    _item(
-                      image: 'assets/items/12.png',
-                      title: 'Jumbo Cheese Burger',
-                      price: 'RM 15.99',
-                      item: '2 item',
-                    ),
-                  ],
+                  children: menu
+                      .where((item) =>
+                          selectedCategory == 'All' ||
+                          item['category'] == selectedCategory)
+                      .map((item) {
+                    return _item(
+                      image: item['image'],
+                      name: item['name'],
+                      price: 'RM ${item['price'].toStringAsFixed(2)}',
+                    );
+                  }).toList(),
                 ),
               ),
             ],
@@ -157,9 +97,8 @@ class _MenuPageState extends State<MenuPage> {
 
   Widget _item({
     required String image,
-    required String title,
+    required String name,
     required String price,
-    required String item,
   }) {
     return Container(
       margin: const EdgeInsets.only(right: 20, bottom: 20),
@@ -185,7 +124,7 @@ class _MenuPageState extends State<MenuPage> {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text(
-              title,
+              name,
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -204,13 +143,6 @@ class _MenuPageState extends State<MenuPage> {
                   fontSize: 20,
                 ),
               ),
-              Text(
-                item,
-                style: const TextStyle(
-                  color: Colors.white60,
-                  fontSize: 18,
-                ),
-              ),
             ],
           ),
         ],
@@ -219,7 +151,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _itemTab({
-    required String icon,
+    // required String icon,
     required String title,
     required bool isActive,
   }) {
@@ -235,10 +167,10 @@ class _MenuPageState extends State<MenuPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            icon,
-            width: 55,
-          ),
+          // Image.asset(
+          //   icon,
+          //   width: 55,
+          // ),
           const SizedBox(width: 15),
           Text(
             title,
@@ -286,13 +218,12 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _closedButtton() {
-    return Container( 
+    return Container(
       margin: const EdgeInsets.only(right: 15),
-      child: ElevatedButton(  
+      child: ElevatedButton(
         onPressed: () {},
         style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(Colors.red),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/sales/sales.dart';
 import 'package:jspos/screens/settings/settings.dart';
-// import 'package:jspos/screens/home/home.dart';
+import 'package:jspos/screens/home/home.dart';
 import 'package:jspos/screens/table/table.dart';
 import 'package:jspos/screens/takeOut/take_out.dart';
+import 'package:jspos/screens/menu/menu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,14 +39,14 @@ class _MainPageState extends State<MainPage> {
 
   _pageView(){
     switch(pageActive){
-      case 'Table': return const TablePage();
+      case 'Table': return const MenuPage();
       case 'Take Out': return const TakeOutPage();
       case 'Sales': return const SalesPage();
       case 'Reports': return const ReportsPage();
       case 'Settings': return const SettingsPage();
 
       default:
-      return const TablePage();
+      return const HomePage();
     }
   }
 
