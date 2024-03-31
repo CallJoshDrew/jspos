@@ -13,6 +13,13 @@ class TablePage extends StatefulWidget {
 
 class _TablePageState extends State<TablePage> {
   String? selectedTable;
+  bool isTableClicked = false;
+
+  void _handleClick() {
+    setState(() {
+      isTableClicked = !isTableClicked;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,7 @@ class _TablePageState extends State<TablePage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        selectedTable == null ? Expanded(
+        isTableClicked == false ? Expanded(
           flex: 14,
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -56,6 +63,7 @@ class _TablePageState extends State<TablePage> {
                           onPressed: () {
                             setState(() {
                               selectedTable = tables[index]['name'];
+                              isTableClicked = true;
                             });
                           },
                           style: ElevatedButton.styleFrom(
@@ -89,7 +97,10 @@ class _TablePageState extends State<TablePage> {
               ],
             ),
           ),
-        ) : const MenuPage(),
+        ) : MenuPage(
+            isTableClicked: isTableClicked,
+            onClick: _handleClick,
+          ),
         // Expanded(flex: 1, child: Container()),
         const Expanded(
           flex: 5,

@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:jspos/models/menu_data.dart';
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+  final bool isTableClicked;
+  final VoidCallback onClick;
+
+  const MenuPage(
+      {Key? key, required this.isTableClicked, required this.onClick})
+      : super(key: key);
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -10,6 +15,41 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   String selectedCategory = 'All';
+  bool isTableClicked = false;
+  @override
+  void initState() {
+    super.initState();
+    isTableClicked =
+        widget.isTableClicked; // Initialize it with the value from the widget
+  }
+
+  Widget _closedButtton() {
+    return Container(
+      margin: const EdgeInsets.only(right: 15),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            widget.onClick(); // Call the callback passed from the parent widget
+            print('isTableClicked: $isTableClicked');
+          });
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(5.0), // Adjust this value as needed
+            ),
+          ),
+        ),
+        child: const Text('Close Menu',
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -205,30 +245,6 @@ class _MenuPageState extends State<MenuPage> {
           Expanded(flex: 1, child: Container(width: double.infinity)),
           Container(child: action)
         ]);
-  }
-
-  Widget _closedButtton() {
-    return Container(
-      margin: const EdgeInsets.only(right: 15),
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(Colors.deepOrange),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(5.0), // Adjust this value as needed
-            ),
-          ),
-        ),
-        child: const Text('Close Menu',
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
-      ),
-    );
   }
 
   Widget _search() {
