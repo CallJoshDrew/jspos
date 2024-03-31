@@ -151,7 +151,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ],
                 ),
-                // custom doted line. 
+                // custom doted line.
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: LayoutBuilder(
@@ -266,9 +266,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.deepOrangeAccent),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
+                                Colors.deepOrange),
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(
                               RoundedRectangleBorder(
@@ -277,7 +275,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                               ),
                             ),
                           ),
-                          child: const Text('Edit'),
+                          child: const Text('Edit',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
                         ),
                 ],
               ),

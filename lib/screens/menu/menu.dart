@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/models/menu_data.dart';
 
 class MenuPage extends StatefulWidget {
@@ -14,84 +13,75 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 14,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: _topMenu(
-                  title: 'SMH Restaurant',
-                  subTitle: '28 March 2024',
-                  action: _closedButtton(),
-                ),
-              ), // Add spacing between _topMenu and ListView
-              // Categories of Menu
-              Container(
-                height: 120,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    GestureDetector(
+    return Expanded(
+      flex: 14,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: _topMenu(
+                title: 'SMH Restaurant',
+                subTitle: '28 March 2024',
+                action: _closedButtton(),
+              ),
+            ), // Add spacing between _topMenu and ListView
+            // Categories of Menu
+            Container(
+              height: 120,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedCategory = 'All';
+                      });
+                    },
+                    child: _itemTab(
+                      title: 'All',
+                      isActive: selectedCategory == 'All',
+                    ),
+                  ),
+                  ...categories.map((category) {
+                    return GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedCategory = 'All';
+                          selectedCategory = category;
                         });
                       },
                       child: _itemTab(
-                        title: 'All',
-                        isActive: selectedCategory == 'All',
+                        title: category,
+                        isActive: selectedCategory == category,
                       ),
-                    ),
-                    ...categories.map((category) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedCategory = category;
-                          });
-                        },
-                        child: _itemTab(
-                          title: category,
-                          isActive: selectedCategory == category,
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-              ),
-
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 4,
-                  childAspectRatio: (1 / 1.2),
-                  children: menu
-                      .where((item) =>
-                          selectedCategory == 'All' ||
-                          item['category'] == selectedCategory)
-                      .map((item) {
-                    return _item(
-                      image: item['image'],
-                      name: item['name'],
-                      price: 'RM ${item['price'].toStringAsFixed(2)}',
                     );
-                  }).toList(),
-                ),
+                  }),
+                ],
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 4,
+                childAspectRatio: (1 / 1.2),
+                children: menu
+                    .where((item) =>
+                        selectedCategory == 'All' ||
+                        item['category'] == selectedCategory)
+                    .map((item) {
+                  return _item(
+                    image: item['image'],
+                    name: item['name'],
+                    price: 'RM ${item['price'].toStringAsFixed(2)}',
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
-        // Expanded(flex: 1, child: Container()),
-        const Expanded(
-          flex: 5,
-          child: OrderDetails(),
-        ),
-      ],
+      ),
     );
   }
 
@@ -171,7 +161,7 @@ class _MenuPageState extends State<MenuPage> {
           //   icon,
           //   width: 55,
           // ),
-          const SizedBox(width: 15),
+          // const SizedBox(width: 15),
           Text(
             title,
             style: const TextStyle(
@@ -223,8 +213,8 @@ class _MenuPageState extends State<MenuPage> {
       child: ElevatedButton(
         onPressed: () {},
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(Colors.deepOrange),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius:
@@ -232,7 +222,11 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ),
         ),
-        child: const Text('Close Menu'),
+        child: const Text('Close Menu',
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.bold)),
       ),
     );
   }

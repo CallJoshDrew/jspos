@@ -37,24 +37,30 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String pageActive = "Table";
 
-  _pageView(){
-    switch(pageActive){
-      case 'Table': return const MenuPage();
-      case 'Take Out': return const TakeOutPage();
-      case 'Sales': return const SalesPage();
-      case 'Reports': return const ReportsPage();
-      case 'Settings': return const SettingsPage();
+  _pageView() {
+    switch (pageActive) {
+      case 'Table':
+        return const TablePage();
+      case 'Take Out':
+        return const TakeOutPage();
+      case 'Sales':
+        return const SalesPage();
+      case 'Reports':
+        return const ReportsPage();
+      case 'Settings':
+        return const SettingsPage();
 
       default:
-      return const HomePage();
+        return const HomePage();
     }
   }
 
-  _setPage(String page){
-    setState((){
+  _setPage(String page) {
+    setState(() {
       pageActive = page;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,18 +73,19 @@ class _MainPageState extends State<MainPage> {
             height: MediaQuery.of(context).size.height,
             child: _sideMenu(),
           ),
-          Expanded(child: Container(
-            margin: const EdgeInsets.only(top: 24, right:12),
-            padding: const EdgeInsets.only(top: 12, right:12, left:12),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12)
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(top: 24, right: 12),
+              padding: const EdgeInsets.only(top: 12, right: 12, left: 12),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12)),
+                color: Color(0xff17181f),
               ),
-              color: Color(0xff17181f),
-            ),
               child: _pageView(),
-          ),)
+            ),
+          )
         ],
       ),
     );
@@ -148,7 +155,10 @@ class _MainPageState extends State<MainPage> {
                   const SizedBox(height: 5),
                   Text(
                     menu,
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               )),
