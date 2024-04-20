@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/models/tables_data.dart';
 import 'package:jspos/screens/menu/menu.dart';
-
 import 'package:jspos/shared/order_details.dart';
 
 class TablePage extends StatefulWidget {
   const TablePage({super.key});
-
   @override
   State<TablePage> createState() => _TablePageState();
 }
-
 class _TablePageState extends State<TablePage> {
   String? selectedTable;
   bool isTableClicked = false;
-
   void _handleClick() {
     setState(() {
       isTableClicked = !isTableClicked;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -101,13 +96,11 @@ class _TablePageState extends State<TablePage> {
             isTableClicked: isTableClicked,
             onClick: _handleClick,
           ),
-        // Expanded(flex: 1, child: Container()),
         const Expanded(
           flex: 5,
           child: OrderDetails(),
         ),
       ],
     ); 
-    // 
   }
 }

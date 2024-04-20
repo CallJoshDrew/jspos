@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:jspos/providers/providers.dart';
 
 class OrderDetails extends StatefulWidget {
   const OrderDetails({super.key});
@@ -11,7 +15,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   bool _isVisible = false;
 
   @override
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Column(
@@ -21,8 +25,8 @@ class _OrderDetailsState extends State<OrderDetails> {
             status: 'Placed Order',
             timeStamp: '04:21 PM, Sun, Mar 31, 2024',
             action: Container(),
+            // isVisible: isVisible,
           ),
-          // const SizedBox(height: 0),
           Expanded(
             flex: 2,
             child: ListView(
@@ -32,72 +36,84 @@ class _OrderDetailsState extends State<OrderDetails> {
                   title: 'Orginal Burger',
                   qty: '2',
                   price: 'RM 5.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/2.png',
                   title: 'Double Burger',
                   qty: '3',
                   price: 'RM 10.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/6.png',
                   title: 'Special Black Burger',
                   qty: '2',
                   price: 'RM 8.00',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/4.png',
                   title: 'Special Cheese Burger',
                   qty: '2',
                   price: 'RM 12.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/1.png',
                   title: 'Orginal Burger',
                   qty: '2',
                   price: 'RM 5.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/2.png',
                   title: 'Double Burger',
                   qty: '3',
                   price: 'RM 10.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/6.png',
                   title: 'Special Black Burger',
                   qty: '2',
                   price: 'RM 8.00',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/4.png',
                   title: 'Special Cheese Burger',
                   qty: '2',
                   price: 'RM 12.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/1.png',
                   title: 'Orginal Burger',
                   qty: '2',
                   price: 'RM 5.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/2.png',
                   title: 'Double Burger',
                   qty: '3',
                   price: 'RM 10.99',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/6.png',
                   title: 'Special Black Burger',
                   qty: '2',
                   price: 'RM 8.00',
+                  // isVisible: isVisible,
                 ),
                 _itemOrder(
                   image: 'assets/items/4.png',
                   title: 'Special Cheese Burger',
                   qty: '2',
                   price: 'RM 12.99',
+                  // isVisible: isVisible,
                 ),
               ],
             ),
@@ -235,6 +251,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String status,
     required String timeStamp,
     required Widget action,
+    // required ValueNotifier<bool> isVisible,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -256,13 +273,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 170),
+                  // isVisible.value
                   _isVisible
                       ? Container()
                       : ElevatedButton(
                           onPressed: () {
                             setState(() {
                               _isVisible = true;
-                            }); // Handle button press here
+                            });
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -316,6 +334,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String title,
     required String qty,
     required String price,
+    // required ValueNotifier<bool> isVisible,
   }) {
     return Container(
       padding: const EdgeInsets.all(8),

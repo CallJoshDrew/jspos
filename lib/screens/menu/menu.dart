@@ -1,28 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/models/menu_data.dart';
+import 'package:jspos/models/selected_table_order.dart';
 
 class MenuPage extends StatefulWidget {
   final bool isTableClicked;
   final VoidCallback onClick;
-
   const MenuPage(
-      {Key? key, required this.isTableClicked, required this.onClick})
-      : super(key: key);
-
+      {super.key, required this.isTableClicked, required this.onClick});
   @override
   State<MenuPage> createState() => _MenuPageState();
 }
-
 class _MenuPageState extends State<MenuPage> {
   String selectedCategory = 'All';
   bool isTableClicked = false;
+  // late SelectedTableOrder order;
   @override
   void initState() {
-    super.initState();
-    isTableClicked =
-        widget.isTableClicked; // Initialize it with the value from the widget
+    // super.initState();
+    // order = SelectedTableOrder(
+    //   orderNumber: 'Order Number',
+    //   tableName: 'Table Name',
+    //   orderType: 'Dine-In',
+    //   status: 'Status',
+    //   items: [],
+    //   subTotal: 0,
+    //   serviceCharge: 0,
+    //   totalPrice: 0,
+    //   quantity: 0,
+    //   paymentMethod: '',
+    //   remarks: 'No Remarks',
+    //   showEditBtn: false,
+    // );
+    isTableClicked = widget.isTableClicked; // Initialize it with the value from the widget
   }
-
   Widget _closedButtton() {
     return Container(
       margin: const EdgeInsets.only(right: 15),
@@ -30,7 +40,6 @@ class _MenuPageState extends State<MenuPage> {
         onPressed: () {
           setState(() {
             widget.onClick(); // Call the callback passed from the parent widget
-            print('isTableClicked: $isTableClicked');
           });
         },
         style: ButtonStyle(
@@ -50,7 +59,6 @@ class _MenuPageState extends State<MenuPage> {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -114,7 +122,8 @@ class _MenuPageState extends State<MenuPage> {
                   return _item(
                     image: item['image'],
                     name: item['name'],
-                    price: 'RM ${item['price'].toStringAsFixed(2)}',
+                    price: item['price'],
+                    // order: order,
                   );
                 }).toList(),
               ),
@@ -128,54 +137,62 @@ class _MenuPageState extends State<MenuPage> {
   Widget _item({
     required String image,
     required String name,
-    required String price,
+    required double price,
+    // required SelectedTableOrder order,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(right: 20, bottom: 20),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        color: const Color(0xff1f2029),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(
-                image: AssetImage(image),
-                fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        Item item = Item(name: name, price: price, image: image, quantity: 1); 
+        // order.items.add(item);
+        // print('New TableOrder: $order');
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 20, bottom: 20),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: const Color(0xff1f2029),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(
+                  image: AssetImage(image),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                price,
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                name,
                 style: const TextStyle(
-                  color: Colors.deepOrange,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'RM ${price.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Colors.deepOrange,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -245,29 +262,5 @@ class _MenuPageState extends State<MenuPage> {
           Expanded(flex: 1, child: Container(width: double.infinity)),
           Container(child: action)
         ]);
-  }
-
-  Widget _search() {
-    return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        width: double.infinity,
-        height: 40,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          color: const Color(0xff1f2029),
-        ),
-        child: const Row(
-          children: [
-            Icon(
-              Icons.search,
-              color: Colors.white54,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'Search menu here....',
-              style: TextStyle(color: Colors.white54, fontSize: 11),
-            )
-          ],
-        ));
   }
 }

@@ -9,7 +9,7 @@ final List<Map<String, dynamic>> menu = [
     { "id": 5, "name": "Pandan Swiss Roll", "category": "Cakes", "price":2.40, "image": "assets/cakes/pandanSwissRoll.png"},
     { "id": 6, "name": "Coffee Swiss Roll", "category": "Cakes", "price":2.40, "image": "assets/cakes/coffeeSwissRoll.png"},
     { "id": 7, "name": "Chocolate Swiss Roll", "category": "Cakes", "price":2.40, "image": "assets/cakes/chocolateSwissRoll.png"},
-    { "id": 8, "name": "Pandan Special Swiss Roll", "category": "Cakes", "price":2.40, "image": "assets/cakes/pandanSwissRollSpecial.png"},
+    { "id": 8, "name": "Pandan Swiss Roll", "category": "Cakes", "price":2.40, "image": "assets/cakes/pandanSwissRollSpecial.png"},
     { "id": 9, "name": "Chicken Floss", "category": "Cakes", "price":3.00, "image": "assets/cakes/chickenFloss.png"},
     { "id": 10, "name": "Chicken Pie", "category": "Cakes", "price":2.70, "image": "assets/cakes/chickenPie.png"},
     { "id": 11, "name": "Jam Pie", "category": "Cakes", "price":1.30, "image": "assets/cakes/jamPie.png"},
