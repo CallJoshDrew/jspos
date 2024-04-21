@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:jspos/providers/providers.dart';
+import 'package:jspos/models/selected_table_order.dart';
 
 class OrderDetails extends StatefulWidget {
-  const OrderDetails({super.key});
+  final SelectedTableOrder selectedOrder;
+
+  const OrderDetails({super.key, required this.selectedOrder});
 
   @override
   State<OrderDetails> createState() => _OrderDetailsState();
@@ -15,17 +14,18 @@ class _OrderDetailsState extends State<OrderDetails> {
   bool _isVisible = false;
 
   @override
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Column(
         children: [
           _orderNumber(
-            title: '#Table8-0001',
-            status: 'Placed Order',
-            timeStamp: '04:21 PM, Sun, Mar 31, 2024',
+            title: widget.selectedOrder.orderNumber,
+            status: widget.selectedOrder.status,
+            timeStamp:
+                (widget.selectedOrder.orderDate?.toString() ?? 'Order Time'),
+            // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
             action: Container(),
-            // isVisible: isVisible,
           ),
           Expanded(
             flex: 2,
@@ -36,85 +36,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   title: 'Orginal Burger',
                   qty: '2',
                   price: 'RM 5.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/2.png',
-                  title: 'Double Burger',
-                  qty: '3',
-                  price: 'RM 10.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/6.png',
-                  title: 'Special Black Burger',
-                  qty: '2',
-                  price: 'RM 8.00',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/4.png',
-                  title: 'Special Cheese Burger',
-                  qty: '2',
-                  price: 'RM 12.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/1.png',
-                  title: 'Orginal Burger',
-                  qty: '2',
-                  price: 'RM 5.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/2.png',
-                  title: 'Double Burger',
-                  qty: '3',
-                  price: 'RM 10.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/6.png',
-                  title: 'Special Black Burger',
-                  qty: '2',
-                  price: 'RM 8.00',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/4.png',
-                  title: 'Special Cheese Burger',
-                  qty: '2',
-                  price: 'RM 12.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/1.png',
-                  title: 'Orginal Burger',
-                  qty: '2',
-                  price: 'RM 5.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/2.png',
-                  title: 'Double Burger',
-                  qty: '3',
-                  price: 'RM 10.99',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/6.png',
-                  title: 'Special Black Burger',
-                  qty: '2',
-                  price: 'RM 8.00',
-                  // isVisible: isVisible,
-                ),
-                _itemOrder(
-                  image: 'assets/items/4.png',
-                  title: 'Special Cheese Burger',
-                  qty: '2',
-                  price: 'RM 12.99',
-                  // isVisible: isVisible,
-                ),
+                )
               ],
             ),
           ),
@@ -310,7 +232,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 46),
+                  SizedBox(
+                    width: (timeStamp == 'Order Time') ? 150 : 46,
+                  ),
                   Text(
                     timeStamp,
                     style: const TextStyle(

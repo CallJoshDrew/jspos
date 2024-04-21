@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Item {
   final String name;
@@ -11,7 +10,7 @@ class Item {
     return 'Item: {name: $name, price: $price, quantity: $quantity, image: $image}';
   }
 }
-class SelectedTableOrder extends StateNotifier<SelectedTableOrder> {
+class SelectedTableOrder {
   // Properties 
   String orderNumber;
   String tableName;
@@ -27,7 +26,6 @@ class SelectedTableOrder extends StateNotifier<SelectedTableOrder> {
   String paymentMethod;
   String remarks;
   bool showEditBtn;
-
   // constructor must have the same name as its class.
   SelectedTableOrder({
     required this.orderNumber,
@@ -42,25 +40,9 @@ class SelectedTableOrder extends StateNotifier<SelectedTableOrder> {
     required this.totalPrice,
     required this.quantity,
     required this.paymentMethod,
-    this.remarks = "",
+    this.remarks = "No Remarks",
     this.showEditBtn = false,
-  }) : super(SelectedTableOrder(
-    orderNumber: orderNumber,
-    tableName: tableName,
-    orderType: orderType,
-    orderTime: orderTime,
-    orderDate: orderDate,
-    status: status,
-    items: items,
-    subTotal: subTotal,
-    serviceCharge: serviceCharge,
-    totalPrice: totalPrice,
-    quantity: quantity,
-    paymentMethod: paymentMethod,
-    remarks: remarks,
-    showEditBtn: showEditBtn,
-  ));
-
+  });
   @override
   // methods
   String toString() {
@@ -68,22 +50,6 @@ class SelectedTableOrder extends StateNotifier<SelectedTableOrder> {
   }
   void addItem(Item item) {
     items.add(item);
-    state = SelectedTableOrder(
-      orderNumber: orderNumber,
-      tableName: tableName,
-      orderType: orderType,
-      orderTime: orderTime,
-      orderDate: orderDate,
-      status: status,
-      items: items,
-      subTotal: subTotal,
-      serviceCharge: serviceCharge,
-      totalPrice: totalPrice,
-      quantity: quantity,
-      paymentMethod: paymentMethod,
-      remarks: remarks,
-      showEditBtn: showEditBtn,
-    );
   }
 }
 

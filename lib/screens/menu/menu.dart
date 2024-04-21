@@ -1,38 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/models/menu_data.dart';
+import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/selected_table_order.dart';
 
 class MenuPage extends StatefulWidget {
-  final bool isTableClicked;
+  final SelectedTableOrder selectedOrder;
+  
   final VoidCallback onClick;
   const MenuPage(
-      {super.key, required this.isTableClicked, required this.onClick});
+      {super.key, required this.selectedOrder, required this.onClick});
   @override
   State<MenuPage> createState() => _MenuPageState();
 }
 class _MenuPageState extends State<MenuPage> {
   String selectedCategory = 'All';
-  bool isTableClicked = false;
-  // late SelectedTableOrder order;
-  @override
-  void initState() {
-    // super.initState();
-    // order = SelectedTableOrder(
-    //   orderNumber: 'Order Number',
-    //   tableName: 'Table Name',
-    //   orderType: 'Dine-In',
-    //   status: 'Status',
-    //   items: [],
-    //   subTotal: 0,
-    //   serviceCharge: 0,
-    //   totalPrice: 0,
-    //   quantity: 0,
-    //   paymentMethod: '',
-    //   remarks: 'No Remarks',
-    //   showEditBtn: false,
-    // );
-    isTableClicked = widget.isTableClicked; // Initialize it with the value from the widget
-  }
   Widget _closedButtton() {
     return Container(
       margin: const EdgeInsets.only(right: 15),

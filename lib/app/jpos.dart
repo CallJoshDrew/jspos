@@ -65,7 +65,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           Container(
             width: 130,
-            padding: const EdgeInsets.only(top: 24, right: 16, left: 16),
+            padding: const EdgeInsets.only(top: 50, right: 16, left: 16),
             height: MediaQuery.of(context).size.height,
             child: _sideMenu(),
           ),
@@ -90,7 +90,7 @@ class _MainPageState extends State<MainPage> {
   Widget _sideMenu() {
     return Column(children: [
       _logo(),
-      const SizedBox(height: 30),
+      const SizedBox(height: 10),
       Expanded(
         child: ListView(children: [
           _itemMenu(menu: 'Table', icon: Icons.table_bar),
