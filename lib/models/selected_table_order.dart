@@ -1,13 +1,18 @@
 
 class Item {
+  final String id;
   final String name;
-  final int quantity;
-  final double price;
+  final String category;
+  int quantity;
+  final double originalPrice;
+  double price;
   final String image;
-  Item({required this.name, required this.quantity, required this.price, required this.image});
+   Item({required this.id, required this.name, required this.category, required this.quantity, required this.price, required this.image})
+    : originalPrice = price;
+    // the value of price is set to the originalPrice during the initial creation.
   @override
   String toString() {
-    return 'Item: {name: $name, price: $price, quantity: $quantity, image: $image}';
+    return 'Item: {\n\tid: $id, \n\tname: $name, \n\tprice: $price, \n\tcategory: $category,\n\tquantity: $quantity, \n\timage: $image\n}';
   }
 }
 class SelectedTableOrder {
@@ -39,14 +44,14 @@ class SelectedTableOrder {
     required this.serviceCharge,
     required this.totalPrice,
     required this.quantity,
-    required this.paymentMethod,
+    this.paymentMethod = "Cash",
     this.remarks = "No Remarks",
     this.showEditBtn = false,
   });
   @override
   // methods
   String toString() {
-    return 'TableOrder: {orderNumber: $orderNumber, tableName: $tableName, orderType: $orderType, status: $status, items: $items, subTotal: $subTotal, serviceCharge: $serviceCharge, totalPrice: $totalPrice, quantity: $quantity, paymentMethod: $paymentMethod, remarks: $remarks, showEditBtn: $showEditBtn}';
+    return 'TableOrder: {\n\torderNumber: $orderNumber, \n\ttableName: $tableName, \n\torderType: $orderType, \n\tstatus: $status, \n\titems: [\n\t\t${items.join(',\n\t\t')}\n\t], \n\tsubTotal: $subTotal, \n\tserviceCharge: $serviceCharge, \n\ttotalPrice: $totalPrice, \n\tquantity: $quantity, \n\tpaymentMethod: $paymentMethod, \n\tremarks: $remarks, \n\tshowEditBtn: $showEditBtn\n}';
   }
   void addItem(Item item) {
     items.add(item);

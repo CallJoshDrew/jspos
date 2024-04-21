@@ -3,6 +3,7 @@ import 'package:jspos/data/tables_data.dart';
 import 'package:jspos/models/selected_table_order.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
+import 'package:collection/collection.dart';
 
 class TablePage extends StatefulWidget {
   const TablePage({super.key});
@@ -27,7 +28,7 @@ class _TablePageState extends State<TablePage> {
     serviceCharge: 0,
     totalPrice: 0,
     quantity: 0,
-    paymentMethod: "",
+    paymentMethod: "Cash",
     remarks: "No Remarks",
     showEditBtn: false,
   );
@@ -173,7 +174,21 @@ class _TablePageState extends State<TablePage> {
               )
             : MenuPage(
                 onClick: _handleOpenMenu,
-                selectedOrder: selectedOrder
+                selectedOrder: selectedOrder,
+                onItemAdded: (item) {
+                  setState(() {
+                    // Try to find an item in selectedOrder.items with the same id as the new item
+                    var existingItem = selectedOrder.items.firstWhereOrNull((i) => i.id == item.id);
+                    if (existingItem != null) {
+                      // If an item with the same id is found, increase its quantity and price
+                      existingItem.quantity += 1;
+                      existingItem.price = (num.tryParse((existingItem.originalPrice * existingItem.quantity).toStringAsFixed(2)) ?? 0).toDouble();
+                    } else {
+                      // If no item with the same id is found, add the new item
+                      selectedOrder.items.add(item);
+                    }
+                  });
+                },
               ),
         Expanded(
           flex: 5,

@@ -3,16 +3,13 @@ import 'package:jspos/models/selected_table_order.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedTableOrder selectedOrder;
-
   const OrderDetails({super.key, required this.selectedOrder});
-
   @override
   State<OrderDetails> createState() => _OrderDetailsState();
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
-  bool _isVisible = false;
-
+  bool _showEditBtn = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,15 +26,17 @@ class _OrderDetailsState extends State<OrderDetails> {
           ),
           Expanded(
             flex: 2,
-            child: ListView(
-              children: [
-                _itemOrder(
-                  image: 'assets/items/1.png',
-                  title: 'Orginal Burger',
-                  qty: '2',
-                  price: 'RM 5.99',
-                )
-              ],
+            child: ListView.builder(
+              itemCount: widget.selectedOrder.items.length,
+              itemBuilder: (context, index) {
+                final item = widget.selectedOrder.items[index];
+                return _itemOrder(
+                  image: item.image,
+                  title: item.name,
+                  item: item,
+                  price: item.price,
+                );
+              },
             ),
           ),
           // This is SubTotal and Total Container
@@ -196,12 +195,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                   const SizedBox(width: 170),
                   // isVisible.value
-                  _isVisible
-                      ? Container()
-                      : ElevatedButton(
+                  _showEditBtn
+                      ? ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              _isVisible = true;
+                              _showEditBtn = false;
                             });
                           },
                           style: ButtonStyle(
@@ -220,7 +218,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   fontSize: 18,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold)),
-                        ),
+                        )
+                      : Container(),
                 ],
               ),
               Row(
@@ -256,49 +255,57 @@ class _OrderDetailsState extends State<OrderDetails> {
   Widget _itemOrder({
     required String image,
     required String title,
-    required String qty,
-    required String price,
-    // required ValueNotifier<bool> isVisible,
+    required Item item,
+    required double price,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        color: const Color(0xff1f2029),
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 60,
-            width: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: AssetImage(image),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          // Item Name and Price
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
+    return Dismissible(
+        // Each Dismissible must contain a Key. Keys allow Flutter to
+        // uniquely identify widgets.
+        key: Key(item.id.toString()),
+        // Provide a function that tells the app
+        // what to do after an item has been swiped away.
+        onDismissed: (direction) {
+          // Remove the item from the data source.
+          setState(() {
+            widget.selectedOrder.items.remove(item);
+          });
+
+          // Then show a snackbar.
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 1),
+              content: Container(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "$title has been removed.",
                   style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10),
+              ),
+            ),
+          );
+        },
+        // Show a red background as the item is swiped away.
+        background: Container(
+          color: Colors.red,
+          child: const Padding(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                  size: 32,
+                ),
                 Text(
-                  price,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  "Delete",
+                  style: TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -306,76 +313,121 @@ class _OrderDetailsState extends State<OrderDetails> {
               ],
             ),
           ),
-          // Add, Decrease and Remove
-          _isVisible
-              ? Expanded(
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          // Empty function
-                        },
-                        child: const CircleAvatar(
-                          radius:
-                              12, // Adjust this value to change the size of the CircleAvatar
-                          backgroundColor: Colors.orange,
-                          child: Icon(
-                            Icons.add,
-                            color: Colors.black,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        qty,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      InkWell(
-                        onTap: () {
-                          // Empty function
-                        },
-                        child: const CircleAvatar(
-                          radius:
-                              12, // Adjust this value to change the size of the CircleAvatar
-                          backgroundColor: Colors.orange,
-                          child: Icon(
-                            Icons.remove,
-                            color: Colors.black,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      InkWell(
-                        onTap: () {
-                          // Empty function
-                        },
-                        child: const Icon(
-                          Icons.delete_forever_outlined,
-                          color: Colors.redAccent,
-                          size: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : Container(),
-          Text(
-            'x $qty',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          margin: const EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            color: const Color(0xff1f2029),
           ),
-        ],
-      ),
-    );
+          child: Row(
+            children: [
+              Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: AssetImage(image),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              // Item Name and Price
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '$price',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              // Add, Decrease and Remove
+              _showEditBtn
+                  ? Container()
+                  : Expanded(
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 35),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                item.quantity++; // Increase the quantity
+                                item.price = (num.tryParse(
+                                            (item.originalPrice * item.quantity)
+                                                .toStringAsFixed(2)) ??
+                                        0)
+                                    .toDouble();
+                              });
+                            },
+                            child: const CircleAvatar(
+                              radius:
+                                  12, // Adjust this value to change the size of the CircleAvatar
+                              backgroundColor: Colors.orange,
+                              child: Icon(
+                                Icons.add,
+                                color: Colors.black,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 25),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                if (item.quantity > 1) {
+                                  item.quantity--; // Decrease the quantity of the item
+                                  item.price = (num.tryParse(
+                                              (item.originalPrice *
+                                                      item.quantity)
+                                                  .toStringAsFixed(2)) ??
+                                          0)
+                                      .toDouble();
+                                }
+                              });
+                            },
+                            child: const CircleAvatar(
+                              radius:
+                                  12, // Adjust this value to change the size of the CircleAvatar
+                              backgroundColor: Colors.orange,
+                              child: Icon(
+                                Icons.remove,
+                                color: Colors.black,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+              Text(
+                'x ${item.quantity}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }

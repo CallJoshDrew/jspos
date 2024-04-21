@@ -4,13 +4,17 @@ import 'package:jspos/models/selected_table_order.dart';
 
 class MenuPage extends StatefulWidget {
   final SelectedTableOrder selectedOrder;
-  
   final VoidCallback onClick;
+  final Function(Item) onItemAdded;
   const MenuPage(
-      {super.key, required this.selectedOrder, required this.onClick});
+      {super.key,
+      required this.selectedOrder,
+      required this.onClick,
+      required this.onItemAdded});
   @override
   State<MenuPage> createState() => _MenuPageState();
 }
+
 class _MenuPageState extends State<MenuPage> {
   String selectedCategory = 'All';
   Widget _closedButtton() {
@@ -39,6 +43,7 @@ class _MenuPageState extends State<MenuPage> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -100,8 +105,10 @@ class _MenuPageState extends State<MenuPage> {
                         item['category'] == selectedCategory)
                     .map((item) {
                   return _item(
-                    image: item['image'],
+                    id: item['id'],
                     name: item['name'],
+                    image: item['image'],
+                    category: item['category'],
                     price: item['price'],
                     // order: order,
                   );
@@ -115,16 +122,23 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _item({
-    required String image,
+    required String id,
     required String name,
+    required String image,
+    required String category,
     required double price,
     // required SelectedTableOrder order,
   }) {
     return GestureDetector(
       onTap: () {
-        Item item = Item(name: name, price: price, image: image, quantity: 1); 
-        // order.items.add(item);
-        // print('New TableOrder: $order');
+        Item item = Item(
+            id: id,
+            name: name,
+            price: price,
+            category: category,
+            image: image,
+            quantity: 1); 
+        widget.onItemAdded(item);
       },
       child: Container(
         margin: const EdgeInsets.only(right: 20, bottom: 20),
