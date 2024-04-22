@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/selected_table_order.dart';
 
@@ -159,51 +158,126 @@ class _MenuPageState extends State<MenuPage> {
               return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return AlertDialog(
-                    title: Text(item.name),
-                    content: SingleChildScrollView(
-                      child: ListBody(
-                        children: <Widget>[
-                          Text('ID: ${item.id}'),
-                          Image.asset(item.image),
-                          Text('Category: ${item.category}'),
-                          Text('Quantity: ${item.quantity}'),
-                          Text('Price: ${item.price}'),
-                          DropdownButton<String>(
-                            value: selectedFlavor,
-                            hint: const Text('Select a flavor'),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedFlavor = newValue;
-                              });
-                            },
-                            items: item.flavor
-                                .map<DropdownMenuItem<String>>((flavor) {
-                              return DropdownMenuItem<String>(
-                                value: flavor['name'],
-                                child: Text(flavor['name']),
-                              );
-                            }).toList(),
+                    backgroundColor: Colors.white,
+                    content: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 600,
+                        minHeight: 500,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                          child: Column(
+                            children: [
+                              // First row
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 160,
+                                    height: 160,
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10)),
+                                      child: Image.asset(
+                                        item.image,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(item.name,
+                                          style: const TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold)),
+                                      Text('RM${item.price}',
+                                          style: const TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      'x ${item.quantity}',
+                                      textAlign: TextAlign.right,
+                                      style: const TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Second row
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return SimpleDialog(
+                                              title:
+                                                  const Text('Select flavor'),
+                                              children:
+                                                  item.flavor.map((flavor) {
+                                                return SimpleDialogOption(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      selectedFlavor =
+                                                          flavor['name'];
+                                                    });
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(flavor['name']),
+                                                );
+                                              }).toList(),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                          selectedFlavor ?? 'Select flavor'),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return SimpleDialog(
+                                              title: const Text('Select type'),
+                                              children: item.types.map((type) {
+                                                return SimpleDialogOption(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      selectedType =
+                                                          type['name'];
+                                                    });
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(type['name']),
+                                                );
+                                              }).toList(),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child:
+                                          Text(selectedType ?? 'Select type'),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
-                          DropdownButton<String>(
-                            value: selectedType,
-                            hint: const Text('Select a type'),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedType = newValue;
-                              });
-                            },
-                            items: item.types
-                                .map<DropdownMenuItem<String>>((type) {
-                              return DropdownMenuItem<String>(
-                                value: type['name'],
-                                child: Text(type['name']),
-                              );
-                            }).toList(),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                    actions: <Widget>[
+                    actions: [
                       TextButton(
                         child: const Text('Confirm'),
                         onPressed: () {
