@@ -34,18 +34,19 @@ class _TablePageState extends State<TablePage> {
   );
   void prettyPrintTable() {
     if (selectedTable != null) {
-      print('Selected Table:');
-      print('Table ID: ${selectedTable!['id']}');
-      print('Table Name: ${selectedTable!['name']}');
-      print('Occupied: ${selectedTable!['occupied']}');
-      print('Order Number: ${selectedTable!['orderNumber']}');
-      print('-------------------------');
+      // print('Selected Table:');
+      // print('Table ID: ${selectedTable!['id']}');
+      // print('Table Name: ${selectedTable!['name']}');
+      // print('Occupied: ${selectedTable!['occupied']}');
+      // print('Order Number: ${selectedTable!['orderNumber']}');
+      // print('-------------------------');
 
       print('Selected Order:');
       print('Order Number: ${selectedOrder.orderNumber}');
       print('Table Name: ${selectedOrder.tableName}');
       print('Order Type: ${selectedOrder.orderType}');
       print('Status: ${selectedOrder.status}');
+      print('Items: ${selectedOrder.items}');
       print('-------------------------');
     }
   }
@@ -188,6 +189,7 @@ class _TablePageState extends State<TablePage> {
                       selectedOrder.items.add(item);
                     }
                   });
+                  prettyPrintTable();
                 },
               ),
         Expanded(

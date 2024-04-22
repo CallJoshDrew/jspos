@@ -113,6 +113,10 @@ class _MenuPageState extends State<MenuPage> {
                     selection: item['selection'] ?? false,
                     choices: item['choices'] ?? [],
                     types: item['types'] ?? [],
+                    meatPortion: item['meat portion'] ?? [],
+                    meePortion: item['mee portion'] ?? [],
+                    selectedChoice: {},
+                    selectedType: {},
                     // if selection is null, default it to false.
                   );
                 }).toList(),
@@ -130,9 +134,14 @@ class _MenuPageState extends State<MenuPage> {
     required String image,
     required String category,
     required double price,
+    // required cannot have default value
     bool selection = false,
     List<Map<String, dynamic>> choices = const [],
     List<Map<String, dynamic>> types = const [],
+    List<Map<String, dynamic>> meatPortion = const [],
+    List<Map<String, dynamic>> meePortion = const [],
+    Map<String, dynamic>? selectedChoice,
+    Map<String, dynamic>? selectedType,
   }) {
     return GestureDetector(
       onTap: () {
@@ -144,16 +153,21 @@ class _MenuPageState extends State<MenuPage> {
           image: image,
           quantity: 1,
           selection: selection,
-          choices: choices,
-          types: types,
-        );
+          selectedChoice: null,
+          selectedType: null,
+          selectedMeatPortion: null,
+          selectedMeePortion: null,
+        ); //this is creating a new instance of item with the required field.
 
-        String? selectedChoice =
-            item.choices.isNotEmpty ? item.choices[0]['name'] : null;
-        String? selectedType =
-            item.types.isNotEmpty ? item.types[0]['name'] : null;
-        double additionalPrice =
-            item.types.isNotEmpty ? item.types[0]['price'] : 0.00;
+        Map<String, dynamic>? selectedChoice =
+            choices.isNotEmpty ? choices[0] : null;
+
+        Map<String, dynamic>? selectedType = types.isNotEmpty ? types[0] : null;
+        String? selectedMeatPortion =
+            meatPortion.isNotEmpty ? meatPortion[0]['name'] : null;
+        String? selectedMeePortion =
+            meePortion.isNotEmpty ? meePortion[0]['name'] : null;
+        double additionalPrice = types.isNotEmpty ? types[0]['price'] : 0.00;
         double totalPrice = item.price + additionalPrice;
         if (item.selection) {
           showDialog(
@@ -227,13 +241,13 @@ class _MenuPageState extends State<MenuPage> {
                                             return SimpleDialog(
                                               title:
                                                   const Text('Select Flavor'),
-                                              children:
-                                                  item.choices.map((choices) {
+                                              children: choices.map((choices) {
                                                 return SimpleDialogOption(
                                                   onPressed: () {
                                                     setState(() {
-                                                      selectedChoice =
-                                                          choices['name'];
+                                                      selectedChoice = choices;
+                                                      item.selectedChoice =
+                                                          choices;
                                                     });
                                                     Navigator.pop(context);
                                                   },
@@ -261,7 +275,9 @@ class _MenuPageState extends State<MenuPage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(15),
                                         child: Text(
-                                          selectedChoice ?? 'Select Flavor',
+                                          selectedChoice != null
+                                              ? '${selectedChoice!['name']} (RM ${selectedChoice!['price'].toStringAsFixed(2)})'
+                                              : 'Select Flavor',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
@@ -281,14 +297,14 @@ class _MenuPageState extends State<MenuPage> {
                                             return SimpleDialog(
                                               title: const Text(
                                                   'Select Variation'),
-                                              children: item.types
+                                              children: types
                                                   .map<SimpleDialogOption>(
                                                       (type) {
                                                 return SimpleDialogOption(
                                                   onPressed: () {
                                                     setState(() {
-                                                      selectedType =
-                                                          type['name'];
+                                                      selectedType = type;
+                                                      item.selectedType = type;
                                                       additionalPrice =
                                                           type['price'];
                                                       totalPrice = item.price +
@@ -298,7 +314,14 @@ class _MenuPageState extends State<MenuPage> {
                                                     Navigator.pop(context);
                                                   },
                                                   child: Text(
-                                                      '${type['name']} + RM ${type['price'].toStringAsFixed(2)}'),
+                                                    '${type['name']} + RM ${type['price'].toStringAsFixed(2)}',
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
                                                 );
                                               }).toList(),
                                             );
@@ -314,7 +337,9 @@ class _MenuPageState extends State<MenuPage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(15),
                                         child: Text(
-                                          selectedType ?? 'Select Variation',
+                                          selectedType != null
+                                              ? '${selectedType!['name']} + RM ${selectedType!['price'].toStringAsFixed(2)}'
+                                              : 'Select Variation',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
