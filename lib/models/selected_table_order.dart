@@ -8,10 +8,10 @@ class Item {
   double price;
   final String image;
   final bool selection;
-  final List<Map<String, dynamic>> flavor;
+  final List<Map<String, dynamic>> choices;
   final List<Map<String, dynamic>> types;
 
-   Item({required this.id, required this.name, required this.category, required this.quantity, required this.price, required this.image, this.selection = false, this.flavor = const [], this.types = const []})
+   Item({required this.id, required this.name, required this.category, required this.quantity, required this.price, required this.image, this.selection = false, this.choices = const [], this.types = const []})
     : originalPrice = price;
     // the value of price is set to the originalPrice during the initial creation.
   @override

@@ -28,19 +28,19 @@ final List<Map<String, dynamic>> menu = [
     { "id": "23", "name": "Chocolate Chip", "category": "Cakes", "price":4.20, "image": "assets/cakes/chocolateChip.png"},
     { "id": "24", "name": "Sponge Cake", "category": "Cakes", "price":2.00, "image": "assets/cakes/spongeCake.png"},
 
-    { "id": "50", "name": "Teh", "category": "Drinks", "price":2.50, "image": "assets/drinks/teh.png", "selection":true, "flavor": [{"name": "Teh C"},{"name": "Teh O"},{"name": "Teh Nai"}, {"name": "Teh Kahwin"}, {"name": "Teh Kosong"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
+    { "id": "50", "name": "Teh", "category": "Drinks", "price":2.50, "image": "assets/drinks/teh.png", "selection":true, "choices": [{"name": "Teh C"},{"name": "Teh O"},{"name": "Teh Nai"}, {"name": "Teh Kahwin"}, {"name": "Teh Kosong"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
 
-    { "id": "51", "name": "Kopi", "category": "Drinks", "price":2.50, "image": "assets/drinks/kopi.png", "selection":true, "flavor": [{"name": "Kopi C"},{"name": "Kopi C Kosong"}, {"name": "Kopi O"}, {"name": "Kopi O Kosong"}, {"name": "Kopi Nai"}, {"name": "Kopi Kahwin"}, {"name": "Kopi Kosong"}, {"name": "Kopi Cham C"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
+    { "id": "51", "name": "Kopi", "category": "Drinks", "price":2.50, "image": "assets/drinks/kopi.png", "selection":true, "choices": [{"name": "Kopi C"},{"name": "Kopi C Kosong"}, {"name": "Kopi O"}, {"name": "Kopi O Kosong"}, {"name": "Kopi Nai"}, {"name": "Kopi Kahwin"}, {"name": "Kopi Kosong"}, {"name": "Kopi Cham C"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
 
-    { "id": "52", "name": "Milo", "category": "Drinks", "price":2.50, "image": "assets/drinks/milo.png", "selection":true, "flavor": [{"name": "Milo C"},{"name": "Milo Nai"}, {"name": "Milo Kahwin"}, {"name": "Milo Kosong"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
+    { "id": "52", "name": "Milo", "category": "Drinks", "price":2.50, "image": "assets/drinks/milo.png", "selection":true, "choices": [{"name": "Milo C"},{"name": "Milo Nai"}, {"name": "Milo Kahwin"}, {"name": "Milo Kosong"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
 
-    { "id": "53", "name": "Lemon", "category": "Drinks", "price":2.50, "image": "assets/drinks/lemon.png", "selection":true, "flavor": [{"name": "Lemon Sui"},{"name": "Lemon Teh"}, {"name": "Lemon Sui Asam"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
+    { "id": "53", "name": "Lemon", "category": "Drinks", "price":2.50, "image": "assets/drinks/lemon.png", "selection":true, "choices": [{"name": "Lemon Sui"},{"name": "Lemon Teh"}, {"name": "Lemon Sui Asam"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
 
-    { "id": "54", "name": "Nescafe", "category": "Drinks", "price":2.50, "image": "assets/drinks/nescafe.png", "selection":true, "flavor": [{"name": "Nescafe C"},{"name": "Nescafe Nai"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
+    { "id": "54", "name": "Nescafe", "category": "Drinks", "price":2.50, "image": "assets/drinks/nescafe.png", "selection":true, "choices": [{"name": "Nescafe C"},{"name": "Nescafe Nai"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
 
-    { "id": "55", "name": "Nestum", "category": "Drinks", "price":2.50, "image": "assets/drinks/example.png", "selection":true, "flavor": [{"name": "Nestum C"},{"name": "Nestum Nai"}, {"name": "Nestum Kahwin"}, {"name": "Nestum Kosong"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
+    { "id": "55", "name": "Nestum", "category": "Drinks", "price":2.50, "image": "assets/drinks/example.png", "selection":true, "choices": [{"name": "Nestum C"},{"name": "Nestum Nai"}, {"name": "Nestum Kahwin"}, {"name": "Nestum Kosong"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
 
-    { "id": "56", "name": "Kitcai", "category": "Drinks", "price":2.50, "image": "assets/drinks/example.png", "selection":true, "flavor": [{"name": "Kitcai Sui"},{"name": "Kitcai Lemon Asam"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
+    { "id": "56", "name": "Kitcai", "category": "Drinks", "price":2.50, "image": "assets/drinks/example.png", "selection":true, "choices": [{"name": "Kitcai Sui"},{"name": "Kitcai Lemon Asam"}], "types": [{"name":"Hot", "price": 0.00},{"name":"Cold", "price": 1.00}]},
 
     { "id": "57", "name": "Sang Nai Sui", "category": "Drinks", "price":2.50, "image": "assets/drinks/example.png", "selection":true, "types": [{"name": "Hot", "price": 0.00},{"name": "Cold", "price": 1.00}]},
 
@@ -61,16 +61,16 @@ final List<Map<String, dynamic>> menu = [
     { "id": "76", "name": "Yeo's Chrysanthemum", "category": "Drinks", "price":2.50, "image": "assets/drinks/chrysanthemum.png"},
     { "id": "77", "name": "Yeo's Susu Soya", "category": "Drinks", "price":2.50, "image": "assets/drinks/susuSoya.png"},
     
-    { "id": "101", "name": "Kono Mee", "category": "Dish", "price":8.00, "image": "assets/dish/konoMee.png", "selection":true, "flavor": [{"name": "Campur", "price": 0.00}, {"name": "Ayam Goreng", "price": 0.00}, {"name": "Sui Kau", "price": 1.00}, {"name": "Seafood", "price": 2.00}, {"name": "Udang", "price": 4.00}]},
-    { "id": "102", "name": "Goreng Kering", "category": "Dish", "price":9.00, "image": "assets/dish/gorengKering.png", "selection":true, "flavor": [{"name": "Campur", "price": 0.00}, {"name": "Ayam", "price": 0.00}, {"name": "Ayam Goreng", "price": 1.00}, {"name": "Seafood", "price": 2.00}]},
+    { "id": "101", "name": "Kono Mee", "category": "Dish", "price":8.00, "image": "assets/dish/konoMee.png", "selection":true, "choices": [{"name": "Campur", "price": 0.00}, {"name": "Ayam Goreng", "price": 0.00}, {"name": "Sui Kau", "price": 1.00}, {"name": "Seafood", "price": 2.00}, {"name": "Udang", "price": 4.00}]},
+    { "id": "102", "name": "Goreng Kering", "category": "Dish", "price":9.00, "image": "assets/dish/gorengKering.png", "selection":true, "choices": [{"name": "Campur", "price": 0.00}, {"name": "Ayam", "price": 0.00}, {"name": "Ayam Goreng", "price": 1.00}, {"name": "Seafood", "price": 2.00}]},
 
-    { "id": "103", "name": "Goreng Basah", "category": "Dish", "price":8.00, "image": "assets/dish/gorengBasah.png", "selection":true, "flavor": [{"name": "Campur", "price": 0.00}, {"name": "Ayam", "price": 0.00}, {"name": "Ayam Goreng", "price": 1.00}, {"name": "Seafood", "price": 2.00}], "meat": [{"level":"Normal Meat", "price": 0.00}, {"level":"Extra Meat", "price": 2.00}], "addOn": [{"type":"Normal Mee", "price": 0.00},{"type":"Extra Mee", "price": 2.00}]},
+    { "id": "103", "name": "Goreng Basah", "category": "Dish", "price":8.00, "image": "assets/dish/gorengBasah.png", "selection":true, "choices": [{"name": "Campur", "price": 0.00}, {"name": "Ayam", "price": 0.00}, {"name": "Ayam Goreng", "price": 1.00}, {"name": "Seafood", "price": 2.00}], "meat": [{"level":"Normal Meat", "price": 0.00}, {"level":"Extra Meat", "price": 2.00}], "mee": [{"type":"Normal Mee", "price": 0.00},{"type":"Extra Mee", "price": 2.00}]},
 
-    { "id": "104", "name": "Laksa", "category": "Dish", "price":10.0, "image": "assets/dish/laksa.png", "selection":true, "flavor": [{"name": "Campur", "price": 0.00}, {"name": "Ayam Goreng", "price": 0.00}, {"name": "Sui Kau", "price": 0.00}, {"name": "Seafood", "price": 2.00}]},
+    { "id": "104", "name": "Laksa", "category": "Dish", "price":10.0, "image": "assets/dish/laksa.png", "selection":true, "choices": [{"name": "Campur", "price": 0.00}, {"name": "Ayam Goreng", "price": 0.00}, {"name": "Sui Kau", "price": 0.00}, {"name": "Seafood", "price": 2.00}]},
 
-    { "id": "105", "name": "Lo Mee", "category": "Dish", "price":10.0, "image": "assets/dish/loMee.png", "selection":true, "flavor": [{"name": "Campur", "price": 0.00}, {"name": "Ayam", "price": 0.00}, {"name": "Sui Kau", "price": 0.00}, {"name": "Seafood", "price": 2.00}]},
+    { "id": "105", "name": "Lo Mee", "category": "Dish", "price":10.0, "image": "assets/dish/loMee.png", "selection":true, "choices": [{"name": "Campur", "price": 0.00}, {"name": "Ayam", "price": 0.00}, {"name": "Sui Kau", "price": 0.00}, {"name": "Seafood", "price": 2.00}]},
 
-    { "id": "106", "name": "Watan Hor", "category": "Dish", "price":10.00, "image": "assets/dish/watanHor.png", "selection":true, "flavor": [{"name": "Campur", "price": 0.00},{"name": "Ayam", "price": 0.00}, {"name": "Sui Kau", "price": 0.00}, {"name": "Seafood", "price": 2.00}]},
+    { "id": "106", "name": "Watan Hor", "category": "Dish", "price":10.00, "image": "assets/dish/watanHor.png", "selection":true, "choices": [{"name": "Campur", "price": 0.00},{"name": "Ayam", "price": 0.00}, {"name": "Sui Kau", "price": 0.00}, {"name": "Seafood", "price": 2.00}]},
     
    
     { "id": "107", "name": "Nasi Ayam", "category": "Dish", "price":7.00, "image": "assets/dish/nasiAyam.png"},

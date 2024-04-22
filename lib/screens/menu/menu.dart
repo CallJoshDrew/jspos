@@ -111,7 +111,7 @@ class _MenuPageState extends State<MenuPage> {
                     category: item['category'],
                     price: item['price'],
                     selection: item['selection'] ?? false,
-                    flavor: item['flavor'] ?? [],
+                    choices: item['choices'] ?? [],
                     types: item['types'] ?? [],
                     // if selection is null, default it to false.
                   );
@@ -131,7 +131,7 @@ class _MenuPageState extends State<MenuPage> {
     required String category,
     required double price,
     bool selection = false,
-    List<Map<String, dynamic>> flavor = const [],
+    List<Map<String, dynamic>> choices = const [],
     List<Map<String, dynamic>> types = const [],
   }) {
     return GestureDetector(
@@ -144,14 +144,18 @@ class _MenuPageState extends State<MenuPage> {
           image: image,
           quantity: 1,
           selection: selection,
-          flavor: flavor,
+          choices: choices,
           types: types,
         );
 
+        String? selectedChoice =
+            item.choices.isNotEmpty ? item.choices[0]['name'] : null;
+        String? selectedType =
+            item.types.isNotEmpty ? item.types[0]['name'] : null;
+        double additionalPrice =
+            item.types.isNotEmpty ? item.types[0]['price'] : 0.00;
+        double totalPrice = item.price + additionalPrice;
         if (item.selection) {
-          String? selectedFlavor;
-          String? selectedType;
-
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -184,6 +188,7 @@ class _MenuPageState extends State<MenuPage> {
                                       ),
                                     ),
                                   ),
+                                  const SizedBox(width: 20),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -192,9 +197,10 @@ class _MenuPageState extends State<MenuPage> {
                                           style: const TextStyle(
                                               fontSize: 24,
                                               fontWeight: FontWeight.bold)),
-                                      Text('RM${item.price}',
+                                      Text(
+                                          'RM ${totalPrice.toStringAsFixed(2)}',
                                           style: const TextStyle(
-                                              fontSize: 24,
+                                              fontSize: 22,
                                               fontWeight: FontWeight.bold)),
                                     ],
                                   ),
@@ -220,28 +226,52 @@ class _MenuPageState extends State<MenuPage> {
                                           builder: (BuildContext context) {
                                             return SimpleDialog(
                                               title:
-                                                  const Text('Select flavor'),
+                                                  const Text('Select Flavor'),
                                               children:
-                                                  item.flavor.map((flavor) {
+                                                  item.choices.map((choices) {
                                                 return SimpleDialogOption(
                                                   onPressed: () {
                                                     setState(() {
-                                                      selectedFlavor =
-                                                          flavor['name'];
+                                                      selectedChoice =
+                                                          choices['name'];
                                                     });
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text(flavor['name']),
+                                                  child: Text(
+                                                    choices['name'],
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
                                                 );
                                               }).toList(),
                                             );
                                           },
                                         );
                                       },
-                                      child: Text(
-                                          selectedFlavor ?? 'Select flavor'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              5), // This is the border radius
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15),
+                                        child: Text(
+                                          selectedChoice ?? 'Select Flavor',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () {
@@ -249,25 +279,49 @@ class _MenuPageState extends State<MenuPage> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return SimpleDialog(
-                                              title: const Text('Select type'),
-                                              children: item.types.map((type) {
+                                              title: const Text(
+                                                  'Select Variation'),
+                                              children: item.types
+                                                  .map<SimpleDialogOption>(
+                                                      (type) {
                                                 return SimpleDialogOption(
                                                   onPressed: () {
                                                     setState(() {
                                                       selectedType =
                                                           type['name'];
+                                                      additionalPrice =
+                                                          type['price'];
+                                                      totalPrice = item.price +
+                                                          additionalPrice;
+                                                      print(totalPrice);
                                                     });
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text(type['name']),
+                                                  child: Text(
+                                                      '${type['name']} + RM ${type['price'].toStringAsFixed(2)}'),
                                                 );
                                               }).toList(),
                                             );
                                           },
                                         );
                                       },
-                                      child:
-                                          Text(selectedType ?? 'Select type'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              5), // This is the border radius
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15),
+                                        child: Text(
+                                          selectedType ?? 'Select Variation',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
