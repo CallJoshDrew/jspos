@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/selected_table_order.dart';
 
@@ -110,7 +111,10 @@ class _MenuPageState extends State<MenuPage> {
                     image: item['image'],
                     category: item['category'],
                     price: item['price'],
-                    // order: order,
+                    selection: item['selection'] ?? false,
+                    flavor: item['flavor'] ?? [],
+                    types: item['types'] ?? [],
+                    // if selection is null, default it to false.
                   );
                 }).toList(),
               ),
@@ -127,18 +131,101 @@ class _MenuPageState extends State<MenuPage> {
     required String image,
     required String category,
     required double price,
-    // required SelectedTableOrder order,
+    bool selection = false,
+    List<Map<String, dynamic>> flavor = const [],
+    List<Map<String, dynamic>> types = const [],
   }) {
     return GestureDetector(
       onTap: () {
         Item item = Item(
-            id: id,
-            name: name,
-            price: price,
-            category: category,
-            image: image,
-            quantity: 1); 
-        widget.onItemAdded(item);
+          id: id,
+          name: name,
+          price: price,
+          category: category,
+          image: image,
+          quantity: 1,
+          selection: selection,
+          flavor: flavor,
+          types: types,
+        );
+
+        if (item.selection) {
+          String? selectedFlavor;
+          String? selectedType;
+
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return AlertDialog(
+                    title: Text(item.name),
+                    content: SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          Text('ID: ${item.id}'),
+                          Image.asset(item.image),
+                          Text('Category: ${item.category}'),
+                          Text('Quantity: ${item.quantity}'),
+                          Text('Price: ${item.price}'),
+                          DropdownButton<String>(
+                            value: selectedFlavor,
+                            hint: const Text('Select a flavor'),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedFlavor = newValue;
+                              });
+                            },
+                            items: item.flavor
+                                .map<DropdownMenuItem<String>>((flavor) {
+                              return DropdownMenuItem<String>(
+                                value: flavor['name'],
+                                child: Text(flavor['name']),
+                              );
+                            }).toList(),
+                          ),
+                          DropdownButton<String>(
+                            value: selectedType,
+                            hint: const Text('Select a type'),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedType = newValue;
+                              });
+                            },
+                            items: item.types
+                                .map<DropdownMenuItem<String>>((type) {
+                              return DropdownMenuItem<String>(
+                                value: type['name'],
+                                child: Text(type['name']),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Confirm'),
+                        onPressed: () {
+                          widget.onItemAdded(item);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        } else {
+          widget.onItemAdded(item);
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(right: 20, bottom: 20),
