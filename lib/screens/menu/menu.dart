@@ -111,13 +111,15 @@ class _MenuPageState extends State<MenuPage> {
                     category: item['category'],
                     price: item['price'],
                     selection: item['selection'] ?? false,
+                    // if selection is null, default it to false.
                     choices: item['choices'] ?? [],
                     types: item['types'] ?? [],
                     meatPortion: item['meat portion'] ?? [],
                     meePortion: item['mee portion'] ?? [],
                     selectedChoice: {},
                     selectedType: {},
-                    // if selection is null, default it to false.
+                    selectedMeatPortion: {},
+                    selectedMeePortion: {},
                   );
                 }).toList(),
               ),
@@ -142,6 +144,8 @@ class _MenuPageState extends State<MenuPage> {
     List<Map<String, dynamic>> meePortion = const [],
     Map<String, dynamic>? selectedChoice,
     Map<String, dynamic>? selectedType,
+    Map<String, dynamic>? selectedMeatPortion,
+    Map<String, dynamic>? selectedMeePortion,
   }) {
     return GestureDetector(
       onTap: () {
@@ -161,8 +165,8 @@ class _MenuPageState extends State<MenuPage> {
 
         Map<String, dynamic>? selectedChoice =
             choices.isNotEmpty ? choices[0] : null;
-
         Map<String, dynamic>? selectedType = types.isNotEmpty ? types[0] : null;
+
         String? selectedMeatPortion =
             meatPortion.isNotEmpty ? meatPortion[0]['name'] : null;
         String? selectedMeePortion =
@@ -176,6 +180,7 @@ class _MenuPageState extends State<MenuPage> {
               return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return AlertDialog(
+                    title: Text(item.name, style: const TextStyle(fontSize: 24, color: Colors.black),),
                     backgroundColor: Colors.white,
                     content: ConstrainedBox(
                       constraints: const BoxConstraints(
@@ -207,12 +212,13 @@ class _MenuPageState extends State<MenuPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(item.name,
+                                      Text(
+                                          '${selectedChoice!['name']} (${selectedType!['name']})',
                                           style: const TextStyle(
-                                              fontSize: 24,
+                                              fontSize: 22,
                                               fontWeight: FontWeight.bold)),
                                       Text(
-                                          'RM ${totalPrice.toStringAsFixed(2)}',
+                                          'Total: RM ${totalPrice.toStringAsFixed(2)}',
                                           style: const TextStyle(
                                               fontSize: 22,
                                               fontWeight: FontWeight.bold)),
@@ -241,7 +247,9 @@ class _MenuPageState extends State<MenuPage> {
                                             return SimpleDialog(
                                               title:
                                                   const Text('Select Flavor'),
-                                              children: choices.map((choices) {
+                                              children: choices
+                                                  .map<SimpleDialogOption>(
+                                                      (choices) {
                                                 return SimpleDialogOption(
                                                   onPressed: () {
                                                     setState(() {
@@ -252,7 +260,7 @@ class _MenuPageState extends State<MenuPage> {
                                                     Navigator.pop(context);
                                                   },
                                                   child: Text(
-                                                    choices['name'],
+                                                    '${choices['name']} (RM ${choices['price'].toStringAsFixed(2)})',
                                                     style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
