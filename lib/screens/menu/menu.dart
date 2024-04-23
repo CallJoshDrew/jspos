@@ -192,9 +192,11 @@ class _MenuPageState extends State<MenuPage> {
                   return AlertDialog(
                     title: Text(
                       item.name,
-                      style: const TextStyle(fontSize: 24, color: Colors.black),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24, color: Colors.white),
                     ),
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.black,
+                    // second color const Color(0xff1f2029),
                     content: ConstrainedBox(
                       constraints: const BoxConstraints(
                         minWidth: 600,
@@ -233,6 +235,7 @@ class _MenuPageState extends State<MenuPage> {
                                         style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ],
@@ -242,11 +245,14 @@ class _MenuPageState extends State<MenuPage> {
                                         'RM ${totalPrice.toStringAsFixed(2)}',
                                         textAlign: TextAlign.right,
                                         style: const TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold)),
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        )),
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 20),
                               // Second row
                               Row(
                                 children: [
@@ -514,14 +520,42 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     actions: [
                       TextButton(
-                        child: const Text('Confirm'),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.deepOrange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Confirm',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
                         onPressed: () {
                           widget.onItemAdded(item);
                           Navigator.of(context).pop();
                         },
                       ),
+                      const SizedBox(width: 10),
                       TextButton(
-                        child: const Text('Cancel'),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            // side: const BorderSide(color: Colors.deepOrange, width: 1), 
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepOrange,
+                            fontSize: 18,
+                          ),
+                        ),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
