@@ -32,24 +32,26 @@ class _TablePageState extends State<TablePage> {
     remarks: "No Remarks",
     showEditBtn: false,
   );
-  // void prettyPrintTable() {
-  //   if (selectedTable != null) {
-  //     // print('Selected Table:');
-  //     // print('Table ID: ${selectedTable!['id']}');
-  //     // print('Table Name: ${selectedTable!['name']}');
-  //     // print('Occupied: ${selectedTable!['occupied']}');
-  //     // print('Order Number: ${selectedTable!['orderNumber']}');
-  //     // print('-------------------------');
+  void prettyPrintTable() {
+    if (selectedTable != null) {
+      // print('Selected Table:');
+      // print('Table ID: ${selectedTable!['id']}');
+      // print('Table Name: ${selectedTable!['name']}');
+      // print('Occupied: ${selectedTable!['occupied']}');
+      // print('Order Number: ${selectedTable!['orderNumber']}');
+      // print('-------------------------');
 
-  //     print('Selected Order:');
-  //     print('Order Number: ${selectedOrder.orderNumber}');
-  //     print('Table Name: ${selectedOrder.tableName}');
-  //     print('Order Type: ${selectedOrder.orderType}');
-  //     print('Status: ${selectedOrder.status}');
-  //     print('Items: ${selectedOrder.items}');
-  //     print('-------------------------');
-  //   }
-  // }
+      print('Selected Order:');
+      print('Order Number: ${selectedOrder.orderNumber}');
+      print('Table Name: ${selectedOrder.tableName}');
+      print('Order Type: ${selectedOrder.orderType}');
+      print('Order Type: ${selectedOrder.orderTime}');
+      print('Order Type: ${selectedOrder.orderDate}');
+      print('Status: ${selectedOrder.status}');
+      // print('Items: ${selectedOrder.items}');
+      print('-------------------------');
+    }
+  }
 
   String generateID(String tableName) {
     final paddedCounter = orderCounter.toString().padLeft(4, '0');
@@ -225,9 +227,9 @@ class _TablePageState extends State<TablePage> {
                       ),
                     );
 
-                    // Future.delayed(Duration.zero, () {
-                    //   prettyPrintTable();
-                    // });
+                    Future.delayed(Duration.zero, () {
+                      prettyPrintTable();
+                    });
                   });
                 },
               ),

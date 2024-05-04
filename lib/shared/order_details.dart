@@ -11,6 +11,16 @@ class OrderDetails extends StatefulWidget {
 
 class _OrderDetailsState extends State<OrderDetails> {
   bool _showEditBtn = false;
+  void prettyPrintOrder() {
+    print('Order Number: ${widget.selectedOrder.orderNumber}');
+    print('Table Name: ${widget.selectedOrder.tableName}');
+    print('Order Type: ${widget.selectedOrder.orderType}');
+    print('Order Time: ${widget.selectedOrder.orderTime}');
+    print('Order Date: ${widget.selectedOrder.orderDate}');
+    print('Status: ${widget.selectedOrder.status}');
+    print('-------------------------');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -36,6 +46,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                   title: item.name,
                   item: item,
                   price: item.price,
+                  onItemChanged: () {
+                    setState(
+                        () {}); // This will cause OrderDetailsState to rebuild
+                  },
                 );
               },
             ),
@@ -50,40 +64,40 @@ class _OrderDetailsState extends State<OrderDetails> {
             ),
             child: Column(
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Sub Total',
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     Text(
-                      'RM 40.32',
-                      style: TextStyle(
-                          fontSize: 18,
+                      'RM ${widget.selectedOrder.subTotal.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                const Row(
+                const SizedBox(height: 10),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Service Charges',
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     Text(
-                      'RM 0',
-                      style: TextStyle(
-                          fontSize: 18,
+                      'RM ${widget.selectedOrder.serviceCharge.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
@@ -115,26 +129,26 @@ class _OrderDetailsState extends State<OrderDetails> {
                     },
                   ),
                 ),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Total',
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     Text(
-                      'RM 44.64',
-                      style: TextStyle(
-                          fontSize: 18,
+                      'RM ${widget.selectedOrder.totalPrice.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                   ],
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 24),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -144,18 +158,24 @@ class _OrderDetailsState extends State<OrderDetails> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    widget.selectedOrder.placeOrder();
+                    prettyPrintOrder();
+                  },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.print, size: 26),
+                      Icon(Icons.print, size: 32),
                       SizedBox(width: 10),
-                      Text(
-                        'Place Order & Print',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 8, 10, 8),
+                        child: Text(
+                          'Place Order & Print',
+                          style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
@@ -258,6 +278,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String title,
     required Item item,
     required double price,
+    required VoidCallback onItemChanged,
   }) {
     return Dismissible(
         // Each Dismissible must contain a Key. Keys allow Flutter to
@@ -391,6 +412,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         0)
                                     .toDouble();
                               });
+                              onItemChanged();
                             },
                             child: const CircleAvatar(
                               radius:

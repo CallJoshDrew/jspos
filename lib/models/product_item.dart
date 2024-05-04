@@ -492,7 +492,7 @@ class _ProductItemState extends State<ProductItem> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
@@ -504,7 +504,7 @@ class _ProductItemState extends State<ProductItem> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

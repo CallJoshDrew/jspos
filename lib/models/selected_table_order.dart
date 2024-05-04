@@ -1,12 +1,13 @@
 import 'package:jspos/shared/item.dart';
+import 'package:intl/intl.dart';
 
 class SelectedTableOrder {
-  // Properties 
+  // Properties
   String orderNumber;
   String tableName;
   String orderType;
-  DateTime? orderTime;
-  DateTime? orderDate;
+  String? orderDate;
+  String? orderTime;
   String status;
   List<Item> items;
   double subTotal;
@@ -38,8 +39,39 @@ class SelectedTableOrder {
   String toString() {
     return 'TableOrder: {\n\torderNumber: $orderNumber, \n\ttableName: $tableName, \n\torderType: $orderType, \n\tstatus: $status, \n\titems: [\n\t\t${items.join(',\n\t\t')}\n\t], \n\tsubTotal: $subTotal, \n\tserviceCharge: $serviceCharge, \n\ttotalPrice: $totalPrice, \n\tquantity: $quantity, \n\tpaymentMethod: $paymentMethod, \n\tremarks: $remarks, \n\tshowEditBtn: $showEditBtn\n}';
   }
+
   void addItem(Item item) {
     items.add(item);
   }
-}
 
+  void updateSubTotal() {
+    subTotal =
+        items.fold(0, (total, item) => total + item.price * item.quantity);
+  }
+
+  void updateServiceCharge(double rate) {
+    serviceCharge = subTotal * rate;
+  }
+
+  void updateTotalPrice() {
+    totalPrice = subTotal + serviceCharge;
+  }
+
+  void updateStatus(String newStatus) {
+    status = newStatus;
+  }
+
+  void updateOrderDateTime() {
+    DateTime now = DateTime.now();
+    orderDate = DateFormat('d MMMM yyyy').format(now); // Outputs: 5 May 2024
+    orderTime = DateFormat('h:mm a').format(now);  // Outputs: 1:03 AM
+  }
+  
+  void placeOrder() {
+    updateSubTotal();
+    updateServiceCharge(0);
+    updateTotalPrice();
+    updateStatus('Placed Order');
+    updateOrderDateTime();
+  }
+}

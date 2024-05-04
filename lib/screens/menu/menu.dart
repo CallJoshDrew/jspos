@@ -37,11 +37,14 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ),
         ),
-        child: const Text('Close Menu',
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
+        child: const Padding(
+          padding: EdgeInsets.all(10),
+          child: Text('Close Menu',
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold)),
+        ),
       ),
     );
   }
