@@ -180,7 +180,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 80, // Adjust this value as needed
+          height: 70, // Adjust this value as needed
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,10 +191,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                     title,
                     style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 170),
+                  const SizedBox(width: 150),
                   // isVisible.value
                   _showEditBtn
                       ? ElevatedButton(
@@ -229,17 +229,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                     status,
                     style: const TextStyle(
                         color: Colors.white54,
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    width: (timeStamp == 'Order Time') ? 150 : 46,
+                    width: (timeStamp == 'Order Time') ? 150 : 40,
                   ),
                   Text(
                     timeStamp,
                     style: const TextStyle(
                         color: Colors.white54,
-                        fontSize: 16,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -278,13 +278,26 @@ class _OrderDetailsState extends State<OrderDetails> {
               duration: const Duration(seconds: 1),
               content: Container(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  "$title has been removed.",
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Icon(
+                      Icons.cancel,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    const SizedBox(
+                        width:
+                            5), // provide some space between the icon and text
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 26,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -299,14 +312,14 @@ class _OrderDetailsState extends State<OrderDetails> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
-                  Icons.delete,
+                  Icons.cancel,
                   color: Colors.white,
-                  size: 32,
+                  size: 36,
                 ),
                 Text(
                   "Delete",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -316,7 +329,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           ),
         ),
         child: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
@@ -325,8 +338,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           child: Row(
             children: [
               Container(
-                height: 60,
-                width: 60,
+                height: 80,
+                width: 80,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   image: DecorationImage(
@@ -335,7 +348,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 20),
               // Item Name and Price
               Expanded(
                 child: Column(
@@ -344,16 +357,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 0),
                     Text(
-                      '$price',
+                      price.toStringAsFixed(2),
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -381,16 +394,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                             },
                             child: const CircleAvatar(
                               radius:
-                                  12, // Adjust this value to change the size of the CircleAvatar
-                              backgroundColor: Colors.orange,
+                                  16, // Adjust this value to change the size of the CircleAvatar
+                              backgroundColor: Color.fromRGBO(65, 175, 71, 1),
                               child: Icon(
                                 Icons.add,
-                                color: Colors.black,
-                                size: 16,
+                                color: Colors.white,
+                                size: 20,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 25),
+                          const SizedBox(width: 20),
                           InkWell(
                             onTap: () {
                               setState(() {
@@ -407,12 +420,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                             },
                             child: const CircleAvatar(
                               radius:
-                                  12, // Adjust this value to change the size of the CircleAvatar
-                              backgroundColor: Colors.orange,
+                                  16, // Adjust this value to change the size of the CircleAvatar
+                              backgroundColor: Colors.red,
                               child: Icon(
                                 Icons.remove,
-                                color: Colors.black,
-                                size: 16,
+                                color: Colors.white,
+                                size: 20,
                               ),
                             ),
                           ),
@@ -422,7 +435,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               Text(
                 'x ${item.quantity}',
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),

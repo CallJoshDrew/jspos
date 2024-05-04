@@ -474,7 +474,7 @@ class _ProductItemState extends State<ProductItem> {
       // individual item container
       child: Container(
         margin: const EdgeInsets.only(right: 20, bottom: 20),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           color: const Color(0xff1f2029),
@@ -483,7 +483,7 @@ class _ProductItemState extends State<ProductItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 200,
+              height: 160,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 image: DecorationImage(
@@ -492,7 +492,7 @@ class _ProductItemState extends State<ProductItem> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
@@ -511,7 +511,7 @@ class _ProductItemState extends State<ProductItem> {
                 Text(
                   'RM ${widget.price.toStringAsFixed(2)}',
                   style: const TextStyle(
-                    color: Colors.deepOrange,
+                    color: Colors.white70,
                     fontSize: 20,
                   ),
                 ),

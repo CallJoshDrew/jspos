@@ -232,7 +232,7 @@ class _TablePageState extends State<TablePage> {
                 },
               ),
         Expanded(
-          flex: 5,
+          flex: 6,
           child: OrderDetails(selectedOrder: selectedOrder),
         ),
       ],
