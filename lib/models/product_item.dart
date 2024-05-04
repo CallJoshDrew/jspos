@@ -1,181 +1,80 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/data/menu_data.dart';
-import 'package:jspos/models/product_item.dart';
-import 'package:jspos/models/selected_table_order.dart';
 import 'package:jspos/shared/item.dart';
 
-class MenuPage extends StatefulWidget {
-  final SelectedTableOrder selectedOrder;
-  final VoidCallback onClick;
+class ProductItem extends StatefulWidget {
   final Function(Item) onItemAdded;
-  const MenuPage(
-      {super.key,
-      required this.selectedOrder,
-      required this.onClick,
-      required this.onItemAdded});
+  final String id;
+  final String name;
+  final String image;
+  final String category;
+  final double price;
+  final bool selection;
+  final List<Map<String, dynamic>> choices;
+  final List<Map<String, dynamic>> types;
+  final List<Map<String, dynamic>> meatPortion;
+  final List<Map<String, dynamic>> meePortion;
+  final Map<String, dynamic>? selectedChoice;
+  final Map<String, dynamic>? selectedType;
+  final Map<String, dynamic>? selectedMeatPortion;
+  final Map<String, dynamic>? selectedMeePortion;
+
+  const ProductItem({
+    Key? key,
+    required this.onItemAdded,
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.category,
+    required this.price,
+    this.selection = false,
+    this.choices = const [],
+    this.types = const [],
+    this.meatPortion = const [],
+    this.meePortion = const [],
+    this.selectedChoice,
+    this.selectedType,
+    this.selectedMeatPortion,
+    this.selectedMeePortion,
+  }) : super(key: key);
+
   @override
-  State<MenuPage> createState() => _MenuPageState();
+  _ProductItemState createState() => _ProductItemState();
 }
 
-class _MenuPageState extends State<MenuPage> {
-  String selectedCategory = 'All';
-  Widget _closedButtton() {
-    return Container(
-      margin: const EdgeInsets.only(right: 15),
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            widget.onClick(); // Call the callback passed from the parent widget
-          });
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(5.0), // Adjust this value as needed
-            ),
-          ),
-        ),
-        child: const Text('Close Menu',
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-
+class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 14,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: _topMenu(
-                title: 'SMH Restaurant',
-                subTitle: '28 March 2024',
-                action: _closedButtton(),
-              ),
-            ), // Add spacing between _topMenu and ListView
-            // Categories of Menu
-            Container(
-              height: 120,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = 'All';
-                      });
-                    },
-                    child: _itemTab(
-                      title: 'All',
-                      isActive: selectedCategory == 'All',
-                    ),
-                  ),
-                  ...categories.map((category) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedCategory = category;
-                        });
-                      },
-                      child: _itemTab(
-                        title: category,
-                        isActive: selectedCategory == category,
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 4,
-                childAspectRatio: (1 / 1.2),
-                children: menu
-                    .where((item) =>
-                        selectedCategory == 'All' ||
-                        item['category'] == selectedCategory)
-                    .map((item) {
-                  return ProductItem(
-                    onItemAdded: widget.onItemAdded,
-                    id: item['id'],
-                    name: item['name'],
-                    image: item['image'],
-                    category: item['category'],
-                    price: item['price'],
-                    selection: item['selection'] ?? false,
-                    choices: item['choices'] ?? [],
-                    types: item['types'] ?? [],
-                    meatPortion: item['meat portion'] ?? [],
-                    meePortion: item['mee portion'] ?? [],
-                    selectedChoice: null,
-                    selectedType: null,
-                    selectedMeatPortion: null,
-                    selectedMeePortion: null,
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _item({
-    required String id,
-    required String name,
-    required String image,
-    required String category,
-    required double price,
-    // required cannot have default value
-    bool selection = false,
-    List<Map<String, dynamic>> choices = const [],
-    List<Map<String, dynamic>> types = const [],
-    List<Map<String, dynamic>> meatPortion = const [],
-    List<Map<String, dynamic>> meePortion = const [],
-    Map<String, dynamic>? selectedChoice,
-    Map<String, dynamic>? selectedType,
-    Map<String, dynamic>? selectedMeatPortion,
-    Map<String, dynamic>? selectedMeePortion,
-  }) {
     return GestureDetector(
       onTap: () {
         Item item = Item(
-          id: id,
-          name: name,
-          price: price,
-          category: category,
-          image: image,
+          id: widget.id,
+          name: widget.name,
+          price: widget.price,
+          category: widget.category,
+          image: widget.image,
           quantity: 1,
-          selection: selection,
-          selectedChoice: choices.isNotEmpty ? choices[0] : null,
-          selectedType: types.isNotEmpty ? types[0] : null,
-          selectedMeatPortion: meatPortion.isNotEmpty ? meatPortion[0] : null,
-          selectedMeePortion: meePortion.isNotEmpty ? meePortion[0] : null,
+          selection: widget.selection,
+          selectedChoice: widget.choices.isNotEmpty ? widget.choices[0] : null,
+          selectedType: widget.types.isNotEmpty ? widget.types[0] : null,
+          selectedMeatPortion:
+              widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null,
+          selectedMeePortion:
+              widget.meePortion.isNotEmpty ? widget.meePortion[0] : null,
         ); //this is creating a new instance of item with the required field.
 
         Map<String, dynamic>? selectedChoice =
-            choices.isNotEmpty ? choices[0] : null;
-        Map<String, dynamic>? selectedType = types.isNotEmpty ? types[0] : null;
+            widget.choices.isNotEmpty ? widget.choices[0] : null;
+        Map<String, dynamic>? selectedType =
+            widget.types.isNotEmpty ? widget.types[0] : null;
         Map<String, dynamic>? selectedMeatPortion =
-            meatPortion.isNotEmpty ? meatPortion[0] : null;
+            widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null;
         Map<String, dynamic>? selectedMeePortion =
-            meePortion.isNotEmpty ? meePortion[0] : null;
+            widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
 
-        double additionalPrice = types.isNotEmpty && types[0]['price'] != null
-            ? types[0]['price']!
-            : 0.00;
+        double additionalPrice =
+            widget.types.isNotEmpty && widget.types[0]['price'] != null
+                ? widget.types[0]['price']!
+                : 0.00;
         double totalPrice = item.price + additionalPrice;
 
         void calculateTotalPrice(double itemPrice, double additionalPrice) {
@@ -260,7 +159,7 @@ class _MenuPageState extends State<MenuPage> {
                                 children: [
                                   // selectedChoice
                                   Expanded(
-                                    child: choices.isNotEmpty
+                                    child: widget.choices.isNotEmpty
                                         ? ElevatedButton(
                                             onPressed: () {
                                               showDialog(
@@ -270,9 +169,9 @@ class _MenuPageState extends State<MenuPage> {
                                                   return SimpleDialog(
                                                     title: const Text(
                                                         'Select Flavor'),
-                                                    children: choices.map<
-                                                            SimpleDialogOption>(
-                                                        (choice) {
+                                                    children: widget.choices
+                                                        .map<SimpleDialogOption>(
+                                                            (choice) {
                                                       return SimpleDialogOption(
                                                         onPressed: () {
                                                           setState(() {
@@ -323,7 +222,7 @@ class _MenuPageState extends State<MenuPage> {
                                   const SizedBox(width: 10),
                                   // selectedType
                                   Expanded(
-                                    child: types.isNotEmpty
+                                    child: widget.types.isNotEmpty
                                         ? ElevatedButton(
                                             onPressed: () {
                                               showDialog(
@@ -333,7 +232,7 @@ class _MenuPageState extends State<MenuPage> {
                                                   return SimpleDialog(
                                                     title: const Text(
                                                         'Select Variation'),
-                                                    children: types.map<
+                                                    children: widget.types.map<
                                                             SimpleDialogOption>(
                                                         (type) {
                                                       return SimpleDialogOption(
@@ -390,7 +289,7 @@ class _MenuPageState extends State<MenuPage> {
                                   const SizedBox(width: 10),
                                   // selectedMeat Portion
                                   Expanded(
-                                    child: meatPortion.isNotEmpty
+                                    child: widget.meatPortion.isNotEmpty
                                         ? ElevatedButton(
                                             onPressed: () {
                                               showDialog(
@@ -400,9 +299,9 @@ class _MenuPageState extends State<MenuPage> {
                                                   return SimpleDialog(
                                                     title: const Text(
                                                         'Select Meat Portion'),
-                                                    children: meatPortion.map<
-                                                            SimpleDialogOption>(
-                                                        (meatPortion) {
+                                                    children: widget.meatPortion
+                                                        .map<SimpleDialogOption>(
+                                                            (meatPortion) {
                                                       return SimpleDialogOption(
                                                         onPressed: () {
                                                           setState(() {
@@ -453,7 +352,7 @@ class _MenuPageState extends State<MenuPage> {
                                   const SizedBox(width: 10),
                                   // selectedMee Portion
                                   Expanded(
-                                    child: meePortion.isNotEmpty
+                                    child: widget.meePortion.isNotEmpty
                                         ? ElevatedButton(
                                             onPressed: () {
                                               showDialog(
@@ -463,9 +362,9 @@ class _MenuPageState extends State<MenuPage> {
                                                   return SimpleDialog(
                                                     title: const Text(
                                                         'Select Mee Portion'),
-                                                    children: meePortion.map<
-                                                            SimpleDialogOption>(
-                                                        (meePortion) {
+                                                    children: widget.meePortion
+                                                        .map<SimpleDialogOption>(
+                                                            (meePortion) {
                                                       return SimpleDialogOption(
                                                         onPressed: () {
                                                           setState(() {
@@ -547,7 +446,7 @@ class _MenuPageState extends State<MenuPage> {
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
-                            // side: const BorderSide(color: Colors.deepOrange, width: 1), 
+                            // side: const BorderSide(color: Colors.deepOrange, width: 1),
                           ),
                         ),
                         child: const Text(
@@ -572,6 +471,7 @@ class _MenuPageState extends State<MenuPage> {
           widget.onItemAdded(item);
         }
       },
+      // individual item container
       child: Container(
         margin: const EdgeInsets.only(right: 20, bottom: 20),
         padding: const EdgeInsets.all(12),
@@ -587,7 +487,7 @@ class _MenuPageState extends State<MenuPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 image: DecorationImage(
-                  image: AssetImage(image),
+                  image: AssetImage(widget.image),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -596,7 +496,7 @@ class _MenuPageState extends State<MenuPage> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
-                name,
+                widget.name,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -609,7 +509,7 @@ class _MenuPageState extends State<MenuPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'RM ${price.toStringAsFixed(2)}',
+                  'RM ${widget.price.toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: Colors.deepOrange,
                     fontSize: 20,
@@ -621,72 +521,5 @@ class _MenuPageState extends State<MenuPage> {
         ),
       ),
     );
-  }
-
-  Widget _itemTab({
-    // required String icon,
-    required String title,
-    required bool isActive,
-  }) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 25),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: const Color(0xff1f2029),
-          border: isActive
-              ? Border.all(color: Colors.deepOrangeAccent, width: 3)
-              : Border.all(color: const Color(0xff1f2029), width: 3)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Image.asset(
-          //   icon,
-          //   width: 55,
-          // ),
-          // const SizedBox(width: 15),
-          Text(
-            title,
-            style: const TextStyle(
-                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _topMenu({
-    required String title,
-    required String subTitle,
-    required action,
-  }) {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                subTitle,
-                style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          Expanded(flex: 1, child: Container(width: double.infinity)),
-          Container(child: action)
-        ]);
   }
 }

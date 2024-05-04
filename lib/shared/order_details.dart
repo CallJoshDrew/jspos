@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/models/selected_table_order.dart';
+import 'package:jspos/shared/item.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedTableOrder selectedOrder;

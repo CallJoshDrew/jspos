@@ -32,24 +32,24 @@ class _TablePageState extends State<TablePage> {
     remarks: "No Remarks",
     showEditBtn: false,
   );
-  void prettyPrintTable() {
-    if (selectedTable != null) {
-      // print('Selected Table:');
-      // print('Table ID: ${selectedTable!['id']}');
-      // print('Table Name: ${selectedTable!['name']}');
-      // print('Occupied: ${selectedTable!['occupied']}');
-      // print('Order Number: ${selectedTable!['orderNumber']}');
-      // print('-------------------------');
+  // void prettyPrintTable() {
+  //   if (selectedTable != null) {
+  //     // print('Selected Table:');
+  //     // print('Table ID: ${selectedTable!['id']}');
+  //     // print('Table Name: ${selectedTable!['name']}');
+  //     // print('Occupied: ${selectedTable!['occupied']}');
+  //     // print('Order Number: ${selectedTable!['orderNumber']}');
+  //     // print('-------------------------');
 
-      print('Selected Order:');
-      print('Order Number: ${selectedOrder.orderNumber}');
-      print('Table Name: ${selectedOrder.tableName}');
-      print('Order Type: ${selectedOrder.orderType}');
-      print('Status: ${selectedOrder.status}');
-      print('Items: ${selectedOrder.items}');
-      print('-------------------------');
-    }
-  }
+  //     print('Selected Order:');
+  //     print('Order Number: ${selectedOrder.orderNumber}');
+  //     print('Table Name: ${selectedOrder.tableName}');
+  //     print('Order Type: ${selectedOrder.orderType}');
+  //     print('Status: ${selectedOrder.status}');
+  //     print('Items: ${selectedOrder.items}');
+  //     print('-------------------------');
+  //   }
+  // }
 
   String generateID(String tableName) {
     final paddedCounter = orderCounter.toString().padLeft(4, '0');
@@ -179,17 +179,56 @@ class _TablePageState extends State<TablePage> {
                 onItemAdded: (item) {
                   setState(() {
                     // Try to find an item in selectedOrder.items with the same id as the new item
-                    var existingItem = selectedOrder.items.firstWhereOrNull((i) => i.id == item.id);
+                    var existingItem = selectedOrder.items
+                        .firstWhereOrNull((i) => i.id == item.id);
                     if (existingItem != null) {
                       // If an item with the same id is found, increase its quantity and price
                       existingItem.quantity += 1;
-                      existingItem.price = (num.tryParse((existingItem.originalPrice * existingItem.quantity).toStringAsFixed(2)) ?? 0).toDouble();
+                      existingItem.price = (num.tryParse(
+                                  (existingItem.originalPrice *
+                                          existingItem.quantity)
+                                      .toStringAsFixed(2)) ??
+                              0)
+                          .toDouble();
                     } else {
                       // If no item with the same id is found, add the new item
                       selectedOrder.items.add(item);
                     }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.green[700],
+                        duration: const Duration(seconds: 1),
+                        content: Container(
+                          alignment: Alignment.centerRight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Icon(
+                                Icons.check_circle,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                              const SizedBox(
+                                  width:
+                                      5), // provide some space between the icon and text
+                              Text(
+                                "${item.name}!",
+                                style: const TextStyle(
+                                  fontSize: 26,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+
+                    // Future.delayed(Duration.zero, () {
+                    //   prettyPrintTable();
+                    // });
                   });
-                  prettyPrintTable();
                 },
               ),
         Expanded(
