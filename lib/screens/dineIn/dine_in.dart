@@ -182,6 +182,7 @@ class _DineInPageState extends State<DineInPage> {
                     // Try to find an item in selectedOrder.items with the same id as the new item
                     selectedOrder.addItem(item);
                     selectedOrder.updateTotalCost(0);
+                    selectedOrder.updateStatus("Place Order & Print");
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.green[700],

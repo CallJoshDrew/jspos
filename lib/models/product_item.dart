@@ -474,7 +474,7 @@ class ProductItemState extends State<ProductItem> {
       // individual item container
       child: Container(
         margin: const EdgeInsets.only(right: 20, bottom: 20),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           color: const Color(0xff1f2029),
@@ -493,29 +493,22 @@ class ProductItemState extends State<ProductItem> {
               ),
             ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
+            Text(
+              widget.name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            Expanded(
               child: Text(
-                widget.name,
+                'RM ${widget.price.toStringAsFixed(2)}',
                 style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  color: Colors.white70,
                   fontSize: 20,
                 ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'RM ${widget.price.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 20,
-                  ),
-                ),
-              ],
             ),
           ],
         ),

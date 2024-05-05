@@ -20,6 +20,46 @@ class _OrderDetailsState extends State<OrderDetails> {
     print('Status: ${widget.selectedOrder.status}');
     print('-------------------------');
   }
+  String orderStatus = "Empty Cart";
+  Color orderStatusColor = Colors.deepOrange;
+  VoidCallback? handleMethod;
+  IconData orderStatusIcon = Icons.shopping_cart;
+
+  void updateOrderStatus() {
+  if (widget.selectedOrder.status == "Status" && widget.selectedOrder.items.isNotEmpty) {
+    orderStatus = "Place Order & Print";
+    orderStatusColor = Colors.green[800]!;
+    // handleMethod = handlePlaceOrderBtn;
+    orderStatusIcon = Icons.print;
+  } else if (widget.selectedOrder.status == "Status") {
+    orderStatus = "Empty Cart";
+    orderStatusColor = Colors.grey[500]!;
+    handleMethod = null; // Disabled
+    orderStatusIcon = Icons.remove_shopping_cart;
+  // } else if (widget.selectedOrder.status == "Placed Order" && !widget.selectedOrder.showEditBtn) {
+  //   orderStatus = "Update Order & Print";
+  //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
+  //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
+  } else if (widget.selectedOrder.status == "Placed Order") {
+    orderStatus = "Make Payment";
+    orderStatusColor = Colors.green[800]!;
+    // handleMethod = handlePaymentBtn;
+    orderStatusIcon = Icons.money;
+  } else if (widget.selectedOrder.status == "Paid") {
+    orderStatus = "Completed";
+    orderStatusColor = Colors.yellow[500]!;
+    // handleMethod = handleCheckOutBtn;
+    orderStatusIcon = Icons.monetization_on;
+  } else if (widget.selectedOrder.status == "Completed") {
+    orderStatus = "Completed";
+    orderStatusColor = Colors.grey[500]!;
+    handleMethod = null; // Disabled
+  } else if (widget.selectedOrder.status == "Cancelled") {
+    orderStatus = "Cancelled";
+    orderStatusColor = Colors.grey[500]!;
+    handleMethod = null; // Disabled
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +85,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   image: item.image,
                   title: item.name,
                   item: item,
-                  price: item.price,
-                  onItemChanged: () {
-                    setState(
-                        () {}); // This will cause OrderDetailsState to rebuild
-                  },
+                  originalPrice: item.originalPrice,
                 );
               },
             ),
@@ -75,7 +111,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           color: Colors.white),
                     ),
                     Text(
-                      'RM ${widget.selectedOrder.subTotal.toStringAsFixed(2)}',
+                      widget.selectedOrder.subTotal.toStringAsFixed(2),
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -95,7 +131,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           color: Colors.white),
                     ),
                     Text(
-                      'RM ${widget.selectedOrder.serviceCharge.toStringAsFixed(2)}',
+                      widget.selectedOrder.serviceCharge.toStringAsFixed(2),
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -140,7 +176,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           color: Colors.white),
                     ),
                     Text(
-                      'RM ${widget.selectedOrder.totalPrice.toStringAsFixed(2)}',
+                      widget.selectedOrder.totalPrice.toStringAsFixed(2),
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -152,7 +188,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.deepOrange,
+                    backgroundColor: orderStatusColor,
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -160,18 +196,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                   onPressed: () {
                     widget.selectedOrder.placeOrder();
+                    updateOrderStatus();
                     prettyPrintOrder();
                   },
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.print, size: 32),
-                      SizedBox(width: 10),
+                      Icon(orderStatusIcon, size: 32),
+                      const SizedBox(width: 10),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(10, 8, 10, 8),
+                        padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                         child: Text(
-                          'Place Order & Print',
-                          style: TextStyle(
+                          orderStatus,
+                          style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
@@ -277,8 +314,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String image,
     required String title,
     required Item item,
-    required double price,
-    required VoidCallback onItemChanged,
+    required double originalPrice,
   }) {
     return Dismissible(
         // Each Dismissible must contain a Key. Keys allow Flutter to
@@ -290,6 +326,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           // Remove the item from the data source.
           setState(() {
             widget.selectedOrder.items.remove(item);
+            widget.selectedOrder.updateTotalCost(0);
           });
 
           // Then show a snackbar.
@@ -385,7 +422,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                     const SizedBox(height: 0),
                     Text(
-                      price.toStringAsFixed(2),
+                      originalPrice.toStringAsFixed(2),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -407,7 +444,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               setState(() {
                                 item.quantity++; // Increase the quantity
                               });
-                              onItemChanged();
+                             
                               widget.selectedOrder.updateTotalCost(0);
                             },
                             child: const CircleAvatar(
