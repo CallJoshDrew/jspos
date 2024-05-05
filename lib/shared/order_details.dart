@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:jspos/models/selected_table_order.dart';
 import 'package:jspos/shared/item.dart';
 
@@ -61,6 +62,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   title: item.name,
                   item: item,
                   price: item.price,
+                  index: index,
                 );
               },
             ),
@@ -169,9 +171,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: 
-                    widget.handleMethod,
-                  
+                  onPressed: widget.handleMethod,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -210,7 +210,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 70, // Adjust this value as needed
+          height: 80, // Adjust this value as needed
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,6 +288,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String title,
     required Item item,
     required double price,
+    required int index,
   }) {
     return Dismissible(
         // Each Dismissible must contain a Key. Keys allow Flutter to
@@ -317,9 +318,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       color: Colors.white,
                       size: 28,
                     ),
-                    const SizedBox(
-                        width:
-                            5), // provide some space between the icon and text
+                    const SizedBox(width: 5),
                     Text(
                       title,
                       style: const TextStyle(
@@ -368,16 +367,46 @@ class _OrderDetailsState extends State<OrderDetails> {
           ),
           child: Row(
             children: [
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: AssetImage(image),
-                    fit: BoxFit.cover,
+              Stack(
+                children: [
+                  Container(
+                    height: 80,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: AssetImage(image),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                ),
+                  Container(
+                    width: 24, // Adjust as needed
+                    height: 24, // Adjust as needed
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                          14), // Adjust for desired border radius
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5), // Shadow color
+                          spreadRadius: 4, // Shadow spread radius
+                          blurRadius: 5, // Shadow blur radius
+                          offset: const Offset(0, 3), // Shadow position
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        (index + 1).toString(),
+                        style: const TextStyle(
+                            color: Color.fromRGBO(31, 32, 41, 1),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(width: 20),
               // Item Name and Price
@@ -393,25 +422,59 @@ class _OrderDetailsState extends State<OrderDetails> {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 0),
-                    Text(
-                      price.toStringAsFixed(2),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    )
+                    Row(
+                      children: [
+                        item.selectedMeatPortion != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child: Text(
+                                  item.selectedMeatPortion!['name'],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orangeAccent,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        item.selectedMeePortion != null
+                            ? Text(
+                                item.selectedMeePortion!['name'],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orangeAccent,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    ),
+                    // Text(
+                    //   price.toStringAsFixed(2),
+                    //   style: const TextStyle(
+                    //     fontSize: 20,
+                    //     fontWeight: FontWeight.bold,
+                    //     color: Colors.white,
+                    //   ),
+                    // )
                   ],
                 ),
               ),
               // Add, Decrease and Remove
               _showEditBtn
-                  ? Container()
-                  : Expanded(
+                  ? Text(
+                      'x ${item.quantity}',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const SizedBox(width: 35),
                           InkWell(
                             onTap: () {
                               setState(() {
@@ -431,7 +494,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 20),
+                          const SizedBox(width: 10),
+                          Text(
+                            '${item.quantity}',
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
                           InkWell(
                             onTap: () {
                               setState(() {
@@ -455,14 +527,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ],
                       ),
                     ),
-              Text(
-                'x ${item.quantity}',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
             ],
           ),
         ));

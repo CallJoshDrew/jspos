@@ -454,10 +454,10 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/dish/gorengKering.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 9.00},
-      {"name": "Ayam", "price": 9.00},
-      {"name": "Ayam Goreng", "price": 10.00},
-      {"name": "Seafood", "price": 11.00}
+      {"name": "Goreng Kering Campur", "price": 9.00},
+      {"name": "Goreng Kering Ayam", "price": 9.00},
+      {"name": "Goreng Kering Ayam Goreng", "price": 10.00},
+      {"name": "Goreng Kering Seafood", "price": 11.00}
     ],
   },
   {
@@ -468,10 +468,10 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/dish/gorengBasah.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 8.00},
-      {"name": "Ayam", "price": 8.00},
-      {"name": "Ayam Goreng", "price": 9.00},
-      {"name": "Seafood", "price": 11.00}
+      {"name": "Goreng Basah Campur", "price": 8.00},
+      {"name": "Goreng Basah Ayam", "price": 8.00},
+      {"name": "Goreng Basah Ayam Goreng", "price": 9.00},
+      {"name": "Goreng Basah Seafood", "price": 11.00}
     ],
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
@@ -486,7 +486,6 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Meat", "price": 2.00}
     ],
     "mee portion": [
-      {"name": "Less Mee", "price": 0.00},
       {"name": "Normal Mee", "price": 0.00},
       {"name": "Extra Mee", "price": 2.00}
     ]
