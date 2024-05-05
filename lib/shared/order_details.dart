@@ -4,7 +4,20 @@ import 'package:jspos/shared/item.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedTableOrder selectedOrder;
-  const OrderDetails({super.key, required this.selectedOrder});
+  final void Function() updateOrderStatus;
+  final Color orderStatusColor;
+  final IconData orderStatusIcon;
+  final String orderStatus;
+
+  const OrderDetails({
+    super.key,
+    required this.selectedOrder,
+    required this.updateOrderStatus,
+    required this.orderStatusColor,
+    required this.orderStatusIcon,
+    required this.orderStatus,
+  });
+
   @override
   State<OrderDetails> createState() => _OrderDetailsState();
 }
@@ -20,46 +33,6 @@ class _OrderDetailsState extends State<OrderDetails> {
     print('Status: ${widget.selectedOrder.status}');
     print('-------------------------');
   }
-  String orderStatus = "Empty Cart";
-  Color orderStatusColor = Colors.deepOrange;
-  VoidCallback? handleMethod;
-  IconData orderStatusIcon = Icons.shopping_cart;
-
-  void updateOrderStatus() {
-  if (widget.selectedOrder.status == "Status" && widget.selectedOrder.items.isNotEmpty) {
-    orderStatus = "Place Order & Print";
-    orderStatusColor = Colors.green[800]!;
-    // handleMethod = handlePlaceOrderBtn;
-    orderStatusIcon = Icons.print;
-  } else if (widget.selectedOrder.status == "Status") {
-    orderStatus = "Empty Cart";
-    orderStatusColor = Colors.grey[500]!;
-    handleMethod = null; // Disabled
-    orderStatusIcon = Icons.remove_shopping_cart;
-  // } else if (widget.selectedOrder.status == "Placed Order" && !widget.selectedOrder.showEditBtn) {
-  //   orderStatus = "Update Order & Print";
-  //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
-  //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
-  } else if (widget.selectedOrder.status == "Placed Order") {
-    orderStatus = "Make Payment";
-    orderStatusColor = Colors.green[800]!;
-    // handleMethod = handlePaymentBtn;
-    orderStatusIcon = Icons.money;
-  } else if (widget.selectedOrder.status == "Paid") {
-    orderStatus = "Completed";
-    orderStatusColor = Colors.yellow[500]!;
-    // handleMethod = handleCheckOutBtn;
-    orderStatusIcon = Icons.monetization_on;
-  } else if (widget.selectedOrder.status == "Completed") {
-    orderStatus = "Completed";
-    orderStatusColor = Colors.grey[500]!;
-    handleMethod = null; // Disabled
-  } else if (widget.selectedOrder.status == "Cancelled") {
-    orderStatus = "Cancelled";
-    orderStatusColor = Colors.grey[500]!;
-    handleMethod = null; // Disabled
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +161,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: orderStatusColor,
+                    backgroundColor: widget.orderStatusColor,
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -196,18 +169,18 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                   onPressed: () {
                     widget.selectedOrder.placeOrder();
-                    updateOrderStatus();
+                    widget.updateOrderStatus();
                     prettyPrintOrder();
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(orderStatusIcon, size: 32),
+                      Icon(widget.orderStatusIcon, size: 32),
                       const SizedBox(width: 10),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                         child: Text(
-                          orderStatus,
+                          widget.orderStatus,
                           style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -444,7 +417,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               setState(() {
                                 item.quantity++; // Increase the quantity
                               });
-                             
+
                               widget.selectedOrder.updateTotalCost(0);
                             },
                             child: const CircleAvatar(

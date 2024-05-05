@@ -91,6 +91,50 @@ class _DineInPageState extends State<DineInPage> {
     });
   }
 
+  String orderStatus = "Empty Cart";
+  Color orderStatusColor = Colors.deepOrange;
+  VoidCallback? handleMethod;
+  IconData orderStatusIcon = Icons.shopping_cart;
+
+  void updateOrderStatus() {
+    setState(() {
+      if (selectedOrder.status == "Ordering" &&
+          selectedOrder.items.isNotEmpty) {
+        orderStatus = "Place Order & Print";
+        orderStatusColor = Colors.green[800]!;
+        // handleMethod = handlePlaceOrderBtn;
+        orderStatusIcon = Icons.print;
+      } else if (selectedOrder.status == "Status") {
+        orderStatus = "Empty Cart";
+        orderStatusColor = Colors.grey[500]!;
+        handleMethod = null; // Disabled
+        orderStatusIcon = Icons.remove_shopping_cart;
+        // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
+        //   orderStatus = "Update Order & Print";
+        //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
+        //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
+      } else if (selectedOrder.status == "Placed Order") {
+        orderStatus = "Make Payment";
+        orderStatusColor = Colors.green[800]!;
+        // handleMethod = handlePaymentBtn;
+        orderStatusIcon = Icons.money;
+      } else if (selectedOrder.status == "Paid") {
+        orderStatus = "Completed";
+        orderStatusColor = Colors.yellow[500]!;
+        // handleMethod = handleCheckOutBtn;
+        orderStatusIcon = Icons.monetization_on;
+      } else if (selectedOrder.status == "Completed") {
+        orderStatus = "Completed";
+        orderStatusColor = Colors.grey[500]!;
+        handleMethod = null; // Disabled
+      } else if (selectedOrder.status == "Cancelled") {
+        orderStatus = "Cancelled";
+        orderStatusColor = Colors.grey[500]!;
+        handleMethod = null; // Disabled
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -182,7 +226,8 @@ class _DineInPageState extends State<DineInPage> {
                     // Try to find an item in selectedOrder.items with the same id as the new item
                     selectedOrder.addItem(item);
                     selectedOrder.updateTotalCost(0);
-                    selectedOrder.updateStatus("Place Order & Print");
+                    selectedOrder.updateStatus("Ordering");
+                    updateOrderStatus();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.green[700],
@@ -222,7 +267,13 @@ class _DineInPageState extends State<DineInPage> {
               ),
         Expanded(
           flex: 6,
-          child: OrderDetails(selectedOrder: selectedOrder),
+          child: OrderDetails(
+            selectedOrder: selectedOrder,
+            updateOrderStatus: updateOrderStatus,
+            orderStatusColor: orderStatusColor,
+            orderStatusIcon: orderStatusIcon,
+            orderStatus: orderStatus,
+          ),
         ),
       ],
     );
