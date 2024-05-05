@@ -374,7 +374,7 @@ final List<Map<String, dynamic>> menu = [
     "price": 0.50,
     "image": "assets/drinks/chineseTeh.png",
     "selection": true,
-     "choices": [
+    "choices": [
       {"name": "Chinese Teh", "price": 0.50}
     ],
     "types": [
@@ -473,6 +473,14 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Ayam Goreng", "price": 9.00},
       {"name": "Seafood", "price": 11.00}
     ],
+    "types": [
+      {"name": "Kuey Teow", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
+      {"name": "Mee Kuning", "price": 0.00},
+      {"name": "Mee Telur", "price": 0.00},
+      {"name": "Yee Mee", "price": 0.00},
+    ],
     "meat portion": [
       {"name": "Normal", "price": 0.00},
       {"name": "Extra Meat", "price": 2.00}
@@ -481,14 +489,6 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Less Mee", "price": 0.00},
       {"name": "Normal Mee", "price": 0.00},
       {"name": "Extra Mee", "price": 2.00}
-    ],
-    "types": [
-      {"name": "Kuey Teow", "price": 0.00},
-      {"name": "Mihun Halus", "price": 0.00},
-      {"name": "Mihun Kasar", "price": 0.00},
-      {"name": "Mee Kuning", "price": 0.00},
-      {"name": "Mee Telur", "price": 0.00},
-      {"name": "Yee Mee", "price": 0.00},
     ]
   },
   {

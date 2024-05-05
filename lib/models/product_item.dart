@@ -71,16 +71,34 @@ class ProductItemState extends State<ProductItem> {
         Map<String, dynamic>? selectedMeePortion =
             widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
 
-        double additionalPrice =
+        double choicePrice =
+            widget.choices.isNotEmpty && widget.choices[0]['price'] != null
+                ? widget.choices[0]['price']!
+                : 0.00;
+        double typePrice =
             widget.types.isNotEmpty && widget.types[0]['price'] != null
                 ? widget.types[0]['price']!
                 : 0.00;
-        double totalPrice = item.price + additionalPrice;
+        double meatPrice =
+            widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null
+                ? widget.meatPortion[0]['price']!
+                : 0.00;
+        double meePrice =
+            widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null
+                ? widget.meePortion[0]['price']!
+                : 0.00;
 
-        void calculateTotalPrice(double itemPrice, double additionalPrice) {
+        double totalPrice = choicePrice + typePrice + meatPrice + meePrice;
+
+        void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
           setState(() {
-            totalPrice = itemPrice + additionalPrice;
-            print(totalPrice);
+            totalPrice = choicePrice + typePrice + meatPrice + meePrice;
+            print('Price of Selected Choice: $choicePrice');
+            print('Price of Selected Type: $typePrice');
+            print('Price of Selected Meat: $meatPrice');
+            print('Price of Selected Mee: $meePrice');
+            print('Total Price: $totalPrice');
+            print('-------------------------');
           });
         }
 
@@ -179,7 +197,14 @@ class ProductItemState extends State<ProductItem> {
                                                                 choice;
                                                             item.selectedChoice =
                                                                 choice;
+                                                            choicePrice =
+                                                                choice['price'];
                                                           });
+                                                          calculateTotalPrice(
+                                                              choicePrice,
+                                                              typePrice,
+                                                              meatPrice,
+                                                              meePrice);
                                                           Navigator.pop(
                                                               context);
                                                         },
@@ -241,12 +266,14 @@ class ProductItemState extends State<ProductItem> {
                                                             selectedType = type;
                                                             item.selectedType =
                                                                 type;
-                                                            additionalPrice =
+                                                            typePrice =
                                                                 type['price'];
                                                           });
                                                           calculateTotalPrice(
-                                                              item.price,
-                                                              additionalPrice);
+                                                              choicePrice,
+                                                              typePrice,
+                                                              meatPrice,
+                                                              meePrice);
                                                           Navigator.pop(
                                                               context);
                                                         },
@@ -309,7 +336,13 @@ class ProductItemState extends State<ProductItem> {
                                                                 meatPortion;
                                                             item.selectedMeatPortion =
                                                                 meatPortion;
+                                                                meatPrice = meatPortion['price'];
                                                           });
+                                                          calculateTotalPrice(
+                                                              choicePrice,
+                                                              typePrice,
+                                                              meatPrice,
+                                                              meePrice);
                                                           Navigator.pop(
                                                               context);
                                                         },
@@ -372,7 +405,13 @@ class ProductItemState extends State<ProductItem> {
                                                                 meePortion;
                                                             item.selectedMeePortion =
                                                                 meePortion;
+                                                                meePrice = meePortion['price'];
                                                           });
+                                                          calculateTotalPrice(
+                                                              choicePrice,
+                                                              typePrice,
+                                                              meatPrice,
+                                                              meePrice);
                                                           Navigator.pop(
                                                               context);
                                                         },
