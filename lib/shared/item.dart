@@ -1,6 +1,6 @@
 class Item {
   final String id;
-  final String name;
+  String name;
   final String category;
   int quantity;
   final double originalPrice;

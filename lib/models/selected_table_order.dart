@@ -42,6 +42,39 @@ class SelectedTableOrder {
   }
 
   void addItem(Item item) {
+    // If the item.selection is true, change the name and price of the item
+    if (item.selection) {
+      if (item.selectedChoice != null) {
+        item.name = item.selectedChoice!['name'];
+        item.price = item.selectedChoice!['price'];
+      }
+
+      if (item.selectedType != null) {
+        double typePrice = item.selectedType!['price'] ??
+            0.00; // Use 0.00 if selectedType.price is null
+        if (typePrice > 0.00) {
+          // Only add typePrice if it's greater than 0.00
+          item.price += typePrice;
+        }
+      }
+      if (item.selectedMeatPortion != null) {
+        double meatPrice = item.selectedMeatPortion!['price'] ??
+            0.00; // Use 0.00 if selectedType.price is null
+        if (meatPrice > 0.00) {
+          // Only add meatPrice if it's greater than 0.00
+          item.price += meatPrice;
+        }
+      }
+      if (item.selectedMeePortion != null) {
+        double meePrice = item.selectedMeePortion!['price'] ??
+            0.00; // Use 0.00 if selectedType.price is null
+        if (meePrice > 0.00) {
+          // Only add meePrice if it's greater than 0.00
+          item.price += meePrice;
+        }
+      }
+    }
+
     // Try to find an item in items with the same id as the new item
     var existingItem = items.firstWhereOrNull((i) => i.id == item.id);
     if (existingItem != null) {
@@ -94,6 +127,7 @@ class SelectedTableOrder {
     updateStatus('Placed Order');
     updateOrderDateTime();
   }
+
   void makePayment() {
     updateSubTotal();
     updateServiceCharge(0);

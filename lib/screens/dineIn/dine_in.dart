@@ -44,8 +44,9 @@ class _DineInPageState extends State<DineInPage> {
       print('Order Number: ${selectedOrder.orderNumber}');
       print('Table Name: ${selectedOrder.tableName}');
       print('Order Type: ${selectedOrder.orderType}');
-      print('Order Type: ${selectedOrder.orderTime}');
-      print('Order Type: ${selectedOrder.orderDate}');
+      print('Order Time: ${selectedOrder.orderTime}');
+      print('Order Date: ${selectedOrder.orderDate}');
+      print('Order items: ${selectedOrder.items}');
       print('Status: ${selectedOrder.status}');
       // print('Items: ${selectedOrder.items}');
       print('-------------------------');

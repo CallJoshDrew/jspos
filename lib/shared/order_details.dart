@@ -60,7 +60,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   image: item.image,
                   title: item.name,
                   item: item,
-                  originalPrice: item.originalPrice,
+                  price: item.price,
                 );
               },
             ),
@@ -287,7 +287,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String image,
     required String title,
     required Item item,
-    required double originalPrice,
+    required double price,
   }) {
     return Dismissible(
         // Each Dismissible must contain a Key. Keys allow Flutter to
@@ -395,7 +395,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                     const SizedBox(height: 0),
                     Text(
-                      originalPrice.toStringAsFixed(2),
+                      price.toStringAsFixed(2),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
