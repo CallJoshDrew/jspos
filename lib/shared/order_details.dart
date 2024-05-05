@@ -406,13 +406,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                             onTap: () {
                               setState(() {
                                 item.quantity++; // Increase the quantity
-                                item.price = (num.tryParse(
-                                            (item.originalPrice * item.quantity)
-                                                .toStringAsFixed(2)) ??
-                                        0)
-                                    .toDouble();
                               });
                               onItemChanged();
+                              widget.selectedOrder.updateTotalCost(0);
                             },
                             child: const CircleAvatar(
                               radius:
@@ -431,19 +427,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                               setState(() {
                                 if (item.quantity > 1) {
                                   item.quantity--; // Decrease the quantity of the item
-                                  item.price = (num.tryParse(
-                                              (item.originalPrice *
-                                                      item.quantity)
-                                                  .toStringAsFixed(2)) ??
-                                          0)
-                                      .toDouble();
+                                  widget.selectedOrder.updateTotalCost(0);
                                 }
                               });
                             },
                             child: const CircleAvatar(
                               radius:
                                   16, // Adjust this value to change the size of the CircleAvatar
-                              backgroundColor: Colors.red,
+                              backgroundColor: Color.fromRGBO(232, 134, 13, 1),
                               child: Icon(
                                 Icons.remove,
                                 color: Colors.white,

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-class SalesPage extends StatefulWidget {
-  const SalesPage({super.key});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  State<SalesPage> createState() => _SalesPageState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class _SalesPageState extends State<SalesPage> {
+class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return const Center(
       child: Text(
-        'This is Sales Page',
+        'This is History Page',
         style: TextStyle(
             fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
       ),

@@ -19,7 +19,7 @@ class ProductItem extends StatefulWidget {
   final Map<String, dynamic>? selectedMeePortion;
 
   const ProductItem({
-    Key? key,
+    super.key,
     required this.onItemAdded,
     required this.id,
     required this.name,
@@ -35,13 +35,13 @@ class ProductItem extends StatefulWidget {
     this.selectedType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
-  }) : super(key: key);
+  });
 
   @override
-  _ProductItemState createState() => _ProductItemState();
+  ProductItemState createState() => ProductItemState();
 }
 
-class _ProductItemState extends State<ProductItem> {
+class ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

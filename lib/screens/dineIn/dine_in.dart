@@ -3,15 +3,14 @@ import 'package:jspos/data/tables_data.dart';
 import 'package:jspos/models/selected_table_order.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
-import 'package:collection/collection.dart';
 
-class TablePage extends StatefulWidget {
-  const TablePage({super.key});
+class DineInPage extends StatefulWidget {
+  const DineInPage({super.key});
   @override
-  State<TablePage> createState() => _TablePageState();
+  State<DineInPage> createState() => _DineInPageState();
 }
 
-class _TablePageState extends State<TablePage> {
+class _DineInPageState extends State<DineInPage> {
   Map<String, dynamic>? selectedTable;
   bool isTableClicked = false;
   int orderCounter = 1;
@@ -181,21 +180,8 @@ class _TablePageState extends State<TablePage> {
                 onItemAdded: (item) {
                   setState(() {
                     // Try to find an item in selectedOrder.items with the same id as the new item
-                    var existingItem = selectedOrder.items
-                        .firstWhereOrNull((i) => i.id == item.id);
-                    if (existingItem != null) {
-                      // If an item with the same id is found, increase its quantity and price
-                      existingItem.quantity += 1;
-                      existingItem.price = (num.tryParse(
-                                  (existingItem.originalPrice *
-                                          existingItem.quantity)
-                                      .toStringAsFixed(2)) ??
-                              0)
-                          .toDouble();
-                    } else {
-                      // If no item with the same id is found, add the new item
-                      selectedOrder.items.add(item);
-                    }
+                    selectedOrder.addItem(item);
+                    selectedOrder.updateTotalCost(0);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.green[700],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/screens/reports/reports.dart';
-import 'package:jspos/screens/sales/sales.dart';
+import 'package:jspos/screens/history/history.dart';
 import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';
-import 'package:jspos/screens/table/table.dart';
+import 'package:jspos/screens/dineIn/dine_in.dart';
 import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
@@ -31,16 +31,16 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String pageActive = "Table";
+  String pageActive = "Dine In";
 
   _pageView() {
     switch (pageActive) {
-      case 'Table':
-        return const TablePage();
+      case 'Dine In':
+        return const DineInPage();
       case 'Take Out':
         return const TakeOutPage();
-      case 'Sales':
-        return const SalesPage();
+      case 'History':
+        return const HistoryPage();
       case 'Reports':
         return const ReportsPage();
       case 'Settings':
@@ -93,9 +93,9 @@ class _MainPageState extends State<MainPage> {
       const SizedBox(height: 10),
       Expanded(
         child: ListView(children: [
-          _itemMenu(menu: 'Table', icon: Icons.table_bar),
+          _itemMenu(menu: 'Dine In', icon: Icons.table_bar),
           _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
-          _itemMenu(menu: 'Sales', icon: Icons.history_sharp),
+          _itemMenu(menu: 'History', icon: Icons.history_sharp),
           _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
           _itemMenu(menu: 'Settings', icon: Icons.tune),
         ]),
