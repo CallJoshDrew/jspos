@@ -94,4 +94,10 @@ class SelectedTableOrder {
     updateStatus('Placed Order');
     updateOrderDateTime();
   }
+  void makePayment() {
+    updateSubTotal();
+    updateServiceCharge(0);
+    updateTotalPrice();
+    updateStatus('Paid');
+  }
 }

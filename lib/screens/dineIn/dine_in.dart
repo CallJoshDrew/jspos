@@ -91,23 +91,53 @@ class _DineInPageState extends State<DineInPage> {
     });
   }
 
+  void handlePlaceOrderBtn() {
+    setState(() {
+      selectedOrder.placeOrder();
+      updateOrderStatus();
+    });
+  }
+
+  void handleUpdateOrderBtn() {
+    // ... code to handle update order button ...
+  }
+
+  void handlePaymentBtn() {
+    setState(() {
+      selectedOrder.makePayment();
+      updateOrderStatus();  
+    });
+  }
+
   String orderStatus = "Empty Cart";
-  Color orderStatusColor = Colors.deepOrange;
-  VoidCallback? handleMethod;
+  Color orderStatusColor = Colors.grey[800]!;
   IconData orderStatusIcon = Icons.shopping_cart;
+
+  // 
+  VoidCallback? handleMethod;
+   void defaultMethod() {
+    // did nothing But explained here
+    // when Dart creates a new object, it first initializes all the instance variables before it runs the constructor. Therefore, instance methods aren’t available yet.
+    // handleMethod is initialized in the initState method, which is called exactly once and then never again for each State object. It’s the first method called after a State object is created, and it’s called before the build method
+  }
+   @override
+  void initState() {
+    super.initState();
+    handleMethod = defaultMethod;
+  }
 
   void updateOrderStatus() {
     setState(() {
       if (selectedOrder.status == "Ordering" &&
           selectedOrder.items.isNotEmpty) {
         orderStatus = "Place Order & Print";
-        orderStatusColor = Colors.green[800]!;
-        // handleMethod = handlePlaceOrderBtn;
+        orderStatusColor = Colors.deepOrange;
+        handleMethod = handlePlaceOrderBtn;
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Status") {
         orderStatus = "Empty Cart";
         orderStatusColor = Colors.grey[500]!;
-        handleMethod = null; // Disabled
+        // handleMethod = handleInitialBtn; // Disabled
         orderStatusIcon = Icons.remove_shopping_cart;
         // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
         //   orderStatus = "Update Order & Print";
@@ -116,21 +146,21 @@ class _DineInPageState extends State<DineInPage> {
       } else if (selectedOrder.status == "Placed Order") {
         orderStatus = "Make Payment";
         orderStatusColor = Colors.green[800]!;
-        // handleMethod = handlePaymentBtn;
-        orderStatusIcon = Icons.money;
-      } else if (selectedOrder.status == "Paid") {
-        orderStatus = "Completed";
-        orderStatusColor = Colors.yellow[500]!;
-        // handleMethod = handleCheckOutBtn;
+        handleMethod = handlePaymentBtn;
         orderStatusIcon = Icons.monetization_on;
-      } else if (selectedOrder.status == "Completed") {
-        orderStatus = "Completed";
-        orderStatusColor = Colors.grey[500]!;
-        handleMethod = null; // Disabled
+      } else if (selectedOrder.status == "Paid") {
+        orderStatus = "COMPLETED (PAID)";
+        orderStatusColor = Colors.grey[700]!;
+        // handleMethod = handleCheckOutBtn;
+        orderStatusIcon = Icons.check_circle;
+      } else if (selectedOrder.status == "COMPLETED (PAID)") {
+        orderStatus = "Cheee";
+        orderStatusColor = Colors.grey[700]!;
+        handleMethod = defaultMethod; // Disabled
       } else if (selectedOrder.status == "Cancelled") {
         orderStatus = "Cancelled";
         orderStatusColor = Colors.grey[500]!;
-        handleMethod = null; // Disabled
+        handleMethod = defaultMethod; // Disabled
       }
     });
   }
@@ -273,6 +303,7 @@ class _DineInPageState extends State<DineInPage> {
             orderStatusColor: orderStatusColor,
             orderStatusIcon: orderStatusIcon,
             orderStatus: orderStatus,
+            handleMethod: handleMethod,
           ),
         ),
       ],

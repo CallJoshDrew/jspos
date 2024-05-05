@@ -8,6 +8,7 @@ class OrderDetails extends StatefulWidget {
   final Color orderStatusColor;
   final IconData orderStatusIcon;
   final String orderStatus;
+  final VoidCallback? handleMethod;
 
   const OrderDetails({
     super.key,
@@ -16,6 +17,7 @@ class OrderDetails extends StatefulWidget {
     required this.orderStatusColor,
     required this.orderStatusIcon,
     required this.orderStatus,
+    this.handleMethod,
   });
 
   @override
@@ -167,16 +169,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {
-                    widget.selectedOrder.placeOrder();
-                    widget.updateOrderStatus();
-                    prettyPrintOrder();
-                  },
+                  onPressed: 
+                    widget.handleMethod,
+                  
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(widget.orderStatusIcon, size: 32),
-                      const SizedBox(width: 10),
+                      // const SizedBox(width: 10),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                         child: Text(
