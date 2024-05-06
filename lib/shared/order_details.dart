@@ -390,8 +390,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.5), // Shadow color
-                          spreadRadius: 4, // Shadow spread radius
-                          blurRadius: 5, // Shadow blur radius
+                          spreadRadius: 2, // Shadow spread radius
+                          blurRadius: 7, // Shadow blur radius
                           offset: const Offset(0, 3), // Shadow position
                         ),
                       ],
@@ -422,6 +422,20 @@ class _OrderDetailsState extends State<OrderDetails> {
                         color: Colors.white,
                       ),
                     ),
+                    const SizedBox(width: 10.0),
+                    item.selectedType != null && item.category == "Drinks"
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              item.selectedType!['name'],
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: item.selectedType!['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[500],
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                     Row(
                       children: [
                         item.selectedMeatPortion != null

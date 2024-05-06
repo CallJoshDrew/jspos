@@ -360,12 +360,9 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/pandanSoya.png",
     "selection": true,
     "choices": [
-      {"name": "Pandan Soy Milk", "price": 3.00}
+      {"name": "Pandan Soy Milk (with Sugar)", "price": 3.00},
+      {"name": "Pandan Soy Milk (No Sugar)", "price": 3.50}
     ],
-    "types": [
-      {"name": "with Sugar", "price": 0.00},
-      {"name": "No Sugar", "price": 0.50}
-    ]
   },
   {
     "id": "69",

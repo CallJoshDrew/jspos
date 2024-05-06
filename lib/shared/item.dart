@@ -1,9 +1,8 @@
 class Item {
-  final String id;
+  String id;
   String name;
   final String category;
   int quantity;
-  final double originalPrice;
   double price;
   final String image;
   final bool selection;
@@ -24,7 +23,7 @@ class Item {
     this.selectedType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
-  }) : originalPrice = price;
+  });
 
   @override
   String toString() {

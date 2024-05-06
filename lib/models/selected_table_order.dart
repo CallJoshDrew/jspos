@@ -1,6 +1,7 @@
 import 'package:jspos/shared/item.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:uuid/uuid.dart';
 
 class SelectedTableOrder {
   // Properties
@@ -48,7 +49,6 @@ class SelectedTableOrder {
         item.name = item.selectedChoice!['name'];
         item.price = item.selectedChoice!['price'];
       }
-
       if (item.selectedType != null) {
         double typePrice = item.selectedType!['price'] ??
             0.00; // Use 0.00 if selectedType.price is null
@@ -58,36 +58,54 @@ class SelectedTableOrder {
         }
       }
       if (item.selectedMeatPortion != null) {
-        double meatPrice = item.selectedMeatPortion!['price'] ??
-            0.00; // Use 0.00 if selectedType.price is null
+        double meatPrice = item.selectedMeatPortion!['price'] ?? 0.00;
         if (meatPrice > 0.00) {
-          // Only add meatPrice if it's greater than 0.00
           item.price += meatPrice;
         }
       }
       if (item.selectedMeePortion != null) {
-        double meePrice = item.selectedMeePortion!['price'] ??
-            0.00; // Use 0.00 if selectedType.price is null
+        double meePrice = item.selectedMeePortion!['price'] ?? 0.00;
         if (meePrice > 0.00) {
-          // Only add meePrice if it's greater than 0.00
           item.price += meePrice;
         }
       }
-    }
-
-    // Try to find an item in items with the same id as the new item
-    var existingItem = items.firstWhereOrNull((i) => i.id == item.id);
-    if (existingItem != null) {
-      // If an item with the same id is found, increase its quantity and price
-      existingItem.quantity += 1;
-      existingItem.price = (num.tryParse(
-                  (existingItem.originalPrice * existingItem.quantity)
-                      .toStringAsFixed(2)) ??
-              0)
-          .toDouble();
+      // Try to find an item in items with the same properties as the new item
+      var existingItem = items.firstWhereOrNull((i) =>
+          i.name == item.name &&
+          (i.selectedChoice != null ? i.selectedChoice!['name'] : null) ==
+              (item.selectedChoice != null
+                  ? item.selectedChoice!['name']
+                  : null) &&
+          (i.selectedType != null ? i.selectedType!['name'] : null) ==
+              (item.selectedType != null ? item.selectedType!['name'] : null) &&
+          (i.selectedMeatPortion != null
+                  ? i.selectedMeatPortion!['name']
+                  : null) ==
+              (item.selectedMeatPortion != null
+                  ? item.selectedMeatPortion!['name']
+                  : null) &&
+          (i.selectedMeePortion != null
+                  ? i.selectedMeePortion!['name']
+                  : null) ==
+              (item.selectedMeePortion != null
+                  ? item.selectedMeePortion!['name']
+                  : null));
+      if (existingItem != null) {
+        // If an item with the same properties is found, increase its quantity and price
+        existingItem.quantity += 1;
+      } else {
+        const uuid = Uuid();
+        item.id = uuid.v4();
+        items.add(item);
+      }
     } else {
-      // If no item with the same id is found, add the new item
-      items.add(item);
+      // Try to find an item in items with the same id as the new item
+      var existingItem = items.firstWhereOrNull((i) => i.id == item.id);
+      if (existingItem != null) {
+        existingItem.quantity += 1;
+      } else {
+        items.add(item);
+      }
     }
   }
 
