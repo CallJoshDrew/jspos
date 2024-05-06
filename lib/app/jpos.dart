@@ -32,13 +32,20 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   String pageActive = "Dine In";
+  bool isSideMenuEnabled = true;
+
+  void toggleSideMenu() {
+    setState(() {
+      isSideMenuEnabled = !isSideMenuEnabled;
+    });
+  }
 
   _pageView() {
     switch (pageActive) {
       case 'Dine In':
-        return const DineInPage();
+        return DineInPage(toggleSideMenu: toggleSideMenu);
       case 'Take Out':
-        return const TakeOutPage();
+        return TakeOutPage(toggleSideMenu: toggleSideMenu);
       case 'History':
         return const HistoryPage();
       case 'Reports':
@@ -88,19 +95,22 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _sideMenu() {
-    return Column(children: [
-      _logo(),
-      const SizedBox(height: 10),
-      Expanded(
-        child: ListView(children: [
-          _itemMenu(menu: 'Dine In', icon: Icons.table_bar),
-          _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
-          _itemMenu(menu: 'History', icon: Icons.history_sharp),
-          _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
-          _itemMenu(menu: 'Settings', icon: Icons.tune),
-        ]),
-      )
-    ]);
+    return IgnorePointer(
+      ignoring: !isSideMenuEnabled,
+      child: Column(children: [
+        _logo(),
+        const SizedBox(height: 10),
+        Expanded(
+          child: ListView(children: [
+            _itemMenu(menu: 'Dine In', icon: Icons.table_bar),
+            _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
+            _itemMenu(menu: 'History', icon: Icons.history_sharp),
+            _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
+            _itemMenu(menu: 'Settings', icon: Icons.tune),
+          ]),
+        )
+      ]),
+    );
   }
 
   Widget _logo() {
@@ -145,14 +155,14 @@ class _MainPageState extends State<MainPage> {
                 children: [
                   Icon(
                     icon,
-                    color: Colors.white,
+                    color: isSideMenuEnabled == true ? Colors.white : Colors.grey[600],
                     size: 45,
                   ),
                   const SizedBox(height: 5),
                   Text(
                     menu,
-                    style: const TextStyle(
-                        color: Colors.white,
+                    style: TextStyle(
+                        color: isSideMenuEnabled == true ? Colors.white: Colors.grey[600],
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),

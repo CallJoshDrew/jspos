@@ -5,7 +5,8 @@ import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 
 class DineInPage extends StatefulWidget {
-  const DineInPage({super.key});
+  final void Function() toggleSideMenu;
+  const DineInPage({super.key, required this.toggleSideMenu});
   @override
   State<DineInPage> createState() => _DineInPageState();
 }
@@ -48,7 +49,7 @@ class _DineInPageState extends State<DineInPage> {
       // print('Order Date: ${selectedOrder.orderDate}');
       // print('Order items: ${selectedOrder.items}');
       // print('Order subTotal: ${selectedOrder.subTotal}');
-      // print('Status: ${selectedOrder.status}');
+      print('Status: ${selectedOrder.status}');
       // print('Items: ${selectedOrder.items}');
       print('-------------------------');
     }
@@ -65,6 +66,7 @@ class _DineInPageState extends State<DineInPage> {
   // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
     setState(() {
+      widget.toggleSideMenu();
       isTableClicked = !isTableClicked;
       orderNumber = generateID(tableName);
 
@@ -124,6 +126,8 @@ class _DineInPageState extends State<DineInPage> {
                   selectedOrder.tableName = "Table Name";
                   selectedOrder.orderNumber = "Order Number";
                   selectedOrder.items = [];
+                  selectedOrder.status = "Start Your Order";
+                  widget.toggleSideMenu();
                   isTableClicked = !isTableClicked;
                   prettyPrintTable();
                 });
@@ -165,6 +169,7 @@ class _DineInPageState extends State<DineInPage> {
         tables[selectedTableIndex!]['orderNumber'] = "";
         selectedOrder.tableName = "Table Name";
         selectedOrder.orderNumber = "Order Number";
+        widget.toggleSideMenu();
         isTableClicked = !isTableClicked;
         prettyPrintTable();
       });

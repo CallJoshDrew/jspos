@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TakeOutPage extends StatefulWidget {
-  const TakeOutPage({super.key});
+  const TakeOutPage({super.key, required void Function() toggleSideMenu});
 
   @override
   State<TakeOutPage> createState() => _TakeOutPageState();
