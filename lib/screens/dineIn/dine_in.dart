@@ -33,22 +33,22 @@ class _DineInPageState extends State<DineInPage> {
   );
   void prettyPrintTable() {
     if (selectedTable != null) {
-      // print('Selected Table:');
-      // print('Table ID: ${selectedTable!['id']}');
-      // print('Table Name: ${selectedTable!['name']}');
-      // print('Occupied: ${selectedTable!['occupied']}');
-      // print('Order Number: ${selectedTable!['orderNumber']}');
-      // print('-------------------------');
+      print('Selected Table:');
+      print('Table ID: ${selectedTable!['id']}');
+      print('Table Name: ${selectedTable!['name']}');
+      print('Occupied: ${selectedTable!['occupied']}');
+      print('Order Number: ${selectedTable!['orderNumber']}');
+      print('-------------------------');
 
-      print('Selected Order:');
-      print('Order Number: ${selectedOrder.orderNumber}');
+      // print('Selected Order:');
       print('Table Name: ${selectedOrder.tableName}');
-      print('Order Type: ${selectedOrder.orderType}');
-      print('Order Time: ${selectedOrder.orderTime}');
-      print('Order Date: ${selectedOrder.orderDate}');
-      print('Order items: ${selectedOrder.items}');
-      print('Order subTotal: ${selectedOrder.subTotal}');
-      print('Status: ${selectedOrder.status}');
+      print('Order Number: ${selectedOrder.orderNumber}');
+      // print('Order Type: ${selectedOrder.orderType}');
+      // print('Order Time: ${selectedOrder.orderTime}');
+      // print('Order Date: ${selectedOrder.orderDate}');
+      // print('Order items: ${selectedOrder.items}');
+      // print('Order subTotal: ${selectedOrder.subTotal}');
+      // print('Status: ${selectedOrder.status}');
       // print('Items: ${selectedOrder.items}');
       print('-------------------------');
     }
@@ -62,6 +62,7 @@ class _DineInPageState extends State<DineInPage> {
     return orderNumber;
   }
 
+  // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
     setState(() {
       isTableClicked = !isTableClicked;
@@ -80,17 +81,96 @@ class _DineInPageState extends State<DineInPage> {
     });
   }
 
-  void _handleOpenMenu() {
-    setState(() {
-      if (selectedTableIndex != null) {
+  Future<void> _showConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[900],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10), // change radius here
+            side: const BorderSide(
+                color: Colors.deepOrange, width: 1), // change border color here
+          ),
+          title: const Text(
+            'Confirmation',
+            style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            'Do you want to "Cancel Order"?',
+            style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  orderCounter--;
+                  tables[selectedTableIndex!]['occupied'] = false;
+                  tables[selectedTableIndex!]['orderNumber'] = "";
+                  selectedOrder.tableName = "Table Name";
+                  selectedOrder.orderNumber = "Order Number";
+                  selectedOrder.items = [];
+                  isTableClicked = !isTableClicked;
+                  prettyPrintTable();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            const SizedBox(width: 6),
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  // side: const BorderSide(color: Colors.deepOrange, width: 1),
+                ),
+              ),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepOrange,
+                  fontSize: 18,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleCloseMenu() {
+    if (selectedTableIndex != null && selectedOrder.items.isEmpty) {
+      setState(() {
         orderCounter--;
         tables[selectedTableIndex!]['occupied'] = false;
         tables[selectedTableIndex!]['orderNumber'] = "";
         selectedOrder.tableName = "Table Name";
         selectedOrder.orderNumber = "Order Number";
-      }
-      isTableClicked = !isTableClicked;
-    });
+        isTableClicked = !isTableClicked;
+        prettyPrintTable();
+      });
+    } else if (selectedOrder.items.isNotEmpty) {
+      _showConfirmationDialog();
+    }
   }
 
   void handlePlaceOrderBtn() {
@@ -107,7 +187,7 @@ class _DineInPageState extends State<DineInPage> {
   void handlePaymentBtn() {
     setState(() {
       selectedOrder.makePayment();
-      updateOrderStatus();  
+      updateOrderStatus();
     });
   }
 
@@ -115,14 +195,14 @@ class _DineInPageState extends State<DineInPage> {
   Color orderStatusColor = Colors.grey[800]!;
   IconData orderStatusIcon = Icons.shopping_cart;
 
-  // 
+  //
   VoidCallback? handleMethod;
-   void defaultMethod() {
+  void defaultMethod() {
     // did nothing But explained here
     // when Dart creates a new object, it first initializes all the instance variables before it runs the constructor. Therefore, instance methods aren’t available yet.
     // handleMethod is initialized in the initState method, which is called exactly once and then never again for each State object. It’s the first method called after a State object is created, and it’s called before the build method
   }
-   @override
+  @override
   void initState() {
     super.initState();
     handleMethod = defaultMethod;
@@ -251,7 +331,7 @@ class _DineInPageState extends State<DineInPage> {
                 ),
               )
             : MenuPage(
-                onClick: _handleOpenMenu,
+                onClick: _handleCloseMenu,
                 selectedOrder: selectedOrder,
                 onItemAdded: (item) {
                   setState(() {
