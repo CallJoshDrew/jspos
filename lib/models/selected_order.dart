@@ -24,8 +24,8 @@ class SelectedOrder {
     required this.orderNumber,
     required this.tableName,
     required this.orderType,
-    this.orderTime,
-    this.orderDate,
+    required this.orderTime,
+    required this.orderDate,
     required this.status,
     required this.items,
     required this.subTotal,
@@ -114,6 +114,8 @@ class SelectedOrder {
     orderNumber = "Order Number";
     items = [];
     status = "Start Your Order";
+    orderTime = "Order Time";
+    orderDate = "Order Date";
     updateTotalCost(0);
   }
 

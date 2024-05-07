@@ -4,7 +4,6 @@ import 'package:jspos/models/item.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedOrder selectedOrder;
-  final void Function() updateOrderStatus;
   final Color orderStatusColor;
   final IconData orderStatusIcon;
   final String orderStatus;
@@ -13,11 +12,10 @@ class OrderDetails extends StatefulWidget {
   const OrderDetails({
     super.key,
     required this.selectedOrder,
-    required this.updateOrderStatus,
     required this.orderStatusColor,
     required this.orderStatusIcon,
     required this.orderStatus,
-    this.handleMethod,
+    this.handleMethod, required ,
   });
 
   @override
@@ -46,7 +44,8 @@ class _OrderDetailsState extends State<OrderDetails> {
             title: widget.selectedOrder.orderNumber,
             status: widget.selectedOrder.status,
             timeStamp:
-                (widget.selectedOrder.orderDate?.toString() ?? 'Order Time'),
+                (widget.selectedOrder.orderTime?.toString() ?? 'Order Time'),
+                date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
             // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
             action: Container(),
           ),
@@ -201,6 +200,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String title,
     required String status,
     required String timeStamp,
+    required String date,
     required Widget action,
     // required ValueNotifier<bool> isVisible,
   }) {
@@ -252,7 +252,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       : Container(),
                 ],
               ),
-              Row(
+              Row(  
                 children: [
                   Text(
                     status,
@@ -262,10 +262,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    width: (timeStamp == 'Order Time') ? 150 : 40,
+                    width: (timeStamp == 'Order Time') ? 70 : 100,
                   ),
                   Text(
-                    timeStamp,
+                    "$timeStamp, $date",
                     style: const TextStyle(
                         color: Colors.white54,
                         fontSize: 20,

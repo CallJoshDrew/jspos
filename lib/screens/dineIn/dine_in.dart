@@ -8,13 +8,13 @@ import 'package:jspos/shared/order_details.dart';
 class DineInPage extends StatefulWidget {
   final void Function() toggleSideMenu;
   final Orders orders;
-  const DineInPage({super.key, required this.toggleSideMenu, required this.orders});
+  const DineInPage(
+      {super.key, required this.toggleSideMenu, required this.orders});
   @override
   State<DineInPage> createState() => _DineInPageState();
 }
 
 class _DineInPageState extends State<DineInPage> {
-  Map<String, dynamic>? selectedTable;
   bool isTableClicked = false;
   int orderCounter = 1;
   int? selectedTableIndex;
@@ -24,6 +24,8 @@ class _DineInPageState extends State<DineInPage> {
     orderNumber: "Order Number",
     tableName: "Table Name",
     orderType: "Dine-In",
+    orderTime: "Order Time",
+    orderDate: "Order Date",
     status: "Start Your Order",
     items: [], // Add your items here
     subTotal: 0,
@@ -35,27 +37,27 @@ class _DineInPageState extends State<DineInPage> {
     showEditBtn: false,
   );
   void prettyPrintTable() {
-    if (selectedTable != null) {
-      // print('Selected Table:');
-      // print('Table ID: ${selectedTable!['id']}');
-      // print('Table Name: ${selectedTable!['name']}');
-      // print('Occupied: ${selectedTable!['occupied']}');
-      // print('Order Number: ${selectedTable!['orderNumber']}');
-      // print('-------------------------');
+    print('Selected Table Index: $selectedTableIndex');
+    print('-------------------------');
+    print('Tables: $tables');
+    // print('Table ID: ${tables!['id']}');
+    // print('Table Name: ${tables!['name']}');
+    // print('Occupied: ${tables!['occupied']}');
+    // print('Order Number: ${tables!['orderNumber']}');
+    // print('-------------------------');
 
-      // // print('Selected Order:');
-      // print('Table Name: ${selectedOrder.tableName}');
-      // print('Order Number: ${selectedOrder.orderNumber}');
-      // print('Order Type: ${selectedOrder.orderType}');
-      // print('Order Time: ${selectedOrder.orderTime}');
-      // print('Order Date: ${selectedOrder.orderDate}');
-      // print('Order items: ${selectedOrder.items}');
-      // print('Order subTotal: ${selectedOrder.subTotal}');
-      // print('Status: ${selectedOrder.status}');
-      // print('Items: ${selectedOrder.items}');
-      print(widget.orders.toString());
-      print('-------------------------');
-    }
+    // // print('Selected Order:');
+    // print('Order Number: ${selectedOrder.orderNumber}');
+    // print('Table Name: ${selectedOrder.tableName}');
+    // print('Order Type: ${selectedOrder.orderType}');
+    // print('Order Time: ${selectedOrder.orderTime}');
+    // print('Order Date: ${selectedOrder.orderDate}');
+    // print('Order items: ${selectedOrder.items}');
+    // print('Order subTotal: ${selectedOrder.subTotal}');
+    // print('Status: ${selectedOrder.status}');
+    // print('Items: ${selectedOrder.items}');
+    print(widget.orders.toString());
+    print('-------------------------');
   }
 
   String generateID(String tableName) {
@@ -71,18 +73,38 @@ class _DineInPageState extends State<DineInPage> {
     setState(() {
       widget.toggleSideMenu();
       isTableClicked = !isTableClicked;
-      orderNumber = generateID(tableName);
 
-      tables[index]['occupied'] = true;
-      tables[index]['orderNumber'] = orderNumber;
+      // Find the index of the table with the matching name
+      int index = tables.indexWhere((table) => table['name'] == tableName);
 
-      // Set the selected table and its index
-      selectedTable = tables[index];
-      selectedTableIndex = index;
+      // Check if a table with the given name exists
+      if (index != -1) {
+        // If the table is not occupied, generate a new orderNumber
+        if (!tables[index]['occupied']) {
+          orderNumber = generateID(tableName);
+          tables[index]['orderNumber'] = orderNumber;
+        } else {
+          // If the table is occupied, use the existing orderNumber
+          orderNumber = tables[index]['orderNumber'];
+        }
 
-      // Update selectedOrder
-      selectedOrder.tableName = tableName;
-      selectedOrder.orderNumber = orderNumber;
+        tables[index]['occupied'] = true;
+
+        // Set the selected table and its index
+        selectedTableIndex = index;
+
+        // Use getOrder to find an order with the same orderNumber
+        var order = widget.orders.getOrder(orderNumber);
+
+        // If an order with the same orderNumber exists, update selectedOrder with its details
+        if (order != null) {
+          selectedOrder = order;
+        } else {
+          // Update selectedOrder
+          selectedOrder.tableName = tableName;
+          selectedOrder.orderNumber = orderNumber;
+        }
+      }
     });
   }
 
@@ -99,11 +121,13 @@ class _DineInPageState extends State<DineInPage> {
           ),
           title: const Text(
             'Confirmation',
-            style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           ),
           content: const Text(
             'Do you want to "Cancel Order"?',
-            style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
           ),
           actions: <Widget>[
             TextButton(
@@ -124,9 +148,9 @@ class _DineInPageState extends State<DineInPage> {
               onPressed: () {
                 setState(() {
                   orderCounter--;
-                  tables[selectedTableIndex!]['occupied'] = false;
-                  tables[selectedTableIndex!]['orderNumber'] = "";
+                  resetSelectedTable();
                   selectedOrder.resetDefault();
+                  updateOrderStatus();
                   widget.toggleSideMenu();
                   isTableClicked = !isTableClicked;
                   prettyPrintTable();
@@ -161,14 +185,18 @@ class _DineInPageState extends State<DineInPage> {
     );
   }
 
+  void resetSelectedTable() {
+    tables[selectedTableIndex!]['occupied'] = false;
+    tables[selectedTableIndex!]['orderNumber'] = "";
+  }
+
   void _handleCloseMenu() {
     if (selectedTableIndex != null && selectedOrder.items.isEmpty) {
       setState(() {
         orderCounter--;
-        tables[selectedTableIndex!]['occupied'] = false;
-        tables[selectedTableIndex!]['orderNumber'] = "";
-        selectedOrder.tableName = "Table Name";
-        selectedOrder.orderNumber = "Order Number";
+        resetSelectedTable();
+        selectedOrder.resetDefault();
+        updateOrderStatus();
         widget.toggleSideMenu();
         isTableClicked = !isTableClicked;
         prettyPrintTable();
@@ -181,8 +209,10 @@ class _DineInPageState extends State<DineInPage> {
   void handlePlaceOrderBtn() {
     setState(() {
       selectedOrder.placeOrder();
-      updateOrderStatus();
       widget.orders.addOrder(selectedOrder);
+      updateOrderStatus();
+      widget.toggleSideMenu();
+      isTableClicked = !isTableClicked;
       prettyPrintTable();
     });
   }
@@ -223,11 +253,11 @@ class _DineInPageState extends State<DineInPage> {
         orderStatusColor = Colors.deepOrange;
         handleMethod = handlePlaceOrderBtn;
         orderStatusIcon = Icons.print;
-      } else if (selectedOrder.status == "Status") {
+      } else if (selectedOrder.status == "Start Your Order") {
         orderStatus = "Empty Cart";
-        orderStatusColor = Colors.grey[500]!;
-        // handleMethod = handleInitialBtn; // Disabled
-        orderStatusIcon = Icons.remove_shopping_cart;
+        orderStatusColor = Colors.grey[800]!;
+        handleMethod = defaultMethod; // Disabled
+        orderStatusIcon = Icons.shopping_cart;
         // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
         //   orderStatus = "Update Order & Print";
         //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
@@ -243,7 +273,7 @@ class _DineInPageState extends State<DineInPage> {
         // handleMethod = handleCheckOutBtn;
         orderStatusIcon = Icons.check_circle;
       } else if (selectedOrder.status == "COMPLETED (PAID)") {
-        orderStatus = "Cheee";
+        orderStatus = "Paid with DuitNow";
         orderStatusColor = Colors.grey[700]!;
         handleMethod = defaultMethod; // Disabled
       } else if (selectedOrder.status == "Cancelled") {
@@ -388,7 +418,6 @@ class _DineInPageState extends State<DineInPage> {
           flex: 6,
           child: OrderDetails(
             selectedOrder: selectedOrder,
-            updateOrderStatus: updateOrderStatus,
             orderStatusColor: orderStatusColor,
             orderStatusIcon: orderStatusIcon,
             orderStatus: orderStatus,
