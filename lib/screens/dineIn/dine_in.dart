@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/data/tables_data.dart';
-import 'package:jspos/models/selected_table_order.dart';
+import 'package:jspos/models/orders.dart';
+import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 
 class DineInPage extends StatefulWidget {
   final void Function() toggleSideMenu;
-  const DineInPage({super.key, required this.toggleSideMenu});
+  final Orders orders;
+  const DineInPage({super.key, required this.toggleSideMenu, required this.orders});
   @override
   State<DineInPage> createState() => _DineInPageState();
 }
@@ -17,8 +19,8 @@ class _DineInPageState extends State<DineInPage> {
   int orderCounter = 1;
   int? selectedTableIndex;
   String orderNumber = "";
-  // Create a new SelectedTableOrder instance
-  SelectedTableOrder selectedOrder = SelectedTableOrder(
+  // Create a new SelectedOrder instance
+  SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
     tableName: "Table Name",
     orderType: "Dine-In",
@@ -34,23 +36,24 @@ class _DineInPageState extends State<DineInPage> {
   );
   void prettyPrintTable() {
     if (selectedTable != null) {
-      print('Selected Table:');
-      print('Table ID: ${selectedTable!['id']}');
-      print('Table Name: ${selectedTable!['name']}');
-      print('Occupied: ${selectedTable!['occupied']}');
-      print('Order Number: ${selectedTable!['orderNumber']}');
-      print('-------------------------');
+      // print('Selected Table:');
+      // print('Table ID: ${selectedTable!['id']}');
+      // print('Table Name: ${selectedTable!['name']}');
+      // print('Occupied: ${selectedTable!['occupied']}');
+      // print('Order Number: ${selectedTable!['orderNumber']}');
+      // print('-------------------------');
 
-      // print('Selected Order:');
-      print('Table Name: ${selectedOrder.tableName}');
-      print('Order Number: ${selectedOrder.orderNumber}');
+      // // print('Selected Order:');
+      // print('Table Name: ${selectedOrder.tableName}');
+      // print('Order Number: ${selectedOrder.orderNumber}');
       // print('Order Type: ${selectedOrder.orderType}');
       // print('Order Time: ${selectedOrder.orderTime}');
       // print('Order Date: ${selectedOrder.orderDate}');
       // print('Order items: ${selectedOrder.items}');
       // print('Order subTotal: ${selectedOrder.subTotal}');
-      print('Status: ${selectedOrder.status}');
+      // print('Status: ${selectedOrder.status}');
       // print('Items: ${selectedOrder.items}');
+      print(widget.orders.toString());
       print('-------------------------');
     }
   }
@@ -123,10 +126,7 @@ class _DineInPageState extends State<DineInPage> {
                   orderCounter--;
                   tables[selectedTableIndex!]['occupied'] = false;
                   tables[selectedTableIndex!]['orderNumber'] = "";
-                  selectedOrder.tableName = "Table Name";
-                  selectedOrder.orderNumber = "Order Number";
-                  selectedOrder.items = [];
-                  selectedOrder.status = "Start Your Order";
+                  selectedOrder.resetDefault();
                   widget.toggleSideMenu();
                   isTableClicked = !isTableClicked;
                   prettyPrintTable();
@@ -182,6 +182,8 @@ class _DineInPageState extends State<DineInPage> {
     setState(() {
       selectedOrder.placeOrder();
       updateOrderStatus();
+      widget.orders.addOrder(selectedOrder);
+      prettyPrintTable();
     });
   }
 

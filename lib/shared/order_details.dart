@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:jspos/models/selected_table_order.dart';
-import 'package:jspos/shared/item.dart';
+import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/models/item.dart';
 
 class OrderDetails extends StatefulWidget {
-  final SelectedTableOrder selectedOrder;
+  final SelectedOrder selectedOrder;
   final void Function() updateOrderStatus;
   final Color orderStatusColor;
   final IconData orderStatusIcon;

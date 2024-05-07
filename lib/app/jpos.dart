@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jspos/models/orders.dart';
 import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/history/history.dart';
 import 'package:jspos/screens/settings/settings.dart';
@@ -33,6 +34,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String pageActive = "Dine In";
   bool isSideMenuEnabled = true;
+  Orders orders = Orders(data: []);
 
   void toggleSideMenu() {
     setState(() {
@@ -43,7 +45,7 @@ class _MainPageState extends State<MainPage> {
   _pageView() {
     switch (pageActive) {
       case 'Dine In':
-        return DineInPage(toggleSideMenu: toggleSideMenu);
+        return DineInPage(toggleSideMenu: toggleSideMenu, orders: orders);
       case 'Take Out':
         return TakeOutPage(toggleSideMenu: toggleSideMenu);
       case 'History':

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/data/menu_data.dart';
-import 'package:jspos/models/product_item.dart';
-import 'package:jspos/models/selected_table_order.dart';
-import 'package:jspos/shared/item.dart';
+import 'package:jspos/shared/product_item.dart';
+import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/models/item.dart';
 
 class MenuPage extends StatefulWidget {
-  final SelectedTableOrder selectedOrder;
+  final SelectedOrder selectedOrder;
   final VoidCallback onClick; 
   // final void Function() onClick and final VoidCallback hold a reference to a function that takes no arguments and returns void.
   // The main difference is that VoidCallback is a bit more concise and is commonly used in Flutter for event handlers and callbacks. 

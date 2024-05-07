@@ -1,9 +1,9 @@
-import 'package:jspos/shared/item.dart';
+import 'package:jspos/models/item.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
-class SelectedTableOrder {
+class SelectedOrder {
   // Properties
   String orderNumber;
   String tableName;
@@ -20,7 +20,7 @@ class SelectedTableOrder {
   String remarks;
   bool showEditBtn;
   // constructor must have the same name as its class.
-  SelectedTableOrder({
+  SelectedOrder({
     required this.orderNumber,
     required this.tableName,
     required this.orderType,
@@ -39,7 +39,7 @@ class SelectedTableOrder {
   @override
   // methods
   String toString() {
-    return 'TableOrder: {\n\torderNumber: $orderNumber, \n\ttableName: $tableName, \n\torderType: $orderType, \n\tstatus: $status, \n\titems: [\n\t\t${items.join(',\n\t\t')}\n\t], \n\tsubTotal: $subTotal, \n\tserviceCharge: $serviceCharge, \n\ttotalPrice: $totalPrice, \n\tquantity: $quantity, \n\tpaymentMethod: $paymentMethod, \n\tremarks: $remarks, \n\tshowEditBtn: $showEditBtn\n}';
+    return '{\n\torderNumber: $orderNumber, \n\ttableName: $tableName, \n\torderType: $orderType, \n\tstatus: $status, \n\titems: [\n\t\t${items.join(',\n\t\t')}\n\t], \n\tsubTotal: $subTotal, \n\tserviceCharge: $serviceCharge, \n\ttotalPrice: $totalPrice, \n\tquantity: $quantity, \n\tpaymentMethod: $paymentMethod, \n\tremarks: $remarks, \n\tshowEditBtn: $showEditBtn\n}';
   }
 
   void addItem(Item item) {
@@ -109,17 +109,28 @@ class SelectedTableOrder {
     }
   }
 
+  void resetDefault() {
+    tableName = "Table Name";
+    orderNumber = "Order Number";
+    items = [];
+    status = "Start Your Order";
+    updateTotalCost(0);
+  }
+
   void updateSubTotal() {
-    subTotal =
+    double total =
         items.fold(0, (total, item) => total + item.price * item.quantity);
+    subTotal = double.parse(total.toStringAsFixed(2));
   }
 
   void updateServiceCharge(double rate) {
-    serviceCharge = subTotal * rate;
+    double charge = subTotal * rate;
+    serviceCharge = double.parse(charge.toStringAsFixed(2));
   }
 
   void updateTotalPrice() {
-    totalPrice = subTotal + serviceCharge;
+    double total = subTotal + serviceCharge;
+    totalPrice = double.parse(total.toStringAsFixed(2));
   }
 
   void updateTotalCost(double serviceChargeRate) {

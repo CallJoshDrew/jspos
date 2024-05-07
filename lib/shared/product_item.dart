@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/shared/item.dart';
+import 'package:jspos/models/item.dart';
 
 class ProductItem extends StatefulWidget {
   final Function(Item) onItemAdded;
