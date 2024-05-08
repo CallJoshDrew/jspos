@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
 class SelectedOrder {
-  // Properties
   String orderNumber;
   String tableName;
   String orderType;
@@ -110,10 +109,10 @@ class SelectedOrder {
   }
 
   void resetDefault() {
-    tableName = "Table Name";
     orderNumber = "Order Number";
-    items = [];
+    tableName = "Table Name";
     status = "Start Your Order";
+    items = [];
     orderTime = "Order Time";
     orderDate = "Order Date";
     updateTotalCost(0);
@@ -156,6 +155,8 @@ class SelectedOrder {
     updateServiceCharge(0);
     updateTotalPrice();
     updateStatus('Placed Order');
+    // tableName = "Table Name";
+    // orderNumber = "Order Number";
     updateOrderDateTime();
   }
 

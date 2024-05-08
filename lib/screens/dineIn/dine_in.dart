@@ -19,6 +19,7 @@ class _DineInPageState extends State<DineInPage> {
   int orderCounter = 1;
   int? selectedTableIndex;
   String orderNumber = "";
+  // String tableName
   // Create a new SelectedOrder instance
   SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
@@ -37,18 +38,26 @@ class _DineInPageState extends State<DineInPage> {
     showEditBtn: false,
   );
   void prettyPrintTable() {
-    print('Selected Table Index: $selectedTableIndex');
-    print('-------------------------');
-    print('Tables: $tables');
+    // print('Selected Table Index: $selectedTableIndex');
+    // print('-------------------------');
+    // print('Tables');
     // print('Table ID: ${tables!['id']}');
     // print('Table Name: ${tables!['name']}');
     // print('Occupied: ${tables!['occupied']}');
     // print('Order Number: ${tables!['orderNumber']}');
     // print('-------------------------');
-
-    // // print('Selected Order:');
-    // print('Order Number: ${selectedOrder.orderNumber}');
-    // print('Table Name: ${selectedOrder.tableName}');
+    print('-------------------------');
+    print('Orders');
+    print('latest: ${widget.orders.toString()}');
+    print('-------------------------');
+    // print('-------------------------');
+    // print(widget.orders.toString());
+    // print('-------------------------');
+    // print('-------------------------');
+    // print('Pretty Print:');
+    // print('SelectedOrder Number: ${selectedOrder.orderNumber}');
+    // print('SelectedOrder Table Name: ${selectedOrder.tableName}');
+    // print('-------------------------');
     // print('Order Type: ${selectedOrder.orderType}');
     // print('Order Time: ${selectedOrder.orderTime}');
     // print('Order Date: ${selectedOrder.orderDate}');
@@ -56,8 +65,6 @@ class _DineInPageState extends State<DineInPage> {
     // print('Order subTotal: ${selectedOrder.subTotal}');
     // print('Status: ${selectedOrder.status}');
     // print('Items: ${selectedOrder.items}');
-    print(widget.orders.toString());
-    print('-------------------------');
   }
 
   String generateID(String tableName) {
@@ -73,36 +80,53 @@ class _DineInPageState extends State<DineInPage> {
     setState(() {
       widget.toggleSideMenu();
       isTableClicked = !isTableClicked;
+      // Set the selected table and its index
+      selectedTableIndex = index;
 
-      // Find the index of the table with the matching name
-      int index = tables.indexWhere((table) => table['name'] == tableName);
-
-      // Check if a table with the given name exists
-      if (index != -1) {
+      // Check if a table with the given index exists
+      if (index != -1 && index < tables.length) {
         // If the table is not occupied, generate a new orderNumber
         if (!tables[index]['occupied']) {
           orderNumber = generateID(tableName);
           tables[index]['orderNumber'] = orderNumber;
+          tables[index]['occupied'] = true;
+
+          // Update selectedOrder
+          selectedOrder.orderNumber = orderNumber;
+          selectedOrder.tableName = tableName;
+          selectedOrder.status = "Start Your Order";
+          selectedOrder.items = [];
+          selectedOrder.orderTime = "Order Time";
+          selectedOrder.orderDate = "Order Date";
+          updateOrderStatus();
         } else {
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
-        }
+          var order = widget.orders.getOrder(orderNumber);
+          // print('orderNumber from tables.index: ${tables[index]["orderNumber"]}'); // successfully got the orderNumber correctly.
+          // Use getOrder to find an order with the same orderNumber
+          print('-------------------------');
+          print('Orders');
+          print('latest: ${widget.orders}');
 
-        tables[index]['occupied'] = true;
+          print('-------------------------');
+          print('Tables');
+          print('selected Table: ${tables[index]}');
+          print('-------------------------');
+          // Print the orderNumber and the order to the console
+          print('SetTables');
+          print('orderNumber: $orderNumber');
+          print('order: $order');
+          print('-------------------------');
+          print('SelectedOrder');
+          print('orderNumber: ${selectedOrder.orderNumber}');
+          print('-------------------------');
 
-        // Set the selected table and its index
-        selectedTableIndex = index;
-
-        // Use getOrder to find an order with the same orderNumber
-        var order = widget.orders.getOrder(orderNumber);
-
-        // If an order with the same orderNumber exists, update selectedOrder with its details
-        if (order != null) {
-          selectedOrder = order;
-        } else {
-          // Update selectedOrder
-          selectedOrder.tableName = tableName;
-          selectedOrder.orderNumber = orderNumber;
+          // If an order with the same orderNumber exists, update selectedOrder with its details
+          if (order != null) {
+            selectedOrder = order;
+            updateOrderStatus();
+          }
         }
       }
     });
@@ -148,8 +172,8 @@ class _DineInPageState extends State<DineInPage> {
               onPressed: () {
                 setState(() {
                   orderCounter--;
-                  resetSelectedTable();
-                  selectedOrder.resetDefault();
+                  // resetSelectedTable();
+                  // selectedOrder.resetDefault();
                   updateOrderStatus();
                   widget.toggleSideMenu();
                   isTableClicked = !isTableClicked;
@@ -209,7 +233,26 @@ class _DineInPageState extends State<DineInPage> {
   void handlePlaceOrderBtn() {
     setState(() {
       selectedOrder.placeOrder();
-      widget.orders.addOrder(selectedOrder);
+      // selectedOrder.orderNumber = orderNumber;
+      // selectedOrder.tableName = tableName;
+      // Add a new SelectedOrder object to the orders list
+      widget.orders.addOrder(SelectedOrder(
+        orderNumber: selectedOrder.orderNumber,
+        tableName: selectedOrder.tableName,
+        orderType: selectedOrder.orderType,
+        orderTime: selectedOrder.orderTime,
+        orderDate: selectedOrder.orderDate,
+        status: selectedOrder.status,
+        items:
+            List.from(selectedOrder.items), // Create a copy of the items list
+        subTotal: selectedOrder.subTotal,
+        serviceCharge: selectedOrder.serviceCharge,
+        totalPrice: selectedOrder.totalPrice,
+        quantity: selectedOrder.quantity,
+        paymentMethod: selectedOrder.paymentMethod,
+        remarks: selectedOrder.remarks,
+        showEditBtn: selectedOrder.showEditBtn,
+      ));
       updateOrderStatus();
       widget.toggleSideMenu();
       isTableClicked = !isTableClicked;
