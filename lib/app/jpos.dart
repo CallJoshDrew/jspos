@@ -36,7 +36,7 @@ class _MainPageState extends State<MainPage> {
   bool isSideMenuEnabled = true;
   Orders orders = Orders(data: []);
 
-  void toggleSideMenu() {
+  void freezeSideMenu() {
     setState(() {
       isSideMenuEnabled = !isSideMenuEnabled;
     });
@@ -45,9 +45,9 @@ class _MainPageState extends State<MainPage> {
   _pageView() {
     switch (pageActive) {
       case 'Dine In':
-        return DineInPage(toggleSideMenu: toggleSideMenu, orders: orders);
+        return DineInPage(freezeSideMenu: freezeSideMenu, orders: orders);
       case 'Take Out':
-        return TakeOutPage(toggleSideMenu: toggleSideMenu);
+        return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return const HistoryPage();
       case 'Reports':

@@ -18,6 +18,7 @@ class SelectedOrder {
   String paymentMethod;
   String remarks;
   bool showEditBtn;
+
   // constructor must have the same name as its class.
   SelectedOrder({
     required this.orderNumber,
@@ -39,6 +40,44 @@ class SelectedOrder {
   // methods
   String toString() {
     return '{\n\torderNumber: $orderNumber, \n\ttableName: $tableName, \n\torderType: $orderType, \n\tstatus: $status, \n\titems: [\n\t\t${items.join(',\n\t\t')}\n\t], \n\tsubTotal: $subTotal, \n\tserviceCharge: $serviceCharge, \n\ttotalPrice: $totalPrice, \n\tquantity: $quantity, \n\tpaymentMethod: $paymentMethod, \n\tremarks: $remarks, \n\tshowEditBtn: $showEditBtn\n}';
+  }
+
+  SelectedOrder newInstance() {
+    return SelectedOrder(
+      orderNumber: "Order Number",
+      tableName: "Table Name",
+      orderType: "Dine-In",
+      orderTime: "Order Time",
+      orderDate: "Order Date",
+      status: "Start Your Order",
+      items: [], // Add your items here
+      subTotal: 0,
+      serviceCharge: 0,
+      totalPrice: 0,
+      quantity: 0,
+      paymentMethod: "Cash",
+      remarks: "No Remarks",
+      showEditBtn: false,
+    );
+  }
+
+  SelectedOrder copyWith() {
+    return SelectedOrder(
+      orderNumber: orderNumber,
+      tableName: tableName,
+      orderType: orderType,
+      orderTime: orderTime,
+      orderDate: orderDate,
+      status: status,
+      items: List.from(items), // Create a copy of the items list
+      subTotal: subTotal,
+      serviceCharge: serviceCharge,
+      totalPrice: totalPrice,
+      quantity: quantity,
+      paymentMethod: paymentMethod,
+      remarks: remarks,
+      showEditBtn: showEditBtn,
+    );
   }
 
   void addItem(Item item) {

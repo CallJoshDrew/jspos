@@ -6,16 +6,16 @@ import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 
 class DineInPage extends StatefulWidget {
-  final void Function() toggleSideMenu;
+  final void Function() freezeSideMenu;
   final Orders orders;
   const DineInPage(
-      {super.key, required this.toggleSideMenu, required this.orders});
+      {super.key, required this.freezeSideMenu, required this.orders});
   @override
   State<DineInPage> createState() => _DineInPageState();
 }
 
 class _DineInPageState extends State<DineInPage> {
-  bool isTableClicked = false;
+  bool showMenu = false;
   int orderCounter = 1;
   int? selectedTableIndex;
   String orderNumber = "";
@@ -47,8 +47,7 @@ class _DineInPageState extends State<DineInPage> {
     // print('Order Number: ${tables!['orderNumber']}');
     // print('-------------------------');
     print('-------------------------');
-    print('Orders');
-    print('latest: ${widget.orders.toString()}');
+    print('PrettyPrint Orders: ${widget.orders.toString()}');
     print('-------------------------');
     // print('-------------------------');
     // print(widget.orders.toString());
@@ -78,8 +77,8 @@ class _DineInPageState extends State<DineInPage> {
   // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
     setState(() {
-      widget.toggleSideMenu();
-      isTableClicked = !isTableClicked;
+      widget.freezeSideMenu();
+      showMenu = !showMenu;
       // Set the selected table and its index
       selectedTableIndex = index;
 
@@ -91,45 +90,39 @@ class _DineInPageState extends State<DineInPage> {
           tables[index]['orderNumber'] = orderNumber;
           tables[index]['occupied'] = true;
 
-          // Update selectedOrder
+          // Generate a new instance of selectedOrder first, and then only assign it's fields and details to the selectedOrder
+          selectedOrder = selectedOrder.newInstance();
           selectedOrder.orderNumber = orderNumber;
           selectedOrder.tableName = tableName;
-          selectedOrder.status = "Start Your Order";
-          selectedOrder.items = [];
-          selectedOrder.orderTime = "Order Time";
-          selectedOrder.orderDate = "Order Date";
           updateOrderStatus();
+
+          // Print orderNumber and selectedOrder details to the console
+          print('New orderNumber: $orderNumber');
+          print('selectedOrder details: $selectedOrder');
         } else {
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
           var order = widget.orders.getOrder(orderNumber);
-          // print('orderNumber from tables.index: ${tables[index]["orderNumber"]}'); // successfully got the orderNumber correctly.
-          // Use getOrder to find an order with the same orderNumber
-          print('-------------------------');
-          print('Orders');
-          print('latest: ${widget.orders}');
-
-          print('-------------------------');
-          print('Tables');
-          print('selected Table: ${tables[index]}');
-          print('-------------------------');
-          // Print the orderNumber and the order to the console
-          print('SetTables');
-          print('orderNumber: $orderNumber');
-          print('order: $order');
-          print('-------------------------');
-          print('SelectedOrder');
-          print('orderNumber: ${selectedOrder.orderNumber}');
-          print('-------------------------');
 
           // If an order with the same orderNumber exists, update selectedOrder with its details
           if (order != null) {
             selectedOrder = order;
             updateOrderStatus();
+
+            // Print orderNumber and selectedOrder details to the console
+            print('Existing orderNumber: $orderNumber');
+            print('selectedOrder details: $selectedOrder');
           }
         }
       }
     });
+  }
+
+  void addItemtoCart(item) {
+    selectedOrder.addItem(item);
+    selectedOrder.updateTotalCost(0);
+    selectedOrder.updateStatus("Ordering");
+    updateOrderStatus();
   }
 
   Future<void> _showConfirmationDialog() async {
@@ -155,33 +148,44 @@ class _DineInPageState extends State<DineInPage> {
           ),
           actions: <Widget>[
             TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'Yes',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 18,
+                child: const Text(
+                  'Yes',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
                 ),
-              ),
-              onPressed: () {
-                setState(() {
-                  orderCounter--;
-                  // resetSelectedTable();
-                  // selectedOrder.resetDefault();
-                  updateOrderStatus();
-                  widget.toggleSideMenu();
-                  isTableClicked = !isTableClicked;
-                  prettyPrintTable();
-                });
-                Navigator.of(context).pop();
-              },
-            ),
+                onPressed: () {
+                  print(
+                      'Button pressed. Current selectedOrder status: ${selectedOrder.status}');
+                  if (selectedOrder.status == "Ordering") {
+                    setState(() {
+                      orderCounter--;
+                      resetSelectedTable();
+                      selectedOrder.resetDefault();
+                      updateOrderStatus();
+                      widget.freezeSideMenu();
+                      showMenu = !showMenu;
+                      prettyPrintTable();
+                    });
+                    print(
+                        'Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
+                  } else if (selectedOrder.status == "Placed Order") {
+                    widget.freezeSideMenu();
+                    showMenu = !showMenu;
+                    prettyPrintTable();
+                    print(
+                        'Menu closed. Current selectedOrder status: ${selectedOrder.status}');
+                  }
+                  Navigator.of(context).pop();
+                }),
             const SizedBox(width: 6),
             TextButton(
               style: TextButton.styleFrom(
@@ -215,14 +219,15 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void _handleCloseMenu() {
-    if (selectedTableIndex != null && selectedOrder.items.isEmpty) {
+    if (selectedOrder.status == "Start Your Order" &&
+        selectedOrder.items.isEmpty) {
       setState(() {
         orderCounter--;
         resetSelectedTable();
         selectedOrder.resetDefault();
         updateOrderStatus();
-        widget.toggleSideMenu();
-        isTableClicked = !isTableClicked;
+        widget.freezeSideMenu();
+        showMenu = !showMenu;
         prettyPrintTable();
       });
     } else if (selectedOrder.items.isNotEmpty) {
@@ -233,30 +238,14 @@ class _DineInPageState extends State<DineInPage> {
   void handlePlaceOrderBtn() {
     setState(() {
       selectedOrder.placeOrder();
-      // selectedOrder.orderNumber = orderNumber;
-      // selectedOrder.tableName = tableName;
+      print('orderNumber: ${selectedOrder.orderNumber}');
+      print('tableName: ${selectedOrder.tableName}');
       // Add a new SelectedOrder object to the orders list
-      widget.orders.addOrder(SelectedOrder(
-        orderNumber: selectedOrder.orderNumber,
-        tableName: selectedOrder.tableName,
-        orderType: selectedOrder.orderType,
-        orderTime: selectedOrder.orderTime,
-        orderDate: selectedOrder.orderDate,
-        status: selectedOrder.status,
-        items:
-            List.from(selectedOrder.items), // Create a copy of the items list
-        subTotal: selectedOrder.subTotal,
-        serviceCharge: selectedOrder.serviceCharge,
-        totalPrice: selectedOrder.totalPrice,
-        quantity: selectedOrder.quantity,
-        paymentMethod: selectedOrder.paymentMethod,
-        remarks: selectedOrder.remarks,
-        showEditBtn: selectedOrder.showEditBtn,
-      ));
+      widget.orders.addOrder(selectedOrder.copyWith());
       updateOrderStatus();
-      widget.toggleSideMenu();
-      isTableClicked = !isTableClicked;
-      prettyPrintTable();
+      widget.freezeSideMenu();
+      showMenu = !showMenu;
+      // prettyPrintTable();
     });
   }
 
@@ -333,7 +322,7 @@ class _DineInPageState extends State<DineInPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        isTableClicked == false
+        showMenu == false
             ? Expanded(
                 flex: 14,
                 child: Padding(
@@ -416,10 +405,7 @@ class _DineInPageState extends State<DineInPage> {
                 onItemAdded: (item) {
                   setState(() {
                     // Try to find an item in selectedOrder.items with the same id as the new item
-                    selectedOrder.addItem(item);
-                    selectedOrder.updateTotalCost(0);
-                    selectedOrder.updateStatus("Ordering");
-                    updateOrderStatus();
+                    addItemtoCart(item);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.green[700],
