@@ -77,7 +77,7 @@ class _DineInPageState extends State<DineInPage> {
   // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
     setState(() {
-      handlefreezeMenu();
+      
       // Set the selected table and its index
       selectedTableIndex = index;
 
@@ -85,6 +85,7 @@ class _DineInPageState extends State<DineInPage> {
       if (index != -1 && index < tables.length) {
         // If the table is not occupied, generate a new orderNumber
         if (!tables[index]['occupied']) {
+          handlefreezeMenu();
           orderNumber = generateID(tableName);
           tables[index]['orderNumber'] = orderNumber;
           tables[index]['occupied'] = true;
@@ -178,6 +179,7 @@ class _DineInPageState extends State<DineInPage> {
                         'Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
                   } else if (selectedOrder.status == "Placed Order") {
                     handlefreezeMenu();
+                    selectedOrder.updateShowEditBtn(true);
                     prettyPrintTable();
                     print(
                         'Menu closed. Current selectedOrder status: ${selectedOrder.status}');

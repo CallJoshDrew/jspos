@@ -211,83 +211,75 @@ class _OrderDetailsState extends State<OrderDetails> {
     VoidCallback? handlefreezeMenu,
     // required ValueNotifier<bool> isVisible,
   }) {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 80, // Adjust this value as needed
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 150),
-                  // isVisible.value
-                  showEditBtn
-                      ? ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              widget.selectedOrder.updateShowEditBtn(false);
-                            });
-                            if (handlefreezeMenu != null) {
-                              handlefreezeMenu();
-                            }
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.deepOrange),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    5.0), // Adjust this value as needed
-                              ),
-                            ),
-                          ),
-                          child: const Text('Edit',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                        )
-                      : Container(),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    status,
-                    style: const TextStyle(
-                        color: Colors.white54,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: (timeStamp == 'Order Time') ? 70 : 100,
-                  ),
-                  Text(
-                    "$timeStamp, $date",
-                    style: const TextStyle(
-                        color: Colors.white54,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
+            ),
+            // show Edit Button when it is true
+            showEditBtn
+                ? ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.selectedOrder.updateShowEditBtn(false);
+                      });
+                      if (handlefreezeMenu != null) {
+                        handlefreezeMenu();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.deepOrange),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              5.0), // Adjust this value as needed
+                        ),
+                      ),
+                    ),
+                    child: const Text('Edit',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                  )
+                : Container(),
+          ],
         ),
-        Expanded(flex: 1, child: Container(width: double.infinity)),
-        Expanded(flex: 5, child: action),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              status,
+              style: const TextStyle(
+                  color: Colors.white54,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "$timeStamp, $date",
+              style: const TextStyle(
+                  color: Colors.white54,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(child: Container(width: double.infinity)),
+            Expanded(child: action),
+          ],
+        ),
       ],
     );
   }
