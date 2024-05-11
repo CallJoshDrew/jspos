@@ -189,13 +189,16 @@ class SelectedOrder {
     orderTime = DateFormat('h:mm a').format(now); // Outputs: 1:03 AM
   }
 
+  void updateShowEditBtn(bool editBtn) {
+    showEditBtn = editBtn;
+  }
+
   void placeOrder() {
     updateSubTotal();
     updateServiceCharge(0);
     updateTotalPrice();
     updateStatus('Placed Order');
-    // tableName = "Table Name";
-    // orderNumber = "Order Number";
+    updateShowEditBtn(true);
     updateOrderDateTime();
   }
 

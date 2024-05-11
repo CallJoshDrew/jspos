@@ -77,8 +77,7 @@ class _DineInPageState extends State<DineInPage> {
   // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
     setState(() {
-      widget.freezeSideMenu();
-      showMenu = !showMenu;
+      handlefreezeMenu();
       // Set the selected table and its index
       selectedTableIndex = index;
 
@@ -106,6 +105,7 @@ class _DineInPageState extends State<DineInPage> {
 
           // If an order with the same orderNumber exists, update selectedOrder with its details
           if (order != null) {
+            order.showEditBtn = true;
             selectedOrder = order;
             updateOrderStatus();
 
@@ -171,15 +171,13 @@ class _DineInPageState extends State<DineInPage> {
                       resetSelectedTable();
                       selectedOrder.resetDefault();
                       updateOrderStatus();
-                      widget.freezeSideMenu();
-                      showMenu = !showMenu;
+                      handlefreezeMenu();
                       prettyPrintTable();
                     });
                     print(
                         'Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
                   } else if (selectedOrder.status == "Placed Order") {
-                    widget.freezeSideMenu();
-                    showMenu = !showMenu;
+                    handlefreezeMenu();
                     prettyPrintTable();
                     print(
                         'Menu closed. Current selectedOrder status: ${selectedOrder.status}');
@@ -226,13 +224,17 @@ class _DineInPageState extends State<DineInPage> {
         resetSelectedTable();
         selectedOrder.resetDefault();
         updateOrderStatus();
-        widget.freezeSideMenu();
-        showMenu = !showMenu;
+        handlefreezeMenu();
         prettyPrintTable();
       });
     } else if (selectedOrder.items.isNotEmpty) {
       _showConfirmationDialog();
     }
+  }
+
+  void handlefreezeMenu() {
+    widget.freezeSideMenu();
+    showMenu = !showMenu;
   }
 
   void handlePlaceOrderBtn() {
@@ -243,8 +245,7 @@ class _DineInPageState extends State<DineInPage> {
       // Add a new SelectedOrder object to the orders list
       widget.orders.addOrder(selectedOrder.copyWith());
       updateOrderStatus();
-      widget.freezeSideMenu();
-      showMenu = !showMenu;
+      handlefreezeMenu();
       // prettyPrintTable();
     });
   }
@@ -451,6 +452,7 @@ class _DineInPageState extends State<DineInPage> {
             orderStatusIcon: orderStatusIcon,
             orderStatus: orderStatus,
             handleMethod: handleMethod,
+            handlefreezeMenu: handlefreezeMenu,
           ),
         ),
       ],

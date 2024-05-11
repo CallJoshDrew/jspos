@@ -8,6 +8,7 @@ class OrderDetails extends StatefulWidget {
   final IconData orderStatusIcon;
   final String orderStatus;
   final VoidCallback? handleMethod;
+  final VoidCallback? handlefreezeMenu;
 
   const OrderDetails({
     super.key,
@@ -15,7 +16,8 @@ class OrderDetails extends StatefulWidget {
     required this.orderStatusColor,
     required this.orderStatusIcon,
     required this.orderStatus,
-    this.handleMethod, required ,
+    this.handleMethod,
+    this.handlefreezeMenu,
   });
 
   @override
@@ -23,7 +25,7 @@ class OrderDetails extends StatefulWidget {
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
-  bool _showEditBtn = false;
+  bool showEditBtn = false;
   void prettyPrintOrder() {
     print('Order Number: ${widget.selectedOrder.orderNumber}');
     print('Table Name: ${widget.selectedOrder.tableName}');
@@ -43,10 +45,12 @@ class _OrderDetailsState extends State<OrderDetails> {
           _orderNumber(
             title: widget.selectedOrder.orderNumber,
             status: widget.selectedOrder.status,
+            showEditBtn: widget.selectedOrder.showEditBtn,
             timeStamp:
                 (widget.selectedOrder.orderTime?.toString() ?? 'Order Time'),
-                date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
+            date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
             // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
+            handlefreezeMenu: widget.handlefreezeMenu,
             action: Container(),
           ),
           Expanded(
@@ -61,6 +65,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   item: item,
                   price: item.price,
                   index: index,
+                  showEditBtn: widget.selectedOrder.showEditBtn,
                 );
               },
             ),
@@ -199,9 +204,11 @@ class _OrderDetailsState extends State<OrderDetails> {
   Widget _orderNumber({
     required String title,
     required String status,
+    required bool showEditBtn,
     required String timeStamp,
     required String date,
     required Widget action,
+    VoidCallback? handlefreezeMenu,
     // required ValueNotifier<bool> isVisible,
   }) {
     return Row(
@@ -225,12 +232,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                   const SizedBox(width: 150),
                   // isVisible.value
-                  _showEditBtn
+                  showEditBtn
                       ? ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              _showEditBtn = false;
+                              widget.selectedOrder.updateShowEditBtn(false);
                             });
+                            if (handlefreezeMenu != null) {
+                              handlefreezeMenu();
+                            }
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -252,7 +262,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       : Container(),
                 ],
               ),
-              Row(  
+              Row(
                 children: [
                   Text(
                     status,
@@ -288,11 +298,212 @@ class _OrderDetailsState extends State<OrderDetails> {
     required Item item,
     required double price,
     required int index,
+    required bool showEditBtn,
   }) {
-    return Dismissible(
+    Widget child = Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: const Color(0xff1f2029),
+      ),
+      child: Row(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 80,
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: AssetImage(image),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Container(
+                width: 24, // Adjust as needed
+                height: 24, // Adjust as needed
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(
+                      14), // Adjust for desired border radius
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      spreadRadius: 2, // Shadow spread radius
+                      blurRadius: 7, // Shadow blur radius
+                      offset: const Offset(0, 3), // Shadow position
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    (index + 1).toString(),
+                    style: const TextStyle(
+                        color: Color.fromRGBO(31, 32, 41, 1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 20),
+          // Item Name and Price
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 10.0),
+                item.selectedType != null && item.category == "Drinks"
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: Text(
+                          item.selectedType!['name'],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: item.selectedType!['name'] == 'Hot'
+                                ? Colors.orangeAccent
+                                : Colors.green[500],
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+                Row(
+                  children: [
+                    item.selectedMeatPortion != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              item.selectedMeatPortion!['name'],
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orangeAccent,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    item.selectedMeePortion != null
+                        ? Text(
+                            item.selectedMeePortion!['name'],
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orangeAccent,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+                // Text(
+                //   price.toStringAsFixed(2),
+                //   style: const TextStyle(
+                //     fontSize: 20,
+                //     fontWeight: FontWeight.bold,
+                //     color: Colors.white,
+                //   ),
+                // )
+              ],
+            ),
+          ),
+          // Add, Decrease and Remove
+          showEditBtn
+              ? Text(
+                  'x ${item.quantity}',
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            item.quantity++; // Increase the quantity
+                          });
+
+                          widget.selectedOrder.updateTotalCost(0);
+                        },
+                        child: const CircleAvatar(
+                          radius:
+                              16, // Adjust this value to change the size of the CircleAvatar
+                          backgroundColor: Color.fromRGBO(65, 175, 71, 1),
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${item.quantity}',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            if (item.quantity > 1) {
+                              item.quantity--; // Decrease the quantity of the item
+                              widget.selectedOrder.updateTotalCost(0);
+                            }
+                          });
+                        },
+                        child: const CircleAvatar(
+                          radius:
+                              16, // Adjust this value to change the size of the CircleAvatar
+                          backgroundColor: Color.fromRGBO(232, 134, 13, 1),
+                          child: Icon(
+                            Icons.remove,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        ],
+      ),
+    );
+    if (showEditBtn) {
+      // If showEditBtn is true, return the child directly
+      return child;
+    } else {
+      return Dismissible(
         // Each Dismissible must contain a Key. Keys allow Flutter to
         // uniquely identify widgets.
         key: Key(item.id.toString()),
+        confirmDismiss: (direction) {
+          if (showEditBtn) {
+            // If showEditBtn is true, do not allow the dismiss action
+            return Future.value(false);
+          }
+          // Otherwise, allow the dismiss action
+          return Future.value(true);
+        },
         // Provide a function that tells the app
         // what to do after an item has been swiped away.
         onDismissed: (direction) {
@@ -357,191 +568,8 @@ class _OrderDetailsState extends State<OrderDetails> {
             ),
           ),
         ),
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.only(bottom: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            color: const Color(0xff1f2029),
-          ),
-          child: Row(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    height: 80,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image: AssetImage(image),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 24, // Adjust as needed
-                    height: 24, // Adjust as needed
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                          14), // Adjust for desired border radius
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5), // Shadow color
-                          spreadRadius: 2, // Shadow spread radius
-                          blurRadius: 7, // Shadow blur radius
-                          offset: const Offset(0, 3), // Shadow position
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        (index + 1).toString(),
-                        style: const TextStyle(
-                            color: Color.fromRGBO(31, 32, 41, 1),
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 20),
-              // Item Name and Price
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 10.0),
-                    item.selectedType != null && item.category == "Drinks"
-                        ? Padding(
-                            padding: const EdgeInsets.only(right: 10.0),
-                            child: Text(
-                              item.selectedType!['name'],
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: item.selectedType!['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[500],
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    Row(
-                      children: [
-                        item.selectedMeatPortion != null
-                            ? Padding(
-                                padding: const EdgeInsets.only(right: 10.0),
-                                child: Text(
-                                  item.selectedMeatPortion!['name'],
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.orangeAccent,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                        item.selectedMeePortion != null
-                            ? Text(
-                                item.selectedMeePortion!['name'],
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orangeAccent,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      ],
-                    ),
-                    // Text(
-                    //   price.toStringAsFixed(2),
-                    //   style: const TextStyle(
-                    //     fontSize: 20,
-                    //     fontWeight: FontWeight.bold,
-                    //     color: Colors.white,
-                    //   ),
-                    // )
-                  ],
-                ),
-              ),
-              // Add, Decrease and Remove
-              _showEditBtn
-                  ? Text(
-                      'x ${item.quantity}',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                item.quantity++; // Increase the quantity
-                              });
-
-                              widget.selectedOrder.updateTotalCost(0);
-                            },
-                            child: const CircleAvatar(
-                              radius:
-                                  16, // Adjust this value to change the size of the CircleAvatar
-                              backgroundColor: Color.fromRGBO(65, 175, 71, 1),
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            '${item.quantity}',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                if (item.quantity > 1) {
-                                  item.quantity--; // Decrease the quantity of the item
-                                  widget.selectedOrder.updateTotalCost(0);
-                                }
-                              });
-                            },
-                            child: const CircleAvatar(
-                              radius:
-                                  16, // Adjust this value to change the size of the CircleAvatar
-                              backgroundColor: Color.fromRGBO(232, 134, 13, 1),
-                              child: Icon(
-                                Icons.remove,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-            ],
-          ),
-        ));
+        child: child,
+      );
+    }
   }
 }
