@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/data/tables_data.dart';
+import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/screens/menu/menu.dart';
@@ -19,8 +20,7 @@ class _DineInPageState extends State<DineInPage> {
   int orderCounter = 1;
   int? selectedTableIndex;
   String orderNumber = "";
-  // String tableName
-  // Create a new SelectedOrder instance
+  List<Item> tempCartItems = [];
   SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
     tableName: "Table Name",
@@ -77,7 +77,6 @@ class _DineInPageState extends State<DineInPage> {
   // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
     setState(() {
-      
       // Set the selected table and its index
       selectedTableIndex = index;
 
@@ -94,6 +93,7 @@ class _DineInPageState extends State<DineInPage> {
           selectedOrder = selectedOrder.newInstance();
           selectedOrder.orderNumber = orderNumber;
           selectedOrder.tableName = tableName;
+          selectedOrder.updateStatus("Ordering");
           updateOrderStatus();
 
           // Print orderNumber and selectedOrder details to the console
@@ -109,10 +109,11 @@ class _DineInPageState extends State<DineInPage> {
             order.showEditBtn = true;
             selectedOrder = order;
             updateOrderStatus();
-
+            tempCartItems = List.from(selectedOrder.items);
             // Print orderNumber and selectedOrder details to the console
             print('Existing orderNumber: $orderNumber');
             print('selectedOrder details: $selectedOrder');
+            print('tempCartItems: $tempCartItems');
           }
         }
       }
@@ -122,8 +123,121 @@ class _DineInPageState extends State<DineInPage> {
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
-    selectedOrder.updateStatus("Ordering");
+    // selectedOrder.updateStatus("Ordering");
     updateOrderStatus();
+  }
+
+  void resetSelectedTable() {
+    tables[selectedTableIndex!]['occupied'] = false;
+    tables[selectedTableIndex!]['orderNumber'] = "";
+  }
+
+  bool areItemListsEqual(List<Item> list1, List<Item> list2) {
+    // If the lengths of the lists are not equal, the lists are not equal
+    if (list1.length != list2.length) {
+      return false;
+    }
+    // Sort the lists by item id
+    list1.sort((a, b) => a.id.compareTo(b.id));
+    list2.sort((a, b) => a.id.compareTo(b.id));
+    // Compare the items in the sorted lists
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i].id != list2[i].id ||
+          list1[i].name !=
+              list2[i].name /* add other property comparisons as needed */) {
+        return false;
+      }
+    }
+    // If no differences were found, the lists are equal
+    return true;
+  }
+
+  void _handleCloseMenu() {
+    if (selectedOrder.status == "Ordering" && selectedOrder.items.isEmpty) {
+      setState(() {
+        orderCounter--;
+        resetSelectedTable();
+        selectedOrder.resetDefault();
+        updateOrderStatus();
+        handlefreezeMenu();
+        prettyPrintTable();
+      });
+    } else if (selectedOrder.status == "Ordering" &&
+        selectedOrder.items.isNotEmpty) {
+      _showConfirmationDialog();
+    } else if (selectedOrder.status == "Placed Order" &&
+        areItemListsEqual(tempCartItems, selectedOrder.items)) {
+      handlefreezeMenu();
+      selectedOrder.updateShowEditBtn(true);
+    } else if (selectedOrder.status == "Placed Order" &&
+        !areItemListsEqual(tempCartItems, selectedOrder.items)) {
+      _showConfirmationDialog();
+    }
+  }
+
+  void handleYesButtonPress() {
+    print(
+        'Button pressed. Current selectedOrder status: ${selectedOrder.status}');
+    if (selectedOrder.status == "Ordering") {
+      setState(() {
+        orderCounter--;
+        resetSelectedTable();
+        selectedOrder.resetDefault();
+        updateOrderStatus();
+        handlefreezeMenu();
+        prettyPrintTable();
+      });
+      print(
+          'Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
+    } else if (selectedOrder.status == "Placed Order") {
+      handlefreezeMenu();
+      selectedOrder.updateShowEditBtn(true);
+      prettyPrintTable();
+      print(
+          'Menu closed. Current selectedOrder status: ${selectedOrder.status}');
+    }
+  }
+
+  void handlefreezeMenu() {
+    widget.freezeSideMenu();
+    showMenu = !showMenu;
+  }
+
+  void handlePlaceOrderBtn() {
+    setState(() {
+      selectedOrder.placeOrder();
+      print('orderNumber: ${selectedOrder.orderNumber}');
+      print('tableName: ${selectedOrder.tableName}');
+      // Add a new SelectedOrder object to the orders list
+      widget.orders.addOrder(selectedOrder.copyWith());
+      updateOrderStatus();
+      handlefreezeMenu();
+      // prettyPrintTable();
+    });
+  }
+
+  void handleUpdateOrderBtn() {
+    // ... code to handle update order button ...
+  }
+
+  void handlePaymentBtn() {
+    setState(() {
+      selectedOrder.makePayment();
+      updateOrderStatus();
+    });
+  }
+
+  //
+  VoidCallback? handleMethod;
+  void defaultMethod() {
+    // did nothing But explained here
+    // when Dart creates a new object, it first initializes all the instance variables before it runs the constructor. Therefore, instance methods aren’t available yet.
+    // handleMethod is initialized in the initState method, which is called exactly once and then never again for each State object. It’s the first method called after a State object is created, and it’s called before the build method
+  }
+  @override
+  void initState() {
+    super.initState();
+    handleMethod = defaultMethod;
   }
 
   Future<void> _showConfirmationDialog() async {
@@ -164,26 +278,7 @@ class _DineInPageState extends State<DineInPage> {
                   ),
                 ),
                 onPressed: () {
-                  print(
-                      'Button pressed. Current selectedOrder status: ${selectedOrder.status}');
-                  if (selectedOrder.status == "Ordering") {
-                    setState(() {
-                      orderCounter--;
-                      resetSelectedTable();
-                      selectedOrder.resetDefault();
-                      updateOrderStatus();
-                      handlefreezeMenu();
-                      prettyPrintTable();
-                    });
-                    print(
-                        'Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
-                  } else if (selectedOrder.status == "Placed Order") {
-                    handlefreezeMenu();
-                    selectedOrder.updateShowEditBtn(true);
-                    prettyPrintTable();
-                    print(
-                        'Menu closed. Current selectedOrder status: ${selectedOrder.status}');
-                  }
+                  handleYesButtonPress();
                   Navigator.of(context).pop();
                 }),
             const SizedBox(width: 6),
@@ -213,82 +308,13 @@ class _DineInPageState extends State<DineInPage> {
     );
   }
 
-  void resetSelectedTable() {
-    tables[selectedTableIndex!]['occupied'] = false;
-    tables[selectedTableIndex!]['orderNumber'] = "";
-  }
-
-  void _handleCloseMenu() {
-    if (selectedOrder.status == "Start Your Order" &&
-        selectedOrder.items.isEmpty) {
-      setState(() {
-        orderCounter--;
-        resetSelectedTable();
-        selectedOrder.resetDefault();
-        updateOrderStatus();
-        handlefreezeMenu();
-        prettyPrintTable();
-      });
-    } else if (selectedOrder.items.isNotEmpty) {
-      _showConfirmationDialog();
-    }
-  }
-
-  void handlefreezeMenu() {
-    widget.freezeSideMenu();
-    showMenu = !showMenu;
-  }
-
-  void handlePlaceOrderBtn() {
-    setState(() {
-      selectedOrder.placeOrder();
-      print('orderNumber: ${selectedOrder.orderNumber}');
-      print('tableName: ${selectedOrder.tableName}');
-      // Add a new SelectedOrder object to the orders list
-      widget.orders.addOrder(selectedOrder.copyWith());
-      updateOrderStatus();
-      handlefreezeMenu();
-      // prettyPrintTable();
-    });
-  }
-
-  void handleUpdateOrderBtn() {
-    // ... code to handle update order button ...
-  }
-
-  void handlePaymentBtn() {
-    setState(() {
-      selectedOrder.makePayment();
-      updateOrderStatus();
-    });
-  }
-
   String orderStatus = "Empty Cart";
   Color orderStatusColor = Colors.grey[800]!;
   IconData orderStatusIcon = Icons.shopping_cart;
 
-  //
-  VoidCallback? handleMethod;
-  void defaultMethod() {
-    // did nothing But explained here
-    // when Dart creates a new object, it first initializes all the instance variables before it runs the constructor. Therefore, instance methods aren’t available yet.
-    // handleMethod is initialized in the initState method, which is called exactly once and then never again for each State object. It’s the first method called after a State object is created, and it’s called before the build method
-  }
-  @override
-  void initState() {
-    super.initState();
-    handleMethod = defaultMethod;
-  }
-
   void updateOrderStatus() {
     setState(() {
-      if (selectedOrder.status == "Ordering" &&
-          selectedOrder.items.isNotEmpty) {
-        orderStatus = "Place Order & Print";
-        orderStatusColor = Colors.deepOrange;
-        handleMethod = handlePlaceOrderBtn;
-        orderStatusIcon = Icons.print;
-      } else if (selectedOrder.status == "Start Your Order") {
+      if (selectedOrder.status == "Start Your Order") {
         orderStatus = "Empty Cart";
         orderStatusColor = Colors.grey[800]!;
         handleMethod = defaultMethod; // Disabled
@@ -297,7 +323,27 @@ class _DineInPageState extends State<DineInPage> {
         //   orderStatus = "Update Order & Print";
         //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
         //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
-      } else if (selectedOrder.status == "Placed Order") {
+      } else if (selectedOrder.status == "Ordering" &&
+          selectedOrder.items.isNotEmpty) {
+        orderStatus = "Place Order & Print";
+        orderStatusColor = Colors.deepOrange;
+        handleMethod = handlePlaceOrderBtn;
+        orderStatusIcon = Icons.print;
+      } else if (selectedOrder.status == "Placed Order" &&
+          selectedOrder.showEditBtn == false &&
+          areItemListsEqual(tempCartItems, selectedOrder.items)) {
+        orderStatus = "Update Orders & Print";
+        orderStatusColor = Colors.grey[700]!;
+        handleMethod = defaultMethod; // Disabled
+        orderStatusIcon = Icons.monetization_on;
+      } else if (selectedOrder.status == "Placed Order" &&
+          selectedOrder.showEditBtn == false &&
+          !areItemListsEqual(tempCartItems, selectedOrder.items)) {
+        orderStatus = "Update Orders & Print";
+        orderStatusColor = Colors.green[800]!;
+        handleMethod = handlePlaceOrderBtn;
+        orderStatusIcon = Icons.monetization_on;
+      }else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
         orderStatus = "Make Payment";
         orderStatusColor = Colors.green[800]!;
         handleMethod = handlePaymentBtn;
@@ -455,6 +501,7 @@ class _DineInPageState extends State<DineInPage> {
             orderStatus: orderStatus,
             handleMethod: handleMethod,
             handlefreezeMenu: handlefreezeMenu,
+            updateOrderStatus: updateOrderStatus,
           ),
         ),
       ],

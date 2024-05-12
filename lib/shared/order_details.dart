@@ -9,6 +9,7 @@ class OrderDetails extends StatefulWidget {
   final String orderStatus;
   final VoidCallback? handleMethod;
   final VoidCallback? handlefreezeMenu;
+  final VoidCallback? updateOrderStatus;
 
   const OrderDetails({
     super.key,
@@ -18,6 +19,7 @@ class OrderDetails extends StatefulWidget {
     required this.orderStatus,
     this.handleMethod,
     this.handlefreezeMenu,
+    this.updateOrderStatus,
   });
 
   @override
@@ -51,6 +53,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
             // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
             handlefreezeMenu: widget.handlefreezeMenu,
+            updateOrderStatus: widget.updateOrderStatus,
             action: Container(),
           ),
           Expanded(
@@ -209,6 +212,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String date,
     required Widget action,
     VoidCallback? handlefreezeMenu,
+    VoidCallback? updateOrderStatus,
     // required ValueNotifier<bool> isVisible,
   }) {
     return Column(
@@ -234,6 +238,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                       });
                       if (handlefreezeMenu != null) {
                         handlefreezeMenu();
+                      }
+                      if (updateOrderStatus != null) {
+                        updateOrderStatus();
                       }
                     },
                     style: ButtonStyle(
