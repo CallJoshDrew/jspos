@@ -94,11 +94,15 @@ class _DineInPageState extends State<DineInPage> {
           selectedOrder.orderNumber = orderNumber;
           selectedOrder.tableName = tableName;
           selectedOrder.updateStatus("Ordering");
-          updateOrderStatus();
-
+          
+          tempCartItems = [];
+          // below these are important updates for the UI, have to manually update it to cause rerender in orderDetails page.
+          orderStatus = "Empty Cart";
+          orderStatusColor = Colors.grey[800]!;
+          orderStatusIcon = Icons.shopping_cart;
           // Print orderNumber and selectedOrder details to the console
-          print('New orderNumber: $orderNumber');
-          print('selectedOrder details: $selectedOrder');
+          // print('New orderNumber: $orderNumber');
+          // print('selectedOrder details: $selectedOrder');
         } else {
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
@@ -108,16 +112,18 @@ class _DineInPageState extends State<DineInPage> {
           if (order != null) {
             order.showEditBtn = true;
             selectedOrder = order;
-            updateOrderStatus();
             tempCartItems = List.from(selectedOrder.items);
             // Print orderNumber and selectedOrder details to the console
-            print('Existing orderNumber: $orderNumber');
-            print('selectedOrder details: $selectedOrder');
+            // print('Existing orderNumber: $orderNumber');
+            // print('selectedOrder details: $selectedOrder');
             print('tempCartItems: $tempCartItems');
           }
         }
       }
     });
+
+    // Call updateOrderStatus() after the state has been updated
+    updateOrderStatus();
   }
 
   void addItemtoCart(item) {
@@ -206,18 +212,25 @@ class _DineInPageState extends State<DineInPage> {
   void handlePlaceOrderBtn() {
     setState(() {
       selectedOrder.placeOrder();
-      print('orderNumber: ${selectedOrder.orderNumber}');
-      print('tableName: ${selectedOrder.tableName}');
+      tempCartItems = List.from(selectedOrder.items);
       // Add a new SelectedOrder object to the orders list
       widget.orders.addOrder(selectedOrder.copyWith());
       updateOrderStatus();
       handlefreezeMenu();
-      // prettyPrintTable();
+      prettyPrintTable();
     });
   }
 
   void handleUpdateOrderBtn() {
-    // ... code to handle update order button ...
+    setState(() {
+      selectedOrder.placeOrder();
+      tempCartItems = List.from(selectedOrder.items);
+      // Add a new SelectedOrder object to the orders list
+      widget.orders.addOrder(selectedOrder.copyWith());
+      updateOrderStatus();
+      handlefreezeMenu();
+      prettyPrintTable();
+    });
   }
 
   void handlePaymentBtn() {
@@ -312,58 +325,55 @@ class _DineInPageState extends State<DineInPage> {
   Color orderStatusColor = Colors.grey[800]!;
   IconData orderStatusIcon = Icons.shopping_cart;
 
-  void updateOrderStatus() {
-    setState(() {
-      if (selectedOrder.status == "Start Your Order") {
-        orderStatus = "Empty Cart";
-        orderStatusColor = Colors.grey[800]!;
-        handleMethod = defaultMethod; // Disabled
-        orderStatusIcon = Icons.shopping_cart;
-        // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
-        //   orderStatus = "Update Order & Print";
-        //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
-        //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
-      } else if (selectedOrder.status == "Ordering" &&
-          selectedOrder.items.isNotEmpty) {
-        orderStatus = "Place Order & Print";
-        orderStatusColor = Colors.deepOrange;
-        handleMethod = handlePlaceOrderBtn;
-        orderStatusIcon = Icons.print;
-      } else if (selectedOrder.status == "Placed Order" &&
-          selectedOrder.showEditBtn == false &&
-          areItemListsEqual(tempCartItems, selectedOrder.items)) {
-        orderStatus = "Update Orders & Print";
-        orderStatusColor = Colors.grey[700]!;
-        handleMethod = defaultMethod; // Disabled
-        orderStatusIcon = Icons.monetization_on;
-      } else if (selectedOrder.status == "Placed Order" &&
-          selectedOrder.showEditBtn == false &&
-          !areItemListsEqual(tempCartItems, selectedOrder.items)) {
-        orderStatus = "Update Orders & Print";
-        orderStatusColor = Colors.green[800]!;
-        handleMethod = handlePlaceOrderBtn;
-        orderStatusIcon = Icons.monetization_on;
-      }else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
-        orderStatus = "Make Payment";
-        orderStatusColor = Colors.green[800]!;
-        handleMethod = handlePaymentBtn;
-        orderStatusIcon = Icons.monetization_on;
-      } else if (selectedOrder.status == "Paid") {
-        orderStatus = "COMPLETED (PAID)";
-        orderStatusColor = Colors.grey[700]!;
-        // handleMethod = handleCheckOutBtn;
-        orderStatusIcon = Icons.check_circle;
-      } else if (selectedOrder.status == "COMPLETED (PAID)") {
-        orderStatus = "Paid with DuitNow";
-        orderStatusColor = Colors.grey[700]!;
-        handleMethod = defaultMethod; // Disabled
-      } else if (selectedOrder.status == "Cancelled") {
-        orderStatus = "Cancelled";
-        orderStatusColor = Colors.grey[500]!;
-        handleMethod = defaultMethod; // Disabled
-      }
-    });
-  }
+    void updateOrderStatus() {
+      // print("selectedOrder items:${selectedOrder.items}");
+      // print("tempCartItems :$tempCartItems");
+      print("updateOrderStatus :${selectedOrder.status}");
+
+      setState(() {
+        if (selectedOrder.status == "Start Your Order") {
+          orderStatus = "Empty Cart";
+          orderStatusColor = Colors.grey[800]!;
+          handleMethod = defaultMethod; // Disabled
+          orderStatusIcon = Icons.shopping_cart;
+          // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
+          //   orderStatus = "Update Order & Print";
+          //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
+          //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
+        } else if (selectedOrder.status == "Ordering" &&
+            selectedOrder.items.isNotEmpty) {
+          orderStatus = "Place Order & Print";
+          orderStatusColor = Colors.deepOrange;
+          handleMethod = handlePlaceOrderBtn;
+          orderStatusIcon = Icons.print;
+        } else if (selectedOrder.status == "Placed Order" &&
+            selectedOrder.showEditBtn == false) {
+          orderStatus = "Update Orders & Print";
+          orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ?Colors.grey[700]! : Colors.green[800]!;
+          handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items) ? defaultMethod : handleUpdateOrderBtn; // Disabled
+          orderStatusIcon = Icons.print;
+        } else if (selectedOrder.status == "Placed Order" &&
+            selectedOrder.showEditBtn == true) {
+          orderStatus = "Make Payment";
+          orderStatusColor = Colors.green[800]!;
+          handleMethod = handlePaymentBtn;
+          orderStatusIcon = Icons.monetization_on;
+        } else if (selectedOrder.status == "Paid") {
+          orderStatus = "COMPLETED (PAID)";
+          orderStatusColor = Colors.grey[700]!;
+          // handleMethod = handleCheckOutBtn;
+          orderStatusIcon = Icons.check_circle;
+        } else if (selectedOrder.status == "COMPLETED (PAID)") {
+          orderStatus = "Paid with DuitNow";
+          orderStatusColor = Colors.grey[700]!;
+          handleMethod = defaultMethod; // Disabled
+        } else if (selectedOrder.status == "Cancelled") {
+          orderStatus = "Cancelled";
+          orderStatusColor = Colors.grey[500]!;
+          handleMethod = defaultMethod; // Disabled
+        }
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
