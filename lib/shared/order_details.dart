@@ -182,7 +182,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(widget.orderStatusIcon, size: 32),
-                      // const SizedBox(width: 10),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                         child: Text(
@@ -435,10 +434,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            item.quantity++; // Increase the quantity
+                            item.quantity++;
+                            widget.updateOrderStatus!();
+                            widget.selectedOrder.updateTotalCost(0);
                           });
-
-                          widget.selectedOrder.updateTotalCost(0);
                         },
                         child: const CircleAvatar(
                           radius:
@@ -465,7 +464,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                         onTap: () {
                           setState(() {
                             if (item.quantity > 1) {
-                              item.quantity--; // Decrease the quantity of the item
+                              item.quantity--;
+                              widget.updateOrderStatus!();
                               widget.selectedOrder.updateTotalCost(0);
                             }
                           });

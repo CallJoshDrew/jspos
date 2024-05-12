@@ -104,7 +104,7 @@ class _MainPageState extends State<MainPage> {
         const SizedBox(height: 10),
         Expanded(
           child: ListView(children: [
-            _itemMenu(menu: 'Dine In', icon: Icons.table_bar),
+            _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
             _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
             _itemMenu(menu: 'Reports', icon: Icons.bar_chart),

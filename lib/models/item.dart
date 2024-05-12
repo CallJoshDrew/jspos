@@ -12,14 +12,14 @@ class Item {
   Map<String, dynamic>? selectedMeePortion;
 
   Item({
-    required this.id, 
-    required this.name, 
-    required this.category, 
-    required this.quantity, 
-    required this.price, 
-    required this.image, 
-    this.selection = false, 
-    this.selectedChoice, 
+    required this.id,
+    required this.name,
+    required this.category,
+    required this.quantity,
+    required this.price,
+    required this.image,
+    this.selection = false,
+    this.selectedChoice,
     this.selectedType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
@@ -28,6 +28,31 @@ class Item {
   @override
   String toString() {
     return 'Item: {\n\tid: $id, \n\tname: $name, \n\tprice: $price, \n\tcategory: $category,\n\tquantity: $quantity,  \n\timage: $image, \n\tselection: $selection, \n\tselectedChoice: $selectedChoice, \n\tselectedType: $selectedType, \n\tselectedMeatPortion: $selectedMeatPortion, \n\tselectedMeePortion: $selectedMeePortion\n}';
+  }
+
+  // A method to create a copy of the Item
+  Item copyWith() {
+    return Item(
+      id: id,
+      name: name,
+      category: category,
+      quantity: quantity,
+      price: price,
+      image: image,
+      selection: selection,
+      selectedChoice: selectedChoice != null
+          ? Map<String, dynamic>.from(selectedChoice!)
+          : null,
+      selectedType: selectedType != null
+          ? Map<String, dynamic>.from(selectedType!)
+          : null,
+      selectedMeatPortion: selectedMeatPortion != null
+          ? Map<String, dynamic>.from(selectedMeatPortion!)
+          : null,
+      selectedMeePortion: selectedMeePortion != null
+          ? Map<String, dynamic>.from(selectedMeePortion!)
+          : null,
+    );
   }
 }
 
