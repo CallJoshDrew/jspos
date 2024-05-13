@@ -6,9 +6,9 @@ import 'package:jspos/models/item.dart';
 
 class MenuPage extends StatefulWidget {
   final SelectedOrder selectedOrder;
-  final VoidCallback onClick; 
+  final VoidCallback onClick;
   // final void Function() onClick and final VoidCallback hold a reference to a function that takes no arguments and returns void.
-  // The main difference is that VoidCallback is a bit more concise and is commonly used in Flutter for event handlers and callbacks. 
+  // The main difference is that VoidCallback is a bit more concise and is commonly used in Flutter for event handlers and callbacks.
   final Function(Item) onItemAdded;
   const MenuPage(
       {super.key,
@@ -31,7 +31,8 @@ class _MenuPageState extends State<MenuPage> {
           });
         },
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(Colors.orange[800]!),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius:
@@ -40,12 +41,23 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ),
         child: const Padding(
-          padding: EdgeInsets.all(10),
-          child: Text('Close Menu',
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold)),
+          padding: EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Close',
+                  style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold)),
+              SizedBox(width: 5),
+              Icon(
+                Icons.cancel,
+                color: Colors.white,
+                size: 30,
+              ),
+            ],
+          ),
         ),
       ),
     );

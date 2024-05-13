@@ -218,48 +218,65 @@ class _OrderDetailsState extends State<OrderDetails> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
-            ),
-            // show Edit Button when it is true
-            showEditBtn
-                ? ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        widget.selectedOrder.updateShowEditBtn(false);
-                      });
-                      if (handlefreezeMenu != null) {
-                        handlefreezeMenu();
-                      }
-                      if (updateOrderStatus != null) {
-                        updateOrderStatus();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.deepOrange),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              5.0), // Adjust this value as needed
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
+              ),
+              // show Edit Button when it is true
+              showEditBtn
+                  ? ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          widget.selectedOrder.updateShowEditBtn(false);
+                        });
+                        if (handlefreezeMenu != null) {
+                          handlefreezeMenu();
+                        }
+                        if (updateOrderStatus != null) {
+                          updateOrderStatus();
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.green[800]!),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                5.0), // Adjust this value as needed
+                          ),
                         ),
                       ),
-                    ),
-                    child: const Text('Edit',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold)),
-                  )
-                : Container(),
-          ],
+                      child: const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text('Edit',
+                                style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                            SizedBox(width: 10),
+                            Icon(
+                              Icons.assignment_add,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : const SizedBox(height: 50.0),
+            ],
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -439,11 +456,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                             widget.selectedOrder.updateTotalCost(0);
                           });
                         },
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                           radius:
                               16, // Adjust this value to change the size of the CircleAvatar
-                          backgroundColor: Color.fromRGBO(65, 175, 71, 1),
-                          child: Icon(
+                          backgroundColor: Colors.green[700]!,
+                          child: const Icon(
                             Icons.add,
                             color: Colors.white,
                             size: 20,
@@ -470,11 +487,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                             }
                           });
                         },
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                           radius:
                               16, // Adjust this value to change the size of the CircleAvatar
-                          backgroundColor: Color.fromRGBO(232, 134, 13, 1),
-                          child: Icon(
+                          backgroundColor: Colors.orange[800]!,
+                          child: const Icon(
                             Icons.remove,
                             color: Colors.white,
                             size: 20,
