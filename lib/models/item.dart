@@ -6,6 +6,10 @@ class Item {
   double price;
   final String image;
   final bool selection;
+  List<Map<String, dynamic>> choices;
+  List<Map<String, dynamic>> types;
+  List<Map<String, dynamic>> meatPortion;
+  List<Map<String, dynamic>> meePortion;
   Map<String, dynamic>? selectedChoice;
   Map<String, dynamic>? selectedType;
   Map<String, dynamic>? selectedMeatPortion;
@@ -18,6 +22,10 @@ class Item {
     required this.quantity,
     required this.price,
     required this.image,
+    required this.choices,
+    required this.types,
+    required this.meatPortion,
+    required this.meePortion,
     this.selection = false,
     this.selectedChoice,
     this.selectedType,
@@ -40,6 +48,10 @@ class Item {
       price: price,
       image: image,
       selection: selection,
+      choices: choices,
+      types: types,
+      meatPortion: meatPortion,
+      meePortion: meePortion,
       selectedChoice: selectedChoice != null
           ? Map<String, dynamic>.from(selectedChoice!)
           : null,

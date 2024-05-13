@@ -27,10 +27,10 @@ class ProductItem extends StatefulWidget {
     required this.category,
     required this.price,
     this.selection = false,
-    this.choices = const [],
-    this.types = const [],
-    this.meatPortion = const [],
-    this.meePortion = const [],
+    required this.choices,
+    required this.types,
+    required this.meatPortion,
+    required this.meePortion,
     this.selectedChoice,
     this.selectedType,
     this.selectedMeatPortion,
@@ -54,6 +54,10 @@ class ProductItemState extends State<ProductItem> {
           image: widget.image,
           quantity: 1,
           selection: widget.selection,
+          choices: widget.choices,
+          types: widget.types,
+          meatPortion: widget.meatPortion,
+          meePortion: widget.meePortion,
           selectedChoice: widget.choices.isNotEmpty ? widget.choices[0] : null,
           selectedType: widget.types.isNotEmpty ? widget.types[0] : null,
           selectedMeatPortion:
@@ -61,7 +65,7 @@ class ProductItemState extends State<ProductItem> {
           selectedMeePortion:
               widget.meePortion.isNotEmpty ? widget.meePortion[0] : null,
         ); //this is creating a new instance of item with the required field.
-
+        print('Product Items - item choices: ${widget.choices}');
         Map<String, dynamic>? selectedChoice =
             widget.choices.isNotEmpty ? widget.choices[0] : null;
         Map<String, dynamic>? selectedType =
@@ -79,18 +83,19 @@ class ProductItemState extends State<ProductItem> {
             widget.types.isNotEmpty && widget.types[0]['price'] != null
                 ? widget.types[0]['price']!
                 : 0.00;
-        double meatPrice =
-            widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null
-                ? widget.meatPortion[0]['price']!
-                : 0.00;
-        double meePrice =
-            widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null
-                ? widget.meePortion[0]['price']!
-                : 0.00;
+        double meatPrice = widget.meatPortion.isNotEmpty &&
+                widget.meatPortion[0]['price'] != null
+            ? widget.meatPortion[0]['price']!
+            : 0.00;
+        double meePrice = widget.meePortion.isNotEmpty &&
+                widget.meePortion[0]['price'] != null
+            ? widget.meePortion[0]['price']!
+            : 0.00;
 
         double totalPrice = choicePrice + typePrice + meatPrice + meePrice;
 
-        void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
+        void calculateTotalPrice(double choicePrice, double typePrice,
+            double meatPrice, double meePrice) {
           setState(() {
             totalPrice = choicePrice + typePrice + meatPrice + meePrice;
             print('Price of Selected Choice: $choicePrice');
@@ -149,10 +154,10 @@ class ProductItemState extends State<ProductItem> {
                                       Text(
                                         selectedChoice != null &&
                                                 selectedType != null
-                                            ? '${selectedChoice!['name']} (${selectedType!['name']}) x 1'
+                                            ? '${selectedChoice!['name']} (${selectedType!['name']})'
                                             : 'Select Flavor and Type',
                                         style: const TextStyle(
-                                          fontSize: 22,
+                                          fontSize: 24,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -336,7 +341,9 @@ class ProductItemState extends State<ProductItem> {
                                                                 meatPortion;
                                                             item.selectedMeatPortion =
                                                                 meatPortion;
-                                                                meatPrice = meatPortion['price'];
+                                                            meatPrice =
+                                                                meatPortion[
+                                                                    'price'];
                                                           });
                                                           calculateTotalPrice(
                                                               choicePrice,
@@ -405,7 +412,9 @@ class ProductItemState extends State<ProductItem> {
                                                                 meePortion;
                                                             item.selectedMeePortion =
                                                                 meePortion;
-                                                                meePrice = meePortion['price'];
+                                                            meePrice =
+                                                                meePortion[
+                                                                    'price'];
                                                           });
                                                           calculateTotalPrice(
                                                               choicePrice,

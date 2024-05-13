@@ -129,6 +129,44 @@ class _DineInPageState extends State<DineInPage> {
     updateOrderStatus();
   }
 
+  void onItemAdded(Item item) {
+  setState(() {
+    // Try to find an item in selectedOrder.items with the same id as the new item
+    addItemtoCart(item);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green[700],
+        duration: const Duration(seconds: 1),
+        content: Container(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(
+                Icons.check_circle,
+                color: Colors.white,
+                size: 28,
+              ),
+              const SizedBox(width: 5), // provide some space between the icon and text
+              Text(
+                "${item.name}!",
+                style: const TextStyle(
+                  fontSize: 26,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    // Future.delayed(Duration.zero, () {
+    //   prettyPrintTable();
+    // });
+  });
+}
+
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
@@ -503,46 +541,7 @@ class _DineInPageState extends State<DineInPage> {
             : MenuPage(
                 onClick: _handleCloseMenu,
                 selectedOrder: selectedOrder,
-                onItemAdded: (item) {
-                  setState(() {
-                    // Try to find an item in selectedOrder.items with the same id as the new item
-                    addItemtoCart(item);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.green[700],
-                        duration: const Duration(seconds: 1),
-                        content: Container(
-                          alignment: Alignment.centerRight,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              const Icon(
-                                Icons.check_circle,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                              const SizedBox(
-                                  width:
-                                      5), // provide some space between the icon and text
-                              Text(
-                                "${item.name}!",
-                                style: const TextStyle(
-                                  fontSize: 26,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-
-                    Future.delayed(Duration.zero, () {
-                      prettyPrintTable();
-                    });
-                  });
-                },
+                onItemAdded: onItemAdded,
               ),
         Expanded(
           flex: 6,
@@ -554,6 +553,7 @@ class _DineInPageState extends State<DineInPage> {
             handleMethod: handleMethod,
             handlefreezeMenu: handlefreezeMenu,
             updateOrderStatus: updateOrderStatus,
+            onItemAdded: onItemAdded,
           ),
         ),
       ],
