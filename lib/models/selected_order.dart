@@ -83,8 +83,9 @@ class SelectedOrder {
   void addItem(Item item) {
     // If the item.selection is true, change the name and price of the item
     if (item.selection) {
+      print('item.choice from addItem: ${item.choices}');
       if (item.selectedChoice != null) {
-        item.name = item.selectedChoice!['name'];
+        // item.name = item.selectedChoice!['name'];
         item.price = item.selectedChoice!['price'];
       }
       if (item.selectedType != null) {

@@ -117,14 +117,22 @@ class ProductItemState extends State<ProductItem> {
                     title: Text(
                       item.name,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 24, color: Colors.white),
+                      style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     backgroundColor: Colors.black,
                     // second color const Color(0xff1f2029),
+                    shadowColor: Colors.black,
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                          color: Colors.deepOrange,
+                          width: 2), // This is the border color
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                     content: ConstrainedBox(
                       constraints: const BoxConstraints(
-                        minWidth: 600,
-                        minHeight: 500,
+                        maxWidth: 1600,
+                        minHeight: 800,
                       ),
                       child: SingleChildScrollView(
                         child: Padding(

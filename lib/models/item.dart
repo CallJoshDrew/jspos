@@ -33,9 +33,26 @@ class Item {
     this.selectedMeePortion,
   });
 
+  // make sure you update this so that it print out all the fields
   @override
   String toString() {
-    return 'Item: {\n\tid: $id, \n\tname: $name, \n\tprice: $price, \n\tcategory: $category,\n\tquantity: $quantity,  \n\timage: $image, \n\tselection: $selection, \n\tselectedChoice: $selectedChoice, \n\tselectedType: $selectedType, \n\tselectedMeatPortion: $selectedMeatPortion, \n\tselectedMeePortion: $selectedMeePortion\n}';
+    return 'Item: {\n'
+        '\tid: $id, \n'
+        '\tname: $name, \n'
+        '\tprice: $price, \n'
+        '\tcategory: $category,\n'
+        '\tquantity: $quantity,  \n'
+        '\timage: $image, \n'
+        '\tselection: $selection, \n'
+        '\tselectedChoice: $selectedChoice, \n'
+        '\tselectedType: $selectedType, \n'
+        '\tselectedMeatPortion: $selectedMeatPortion, \n'
+        '\tselectedMeePortion: $selectedMeePortion,\n'
+        '\tchoices: ${choices.toString()},\n'
+        '\ttypes: ${types.toString()},\n'
+        '\tmeatPortion: ${meatPortion.toString()},\n'
+        '\tmeePortion: ${meePortion.toString()}\n'
+        '}';
   }
 
   // A method to create a copy of the Item
