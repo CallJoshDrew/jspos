@@ -763,7 +763,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               ),
                             ),
                             onPressed: () {
-                              widget.onItemAdded(item);
+                              widget.selectedOrder.updateItem(item);
                               Navigator.of(context).pop();
                             },
                           ),

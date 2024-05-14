@@ -83,7 +83,7 @@ class SelectedOrder {
   void addItem(Item item) {
     // If the item.selection is true, change the name and price of the item
     if (item.selection) {
-      print('item.choice from addItem: ${item.choices}');
+      // print('item.choice from addItem: ${item.choices}');
       if (item.selectedChoice != null) {
         // item.name = item.selectedChoice!['name'];
         item.price = item.selectedChoice!['price'];
@@ -145,6 +145,19 @@ class SelectedOrder {
       } else {
         items.add(item);
       }
+    }
+  }
+
+  void updateItem(Item item) {
+    // Find the index of the item with the same id
+    int index = items.indexWhere((i) => i.id == item.id);
+
+    // If the item is found, update it
+    if (index != -1) {
+      items[index] = item;
+    } else {
+      // If the item is not found, add it to the list
+      items.add(item);
     }
   }
 
