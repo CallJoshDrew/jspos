@@ -36,6 +36,10 @@ class _DineInPageState extends State<DineInPage> {
     paymentMethod: "Cash",
     remarks: "No Remarks",
     showEditBtn: false,
+    itemCounts: {},
+    itemQuantities: {},
+    totalItems: 0,
+    totalQuantity: 0,
   );
   void prettyPrintTable() {
     // print('Selected Table Index: $selectedTableIndex');
@@ -130,42 +134,43 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void onItemAdded(Item item) {
-  setState(() {
-    // Try to find an item in selectedOrder.items with the same id as the new item
-    addItemtoCart(item);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green[700],
-        duration: const Duration(seconds: 1),
-        content: Container(
-          alignment: Alignment.centerRight,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Icon(
-                Icons.check_circle,
-                color: Colors.white,
-                size: 28,
-              ),
-              const SizedBox(width: 5), // provide some space between the icon and text
-              Text(
-                "${item.name}!",
-                style: const TextStyle(
-                  fontSize: 26,
+    setState(() {
+      // Try to find an item in selectedOrder.items with the same id as the new item
+      addItemtoCart(item);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green[700],
+          duration: const Duration(seconds: 1),
+          content: Container(
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Icon(
+                  Icons.check_circle,
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  size: 28,
                 ),
-              ),
-            ],
+                const SizedBox(
+                    width: 5), // provide some space between the icon and text
+                Text(
+                  "${item.name}!",
+                  style: const TextStyle(
+                    fontSize: 26,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-    // Future.delayed(Duration.zero, () {
-    //   prettyPrintTable();
-    // });
-  });
-}
+      );
+      // Future.delayed(Duration.zero, () {
+      //   prettyPrintTable();
+      // });
+    });
+  }
 
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
@@ -501,7 +506,9 @@ class _DineInPageState extends State<DineInPage> {
                                     Text(
                                       tables[index]['name'],
                                       style: TextStyle(
-                                          fontSize: pressedButtonIndex == index ? 28 : 22,
+                                          fontSize: pressedButtonIndex == index
+                                              ? 28
+                                              : 22,
                                           fontWeight: FontWeight.bold,
                                           color: pressedButtonIndex == index
                                               ? Colors.white
@@ -514,7 +521,9 @@ class _DineInPageState extends State<DineInPage> {
                                         color: pressedButtonIndex == index
                                             ? Colors.white
                                             : Colors.deepOrangeAccent,
-                                        size: pressedButtonIndex == index ? 46 : 40,
+                                        size: pressedButtonIndex == index
+                                            ? 46
+                                            : 40,
                                       ),
 
                                     // if (tables[index]['occupied'])

@@ -89,15 +89,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Cake',
-                      style: TextStyle(
+                    Text(
+                      'Cakes (${widget.selectedOrder.cakes['itemCount'].toString()})',
+                      style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     Text(
-                      widget.selectedOrder.subTotal.toStringAsFixed(2),
+                      widget.selectedOrder.cakes['itemQuantity'].toString(),
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -109,15 +109,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Dish',
-                      style: TextStyle(
+                    Text(
+                      'Dish (${widget.selectedOrder.dish['itemCount'].toString()})',
+                      style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     Text(
-                      widget.selectedOrder.serviceCharge.toStringAsFixed(2),
+                      widget.selectedOrder.dish['itemQuantity'].toString(),
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -129,15 +129,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Drinks',
-                      style: TextStyle(
+                    Text(
+                      'Drinks (${widget.selectedOrder.drinks['itemCount'].toString()})',
+                      style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     Text(
-                      widget.selectedOrder.serviceCharge.toStringAsFixed(2),
+                      widget.selectedOrder.drinks['itemQuantity'].toString(),
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -866,7 +866,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 fontSize: 18,
                               ),
                             ),
-                            // Sub Total, Service Charges Total OnPressed Function
+                            // SubTotal, Service Charges Total OnPressed Function
                             onPressed: () {
                               setState(() {
                                 print('total Price is $subTotalPrice');
@@ -1012,6 +1012,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 setState(() {
                                   item.quantity++;
                                   widget.selectedOrder.updateTotalCost(0);
+                                  widget.selectedOrder.calculateItemsAndQuantities();
                                   widget.updateOrderStatus!();
                                 });
                               },
@@ -1041,8 +1042,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 setState(() {
                                   if (item.quantity > 1) {
                                     item.quantity--;
-                                    widget.updateOrderStatus!();
                                     widget.selectedOrder.updateTotalCost(0);
+                                    widget.selectedOrder.calculateItemsAndQuantities();
+                                    widget.updateOrderStatus!();
                                   }
                                 });
                               },
@@ -1120,6 +1122,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           setState(() {
             widget.selectedOrder.items.remove(item);
             widget.selectedOrder.updateTotalCost(0);
+            widget.selectedOrder.calculateItemsAndQuantities();
+            widget.updateOrderStatus!();
           });
 
           // Then show a snackbar.

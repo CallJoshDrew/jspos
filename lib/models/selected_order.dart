@@ -18,6 +18,13 @@ class SelectedOrder {
   String paymentMethod;
   String remarks;
   bool showEditBtn;
+  Map<String, int> itemCounts;
+  Map<String, int> itemQuantities;
+  int totalItems = 0;
+  int totalQuantity = 0;
+  Map<String, int> cakes;
+  Map<String, int> drinks;
+  Map<String, int> dish;
 
   // constructor must have the same name as its class.
   SelectedOrder({
@@ -35,7 +42,16 @@ class SelectedOrder {
     this.paymentMethod = "Cash",
     this.remarks = "No Remarks",
     this.showEditBtn = false,
-  });
+    required this.itemCounts,
+    required this.itemQuantities,
+    this.totalItems = 0,
+    this.totalQuantity = 0,
+    Map<String, int>? cakes,
+    Map<String, int>? drinks,
+    Map<String, int>? dish,
+  })  : cakes = cakes ?? {'itemCount': 0, 'itemQuantity': 0},
+        drinks = drinks ?? {'itemCount': 0, 'itemQuantity': 0},
+        dish = dish ?? {'itemCount': 0, 'itemQuantity': 0};
   @override
   // methods
   String toString() {
@@ -58,6 +74,13 @@ class SelectedOrder {
       paymentMethod: "Cash",
       remarks: "No Remarks",
       showEditBtn: false,
+      itemCounts: {},
+      itemQuantities: {},
+      totalItems: 0,
+      totalQuantity: 0,
+      cakes: {'itemCount': 0, 'itemQuantity': 0},
+      drinks: {'itemCount': 0, 'itemQuantity': 0},
+      dish: {'itemCount': 0, 'itemQuantity': 0},
     );
   }
 
@@ -77,6 +100,10 @@ class SelectedOrder {
       paymentMethod: paymentMethod,
       remarks: remarks,
       showEditBtn: showEditBtn,
+      itemCounts: itemCounts,
+      itemQuantities: itemQuantities,
+      totalItems: totalItems,
+      totalQuantity: totalQuantity,
     );
   }
 
@@ -142,10 +169,12 @@ class SelectedOrder {
       var existingItem = items.firstWhereOrNull((i) => i.id == item.id);
       if (existingItem != null) {
         existingItem.quantity += 1;
+        calculateItemsAndQuantities();
       } else {
         items.add(item);
       }
     }
+    calculateItemsAndQuantities();
   }
 
   // solely for item in the orderDetails which has selection is true
@@ -160,6 +189,7 @@ class SelectedOrder {
       // If the item is not found, add it to the list
       items.add(item);
     }
+    calculateItemsAndQuantities();
   }
 
   void resetDefault() {
@@ -170,6 +200,7 @@ class SelectedOrder {
     orderTime = "Order Time";
     orderDate = "Order Date";
     updateTotalCost(0);
+    // calculateItemsAndQuantities();
   }
 
   void updateSubTotal() {
@@ -222,5 +253,39 @@ class SelectedOrder {
     updateServiceCharge(0);
     updateTotalPrice();
     updateStatus('Paid');
+  }
+
+  void calculateItemsAndQuantities() {
+    // Reset the counts and quantities
+    cakes['itemCount'] = 0;
+    cakes['itemQuantity'] = 0;
+    drinks['itemCount'] = 0;
+    drinks['itemQuantity'] = 0;
+    dish['itemCount'] = 0;
+    dish['itemQuantity'] = 0;
+
+    // Iterate over each item in the items list
+    for (var item in items) {
+      switch (item.category) {
+        case 'Cakes':
+          cakes['itemCount'] = (cakes['itemCount'] ?? 0) + 1;
+          cakes['itemQuantity'] =
+              (cakes['itemQuantity'] ?? 0) + (item.quantity);
+          break;
+        case 'Drinks':
+          drinks['itemCount'] = (drinks['itemCount'] ?? 0) + 1;
+          drinks['itemQuantity'] =
+              (drinks['itemQuantity'] ?? 0) + (item.quantity);
+          break;
+        case 'Dish':
+          dish['itemCount'] = (dish['itemCount'] ?? 0) + 1;
+          dish['itemQuantity'] =
+              (dish['itemQuantity'] ?? 0) + (item.quantity);
+          break;
+        default:
+          // Handle other categories if necessary
+          break;
+      }
+    }
   }
 }
