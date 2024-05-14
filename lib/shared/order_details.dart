@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 
@@ -86,64 +88,36 @@ class _OrderDetailsState extends State<OrderDetails> {
             ),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Cakes (${widget.selectedOrder.cakes['itemCount'].toString()})',
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    Text(
-                      widget.selectedOrder.cakes['itemQuantity'].toString(),
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Dish (${widget.selectedOrder.dish['itemCount'].toString()})',
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    Text(
-                      widget.selectedOrder.dish['itemQuantity'].toString(),
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Drinks (${widget.selectedOrder.drinks['itemCount'].toString()})',
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    Text(
-                      widget.selectedOrder.drinks['itemQuantity'].toString(),
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Cakes ${widget.selectedOrder.cakes['itemQuantity'].toString()}',
+                        style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Dish ${widget.selectedOrder.dish['itemQuantity'].toString()}',
+                        style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Drinks ${widget.selectedOrder.drinks['itemQuantity'].toString()}',
+                        style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -563,7 +537,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 choicePrice =
                                                                     choice[
                                                                         'price'];
-                                                                item.name = choice['name'];
+                                                                item.name =
+                                                                    choice[
+                                                                        'name'];
                                                               });
                                                               calculateTotalPrice(
                                                                   choicePrice,
@@ -1012,7 +988,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 setState(() {
                                   item.quantity++;
                                   widget.selectedOrder.updateTotalCost(0);
-                                  widget.selectedOrder.calculateItemsAndQuantities();
+                                  widget.selectedOrder
+                                      .calculateItemsAndQuantities();
                                   widget.updateOrderStatus!();
                                 });
                               },
@@ -1043,7 +1020,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   if (item.quantity > 1) {
                                     item.quantity--;
                                     widget.selectedOrder.updateTotalCost(0);
-                                    widget.selectedOrder.calculateItemsAndQuantities();
+                                    widget.selectedOrder
+                                        .calculateItemsAndQuantities();
                                     widget.updateOrderStatus!();
                                   }
                                 });
