@@ -170,8 +170,8 @@ class _DineInPageState extends State<DineInPage> {
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
-    print("selectedOrder.items: ${selectedOrder.items}");
-    print("tempCartItems: $tempCartItems");
+    // print("selectedOrder.items: ${selectedOrder.items}");
+    // print("tempCartItems: $tempCartItems");
     // print("selectedOrder.status: ${selectedOrder.status}");
     // print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
     if (selectedOrder.status == "Placed Order" &&
@@ -237,16 +237,14 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void handleYesButtonPress() {
-    print(
-        'Button pressed. Current selectedOrder status: ${selectedOrder.status}');
+    // print('Button pressed. Current selectedOrder status: ${selectedOrder.status}');
     if (selectedOrder.status == "Ordering") {
       setState(() {
         orderCounter--;
         resetSelectedTable();
         selectedOrder.resetDefault();
       });
-      print(
-          'Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
+      // print('Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
     } else if (selectedOrder.status == "Placed Order" &&
         !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       selectedOrder.updateShowEditBtn(true);
@@ -254,8 +252,7 @@ class _DineInPageState extends State<DineInPage> {
           tempCartItems.map((item) => item.copyWith()).toList();
     } else if (selectedOrder.status == "Placed Order") {
       selectedOrder.updateShowEditBtn(true);
-      print(
-          'Menu closed. Current selectedOrder status: ${selectedOrder.status}');
+      // print('Menu closed. Current selectedOrder status: ${selectedOrder.status}');
     }
     handlefreezeMenu();
     updateOrderStatus();

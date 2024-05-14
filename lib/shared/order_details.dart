@@ -76,7 +76,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               },
             ),
           ),
-          // SubTotal and Total Container
+          // Category, Items, Quantity UI
           Container(
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -90,7 +90,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Sub Total',
+                      'Cake',
                       style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -110,7 +110,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Service Charges',
+                      'Dish',
                       style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -125,44 +125,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ],
                 ),
-                // custom doted line.
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  child: LayoutBuilder(
-                    builder:
-                        (BuildContext context, BoxConstraints constraints) {
-                      final boxWidth = constraints.constrainWidth();
-                      const dashWidth = 5.0;
-                      final dashCount = (boxWidth / (2 * dashWidth)).floor();
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(dashCount, (_) {
-                          return Row(
-                            children: <Widget>[
-                              Container(
-                                  width: dashWidth,
-                                  height: 2,
-                                  color: Colors.white),
-                              const SizedBox(width: dashWidth),
-                            ],
-                          );
-                        }),
-                      );
-                    },
-                  ),
-                ),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Total',
+                      'Drinks',
                       style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
                     Text(
-                      widget.selectedOrder.totalPrice.toStringAsFixed(2),
+                      widget.selectedOrder.serviceCharge.toStringAsFixed(2),
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -201,6 +176,131 @@ class _OrderDetailsState extends State<OrderDetails> {
               ],
             ),
           ),
+          // SubTotal, Service Charges & Total UI
+          // Container(
+          //   padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
+          //   margin: const EdgeInsets.symmetric(vertical: 10),
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(14),
+          //     color: const Color(0xff1f2029),
+          //   ),
+          //   child: Column(
+          //     children: [
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           const Text(
+          //             'Sub Total',
+          //             style: TextStyle(
+          //                 fontSize: 22,
+          //                 fontWeight: FontWeight.bold,
+          //                 color: Colors.white),
+          //           ),
+          //           Text(
+          //             widget.selectedOrder.subTotal.toStringAsFixed(2),
+          //             style: const TextStyle(
+          //                 fontSize: 22,
+          //                 fontWeight: FontWeight.bold,
+          //                 color: Colors.white),
+          //           ),
+          //         ],
+          //       ),
+          //       const SizedBox(height: 10),
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           const Text(
+          //             'Service Charges',
+          //             style: TextStyle(
+          //                 fontSize: 22,
+          //                 fontWeight: FontWeight.bold,
+          //                 color: Colors.white),
+          //           ),
+          //           Text(
+          //             widget.selectedOrder.serviceCharge.toStringAsFixed(2),
+          //             style: const TextStyle(
+          //                 fontSize: 22,
+          //                 fontWeight: FontWeight.bold,
+          //                 color: Colors.white),
+          //           ),
+          //         ],
+          //       ),
+          //       // custom doted line.
+          //       Container(
+          //         margin: const EdgeInsets.symmetric(vertical: 20),
+          //         child: LayoutBuilder(
+          //           builder:
+          //               (BuildContext context, BoxConstraints constraints) {
+          //             final boxWidth = constraints.constrainWidth();
+          //             const dashWidth = 5.0;
+          //             final dashCount = (boxWidth / (2 * dashWidth)).floor();
+          //             return Row(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: List.generate(dashCount, (_) {
+          //                 return Row(
+          //                   children: <Widget>[
+          //                     Container(
+          //                         width: dashWidth,
+          //                         height: 2,
+          //                         color: Colors.white),
+          //                     const SizedBox(width: dashWidth),
+          //                   ],
+          //                 );
+          //               }),
+          //             );
+          //           },
+          //         ),
+          //       ),
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           const Text(
+          //             'Total',
+          //             style: TextStyle(
+          //                 fontSize: 22,
+          //                 fontWeight: FontWeight.bold,
+          //                 color: Colors.white),
+          //           ),
+          //           Text(
+          //             widget.selectedOrder.totalPrice.toStringAsFixed(2),
+          //             style: const TextStyle(
+          //                 fontSize: 22,
+          //                 fontWeight: FontWeight.bold,
+          //                 color: Colors.white),
+          //           ),
+          //         ],
+          //       ),
+          //       const SizedBox(height: 24),
+          //       ElevatedButton(
+          //         style: ElevatedButton.styleFrom(
+          //           foregroundColor: Colors.white,
+          //           backgroundColor: widget.orderStatusColor,
+          //           padding: const EdgeInsets.symmetric(vertical: 8),
+          //           shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(8),
+          //           ),
+          //         ),
+          //         onPressed: widget.handleMethod,
+          //         child: Row(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             Icon(widget.orderStatusIcon, size: 32),
+          //             Padding(
+          //               padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+          //               child: Text(
+          //                 widget.orderStatus,
+          //                 style: const TextStyle(
+          //                     fontSize: 22,
+          //                     fontWeight: FontWeight.bold,
+          //                     color: Colors.white),
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
@@ -338,17 +438,18 @@ class _OrderDetailsState extends State<OrderDetails> {
           double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
 
-          double totalPrice = choicePrice + typePrice + meatPrice + meePrice;
+          double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
 
           void calculateTotalPrice(double choicePrice, double typePrice,
               double meatPrice, double meePrice) {
             setState(() {
-              totalPrice = choicePrice + typePrice + meatPrice + meePrice;
+              subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
+              item.price = subTotalPrice;
               print('Price of Selected Choice: $choicePrice');
               print('Price of Selected Type: $typePrice');
               print('Price of Selected Meat: $meatPrice');
               print('Price of Selected Mee: $meePrice');
-              print('Total Price: $totalPrice');
+              print('Total Price: $subTotalPrice');
               print('-------------------------');
             });
           }
@@ -364,7 +465,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                           item.name,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                              fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
                         ),
                         backgroundColor: Colors.black,
                         shadowColor: Colors.black,
@@ -421,7 +524,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       ),
                                       Expanded(
                                         child: Text(
-                                            'RM ${totalPrice.toStringAsFixed(2)}',
+                                            'RM ${subTotalPrice.toStringAsFixed(2)}',
                                             textAlign: TextAlign.right,
                                             style: const TextStyle(
                                               fontSize: 22,
@@ -460,6 +563,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 choicePrice =
                                                                     choice[
                                                                         'price'];
+                                                                item.name = choice['name'];
                                                               });
                                                               calculateTotalPrice(
                                                                   choicePrice,
@@ -762,9 +866,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 fontSize: 18,
                               ),
                             ),
+                            // Sub Total, Service Charges Total OnPressed Function
                             onPressed: () {
-                              widget.selectedOrder.updateItem(item);
-                              Navigator.of(context).pop();
+                              setState(() {
+                                print('total Price is $subTotalPrice');
+                                print('total Price is $item');
+                                item.price = subTotalPrice;
+                                widget.selectedOrder.updateTotalCost(0);
+                                widget.updateOrderStatus!();
+                                widget.selectedOrder.updateItem(item);
+                                Navigator.of(context).pop();
+                              });
                             },
                           ),
                           const SizedBox(width: 10),
@@ -845,7 +957,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         //   ),
                         // ),
                         Text(
-                          item.selection ? "${index + 1}.${item.selectedChoice!['name']}" : '${index + 1}. $name',
+                          '${index + 1}. $name',
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -868,14 +980,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 ),
                               )
                             : const SizedBox.shrink(),
-                        // Text(
-                        //   'RM ${price.toStringAsFixed(2)}',
-                        //   style: TextStyle(
-                        //     fontSize: 20,
-                        //     fontWeight: FontWeight.bold,
-                        //     color: Colors.green[300],
-                        //   ),
-                        // )
+                        Text(
+                          'RM ${price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green[300],
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -899,8 +1011,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                               onTap: () {
                                 setState(() {
                                   item.quantity++;
-                                  widget.updateOrderStatus!();
                                   widget.selectedOrder.updateTotalCost(0);
+                                  widget.updateOrderStatus!();
                                 });
                               },
                               child: CircleAvatar(
@@ -1027,7 +1139,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      item.selection ? item.selectedChoice!['name'] : name,
+                      name,
                       style: const TextStyle(
                         fontSize: 26,
                         color: Colors.white,

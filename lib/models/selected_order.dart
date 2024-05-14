@@ -85,7 +85,7 @@ class SelectedOrder {
     if (item.selection) {
       // print('item.choice from addItem: ${item.choices}');
       if (item.selectedChoice != null) {
-        // item.name = item.selectedChoice!['name'];
+        item.name = item.selectedChoice!['name'];
         item.price = item.selectedChoice!['price'];
       }
       if (item.selectedType != null) {
@@ -148,6 +148,7 @@ class SelectedOrder {
     }
   }
 
+  // solely for item in the orderDetails which has selection is true
   void updateItem(Item item) {
     // Find the index of the item with the same id
     int index = items.indexWhere((i) => i.id == item.id);
