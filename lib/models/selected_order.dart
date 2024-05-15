@@ -123,18 +123,6 @@ class SelectedOrder {
           item.price += typePrice;
         }
       }
-      if (item.selectedMeatPortion != null) {
-        double meatPrice = item.selectedMeatPortion!['price'] ?? 0.00;
-        if (meatPrice > 0.00) {
-          item.price += meatPrice;
-        }
-      }
-      if (item.selectedMeePortion != null) {
-        double meePrice = item.selectedMeePortion!['price'] ?? 0.00;
-        if (meePrice > 0.00) {
-          item.price += meePrice;
-        }
-      }
       // Try to find an item in items with the same properties as the new item
       var existingItem = items.firstWhereOrNull((i) =>
           i.name == item.name &&
@@ -144,27 +132,16 @@ class SelectedOrder {
                   : null) &&
           (i.selectedType != null ? i.selectedType!['name'] : null) ==
               (item.selectedType != null ? item.selectedType!['name'] : null) &&
-          (i.selectedMeatPortion != null
-                  ? i.selectedMeatPortion!['name']
-                  : null) ==
-              (item.selectedMeatPortion != null
-                  ? item.selectedMeatPortion!['name']
-                  : null) &&
-          (i.selectedMeePortion != null
-                  ? i.selectedMeePortion!['name']
-                  : null) ==
-              (item.selectedMeePortion != null
-                  ? item.selectedMeePortion!['name']
-                  : null) &&
           (i.itemRemarks == item.itemRemarks));
       if (existingItem != null) {
         // If an item with the same properties is found, increase its quantity and price
         existingItem.quantity += 1;
       } else {
-        // const uuid = Uuid();
-        // item.id = uuid.v4();
+        const uuid = Uuid();
+        item.id = uuid.v4();
         items.add(item);
-        // How to add item without changing the id?
+        // Why i must have unique id? Because when removing, it is based on the id. 
+        // If there is no same id but different names, details, it will caused problems...
       }
     } else {
       // item selection is false

@@ -137,8 +137,6 @@ class _MenuPageState extends State<MenuPage> {
                     meePortion: item['mee portion'] ?? [],
                     selectedChoice: null,
                     selectedType: null,
-                    selectedMeatPortion: null,
-                    selectedMeePortion: null,
                   );
                 }).toList(),
               ),

@@ -12,8 +12,6 @@ class Item {
   List<Map<String, dynamic>> meePortion;
   Map<String, dynamic>? selectedChoice;
   Map<String, dynamic>? selectedType;
-  Map<String, dynamic>? selectedMeatPortion;
-  Map<String, dynamic>? selectedMeePortion;
   Map<String, dynamic>? itemRemarks;
 
 
@@ -31,8 +29,6 @@ class Item {
     required this.meePortion,
     this.selectedChoice,
     this.selectedType,
-    this.selectedMeatPortion,
-    this.selectedMeePortion,
     this.itemRemarks,
   });
 
@@ -53,8 +49,6 @@ class Item {
         '\tmeePortion: ${meePortion.toString()}\n'
         '\tselectedChoice: $selectedChoice, \n'
         '\tselectedType: $selectedType, \n'
-        '\tselectedMeatPortion: $selectedMeatPortion, \n'
-        '\tselectedMeePortion: $selectedMeePortion,\n'
         '\tmeePortion: ${itemRemarks.toString()}\n'
         '}';
   }
@@ -78,12 +72,6 @@ class Item {
           : null,
       selectedType: selectedType != null
           ? Map<String, dynamic>.from(selectedType!)
-          : null,
-      selectedMeatPortion: selectedMeatPortion != null
-          ? Map<String, dynamic>.from(selectedMeatPortion!)
-          : null,
-      selectedMeePortion: selectedMeePortion != null
-          ? Map<String, dynamic>.from(selectedMeePortion!)
           : null,
       itemRemarks: itemRemarks != null
           ? Map<String, dynamic>.from(itemRemarks!)

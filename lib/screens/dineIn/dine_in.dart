@@ -140,7 +140,7 @@ class _DineInPageState extends State<DineInPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green[700],
-          duration: const Duration(seconds: 1),
+          duration: const Duration(milliseconds: 100),
           content: Container(
             alignment: Alignment.centerRight,
             child: Row(
