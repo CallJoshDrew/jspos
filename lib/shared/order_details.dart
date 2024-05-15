@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 
@@ -460,7 +461,6 @@ class _OrderDetailsState extends State<OrderDetails> {
               onPressed: () {
                 setState(() {
                   String key = data['id'].toString();
-                  item.itemRemarks ??= {};
                   if (item.itemRemarks!.containsKey(key)) {
                     // If the remark is already in itemRemarks, remove it
                     item.itemRemarks!.remove(key);
@@ -890,7 +890,53 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               : Container(), // Empty container
                                         ),
                                       ],
-                                    )
+                                    ),
+                                    const SizedBox(height: 20),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // First row
+                                    const Text(
+                                      'Press the buttons to add remarks',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    // remarks buttons
+                                    Wrap(
+                                      spacing: 8.0, // gap between adjacent chips
+                                      runSpacing: 4.0, // gap between lines
+                                      children: remarksData
+                                          .map((data) => Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 6, 10, 6),
+                                                child: remarkButton(data),
+                                              ))
+                                          .toList(),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    const TextField(
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black), // Set text color to black
+                                      decoration: InputDecoration(
+                                        fillColor: Colors
+                                            .white, // Set background color to white
+                                        filled: true, // Don't forget this
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Write comments here',
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors
+                                                  .grey), // Set border color to grey when focused
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                   ],
                                 ),
                               ),

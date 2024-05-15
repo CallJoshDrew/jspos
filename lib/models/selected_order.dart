@@ -155,16 +155,19 @@ class SelectedOrder {
                   : null) ==
               (item.selectedMeePortion != null
                   ? item.selectedMeePortion!['name']
-                  : null));
+                  : null) &&
+          (i.itemRemarks == item.itemRemarks));
       if (existingItem != null) {
         // If an item with the same properties is found, increase its quantity and price
         existingItem.quantity += 1;
       } else {
-        const uuid = Uuid();
-        item.id = uuid.v4();
+        // const uuid = Uuid();
+        // item.id = uuid.v4();
         items.add(item);
+        // How to add item without changing the id?
       }
     } else {
+      // item selection is false
       // Try to find an item in items with the same id as the new item
       var existingItem = items.firstWhereOrNull((i) => i.id == item.id);
       if (existingItem != null) {
@@ -279,8 +282,7 @@ class SelectedOrder {
           break;
         case 'Dish':
           dish['itemCount'] = (dish['itemCount'] ?? 0) + 1;
-          dish['itemQuantity'] =
-              (dish['itemQuantity'] ?? 0) + (item.quantity);
+          dish['itemQuantity'] = (dish['itemQuantity'] ?? 0) + (item.quantity);
           break;
         default:
           // Handle other categories if necessary

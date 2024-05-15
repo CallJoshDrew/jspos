@@ -68,7 +68,7 @@ class ProductItemState extends State<ProductItem> {
               widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null,
           selectedMeePortion:
               widget.meePortion.isNotEmpty ? widget.meePortion[0] : null,
-          itemRemarks: itemRemarks,
+          
         ); //this is creating a new instance of item with the required field.
         print('Product Items - item choices: ${widget.choices}');
         Map<String, dynamic>? selectedChoice =
@@ -602,6 +602,7 @@ class ProductItemState extends State<ProductItem> {
                             ),
                           ),
                           onPressed: () {
+                            itemRemarks = {};
                             widget.onItemAdded(item);
                             Navigator.of(context).pop();
                           },
