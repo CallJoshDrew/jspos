@@ -14,23 +14,26 @@ class Item {
   Map<String, dynamic>? selectedType;
   Map<String, dynamic>? selectedMeatPortion;
   Map<String, dynamic>? selectedMeePortion;
+  Map<String, dynamic>? itemRemarks;
+
 
   Item({
     required this.id,
     required this.name,
+    required this.price,
     required this.category,
     required this.quantity,
-    required this.price,
     required this.image,
+    this.selection = false,
     required this.choices,
     required this.types,
     required this.meatPortion,
     required this.meePortion,
-    this.selection = false,
     this.selectedChoice,
     this.selectedType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
+    this.itemRemarks,
   });
 
   // make sure you update this so that it print out all the fields
@@ -44,14 +47,15 @@ class Item {
         '\tquantity: $quantity,  \n'
         '\timage: $image, \n'
         '\tselection: $selection, \n'
-        '\tselectedChoice: $selectedChoice, \n'
-        '\tselectedType: $selectedType, \n'
-        '\tselectedMeatPortion: $selectedMeatPortion, \n'
-        '\tselectedMeePortion: $selectedMeePortion,\n'
         '\tchoices: ${choices.toString()},\n'
         '\ttypes: ${types.toString()},\n'
         '\tmeatPortion: ${meatPortion.toString()},\n'
         '\tmeePortion: ${meePortion.toString()}\n'
+        '\tselectedChoice: $selectedChoice, \n'
+        '\tselectedType: $selectedType, \n'
+        '\tselectedMeatPortion: $selectedMeatPortion, \n'
+        '\tselectedMeePortion: $selectedMeePortion,\n'
+        '\tmeePortion: ${itemRemarks.toString()}\n'
         '}';
   }
 
@@ -80,6 +84,9 @@ class Item {
           : null,
       selectedMeePortion: selectedMeePortion != null
           ? Map<String, dynamic>.from(selectedMeePortion!)
+          : null,
+      itemRemarks: itemRemarks != null
+          ? Map<String, dynamic>.from(itemRemarks!)
           : null,
     );
   }
