@@ -117,13 +117,15 @@ class _DineInPageState extends State<DineInPage> {
           if (order != null) {
             order.showEditBtn = true;
             selectedOrder = order;
-            tempCartItems = List.from(selectedOrder.items);
+            tempCartItems = selectedOrder.items.map((item) => item.copyWith()).toList();
             // tempCartItems = selectedOrder.items.map((item) => item.copyWith()).toList(); use this if above got issue of references.
 
             // Print orderNumber and selectedOrder details to the console
             // print('Existing orderNumber: $orderNumber');
-            // print('selectedOrder details: $selectedOrder');
-            // print('tempCartItems: $tempCartItems');
+            print('Selected Table: ');
+            print('selectedOrder items: ${selectedOrder.items}');
+            print('tempCartItems: $tempCartItems');
+            print('-------------------------');
           }
         }
       }
@@ -175,8 +177,8 @@ class _DineInPageState extends State<DineInPage> {
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
-    // print("selectedOrder.items: ${selectedOrder.items}");
-    // print("tempCartItems: $tempCartItems");
+    print("selectedOrder.items: ${selectedOrder.items}");
+    print("tempCartItems: $tempCartItems");
     // print("selectedOrder.status: ${selectedOrder.status}");
     // print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
     if (selectedOrder.status == "Placed Order" &&
@@ -194,26 +196,37 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
-    // If the lengths of the lists are not equal, the lists are not equal
-    if (list1.length != list2.length) {
+  // If the lengths of the lists are not equal, the lists are not equal
+  if (list1.length != list2.length) {
+    print('Lists have different lengths');
+    return false;
+  }
+
+  // Sort the lists by item name
+  list1.sort((a, b) => a.name.compareTo(b.name));
+  list2.sort((a, b) => a.name.compareTo(b.name));
+
+  // Compare the items in the sorted lists
+  for (int i = 0; i < list1.length; i++) {
+    print('Comparing item ${i + 1}');
+    print('List 1 item: ${list1[i].name}, quantity: ${list1[i].quantity}');
+    print('List 2 item: ${list2[i].name}, quantity: ${list2[i].quantity}');
+
+    if (list1[i].name != list2[i].name) {
+      print('Items have different names');
       return false;
     }
-    // Sort the lists by item id
-    list1.sort((a, b) => a.id.compareTo(b.id));
-    list2.sort((a, b) => a.id.compareTo(b.id));
-    // Compare the items in the sorted lists
-    for (int i = 0; i < list1.length; i++) {
-      if (list1[i].id != list2[i].id ||
-          list1[i].name != list2[i].name ||
-          list1[i].quantity !=
-              list2[i]
-                  .quantity /* add other property comparisons as needed */) {
-        return false;
-      }
+    if (list1[i].quantity != list2[i].quantity) {
+      print('Items have different quantities');
+      return false;
     }
-    // If no differences were found, the lists are equal
-    return true;
   }
+
+  // If no differences were found, the lists are equal
+  print('No differences found, lists are equal');
+  return true;
+}
+
 
   void _handleCloseMenu() {
     if (selectedOrder.status == "Ordering" && selectedOrder.items.isEmpty) {

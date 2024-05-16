@@ -123,14 +123,14 @@ class SelectedOrder {
       // Try to find an item in items with the same properties as the new item
       var existingItem = items.firstWhereOrNull((i) {
         // Add the print statements here
-        print('Existing item remarks: ${i.itemRemarks}');
-        print('New item remarks: ${item.itemRemarks}');
-        print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
-        print('New item remarks type: ${item.itemRemarks.runtimeType}');
+        // print('Existing item remarks: ${i.itemRemarks}');
+        // print('New item remarks: ${item.itemRemarks}');
+        // print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
+        // print('New item remarks type: ${item.itemRemarks.runtimeType}');
 
         // Use MapEquality().equals for deep equality check
         bool areRemarksEqual = MapEquality().equals(i.itemRemarks, item.itemRemarks);
-        print('Are remarks equal: $areRemarksEqual');
+        // print('Are remarks equal: $areRemarksEqual');
 
         return i.name == item.name &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
