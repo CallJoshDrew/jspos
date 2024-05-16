@@ -116,6 +116,8 @@ class ProductItemState extends State<ProductItem> {
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
+              padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(
+                  20, 10, 20, 10)), // Add padding inside the button
             ),
             onPressed: () {
               setState(() {
@@ -417,13 +419,20 @@ class ProductItemState extends State<ProductItem> {
                                     const SizedBox(height: 20),
                                     TextField(
                                       controller: _controller,
-                                      style:
-                                          const TextStyle(color: Colors.black),
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold),
                                       decoration: const InputDecoration(
                                         fillColor: Colors.white,
                                         filled: true,
                                         border: OutlineInputBorder(),
-                                        labelText: 'Write comments here',
+                                        labelText:
+                                            'Write comments or remarks here',
+                                        labelStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold),
                                         focusedBorder: OutlineInputBorder(
                                           borderSide:
                                               BorderSide(color: Colors.grey),
@@ -445,7 +454,7 @@ class ProductItemState extends State<ProductItem> {
                                           print(item.itemRemarks);
                                         });
                                       },
-                                    ),
+                                    )
                                   ],
                                 ),
                               ],

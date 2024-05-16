@@ -459,6 +459,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
+                padding: MaterialStateProperty.all(
+                    const EdgeInsets.fromLTRB(20, 10, 20, 10)), //
               ),
               onPressed: () {
                 setState(() {
@@ -777,21 +779,46 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         TextField(
                                           controller: _controller,
                                           style: const TextStyle(
-                                              color: Colors
-                                                  .black), // Set text color to black
+                                              color: Colors.black,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold),
                                           decoration: const InputDecoration(
-                                            fillColor: Colors
-                                                .white, // Set background color to white
-                                            filled: true, // Don't forget this
+                                            fillColor: Colors.white,
+                                            filled: true,
                                             border: OutlineInputBorder(),
-                                            labelText: 'Write comments here',
+                                            labelText:
+                                                'Write comments or remarks here',
+                                            labelStyle: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold),
                                             focusedBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                  color: Colors
-                                                      .grey), // Set border color to grey when focused
+                                                  color: Colors.grey),
                                             ),
                                           ),
-                                        ),
+                                          onChanged: (text) {
+                                            // This callback is called each time the text changes
+                                            setState(() {
+                                              if (text.isEmpty) {
+                                                // If the text is empty, remove the key '100' from itemRemarks
+                                                item.itemRemarks!.remove('100');
+                                              } else {
+                                                // Add the user's comment with a key of '100'
+                                                item.itemRemarks!['100'] = text;
+                                              }
+                                              SplayTreeMap<String, dynamic>
+                                                  sortedItemRemarks =
+                                                  SplayTreeMap<String, dynamic>(
+                                                (a, b) => int.parse(a)
+                                                    .compareTo(int.parse(b)),
+                                              )..addAll(item.itemRemarks!);
+                                              item.itemRemarks =
+                                                  sortedItemRemarks;
+                                              print(item.itemRemarks);
+                                            });
+                                          },
+                                        )
                                       ],
                                     ),
                                   ],
@@ -915,29 +942,30 @@ class _OrderDetailsState extends State<OrderDetails> {
                           ),
                         ),
                         const SizedBox(width: 10.0),
-                        item.selectedType != null && item.category == "Drinks"
+                        item.selectedType != null && item.category != "Cakes"
                             ? Padding(
                                 padding: const EdgeInsets.only(right: 10.0),
                                 child: Text(
-                                  item.selectedType!['name'],
+                                  "( ${item.selectedType!['name']} )",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: item.selectedType!['name'] == 'Hot'
-                                        ? Colors.orangeAccent
-                                        : Colors.green[500],
+                                    color: item.selectedType!['name'] == 'Cold'
+                                        ? Colors.green[500]
+                                        : Colors.orangeAccent,
                                   ),
                                 ),
                               )
                             : const SizedBox.shrink(),
-                        Text(
-                          'RM ${price.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green[300],
-                          ),
-                        )
+                        // Showing the Item Price UI
+                        // Text(
+                        //   'RM ${price.toStringAsFixed(2)}',
+                        //   style: TextStyle(
+                        //     fontSize: 20,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: Colors.green[300],
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
@@ -1019,11 +1047,20 @@ class _OrderDetailsState extends State<OrderDetails> {
             // Remarks & Comments UI
             Padding(
               padding: EdgeInsets.only(
-                  top: item.selection && item.itemRemarks != null ? 10.0 : 0.0,
-                  left: item.selection && item.itemRemarks != null ? 8.0 : 0.0),
+                  top: item.selection &&
+                          item.itemRemarks != null &&
+                          item.itemRemarks?.isNotEmpty == true
+                      ? 10.0
+                      : 0.0,
+                  left: item.selection &&
+                          item.itemRemarks != null &&
+                          item.itemRemarks?.isNotEmpty == true
+                      ? 8.0
+                      : 0.0),
               child: Row(
                 children: [
-                  item.itemRemarks != null
+                  item.itemRemarks != null &&
+                          item.itemRemarks?.isNotEmpty == true
                       ? Text(
                           item.itemRemarks?.values.join(', ') ?? '',
                           style: const TextStyle(
@@ -1035,7 +1072,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       : const SizedBox.shrink(),
                 ],
               ),
-            ),
+            )
           ],
         ),
       ),
