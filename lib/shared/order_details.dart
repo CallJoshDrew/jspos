@@ -975,7 +975,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ? Text(
                         'x ${item.quantity}',
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

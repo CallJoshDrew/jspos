@@ -220,6 +220,10 @@ class _DineInPageState extends State<DineInPage> {
       print('Items have different quantities');
       return false;
     }
+     if (list1[i].itemRemarks != list2[i].itemRemarks) {
+      print('Items have different itemRemarks');
+      return false;
+    }
   }
 
   // If no differences were found, the lists are equal
