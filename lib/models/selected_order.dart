@@ -110,46 +110,48 @@ class SelectedOrder {
   void addItem(Item item) {
     // If the item.selection is true, change the name and price of the item
     if (item.selection) {
-      // print('item.choice from addItem: ${item.choices}');
       if (item.selectedChoice != null) {
         item.name = item.selectedChoice!['name'];
         item.price = item.selectedChoice!['price'];
       }
       if (item.selectedType != null) {
-        double typePrice = item.selectedType!['price'] ??
-            0.00; // Use 0.00 if selectedType.price is null
+        double typePrice = item.selectedType!['price'] ?? 0.00;
         if (typePrice > 0.00) {
-          // Only add typePrice if it's greater than 0.00
           item.price += typePrice;
         }
       }
       // Try to find an item in items with the same properties as the new item
-      var existingItem = items.firstWhereOrNull((i) =>
-          i.name == item.name &&
-          (i.selectedChoice != null ? i.selectedChoice!['name'] : null) ==
-              (item.selectedChoice != null
-                  ? item.selectedChoice!['name']
-                  : null) &&
-          (i.selectedType != null ? i.selectedType!['name'] : null) ==
-              (item.selectedType != null ? item.selectedType!['name'] : null) &&
-          (i.itemRemarks == item.itemRemarks));
+      var existingItem = items.firstWhereOrNull((i) {
+        // Add the print statements here
+        print('Existing item remarks: ${i.itemRemarks}');
+        print('New item remarks: ${item.itemRemarks}');
+        print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
+        print('New item remarks type: ${item.itemRemarks.runtimeType}');
+
+        // Use MapEquality().equals for deep equality check
+        bool areRemarksEqual = MapEquality().equals(i.itemRemarks, item.itemRemarks);
+        print('Are remarks equal: $areRemarksEqual');
+
+        return i.name == item.name &&
+            i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
+            i.selectedType?['name'] == item.selectedType?['name'] &&
+            areRemarksEqual; // Use the result of the deep equality check
+      });
+
       if (existingItem != null) {
-        // If an item with the same properties is found, increase its quantity and price
+        // If an item with the same properties is found, increase its quantity
         existingItem.quantity += 1;
       } else {
         const uuid = Uuid();
         item.id = uuid.v4();
         items.add(item);
-        // Why i must have unique id? Because when removing, it is based on the id. 
-        // If there is no same id but different names, details, it will caused problems...
       }
     } else {
       // item selection is false
       // Try to find an item in items with the same id as the new item
-      var existingItem = items.firstWhereOrNull((i) => i.id == item.id);
+      var existingItem = items.firstWhereOrNull((i) => i.name == item.name);
       if (existingItem != null) {
         existingItem.quantity += 1;
-        calculateItemsAndQuantities();
       } else {
         items.add(item);
       }

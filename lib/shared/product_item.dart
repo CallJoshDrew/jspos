@@ -58,8 +58,6 @@ class ProductItemState extends State<ProductItem> {
           selection: widget.selection,
           choices: widget.choices,
           types: widget.types,
-          meatPortion: widget.meatPortion,
-          meePortion: widget.meePortion,
           selectedChoice: widget.choices.isNotEmpty ? widget.choices[0] : null,
           selectedType: widget.types.isNotEmpty ? widget.types[0] : null,
         ); //this is creating a new instance of item with the required field.
@@ -121,6 +119,7 @@ class ProductItemState extends State<ProductItem> {
             ),
             onPressed: () {
               setState(() {
+                print(itemRemarks);
                 String key = data['id'].toString();
                 if (itemRemarks.containsKey(key)) {
                   // If the remark is already in itemRemarks, remove it
@@ -132,14 +131,13 @@ class ProductItemState extends State<ProductItem> {
 
                 // Add the user's comment with a key of '100'
                 itemRemarks['100'] = _controller.text;
-
                 SplayTreeMap<String, dynamic> sortedItemRemarks =
                     SplayTreeMap<String, dynamic>(
                   (a, b) => int.parse(a).compareTo(int.parse(b)),
                 )..addAll(itemRemarks);
                 itemRemarks = sortedItemRemarks;
                 item.itemRemarks = itemRemarks;
-                print(itemRemarks);
+                print(item.itemRemarks);
               });
             },
             child: Text(
@@ -419,21 +417,34 @@ class ProductItemState extends State<ProductItem> {
                                     const SizedBox(height: 20),
                                     TextField(
                                       controller: _controller,
-                                      style: const TextStyle(
-                                          color: Colors
-                                              .black), // Set text color to black
+                                      style:
+                                          const TextStyle(color: Colors.black),
                                       decoration: const InputDecoration(
-                                        fillColor: Colors
-                                            .white, // Set background color to white
-                                        filled: true, // Don't forget this
+                                        fillColor: Colors.white,
+                                        filled: true,
                                         border: OutlineInputBorder(),
                                         labelText: 'Write comments here',
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors
-                                                  .grey), // Set border color to grey when focused
+                                          borderSide:
+                                              BorderSide(color: Colors.grey),
                                         ),
                                       ),
+                                      onChanged: (text) {
+                                        // This callback is called each time the text changes
+                                        setState(() {
+                                          // Add the user's comment with a key of '100'
+                                          itemRemarks['100'] = text;
+                                          SplayTreeMap<String, dynamic>
+                                              sortedItemRemarks =
+                                              SplayTreeMap<String, dynamic>(
+                                            (a, b) => int.parse(a)
+                                                .compareTo(int.parse(b)),
+                                          )..addAll(itemRemarks);
+                                          itemRemarks = sortedItemRemarks;
+                                          item.itemRemarks = itemRemarks;
+                                          print(item.itemRemarks);
+                                        });
+                                      },
                                     ),
                                   ],
                                 ),
@@ -460,6 +471,7 @@ class ProductItemState extends State<ProductItem> {
                           ),
                           onPressed: () {
                             itemRemarks = {};
+                            _controller.text = '';
                             widget.onItemAdded(item);
                             Navigator.of(context).pop();
                           },
