@@ -44,7 +44,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                         SingleChildScrollView(
                           child: Container(
                             padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                            margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            margin: const EdgeInsets.fromLTRB(10, 0, 15, 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
                               color: const Color(0xff1f2029),
@@ -217,7 +217,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                             MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'x ${widget.payment.selectedOrder.items[index].quantity} ',
+                                            '${widget.payment.selectedOrder.items[index].quantity} ',
                                             style: const TextStyle(
                                               fontSize: 24,
                                               fontWeight: FontWeight.bold,
@@ -324,7 +324,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           EdgeInsets.only(top: 16, bottom: 16),
                                       child: Center(
                                         child: Text(
-                                          'Total Items',
+                                          'Cakes',
                                           style: TextStyle(
                                             fontSize: 24,
                                             fontWeight: FontWeight.bold,
@@ -340,7 +340,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           EdgeInsets.only(top: 16, bottom: 16),
                                       child: Center(
                                         child: Text(
-                                          'Total Quantity',
+                                          'Dish',
                                           style: TextStyle(
                                             fontSize: 24,
                                             fontWeight: FontWeight.bold,
@@ -356,7 +356,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           EdgeInsets.only(top: 16, bottom: 16),
                                       child: Center(
                                         child: Text(
-                                          'Payment',
+                                          'Drinks',
                                           style: TextStyle(
                                             fontSize: 24,
                                             fontWeight: FontWeight.bold,
