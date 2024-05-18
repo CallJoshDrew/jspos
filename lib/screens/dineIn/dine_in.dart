@@ -5,6 +5,7 @@ import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
+import 'package:jspos/shared/make_payment.dart';
 
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
@@ -259,6 +260,7 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void handleYesButtonPress() {
+    // yes to cancel orders or cancel changes
     // print('Button pressed. Current selectedOrder status: ${selectedOrder.status}');
     if (selectedOrder.status == "Ordering") {
       setState(() {
@@ -312,10 +314,18 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void handlePaymentBtn() {
-    setState(() {
-      selectedOrder.makePayment();
-      updateOrderStatus();
-    });
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => MakePaymentPage(
+        payment: MakePayment(selectedOrder: selectedOrder),
+      ),
+    ),
+  );
+    // setState(() {
+    //   selectedOrder.makePayment();
+    //   updateOrderStatus();
+    // }); Need to put this in the Payment Page after confirm payment. 
   }
 
   //
