@@ -67,7 +67,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
 
   double roundBill(double bill) {
     double fractionalPart = bill - bill.floor();
-    if (fractionalPart <= 0.40) {
+    if (fractionalPart <= 0.50) {
       return bill.floorToDouble();
     } else {
       return bill;
@@ -351,7 +351,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          '(${(originalBill - adjustedBill).toStringAsFixed(2)})',
+                                          '- ${(originalBill - adjustedBill).toStringAsFixed(2)}',
                                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -435,7 +435,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          _change.toStringAsFixed(2),
+                                          '- ${_change.toStringAsFixed(2)}',
                                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -452,10 +452,20 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                     Row(
                                       children: [
                                         const Expanded(
-                                          child: Text(
-                                            "Allow Rounding Adjustment?",
-                                            style: TextStyle(fontSize: 24, color: Colors.white),
-                                            textAlign: TextAlign.start,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Allow Rounding Adjustment?",
+                                                style: TextStyle(fontSize: 24, color: Colors.white),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              Text(
+                                                "- Less than 0.50",
+                                                style: TextStyle(fontSize: 20, color: Colors.white),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         ToggleButtons(
@@ -500,7 +510,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                     const Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
-                                        "Please Choose Payment Method",
+                                        "Payment Method",
                                         style: TextStyle(fontSize: 24, color: Colors.white),
                                         textAlign: TextAlign.start,
                                       ),
@@ -536,24 +546,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                         );
                                       }).toList(),
                                     ),
-                                    const SizedBox(height: 40),
+                                    const SizedBox(height: 30),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Please Enter the Amount Received",
-                                              style: TextStyle(fontSize: 24, color: Colors.white),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            Text(
-                                              "Amount Change: RM ${_change.toStringAsFixed(2)}",
-                                              style: const TextStyle(fontSize: 24, color: Colors.green),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ],
+                                        const Text(
+                                          "Please Enter the Amount Received",
+                                          style: TextStyle(fontSize: 24, color: Colors.white),
+                                          textAlign: TextAlign.start,
                                         ),
                                         Container(
                                           width: 200,
