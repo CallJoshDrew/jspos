@@ -596,7 +596,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               onPressed: () {
                                 setState(() {
                                   // Add the user's comment with a key of '100'
-                                  if (item.itemRemarks != null && comment != null) {
+                                  if (item.itemRemarks != {} && comment != null && _controller.text.trim() != '') {
                                     itemRemarks['100'] = _controller.text;
                                   }
                                   SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
