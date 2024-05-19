@@ -760,6 +760,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           }
         },
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -930,9 +931,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                   left: item.selection &&
                           item.itemRemarks != null &&
                           item.itemRemarks?.isNotEmpty == true
-                      ? 8.0
+                      ? 2.0
                       : 0.0),
-              child: Row(
+              child: Wrap(
                 children: [
                   item.itemRemarks != null &&
                           item.itemRemarks?.isNotEmpty == true

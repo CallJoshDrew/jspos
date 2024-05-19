@@ -129,7 +129,8 @@ class SelectedOrder {
         // print('New item remarks type: ${item.itemRemarks.runtimeType}');
 
         // Use MapEquality().equals for deep equality check
-        bool areRemarksEqual = MapEquality().equals(i.itemRemarks, item.itemRemarks);
+        bool areRemarksEqual =
+            MapEquality().equals(i.itemRemarks, item.itemRemarks);
         // print('Are remarks equal: $areRemarksEqual');
 
         return i.name == item.name &&

@@ -433,7 +433,7 @@ class _DineInPageState extends State<DineInPage> {
       } else if (selectedOrder.status == "Ordering" &&
           selectedOrder.items.isNotEmpty) {
         orderStatus = "Place Order & Print";
-        orderStatusColor = Colors.deepOrange;
+        orderStatusColor = Colors.green[800]!;
         handleMethod = handlePlaceOrderBtn;
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" &&

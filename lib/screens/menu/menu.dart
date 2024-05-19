@@ -32,7 +32,7 @@ class _MenuPageState extends State<MenuPage> {
         },
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(Colors.orange[800]!),
+              MaterialStateProperty.all<Color>(Colors.green[800]!),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius:
