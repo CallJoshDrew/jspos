@@ -298,7 +298,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                       Expanded(
                         flex: 4,
                         child: Container(
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                          padding: const EdgeInsets.only(bottom: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
                             color: const Color(0xff1f2029),
@@ -444,222 +444,225 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  const Expanded(
-                                    child: Text(
-                                      "Allow Rounding Adjustment?",
-                                      style: TextStyle(fontSize: 24, color: Colors.white),
-                                      textAlign: TextAlign.start,
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(20, 0, 10, 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Expanded(
+                                          child: Text(
+                                            "Allow Rounding Adjustment?",
+                                            style: TextStyle(fontSize: 24, color: Colors.white),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        ToggleButtons(
+                                          onPressed: (int index) {
+                                            setState(() {
+                                              for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                                                if (buttonIndex == index) {
+                                                  isSelected[buttonIndex] = true;
+                                                  if (index == 0) {
+                                                    adjustedBill = roundBill(originalBill);
+                                                    isRoundingApplied = true;
+                                                  } else {
+                                                    adjustedBill = originalBill;
+                                                    isRoundingApplied = false;
+                                                  }
+                                                } else {
+                                                  isSelected[buttonIndex] = false;
+                                                }
+                                              }
+                                            });
+                                          },
+                                          isSelected: isSelected,
+                                          fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
+                                          selectedBorderColor: Colors.green,
+                                          borderRadius: BorderRadius.circular(4),
+                                          borderWidth: 1.0,
+                                          borderColor: Colors.white,
+                                          children: const <Widget>[
+                                            Padding(
+                                              padding: EdgeInsets.fromLTRB(30, 6, 30, 6),
+                                              child: Text('Yes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.fromLTRB(30, 6, 30, 6),
+                                              child: Text('No', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  ToggleButtons(
-                                    onPressed: (int index) {
-                                      setState(() {
-                                        for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                          if (buttonIndex == index) {
-                                            isSelected[buttonIndex] = true;
-                                            if (index == 0) {
-                                              adjustedBill = roundBill(originalBill);
-                                              isRoundingApplied = true;
-                                            } else {
-                                              adjustedBill = originalBill;
-                                              isRoundingApplied = false;
-                                            }
-                                          } else {
-                                            isSelected[buttonIndex] = false;
-                                          }
-                                        }
-                                      });
-                                    },
-                                    isSelected: isSelected,
-                                    fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
-                                    selectedBorderColor: Colors.green,
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderWidth: 1.0,
-                                    borderColor: Colors.white,
-                                    children: const <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                        child: Text('Yes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                                    const SizedBox(height: 20),
+                                    const Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: Text(
+                                        "Please Choose Payment Method",
+                                        style: TextStyle(fontSize: 24, color: Colors.white),
+                                        textAlign: TextAlign.start,
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                        child: Text('No', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  "Please Choose Payment Method",
-                                  style: TextStyle(fontSize: 24, color: Colors.white),
-                                  textAlign: TextAlign.start,
+                                    ),
+                                    Wrap(
+                                      alignment: WrapAlignment.start,
+                                      spacing: 10.0,
+                                      runSpacing: 10,
+                                      children: <String>['Cash', 'DuitNow', 'FoodPanda', 'GrabFood', 'ShopeeFood'].map((String value) {
+                                        return ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: selectedPaymentMethod == value ? Colors.white : Colors.black87,
+                                            backgroundColor: selectedPaymentMethod == value ? Colors.green : Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedPaymentMethod = value;
+                                              widget.payment.selectedOrder.paymentMethod = value;
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                fontSize: 22,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                    const SizedBox(height: 40),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              "Please Enter the Amount Received",
+                                              style: TextStyle(fontSize: 24, color: Colors.white),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            Text(
+                                              "Amount Change: RM ${_change.toStringAsFixed(2)}",
+                                              style: const TextStyle(fontSize: 24, color: Colors.green),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          width: 200,
+                                          height: 60,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(10), // Set the border radius here.
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextField(
+                                              controller: _controller,
+                                              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                              keyboardType: TextInputType.number,
+                                              textAlign: TextAlign.center,
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                                labelStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _calculateChange();
+                                                  _controller.text = value;
+                                                  _controller.selection = TextSelection.fromPosition(
+                                                    TextPosition(offset: _controller.text.length),
+                                                  );
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 40),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end, // This will space the buttons evenly in the row.
+                                      children: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green, // This sets the background color.
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10), // This sets the border radius.
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text('Are you sure?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+                                                    ),
+                                                    TextButton(
+                                                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.white)),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('Cancel', style: TextStyle(color: Colors.orange)),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Accept',
+                                              style: TextStyle(fontSize: 24, color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 20),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10), // This sets the border radius.
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Cancel',
+                                              style: TextStyle(fontSize: 24, color: Colors.black),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Wrap(
-                                alignment: WrapAlignment.start,
-                                spacing: 10.0,
-                                runSpacing: 10,
-                                children: <String>['Cash', 'DuitNow', 'FoodPanda', 'GrabFood', 'ShopeeFood'].map((String value) {
-                                  return ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: selectedPaymentMethod == value ? Colors.white : Colors.black87,
-                                      backgroundColor: selectedPaymentMethod == value ? Colors.green : Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedPaymentMethod = value;
-                                        widget.payment.selectedOrder.paymentMethod = value;
-                                      });
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        value,
-                                        style: const TextStyle(
-                                          fontSize: 22,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                              const SizedBox(height: 40),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Please Enter the Amount Received",
-                                        style: TextStyle(fontSize: 24, color: Colors.white),
-                                        textAlign: TextAlign.start,
-                                      ),
-                                      Text(
-                                        "Amount Change: RM ${_change.toStringAsFixed(2)}",
-                                        style: const TextStyle(fontSize: 24, color: Colors.green),
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    width: 200,
-                                    height: 60,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10), // Set the border radius here.
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextField(
-                                        controller: _controller,
-                                        style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          labelStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          // focusedBorder: OutlineInputBorder(
-                                          //   borderSide:
-                                          //       BorderSide(color: Colors.white),
-                                          // ),
-                                        ),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _calculateChange();
-                                            _controller.text = value;
-                                            _controller.selection = TextSelection.fromPosition(
-                                              TextPosition(offset: _controller.text.length),
-                                            );
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 60),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end, // This will space the buttons evenly in the row.
-                                children: [
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green, // This sets the background color.
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10), // This sets the border radius.
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('Are you sure?'),
-                                            actions: [
-                                              TextButton(
-                                                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('Confirm', style: TextStyle(color: Colors.white)),
-                                              ),
-                                              TextButton(
-                                                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.white)),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('Cancel', style: TextStyle(color: Colors.orange)),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Accept',
-                                        style: TextStyle(fontSize: 24, color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 20),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10), // This sets the border radius.
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Cancel',
-                                        style: TextStyle(fontSize: 24, color: Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
                             ],
                           ),
                         ),
