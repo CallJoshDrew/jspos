@@ -1,5 +1,6 @@
 {
     "editor.wordWrap": "on",
-    "editor.wordWrapColumn": 300,
-    "notebook.output.wordWrap": true
+    "editor.wordWrapColumn": 1000,
+    "notebook.output.wordWrap": true,
+    "editor.defaultFormatter": "Dart-Code.flutter"
 }
