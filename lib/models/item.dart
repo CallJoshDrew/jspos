@@ -48,7 +48,7 @@ class Item {
   }
 
   // A method to create a copy of the Item
-  Item copyWith() {
+  Item copyWith({Map<String, dynamic>? itemRemarks}) {
     return Item(
       id: id,
       name: name,
@@ -65,9 +65,7 @@ class Item {
       selectedType: selectedType != null
           ? Map<String, dynamic>.from(selectedType!)
           : null,
-      itemRemarks: itemRemarks != null
-          ? Map<String, dynamic>.from(itemRemarks!)
-          : null,
+      itemRemarks: itemRemarks,
     );
   }
 }

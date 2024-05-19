@@ -10,8 +10,7 @@ import 'package:jspos/shared/make_payment.dart';
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
   final Orders orders;
-  const DineInPage(
-      {super.key, required this.freezeSideMenu, required this.orders});
+  const DineInPage({super.key, required this.freezeSideMenu, required this.orders});
   @override
   State<DineInPage> createState() => _DineInPageState();
 }
@@ -118,11 +117,7 @@ class _DineInPageState extends State<DineInPage> {
           if (order != null) {
             order.showEditBtn = true;
             selectedOrder = order;
-            tempCartItems = selectedOrder.items.map((item) => item.copyWith()).toList();
-            // tempCartItems = selectedOrder.items.map((item) => item.copyWith()).toList(); use this if above got issue of references.
-
-            // Print orderNumber and selectedOrder details to the console
-            // print('Existing orderNumber: $orderNumber');
+            tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             print('Selected Table: ');
             print('selectedOrder items: ${selectedOrder.items}');
             print('tempCartItems: $tempCartItems');
@@ -154,8 +149,7 @@ class _DineInPageState extends State<DineInPage> {
                   color: Colors.white,
                   size: 28,
                 ),
-                const SizedBox(
-                    width: 5), // provide some space between the icon and text
+                const SizedBox(width: 5), // provide some space between the icon and text
                 Text(
                   "${item.name}!",
                   style: const TextStyle(
@@ -178,13 +172,11 @@ class _DineInPageState extends State<DineInPage> {
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
-    print("selectedOrder.items: ${selectedOrder.items}");
+    print("selecteded item: $item");
     print("tempCartItems: $tempCartItems");
     // print("selectedOrder.status: ${selectedOrder.status}");
     // print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
-    if (selectedOrder.status == "Placed Order" &&
-        selectedOrder.showEditBtn == false &&
-        !areItemListsEqual(tempCartItems, selectedOrder.items)) {
+    if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       orderStatusColor = Colors.green[800]!;
       handleMethod = handleUpdateOrderBtn;
     }
@@ -197,41 +189,40 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
-  // If the lengths of the lists are not equal, the lists are not equal
-  if (list1.length != list2.length) {
-    print('Lists have different lengths');
-    return false;
+    // If the lengths of the lists are not equal, the lists are not equal
+    if (list1.length != list2.length) {
+      print('Lists have different lengths');
+      return false;
+    }
+
+    // Sort the lists by item name
+    list1.sort((a, b) => a.name.compareTo(b.name));
+    list2.sort((a, b) => a.name.compareTo(b.name));
+
+    // Compare the items in the sorted lists
+    for (int i = 0; i < list1.length; i++) {
+      print('Comparing item ${i + 1}');
+      print('List 1 item: ${list1[i].name}, quantity: ${list1[i].quantity}');
+      print('List 2 item: ${list2[i].name}, quantity: ${list2[i].quantity}');
+
+      if (list1[i].name != list2[i].name) {
+        print('Items have different names');
+        return false;
+      }
+      if (list1[i].quantity != list2[i].quantity) {
+        print('Items have different quantities');
+        return false;
+      }
+      if (list1[i].itemRemarks != list2[i].itemRemarks) {
+        print('Items have different itemRemarks');
+        return false;
+      }
+    }
+
+    // If no differences were found, the lists are equal
+    print('No differences found, lists are equal');
+    return true;
   }
-
-  // Sort the lists by item name
-  list1.sort((a, b) => a.name.compareTo(b.name));
-  list2.sort((a, b) => a.name.compareTo(b.name));
-
-  // Compare the items in the sorted lists
-  for (int i = 0; i < list1.length; i++) {
-    print('Comparing item ${i + 1}');
-    print('List 1 item: ${list1[i].name}, quantity: ${list1[i].quantity}');
-    print('List 2 item: ${list2[i].name}, quantity: ${list2[i].quantity}');
-
-    if (list1[i].name != list2[i].name) {
-      print('Items have different names');
-      return false;
-    }
-    if (list1[i].quantity != list2[i].quantity) {
-      print('Items have different quantities');
-      return false;
-    }
-     if (list1[i].itemRemarks != list2[i].itemRemarks) {
-      print('Items have different itemRemarks');
-      return false;
-    }
-  }
-
-  // If no differences were found, the lists are equal
-  print('No differences found, lists are equal');
-  return true;
-}
-
 
   void _handleCloseMenu() {
     if (selectedOrder.status == "Ordering" && selectedOrder.items.isEmpty) {
@@ -243,18 +234,15 @@ class _DineInPageState extends State<DineInPage> {
         handlefreezeMenu();
         prettyPrintTable();
       });
-    } else if (selectedOrder.status == "Ordering" &&
-        selectedOrder.items.isNotEmpty) {
+    } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
       _showConfirmationDialog();
-    } else if (selectedOrder.status == "Placed Order" &&
-        areItemListsEqual(tempCartItems, selectedOrder.items)) {
+    } else if (selectedOrder.status == "Placed Order" && areItemListsEqual(tempCartItems, selectedOrder.items)) {
       handlefreezeMenu();
       selectedOrder.updateShowEditBtn(true);
       orderStatus = "Make Payment";
       orderStatusColor = Colors.green[800]!;
       orderStatusIcon = Icons.monetization_on;
-    } else if (selectedOrder.status == "Placed Order" &&
-        !areItemListsEqual(tempCartItems, selectedOrder.items)) {
+    } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       _showConfirmationDialog();
     }
   }
@@ -269,11 +257,9 @@ class _DineInPageState extends State<DineInPage> {
         selectedOrder.resetDefault();
       });
       // print('Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
-    } else if (selectedOrder.status == "Placed Order" &&
-        !areItemListsEqual(tempCartItems, selectedOrder.items)) {
+    } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       selectedOrder.updateShowEditBtn(true);
-      selectedOrder.items =
-          tempCartItems.map((item) => item.copyWith()).toList();
+      selectedOrder.items = tempCartItems.map((item) => item.copyWith()).toList();
     } else if (selectedOrder.status == "Placed Order") {
       selectedOrder.updateShowEditBtn(true);
       // print('Menu closed. Current selectedOrder status: ${selectedOrder.status}');
@@ -290,8 +276,7 @@ class _DineInPageState extends State<DineInPage> {
   void handlePlaceOrderBtn() {
     setState(() {
       selectedOrder.placeOrder();
-      tempCartItems =
-          selectedOrder.items.map((item) => item.copyWith()).toList();
+      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
       // Add a new SelectedOrder object to the orders list
       widget.orders.addOrder(selectedOrder.copyWith());
       updateOrderStatus();
@@ -303,8 +288,7 @@ class _DineInPageState extends State<DineInPage> {
   void handleUpdateOrderBtn() {
     setState(() {
       selectedOrder.placeOrder();
-      tempCartItems =
-          selectedOrder.items.map((item) => item.copyWith()).toList();
+      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
       // Add a new SelectedOrder object to the orders list
       widget.orders.addOrder(selectedOrder.copyWith());
       updateOrderStatus();
@@ -315,17 +299,17 @@ class _DineInPageState extends State<DineInPage> {
 
   void handlePaymentBtn() {
     Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => MakePaymentPage(
-        payment: MakePayment(selectedOrder: selectedOrder),
+      context,
+      MaterialPageRoute(
+        builder: (context) => MakePaymentPage(
+          payment: MakePayment(selectedOrder: selectedOrder),
+        ),
       ),
-    ),
-  );
+    );
     // setState(() {
     //   selectedOrder.makePayment();
     //   updateOrderStatus();
-    // }); Need to put this in the Payment Page after confirm payment. 
+    // }); Need to put this in the Payment Page after confirm payment.
   }
 
   //
@@ -349,20 +333,15 @@ class _DineInPageState extends State<DineInPage> {
           backgroundColor: Colors.grey[900],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10), // change radius here
-            side: const BorderSide(
-                color: Colors.deepOrange, width: 1), // change border color here
+            side: const BorderSide(color: Colors.deepOrange, width: 1), // change border color here
           ),
           title: const Text(
             'Confirmation',
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           ),
           content: Text(
-            selectedOrder.status == "Placed Order"
-                ? "Do you want to 'Cancel Changes'?"
-                : "Do you want to 'Cancel Order'?",
-            style: const TextStyle(
-                fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+            selectedOrder.status == "Placed Order" ? "Do you want to 'Cancel Changes'?" : "Do you want to 'Cancel Order'?",
+            style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
           ),
           actions: <Widget>[
             TextButton(
@@ -430,24 +409,17 @@ class _DineInPageState extends State<DineInPage> {
         //   orderStatus = "Update Order & Print";
         //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
         //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
-      } else if (selectedOrder.status == "Ordering" &&
-          selectedOrder.items.isNotEmpty) {
+      } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
         orderStatus = "Place Order & Print";
         orderStatusColor = Colors.green[800]!;
         handleMethod = handlePlaceOrderBtn;
         orderStatusIcon = Icons.print;
-      } else if (selectedOrder.status == "Placed Order" &&
-          selectedOrder.showEditBtn == false) {
+      } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false) {
         orderStatus = "Update Orders & Print";
-        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items)
-            ? Colors.grey[700]!
-            : Colors.green[800]!;
-        handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items)
-            ? defaultMethod
-            : handleUpdateOrderBtn; // Disabled
+        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? Colors.grey[700]! : Colors.green[800]!;
+        handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items) ? defaultMethod : handleUpdateOrderBtn; // Disabled
         orderStatusIcon = Icons.print;
-      } else if (selectedOrder.status == "Placed Order" &&
-          selectedOrder.showEditBtn == true) {
+      } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
         orderStatus = "Make Payment";
         orderStatusColor = Colors.green[800]!;
         handleMethod = handlePaymentBtn;
@@ -496,32 +468,25 @@ class _DineInPageState extends State<DineInPage> {
                       Expanded(
                         child: GridView.builder(
                           itemCount: tables.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                                4, // Adjust the number of items per row
-                            childAspectRatio:
-                                2 / 1, // Adjust the aspect ratio of the items
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4, // Adjust the number of items per row
+                            childAspectRatio: 2 / 1, // Adjust the aspect ratio of the items
                             crossAxisSpacing: 10, // Add horizontal spacing
                             mainAxisSpacing: 10, // Add vertical spacing
                           ),
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.all(
-                                  8.0), // Add padding to each card
+                              padding: const EdgeInsets.all(8.0), // Add padding to each card
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
                                     pressedButtonIndex = index;
-                                    _handleSetTables(
-                                        tables[index]['name'], index);
+                                    _handleSetTables(tables[index]['name'], index);
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.black,
-                                  backgroundColor: pressedButtonIndex == index
-                                      ? Colors.deepOrangeAccent
-                                      : Colors.white,
+                                  backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -533,24 +498,16 @@ class _DineInPageState extends State<DineInPage> {
                                     Text(
                                       tables[index]['name'],
                                       style: TextStyle(
-                                          fontSize: pressedButtonIndex == index
-                                              ? 28
-                                              : 22,
+                                          fontSize: pressedButtonIndex == index ? 28 : 22,
                                           fontWeight: FontWeight.bold,
-                                          color: pressedButtonIndex == index
-                                              ? Colors.white
-                                              : Colors.black),
+                                          color: pressedButtonIndex == index ? Colors.white : Colors.black),
                                     ),
                                     const SizedBox(width: 10),
                                     if (tables[index]['occupied'])
                                       Icon(
                                         Icons.dining,
-                                        color: pressedButtonIndex == index
-                                            ? Colors.white
-                                            : Colors.deepOrangeAccent,
-                                        size: pressedButtonIndex == index
-                                            ? 46
-                                            : 40,
+                                        color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
+                                        size: pressedButtonIndex == index ? 46 : 40,
                                       ),
 
                                     // if (tables[index]['occupied'])

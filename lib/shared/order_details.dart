@@ -35,6 +35,7 @@ class OrderDetails extends StatefulWidget {
 
 class _OrderDetailsState extends State<OrderDetails> {
   bool showEditBtn = false;
+  Map<String, dynamic> itemRemarks = {};
   final TextEditingController _controller = TextEditingController();
   void prettyPrintOrder() {
     print('Order Number: ${widget.selectedOrder.orderNumber}');
@@ -56,8 +57,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             title: widget.selectedOrder.orderNumber,
             status: widget.selectedOrder.status,
             showEditBtn: widget.selectedOrder.showEditBtn,
-            timeStamp:
-                (widget.selectedOrder.orderTime?.toString() ?? 'Order Time'),
+            timeStamp: (widget.selectedOrder.orderTime?.toString() ?? 'Order Time'),
             date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
             // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
             handlefreezeMenu: widget.handlefreezeMenu,
@@ -99,26 +99,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                     children: [
                       Text(
                         'Cakes ${widget.selectedOrder.cakes['itemQuantity'].toString()}',
-                        style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         'Dish ${widget.selectedOrder.dish['itemQuantity'].toString()}',
-                        style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         'Drinks ${widget.selectedOrder.drinks['itemQuantity'].toString()}',
-                        style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ],
                   ),
@@ -142,10 +133,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                         child: Text(
                           widget.orderStatus,
-                          style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                       ),
                     ],
@@ -181,10 +169,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
               ),
               // show Edit Button when it is true
               showEditBtn
@@ -201,13 +186,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.green[800]!),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.green[800]!),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                5.0), // Adjust this value as needed
+                            borderRadius: BorderRadius.circular(5.0), // Adjust this value as needed
                           ),
                         ),
                       ),
@@ -216,11 +198,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text('Edit',
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
+                            Text('Edit', style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
                             SizedBox(width: 10),
                             Icon(
                               Icons.assignment_add,
@@ -240,17 +218,11 @@ class _OrderDetailsState extends State<OrderDetails> {
           children: [
             Text(
               status,
-              style: const TextStyle(
-                  color: Colors.white54,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
               "$timeStamp, $date",
-              style: const TextStyle(
-                  color: Colors.white54,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -282,7 +254,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       ),
       child: GestureDetector(
         onTap: () {
-          item.itemRemarks ??= {};
+          itemRemarks = Map<String, dynamic>.from(item.itemRemarks ?? {});
           print('item.itemRemarks is: ${item.itemRemarks}');
           Map<String, dynamic>? selectedChoice = item.selectedChoice;
           Map<String, dynamic>? selectedType = item.selectedType;
@@ -312,55 +284,36 @@ class _OrderDetailsState extends State<OrderDetails> {
                 backgroundColor: MaterialStateProperty.resolveWith<Color>(
                   (Set<MaterialState> states) {
                     // Check if the remark has been added to itemRemarks
-                    if (item.itemRemarks?.containsKey(data['id'].toString()) ??
-                        false) {
+                    if (itemRemarks.containsKey(data['id'].toString())) {
                       // If the button is pressed or the remark has been added, make the background green
-                      return states.contains(MaterialState.pressed)
-                          ? Colors.green[700]!
-                          : Colors.green;
+                      return states.contains(MaterialState.pressed) ? Colors.green[700]! : Colors.green;
                     } else {
                       // If the button is pressed or the remark has not been added, make the background black
-                      return states.contains(MaterialState.pressed)
-                          ? Colors.green
-                          : Colors.black;
+                      return states.contains(MaterialState.pressed) ? Colors.green : Colors.black;
                     }
                   },
                 ),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
-                side: MaterialStateProperty.all(
-                    const BorderSide(color: Colors.white)),
+                side: MaterialStateProperty.all(const BorderSide(color: Colors.white)),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                padding: MaterialStateProperty.all(
-                    const EdgeInsets.fromLTRB(20, 10, 20, 10)), //
+                padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(20, 10, 20, 10)), //
               ),
               onPressed: () {
                 setState(() {
                   String key = data['id'].toString();
-                  if (item.itemRemarks!.containsKey(key)) {
+                  if (itemRemarks.containsKey(key)) {
                     // If the remark is already in itemRemarks, remove it
-                    item.itemRemarks!.remove(key);
+                    itemRemarks.remove(key);
                   } else {
                     // If the remark is not in itemRemarks, add it
-                    item.itemRemarks![key] = data['remarks'];
+                    itemRemarks[key] = data['remarks'];
                   }
-
-                  // Add the user's comment with a key of '100'
-                  item.itemRemarks!['100'] = _controller.text;
-
-                  SplayTreeMap<String, dynamic> sortedItemRemarks =
-                      SplayTreeMap<String, dynamic>(
-                    (a, b) => int.parse(a).compareTo(int.parse(b)),
-                  );
-
-                  // Check if item.itemRemarks is null. If it is, initialize it with an empty map
-                  sortedItemRemarks.addAll(item.itemRemarks ?? {});
-
-                  item.itemRemarks = sortedItemRemarks;
-                  print(item.itemRemarks);
+                  print('itemRemarks selection:$itemRemarks');
+                  print('item.itemRemarks:${item.itemRemarks}');
                 });
               },
               child: Text(
@@ -380,25 +333,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                   return StatefulBuilder(
                     builder: (BuildContext context, StateSetter setState) {
                       return Dialog(
-                        insetPadding:
-                            EdgeInsets.zero, // Make dialog full-screen
+                        insetPadding: EdgeInsets.zero, // Make dialog full-screen
                         backgroundColor: Colors.black87,
                         child: AlertDialog(
                           title: Text(
                             item.name,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 24,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                           backgroundColor: Colors.black,
                           shadowColor: Colors.black,
                           elevation: 5,
                           shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                                color: Colors.deepOrange,
-                                width: 2), // This is the border color
+                            side: const BorderSide(color: Colors.deepOrange, width: 2), // This is the border color
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           content: ConstrainedBox(
@@ -408,8 +355,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             ),
                             child: SingleChildScrollView(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
                                 child: Column(
                                   children: [
                                     // First row
@@ -419,9 +365,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           width: 160,
                                           height: 160,
                                           child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
                                             child: Image.asset(
                                               item.image,
                                               fit: BoxFit.cover,
@@ -430,12 +374,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         ),
                                         const SizedBox(width: 20),
                                         Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              selectedChoice != null &&
-                                                      selectedType != null
+                                              selectedChoice != null && selectedType != null
                                                   ? '${selectedChoice!['name']} (${selectedType!['name']})'
                                                   : 'Select Flavor and Type',
                                               style: const TextStyle(
@@ -447,8 +389,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           ],
                                         ),
                                         Expanded(
-                                          child: Text(
-                                              'RM ${subTotalPrice.toStringAsFixed(2)}',
+                                          child: Text('RM ${subTotalPrice.toStringAsFixed(2)}',
                                               textAlign: TextAlign.right,
                                               style: const TextStyle(
                                                 fontSize: 22,
@@ -469,43 +410,26 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   onPressed: () {
                                                     showDialog(
                                                       context: context,
-                                                      builder: (BuildContext
-                                                          context) {
+                                                      builder: (BuildContext context) {
                                                         return SimpleDialog(
-                                                          title: const Text(
-                                                              'Select Flavor'),
-                                                          children: item.choices
-                                                              .map<SimpleDialogOption>(
-                                                                  (choice) {
+                                                          title: const Text('Select Flavor'),
+                                                          children: item.choices.map<SimpleDialogOption>((choice) {
                                                             return SimpleDialogOption(
                                                               onPressed: () {
                                                                 setState(() {
-                                                                  selectedChoice =
-                                                                      choice;
-                                                                  item.selectedChoice =
-                                                                      choice;
-                                                                  choicePrice =
-                                                                      choice[
-                                                                          'price'];
-                                                                  item.name =
-                                                                      choice[
-                                                                          'name'];
+                                                                  selectedChoice = choice;
+                                                                  item.selectedChoice = choice;
+                                                                  choicePrice = choice['price'];
+                                                                  item.name = choice['name'];
                                                                 });
-                                                                calculateTotalPrice(
-                                                                    choicePrice,
-                                                                    typePrice);
-                                                                Navigator.pop(
-                                                                    context);
+                                                                calculateTotalPrice(choicePrice, typePrice);
+                                                                Navigator.pop(context);
                                                               },
                                                               child: Text(
                                                                 '${choice['name']} (RM ${choice['price'].toStringAsFixed(2)})',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .black,
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.black,
                                                                   fontSize: 18,
                                                                 ),
                                                               ),
@@ -515,24 +439,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       },
                                                     );
                                                   },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5), // This is the border radius
+                                                  style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
                                                     ),
                                                   ),
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            15),
+                                                    padding: const EdgeInsets.all(15),
                                                     child: Text(
                                                       '${selectedChoice!['name']} (RM ${selectedChoice!['price'].toStringAsFixed(2)})',
                                                       style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        fontWeight: FontWeight.bold,
                                                         color: Colors.black,
                                                         fontSize: 18,
                                                       ),
@@ -549,39 +466,25 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   onPressed: () {
                                                     showDialog(
                                                       context: context,
-                                                      builder: (BuildContext
-                                                          context) {
+                                                      builder: (BuildContext context) {
                                                         return SimpleDialog(
-                                                          title: const Text(
-                                                              'Select Variation'),
-                                                          children: item.types
-                                                              .map<SimpleDialogOption>(
-                                                                  (type) {
+                                                          title: const Text('Select Variation'),
+                                                          children: item.types.map<SimpleDialogOption>((type) {
                                                             return SimpleDialogOption(
                                                               onPressed: () {
                                                                 setState(() {
-                                                                  selectedType =
-                                                                      type;
-                                                                  item.selectedType =
-                                                                      type;
-                                                                  typePrice = type[
-                                                                      'price'];
+                                                                  selectedType = type;
+                                                                  item.selectedType = type;
+                                                                  typePrice = type['price'];
                                                                 });
-                                                                calculateTotalPrice(
-                                                                    choicePrice,
-                                                                    typePrice);
-                                                                Navigator.pop(
-                                                                    context);
+                                                                calculateTotalPrice(choicePrice, typePrice);
+                                                                Navigator.pop(context);
                                                               },
                                                               child: Text(
                                                                 '${type['name']} + RM ${type['price'].toStringAsFixed(2)}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .black,
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.black,
                                                                   fontSize: 18,
                                                                 ),
                                                               ),
@@ -591,24 +494,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       },
                                                     );
                                                   },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5), // This is the border radius
+                                                  style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
                                                     ),
                                                   ),
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            15),
+                                                    padding: const EdgeInsets.all(15),
                                                     child: Text(
                                                       '${selectedType!['name']} + RM ${selectedType!['price'].toStringAsFixed(2)}',
                                                       style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        fontWeight: FontWeight.bold,
                                                         color: Colors.black,
                                                         fontSize: 18,
                                                       ),
@@ -622,30 +518,22 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     ),
                                     const SizedBox(height: 20),
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         // First row
                                         const Text(
                                           'Press the buttons to add remarks',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                                         ),
                                         const SizedBox(height: 10),
                                         // remarks buttons
                                         Wrap(
-                                          spacing:
-                                              8.0, // gap between adjacent chips
+                                          spacing: 8.0, // gap between adjacent chips
                                           runSpacing: 4.0, // gap between lines
                                           children: remarksData
-                                              .where((data) =>
-                                                  data['category'] ==
-                                                  item.category) // Filter remarksData based on item.category
+                                              .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
                                               .map((data) => Padding(
-                                                    padding: const EdgeInsets
-                                                        .fromLTRB(0, 6, 10, 6),
+                                                    padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
                                                     child: remarkButton(data),
                                                   ))
                                               .toList(),
@@ -653,23 +541,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         const SizedBox(height: 20),
                                         TextField(
                                           controller: _controller,
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold),
+                                          style: const TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
                                           decoration: const InputDecoration(
                                             fillColor: Colors.white,
                                             filled: true,
                                             border: OutlineInputBorder(),
-                                            labelText:
-                                                'Write comments or remarks here',
-                                            labelStyle: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold),
+                                            labelText: 'Write comments or remarks here',
+                                            labelStyle: TextStyle(color: Colors.grey, fontSize: 22, fontWeight: FontWeight.bold),
                                             focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey),
+                                              borderSide: BorderSide(color: Colors.grey),
                                             ),
                                           ),
                                           onChanged: (text) {
@@ -677,20 +557,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             setState(() {
                                               if (text.isEmpty) {
                                                 // If the text is empty, remove the key '100' from itemRemarks
-                                                item.itemRemarks!.remove('100');
+                                                itemRemarks.remove('100');
                                               } else {
                                                 // Add the user's comment with a key of '100'
-                                                item.itemRemarks!['100'] = text;
+                                                itemRemarks['100'] = text;
                                               }
-                                              SplayTreeMap<String, dynamic>
-                                                  sortedItemRemarks =
-                                                  SplayTreeMap<String, dynamic>(
-                                                (a, b) => int.parse(a)
-                                                    .compareTo(int.parse(b)),
-                                              )..addAll(item.itemRemarks!);
-                                              item.itemRemarks =
-                                                  sortedItemRemarks;
-                                              print(item.itemRemarks);
+                                              SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                                                (a, b) => int.parse(a).compareTo(int.parse(b)),
+                                              )..addAll(itemRemarks);
+                                              itemRemarks = sortedItemRemarks;
                                             });
                                           },
                                         )
@@ -720,8 +595,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                               // SubTotal, Service Charges Total OnPressed Function
                               onPressed: () {
                                 setState(() {
-                                  print('total Price is $subTotalPrice');
-                                  print('total Price is $item');
+                                  // Add the user's comment with a key of '100'
+                                  if (item.itemRemarks != null && comment != null) {
+                                    itemRemarks['100'] = _controller.text;
+                                  }
+                                  SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                                    (a, b) => int.parse(a).compareTo(int.parse(b)),
+                                  )..addAll(itemRemarks);
+                                  item.itemRemarks = sortedItemRemarks;
                                   item.price = subTotalPrice;
                                   widget.selectedOrder.updateTotalCost(0);
                                   widget.updateOrderStatus!();
@@ -748,6 +629,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 ),
                               ),
                               onPressed: () {
+                                itemRemarks = {};
+                                _controller.text = '';
                                 Navigator.of(context).pop();
                               },
                             ),
@@ -826,9 +709,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: item.selectedType!['name'] == 'Cold'
-                                        ? Colors.green[500]
-                                        : Colors.orangeAccent,
+                                    color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
                                   ),
                                 ),
                               )
@@ -866,14 +747,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 setState(() {
                                   item.quantity++;
                                   widget.selectedOrder.updateTotalCost(0);
-                                  widget.selectedOrder
-                                      .calculateItemsAndQuantities();
+                                  widget.selectedOrder.calculateItemsAndQuantities();
                                   widget.updateOrderStatus!();
                                 });
                               },
                               child: CircleAvatar(
-                                radius:
-                                    16, // Adjust this value to change the size of the CircleAvatar
+                                radius: 16, // Adjust this value to change the size of the CircleAvatar
                                 backgroundColor: Colors.green[700]!,
                                 child: const Icon(
                                   Icons.add,
@@ -898,15 +777,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   if (item.quantity > 1) {
                                     item.quantity--;
                                     widget.selectedOrder.updateTotalCost(0);
-                                    widget.selectedOrder
-                                        .calculateItemsAndQuantities();
+                                    widget.selectedOrder.calculateItemsAndQuantities();
                                     widget.updateOrderStatus!();
                                   }
                                 });
                               },
                               child: CircleAvatar(
-                                radius:
-                                    16, // Adjust this value to change the size of the CircleAvatar
+                                radius: 16, // Adjust this value to change the size of the CircleAvatar
                                 backgroundColor: Colors.orange[800]!,
                                 child: const Icon(
                                   Icons.remove,
@@ -923,20 +800,11 @@ class _OrderDetailsState extends State<OrderDetails> {
             // Remarks & Comments UI
             Padding(
               padding: EdgeInsets.only(
-                  top: item.selection &&
-                          item.itemRemarks != null &&
-                          item.itemRemarks?.isNotEmpty == true
-                      ? 10.0
-                      : 0.0,
-                  left: item.selection &&
-                          item.itemRemarks != null &&
-                          item.itemRemarks?.isNotEmpty == true
-                      ? 2.0
-                      : 0.0),
+                  top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0,
+                  left: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 2.0 : 0.0),
               child: Wrap(
                 children: [
-                  item.itemRemarks != null &&
-                          item.itemRemarks?.isNotEmpty == true
+                  item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true
                       ? Text(
                           item.itemRemarks?.values.join(', ') ?? '',
                           style: const TextStyle(

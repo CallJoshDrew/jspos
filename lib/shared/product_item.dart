@@ -61,19 +61,11 @@ class ProductItemState extends State<ProductItem> {
           selectedChoice: widget.choices.isNotEmpty ? widget.choices[0] : null,
           selectedType: widget.types.isNotEmpty ? widget.types[0] : null,
         ); //this is creating a new instance of item with the required field.
-        Map<String, dynamic>? selectedChoice =
-            widget.choices.isNotEmpty ? widget.choices[0] : null;
-        Map<String, dynamic>? selectedType =
-            widget.types.isNotEmpty ? widget.types[0] : null;
+        Map<String, dynamic>? selectedChoice = widget.choices.isNotEmpty ? widget.choices[0] : null;
+        Map<String, dynamic>? selectedType = widget.types.isNotEmpty ? widget.types[0] : null;
 
-        double choicePrice =
-            widget.choices.isNotEmpty && widget.choices[0]['price'] != null
-                ? widget.choices[0]['price']!
-                : 0.00;
-        double typePrice =
-            widget.types.isNotEmpty && widget.types[0]['price'] != null
-                ? widget.types[0]['price']!
-                : 0.00;
+        double choicePrice = widget.choices.isNotEmpty && widget.choices[0]['price'] != null ? widget.choices[0]['price']! : 0.00;
+        double typePrice = widget.types.isNotEmpty && widget.types[0]['price'] != null ? widget.types[0]['price']! : 0.00;
 
         double totalPrice = choicePrice + typePrice;
 
@@ -97,31 +89,24 @@ class ProductItemState extends State<ProductItem> {
                   // Check if the remark has been added to itemRemarks
                   if (itemRemarks.containsKey(data['id'].toString())) {
                     // If the button is pressed or the remark has been added, make the background green
-                    return states.contains(MaterialState.pressed)
-                        ? Colors.green[700]!
-                        : Colors.green;
+                    return states.contains(MaterialState.pressed) ? Colors.green[700]! : Colors.green;
                   } else {
                     // If the button is pressed or the remark has not been added, make the background black
-                    return states.contains(MaterialState.pressed)
-                        ? Colors.green
-                        : Colors.black;
+                    return states.contains(MaterialState.pressed) ? Colors.green : Colors.black;
                   }
                 },
               ),
               foregroundColor: MaterialStateProperty.all(Colors.white),
-              side: MaterialStateProperty.all(
-                  const BorderSide(color: Colors.white)),
+              side: MaterialStateProperty.all(const BorderSide(color: Colors.white)),
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
-              padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(
-                  20, 10, 20, 10)), // Add padding inside the button
+              padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(20, 10, 20, 10)), // Add padding inside the button
             ),
             onPressed: () {
               setState(() {
-                print(itemRemarks);
                 String key = data['id'].toString();
                 if (itemRemarks.containsKey(key)) {
                   // If the remark is already in itemRemarks, remove it
@@ -130,16 +115,7 @@ class ProductItemState extends State<ProductItem> {
                   // If the remark is not in itemRemarks, add it
                   itemRemarks[key] = data['remarks'];
                 }
-
-                // Add the user's comment with a key of '100'
-                itemRemarks['100'] = _controller.text;
-                SplayTreeMap<String, dynamic> sortedItemRemarks =
-                    SplayTreeMap<String, dynamic>(
-                  (a, b) => int.parse(a).compareTo(int.parse(b)),
-                )..addAll(itemRemarks);
-                itemRemarks = sortedItemRemarks;
-                item.itemRemarks = itemRemarks;
-                print(item.itemRemarks);
+                print('itemRemarks selection:$itemRemarks');
               });
             },
             child: Text(
@@ -165,19 +141,14 @@ class ProductItemState extends State<ProductItem> {
                       title: Text(
                         item.name,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 24,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                       backgroundColor: Colors.black,
                       // second color const Color(0xff1f2029),
                       shadowColor: Colors.black,
                       elevation: 5,
                       shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                            color: Colors.deepOrange,
-                            width: 2), // This is the border color
+                        side: const BorderSide(color: Colors.deepOrange, width: 2), // This is the border color
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       content: ConstrainedBox(
@@ -197,8 +168,7 @@ class ProductItemState extends State<ProductItem> {
                                       width: 160,
                                       height: 160,
                                       child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10)),
+                                        borderRadius: const BorderRadius.all(Radius.circular(10)),
                                         child: Image.asset(
                                           item.image,
                                           fit: BoxFit.cover,
@@ -207,12 +177,10 @@ class ProductItemState extends State<ProductItem> {
                                     ),
                                     const SizedBox(width: 20),
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          selectedChoice != null &&
-                                                  selectedType != null
+                                          selectedChoice != null && selectedType != null
                                               ? '${selectedChoice!['name']} (${selectedType!['name']})'
                                               : 'Select Flavor and Type',
                                           style: const TextStyle(
@@ -224,8 +192,7 @@ class ProductItemState extends State<ProductItem> {
                                       ],
                                     ),
                                     Expanded(
-                                      child: Text(
-                                          'RM ${totalPrice.toStringAsFixed(2)}',
+                                      child: Text('RM ${totalPrice.toStringAsFixed(2)}',
                                           textAlign: TextAlign.right,
                                           style: const TextStyle(
                                             fontSize: 22,
@@ -246,40 +213,25 @@ class ProductItemState extends State<ProductItem> {
                                               onPressed: () {
                                                 showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) {
+                                                  builder: (BuildContext context) {
                                                     return SimpleDialog(
-                                                      title: const Text(
-                                                          'Select Flavor'),
-                                                      children: widget.choices
-                                                          .map<SimpleDialogOption>(
-                                                              (choice) {
+                                                      title: const Text('Select Flavor'),
+                                                      children: widget.choices.map<SimpleDialogOption>((choice) {
                                                         return SimpleDialogOption(
                                                           onPressed: () {
                                                             setState(() {
-                                                              selectedChoice =
-                                                                  choice;
-                                                              item.selectedChoice =
-                                                                  choice;
-                                                              choicePrice =
-                                                                  choice[
-                                                                      'price'];
+                                                              selectedChoice = choice;
+                                                              item.selectedChoice = choice;
+                                                              choicePrice = choice['price'];
                                                             });
-                                                            calculateTotalPrice(
-                                                                choicePrice,
-                                                                typePrice);
-                                                            Navigator.pop(
-                                                                context);
+                                                            calculateTotalPrice(choicePrice, typePrice);
+                                                            Navigator.pop(context);
                                                           },
                                                           child: Text(
                                                             '${choice['name']} (RM ${choice['price'].toStringAsFixed(2)})',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black,
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.black,
                                                               fontSize: 18,
                                                             ),
                                                           ),
@@ -291,14 +243,11 @@ class ProductItemState extends State<ProductItem> {
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5), // This is the border radius
+                                                  borderRadius: BorderRadius.circular(5), // This is the border radius
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(15),
+                                                padding: const EdgeInsets.all(15),
                                                 child: Text(
                                                   '${selectedChoice!['name']} (RM ${selectedChoice!['price'].toStringAsFixed(2)})',
                                                   style: const TextStyle(
@@ -319,39 +268,25 @@ class ProductItemState extends State<ProductItem> {
                                               onPressed: () {
                                                 showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) {
+                                                  builder: (BuildContext context) {
                                                     return SimpleDialog(
-                                                      title: const Text(
-                                                          'Select Variation'),
-                                                      children: widget.types
-                                                          .map<SimpleDialogOption>(
-                                                              (type) {
+                                                      title: const Text('Select Variation'),
+                                                      children: widget.types.map<SimpleDialogOption>((type) {
                                                         return SimpleDialogOption(
                                                           onPressed: () {
                                                             setState(() {
-                                                              selectedType =
-                                                                  type;
-                                                              item.selectedType =
-                                                                  type;
-                                                              typePrice =
-                                                                  type['price'];
+                                                              selectedType = type;
+                                                              item.selectedType = type;
+                                                              typePrice = type['price'];
                                                             });
-                                                            calculateTotalPrice(
-                                                                choicePrice,
-                                                                typePrice);
-                                                            Navigator.pop(
-                                                                context);
+                                                            calculateTotalPrice(choicePrice, typePrice);
+                                                            Navigator.pop(context);
                                                           },
                                                           child: Text(
                                                             '${type['name']} + RM ${type['price'].toStringAsFixed(2)}',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black,
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.black,
                                                               fontSize: 18,
                                                             ),
                                                           ),
@@ -363,14 +298,11 @@ class ProductItemState extends State<ProductItem> {
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5), // This is the border radius
+                                                  borderRadius: BorderRadius.circular(5), // This is the border radius
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(15),
+                                                padding: const EdgeInsets.all(15),
                                                 child: Text(
                                                   '${selectedType!['name']} + RM ${selectedType!['price'].toStringAsFixed(2)}',
                                                   style: const TextStyle(
@@ -393,25 +325,17 @@ class ProductItemState extends State<ProductItem> {
                                     // First row
                                     const Text(
                                       'Press the buttons to add remarks',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
+                                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 10),
                                     // remarks buttons
                                     Wrap(
-                                      spacing:
-                                          8.0, // gap between adjacent chips
+                                      spacing: 8.0, // gap between adjacent chips
                                       runSpacing: 4.0, // gap between lines
                                       children: remarksData
-                                          .where((data) =>
-                                              data['category'] ==
-                                              item.category) // Filter remarksData based on item.category
+                                          .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
                                           .map((data) => Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        0, 6, 10, 6),
+                                                padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
                                                 child: remarkButton(data),
                                               ))
                                           .toList(),
@@ -419,23 +343,15 @@ class ProductItemState extends State<ProductItem> {
                                     const SizedBox(height: 20),
                                     TextField(
                                       controller: _controller,
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
                                       decoration: const InputDecoration(
                                         fillColor: Colors.white,
                                         filled: true,
                                         border: OutlineInputBorder(),
-                                        labelText:
-                                            'Write comments or remarks here',
-                                        labelStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold),
+                                        labelText: 'Write comments or remarks here',
+                                        labelStyle: TextStyle(color: Colors.grey, fontSize: 22, fontWeight: FontWeight.bold),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.grey),
+                                          borderSide: BorderSide(color: Colors.grey),
                                         ),
                                       ),
                                       onChanged: (text) {
@@ -443,11 +359,8 @@ class ProductItemState extends State<ProductItem> {
                                         setState(() {
                                           // Add the user's comment with a key of '100'
                                           itemRemarks['100'] = text;
-                                          SplayTreeMap<String, dynamic>
-                                              sortedItemRemarks =
-                                              SplayTreeMap<String, dynamic>(
-                                            (a, b) => int.parse(a)
-                                                .compareTo(int.parse(b)),
+                                          SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                                            (a, b) => int.parse(a).compareTo(int.parse(b)),
                                           )..addAll(itemRemarks);
                                           itemRemarks = sortedItemRemarks;
                                           item.itemRemarks = itemRemarks;
@@ -479,8 +392,20 @@ class ProductItemState extends State<ProductItem> {
                             ),
                           ),
                           onPressed: () {
+                            // Add the user's comment with a key of '100'
+                            if (item.itemRemarks != null) {
+                              itemRemarks['100'] = _controller.text;
+                            }
+                            SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                              (a, b) => int.parse(a).compareTo(int.parse(b)),
+                            )..addAll(itemRemarks);
+                            itemRemarks = sortedItemRemarks;
+                            print('itemRemarks after sorting: $itemRemarks'); // Debug print
+                            item.itemRemarks = itemRemarks;
                             itemRemarks = {};
+                            print('itemRemarks after clearing: $itemRemarks'); // Debug print
                             _controller.text = '';
+                            print('_controller.text after clearing: ${_controller.text}'); // Debug print
                             widget.onItemAdded(item);
                             Navigator.of(context).pop();
                           },
@@ -503,6 +428,8 @@ class ProductItemState extends State<ProductItem> {
                             ),
                           ),
                           onPressed: () {
+                            itemRemarks = {};
+                            _controller.text = '';
                             Navigator.of(context).pop();
                           },
                         ),
