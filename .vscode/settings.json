@@ -1,4 +1,5 @@
 {
-    "editor.wordWrap": "wordWrapColumn",
-    "editor.wordWrapColumn": 200
+    "editor.wordWrap": "on",
+    "editor.wordWrapColumn": 300,
+    "notebook.output.wordWrap": true
 }
