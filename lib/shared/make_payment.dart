@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/selected_order.dart';
 
@@ -19,13 +20,16 @@ class MakePaymentPage extends StatefulWidget {
 
 class MakePaymentPageState extends State<MakePaymentPage> {
   String selectedPaymentMethod = "Cash";
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   double _change = 0.0;
+  late double originalBill; // Declare originalBill
+  late double adjustedBill;
+  bool isRoundingApplied = false;
+  List<bool> isSelected = [false, true];
 
   void _calculateChange() {
     double amountReceived = double.tryParse(_controller.text) ?? 0.0;
     _change = amountReceived - widget.payment.selectedOrder.totalPrice;
-    if (_change < 0) _change = 0.0;
   }
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
@@ -63,7 +67,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
 
   double roundBill(double bill) {
     double fractionalPart = bill - bill.floor();
-    if (fractionalPart <= 0.50) {
+    if (fractionalPart <= 0.40) {
       return bill.floorToDouble();
     } else {
       return bill;
@@ -71,11 +75,17 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    originalBill = widget.payment.selectedOrder.totalPrice; // Initialize originalBill here
+    adjustedBill = originalBill; // Initialize adjustedBill here
+  }
+
+  @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-    double originalBill = widget.payment.selectedOrder.totalPrice; // Replace this with the actual bill amount
-    double adjustedBill = originalBill;
+
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
       body: Dialog(
@@ -341,7 +351,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.payment.selectedOrder.serviceCharge.toStringAsFixed(2),
+                                          '(${(originalBill - adjustedBill).toStringAsFixed(2)})',
                                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -372,12 +382,12 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         const Text(
-                                          'Rounding Total Sales (RM)',
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          'Total (RM)',
+                                          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.payment.selectedOrder.totalPrice.toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
+                                          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
@@ -438,27 +448,46 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                 children: [
                                   const Expanded(
                                     child: Text(
-                                    "Allow Rounding Adjustment?",
-                                    style: TextStyle(fontSize: 24, color: Colors.white),
-                                    textAlign: TextAlign.start,
-                                                                    ),
+                                      "Allow Rounding Adjustment?",
+                                      style: TextStyle(fontSize: 24, color: Colors.white),
+                                      textAlign: TextAlign.start,
+                                    ),
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () {
+                                  ToggleButtons(
+                                    onPressed: (int index) {
                                       setState(() {
-                                        adjustedBill = roundBill(originalBill);
+                                        for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                                          if (buttonIndex == index) {
+                                            isSelected[buttonIndex] = true;
+                                            if (index == 0) {
+                                              adjustedBill = roundBill(originalBill);
+                                              isRoundingApplied = true;
+                                            } else {
+                                              adjustedBill = originalBill;
+                                              isRoundingApplied = false;
+                                            }
+                                          } else {
+                                            isSelected[buttonIndex] = false;
+                                          }
+                                        }
                                       });
                                     },
-                                    child: const Text('Yes'),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        adjustedBill = originalBill;
-                                      });
-                                    },
-                                    child: const Text('No'),
+                                    isSelected: isSelected,
+                                    fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
+                                    selectedBorderColor: Colors.green,
+                                    borderRadius: BorderRadius.circular(4),
+                                    borderWidth: 1.0,
+                                    borderColor: Colors.white,
+                                    children: const <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                        child: Text('Yes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                        child: Text('No', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
