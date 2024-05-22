@@ -219,8 +219,8 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                             children: [
                                                               item.selection && item.selectedChoice != null
                                                                   ? Row(
-                                                                    children: [
-                                                                      Text(
+                                                                      children: [
+                                                                        Text(
                                                                           "${index + 1}.${item.selectedChoice!['name']} ",
                                                                           style: const TextStyle(
                                                                             fontSize: 22,
@@ -234,8 +234,8 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                             color: Colors.white,
                                                                           ),
                                                                         ),
-                                                                    ],
-                                                                  )
+                                                                      ],
+                                                                    )
                                                                   : Text(
                                                                       '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
                                                                       style: const TextStyle(
@@ -317,14 +317,15 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                    const SizedBox(height: 4),
+                                                                const SizedBox(height: 4),
                                                                 Wrap(
                                                                   children: [
-                                                                    item.selection && item.selectedMeatPortion != null
-                                                                     && filterRemarks(item.itemRemarks).isNotEmpty == true
+                                                                    item.selection &&
+                                                                            item.selectedMeatPortion != null &&
+                                                                            filterRemarks(item.itemRemarks).isNotEmpty == true
                                                                         ? Row(
-                                                                          children: [
-                                                                            const Text(
+                                                                            children: [
+                                                                              const Text(
                                                                                 'Remarks: ',
                                                                                 style: TextStyle(
                                                                                   fontSize: 22,
@@ -338,8 +339,8 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                                   color: Colors.orangeAccent,
                                                                                 ),
                                                                               )
-                                                                          ],
-                                                                        )
+                                                                            ],
+                                                                          )
                                                                         : const SizedBox.shrink(),
                                                                   ],
                                                                 ),
@@ -708,24 +709,79 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                             showDialog(
                                               context: context,
                                               builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: const Text('Are you sure?'),
-                                                  actions: [
-                                                    TextButton(
-                                                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)),
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+                                                return Dialog(
+                                                  insetPadding: EdgeInsets.zero, // Make dialog full-screen
+                                                  backgroundColor: Colors.black87,
+                                                  child: AlertDialog(
+                                                    backgroundColor: const Color(0xff1f2029),
+                                                    elevation: 5,
+                                                    shape: RoundedRectangleBorder(
+                                                      side: const BorderSide(color: Colors.green, width: 2), // This is the border color
+                                                      borderRadius: BorderRadius.circular(10.0),
                                                     ),
-                                                    TextButton(
-                                                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.white)),
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text('Cancel', style: TextStyle(color: Colors.orange)),
+                                                    content: ConstrainedBox(
+                                                      constraints: const BoxConstraints(
+                                                        minWidth: 300,
+                                                        minHeight: 70,
+                                                      ),
+                                                      child: const Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            'Are you sure?',
+                                                            textAlign: TextAlign.center,
+                                                            style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ],
+                                                    actions: [
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(bottom: 10, left: 40, right: 40),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            TextButton(
+                                                              style: ButtonStyle(
+                                                                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(10.0),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop();
+                                                              },
+                                                              child: const Padding(
+                                                                padding: EdgeInsets.all(6.0),
+                                                                child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 24)),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(width: 30),
+                                                            TextButton(
+                                                              style: ButtonStyle(
+                                                                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(10.0),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop();
+                                                              },
+                                                              child: const Padding(
+                                                                padding: EdgeInsets.all(6.0),
+                                                                child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 24)),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
