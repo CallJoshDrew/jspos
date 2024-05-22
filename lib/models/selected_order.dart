@@ -120,6 +120,18 @@ class SelectedOrder {
           item.price += typePrice;
         }
       }
+      if (item.selectedMeatPortion != null) {
+        double meatPrice = item.selectedMeatPortion!['price'] ?? 0.00;
+        if (meatPrice > 0.00) {
+          item.price += meatPrice;
+        }
+      }
+      if (item.selectedMeePortion != null) {
+        double meePrice = item.selectedMeePortion!['price'] ?? 0.00;
+        if (meePrice > 0.00) {
+          item.price += meePrice;
+        }
+      }
       // Try to find an item in items with the same properties as the new item
       var existingItem = items.firstWhereOrNull((i) {
         // Add the print statements here
@@ -129,13 +141,14 @@ class SelectedOrder {
         // print('New item remarks type: ${item.itemRemarks.runtimeType}');
 
         // Use MapEquality().equals for deep equality check
-        bool areRemarksEqual =
-            MapEquality().equals(i.itemRemarks, item.itemRemarks);
+        bool areRemarksEqual = MapEquality().equals(i.itemRemarks, item.itemRemarks);
         // print('Are remarks equal: $areRemarksEqual');
 
         return i.name == item.name &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
             i.selectedType?['name'] == item.selectedType?['name'] &&
+            i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
+            i.selectedMeePortion?['name']  == item.selectedMeePortion?['name'] &&
             areRemarksEqual; // Use the result of the deep equality check
       });
 
@@ -158,6 +171,7 @@ class SelectedOrder {
       }
     }
     calculateItemsAndQuantities();
+    print('Added Item: ${item}');
   }
 
   // solely for item in the orderDetails which has selection is true
@@ -187,8 +201,7 @@ class SelectedOrder {
   }
 
   void updateSubTotal() {
-    double total =
-        items.fold(0, (total, item) => total + item.price * item.quantity);
+    double total = items.fold(0, (total, item) => total + item.price * item.quantity);
     subTotal = double.parse(total.toStringAsFixed(2));
   }
 
@@ -252,13 +265,11 @@ class SelectedOrder {
       switch (item.category) {
         case 'Cakes':
           cakes['itemCount'] = (cakes['itemCount'] ?? 0) + 1;
-          cakes['itemQuantity'] =
-              (cakes['itemQuantity'] ?? 0) + (item.quantity);
+          cakes['itemQuantity'] = (cakes['itemQuantity'] ?? 0) + (item.quantity);
           break;
         case 'Drinks':
           drinks['itemCount'] = (drinks['itemCount'] ?? 0) + 1;
-          drinks['itemQuantity'] =
-              (drinks['itemQuantity'] ?? 0) + (item.quantity);
+          drinks['itemQuantity'] = (drinks['itemQuantity'] ?? 0) + (item.quantity);
           break;
         case 'Dish':
           dish['itemCount'] = (dish['itemCount'] ?? 0) + 1;

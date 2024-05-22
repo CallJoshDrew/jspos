@@ -242,6 +242,7 @@ class _DineInPageState extends State<DineInPage> {
       orderStatus = "Make Payment";
       orderStatusColor = Colors.green[800]!;
       orderStatusIcon = Icons.monetization_on;
+      handleMethod = handlePaymentBtn;
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       _showConfirmationDialog();
     }

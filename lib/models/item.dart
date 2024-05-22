@@ -8,10 +8,13 @@ class Item {
   final bool selection;
   List<Map<String, dynamic>> choices;
   List<Map<String, dynamic>> types;
+   List<Map<String, dynamic>> meatPortion;
+  List<Map<String, dynamic>> meePortion;
   Map<String, dynamic>? selectedChoice;
   Map<String, dynamic>? selectedType;
+  Map<String, dynamic>? selectedMeatPortion;
+  Map<String, dynamic>? selectedMeePortion;
   Map<String, dynamic>? itemRemarks;
-
 
   Item({
     required this.id,
@@ -23,8 +26,12 @@ class Item {
     this.selection = false,
     required this.choices,
     required this.types,
+    required this.meatPortion,
+    required this.meePortion,
     this.selectedChoice,
     this.selectedType,
+    this.selectedMeatPortion,
+    this.selectedMeePortion,
     this.itemRemarks,
   });
 
@@ -41,8 +48,12 @@ class Item {
         '\tselection: $selection, \n'
         '\tchoices: ${choices.toString()},\n'
         '\ttypes: ${types.toString()},\n'
+        '\tmeatPortion: ${meatPortion.toString()},\n'
+        '\tmeePortion: ${meePortion.toString()}\n'
         '\tselectedChoice: $selectedChoice, \n'
         '\tselectedType: $selectedType, \n'
+        '\tselectedMeatPortion: $selectedMeatPortion, \n'
+        '\tselectedMeePortion: $selectedMeePortion,\n'
         '\titemRemarks: ${itemRemarks.toString()}\n'
         '}';
   }
@@ -59,12 +70,12 @@ class Item {
       selection: selection,
       choices: choices,
       types: types,
-      selectedChoice: selectedChoice != null
-          ? Map<String, dynamic>.from(selectedChoice!)
-          : null,
-      selectedType: selectedType != null
-          ? Map<String, dynamic>.from(selectedType!)
-          : null,
+      meatPortion: meatPortion,
+      meePortion: meePortion,
+      selectedChoice: selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
+      selectedType: selectedType != null ? Map<String, dynamic>.from(selectedType!) : null,
+      selectedMeatPortion: selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
+      selectedMeePortion: selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
       itemRemarks: itemRemarks,
     );
   }

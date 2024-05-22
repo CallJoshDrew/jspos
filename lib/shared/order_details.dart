@@ -258,14 +258,18 @@ class _OrderDetailsState extends State<OrderDetails> {
           print('item.itemRemarks is: ${item.itemRemarks}');
           Map<String, dynamic>? selectedChoice = item.selectedChoice;
           Map<String, dynamic>? selectedType = item.selectedType;
+          Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
+          Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
+
           double choicePrice = item.selectedChoice?['price'] ?? 0;
           double typePrice = item.selectedType?['price'] ?? 0;
+          double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
+          double meePrice = item.selectedMeePortion?['price'] ?? 0;
+          double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
 
-          double subTotalPrice = choicePrice + typePrice;
-
-          void calculateTotalPrice(double choicePrice, double typePrice) {
+          void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
             setState(() {
-              subTotalPrice = choicePrice + typePrice;
+              subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
               item.price = subTotalPrice;
               // print('Price of Selected Choice: $choicePrice');
               // print('Price of Selected Type: $typePrice');
@@ -422,7 +426,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                   choicePrice = choice['price'];
                                                                   item.name = choice['name'];
                                                                 });
-                                                                calculateTotalPrice(choicePrice, typePrice);
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                                 Navigator.pop(context);
                                                               },
                                                               child: Text(
@@ -477,7 +481,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                   item.selectedType = type;
                                                                   typePrice = type['price'];
                                                                 });
-                                                                calculateTotalPrice(choicePrice, typePrice);
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                                 Navigator.pop(context);
                                                               },
                                                               child: Text(
@@ -512,6 +516,166 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   ),
                                                 )
                                               : Container(), // Empty container if types is empty
+                                        ),
+                                        const SizedBox(width: 10),
+                                         // selectedMeat Portion
+                                        Expanded(
+                                          child: item.meatPortion.isNotEmpty
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return SimpleDialog(
+                                                          title: const Text(
+                                                              'Select Meat Portion'),
+                                                          children: item
+                                                              .meatPortion
+                                                              .map<SimpleDialogOption>(
+                                                                  (meatPortion) {
+                                                            return SimpleDialogOption(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedMeatPortion =
+                                                                      meatPortion;
+                                                                  item.selectedMeatPortion =
+                                                                      meatPortion;
+                                                                  meatPrice =
+                                                                      meatPortion[
+                                                                          'price'];
+                                                                });
+                                                                calculateTotalPrice(
+                                                                    choicePrice,
+                                                                    typePrice,
+                                                                    meatPrice,
+                                                                    meePrice);
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: Text(
+                                                                '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 18,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5), // This is the border radius
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            15),
+                                                    child: Text(
+                                                      '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(), // Empty container
+                                        ),
+                                        const SizedBox(width: 10),
+                                        // selectedMee Portion
+                                        Expanded(
+                                          child: item.meePortion.isNotEmpty
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return SimpleDialog(
+                                                          title: const Text(
+                                                              'Select Mee Portion'),
+                                                          children: item
+                                                              .meePortion
+                                                              .map<SimpleDialogOption>(
+                                                                  (meePortion) {
+                                                            return SimpleDialogOption(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedMeePortion =
+                                                                      meePortion;
+                                                                  item.selectedMeePortion =
+                                                                      meePortion;
+                                                                  meePrice =
+                                                                      meePortion[
+                                                                          'price'];
+                                                                });
+                                                                calculateTotalPrice(
+                                                                    choicePrice,
+                                                                    typePrice,
+                                                                    meatPrice,
+                                                                    meePrice);
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: Text(
+                                                                '${meePortion['name']} (RM ${meePortion['price'].toStringAsFixed(2)})',
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 18,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5), // This is the border radius
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            15),
+                                                    child: Text(
+                                                      '${selectedMeePortion!['name']} (RM ${selectedMeePortion!['price'].toStringAsFixed(2)})',
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(), // Empty container
                                         ),
                                         const SizedBox(width: 10),
                                       ],
