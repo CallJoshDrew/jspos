@@ -141,7 +141,7 @@ class SelectedOrder {
         // print('New item remarks type: ${item.itemRemarks.runtimeType}');
 
         // Use MapEquality().equals for deep equality check
-        bool areRemarksEqual = MapEquality().equals(i.itemRemarks, item.itemRemarks);
+        bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
         // why can't set to const for above?
         // print('Are remarks equal: $areRemarksEqual');
 
