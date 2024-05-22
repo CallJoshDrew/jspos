@@ -1,14 +1,16 @@
 class Item {
   String id;
   String name;
+  final String originalName;
   final String category;
   int quantity;
   double price;
+  final double originalPrice;
   final String image;
   final bool selection;
   List<Map<String, dynamic>> choices;
   List<Map<String, dynamic>> types;
-   List<Map<String, dynamic>> meatPortion;
+  List<Map<String, dynamic>> meatPortion;
   List<Map<String, dynamic>> meePortion;
   Map<String, dynamic>? selectedChoice;
   Map<String, dynamic>? selectedType;
@@ -33,7 +35,8 @@ class Item {
     this.selectedMeatPortion,
     this.selectedMeePortion,
     this.itemRemarks,
-  });
+  })  : originalPrice = price,
+        originalName = name; // Set originalPrice equal to price here
 
   // make sure you update this so that it print out all the fields
   @override
@@ -41,7 +44,9 @@ class Item {
     return 'Item: {\n'
         '\tid: $id, \n'
         '\tname: $name, \n'
+        '\tname: $originalName, \n'
         '\tprice: $price, \n'
+        '\tprice: $originalPrice, \n'
         '\tcategory: $category,\n'
         '\tquantity: $quantity,  \n'
         '\timage: $image, \n'

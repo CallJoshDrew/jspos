@@ -138,20 +138,21 @@ class _DineInPageState extends State<DineInPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green[700],
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: 300),
           content: Container(
             alignment: Alignment.centerRight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const Icon(
-                  Icons.check_circle,
+                  // Icons.check_circle,
+                  Icons.add,
                   color: Colors.white,
                   size: 28,
                 ),
                 const SizedBox(width: 5), // provide some space between the icon and text
                 Text(
-                  "${item.name}!",
+                  "RM ${item.price.toStringAsFixed(2)}",
                   style: const TextStyle(
                     fontSize: 26,
                     color: Colors.white,

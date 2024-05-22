@@ -80,7 +80,7 @@ class ProductItemState extends State<ProductItem> {
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
 
         double totalPrice = choicePrice + typePrice + meatPrice + meePrice;
-
+        print(item.originalName);
         void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
           setState(() {
             totalPrice = choicePrice + typePrice + meatPrice + meePrice;
@@ -151,7 +151,7 @@ class ProductItemState extends State<ProductItem> {
                     backgroundColor: Colors.black87,
                     child: AlertDialog(
                       title: Text(
-                        item.name,
+                        item.originalName,
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -344,6 +344,9 @@ class ProductItemState extends State<ProductItem> {
                                                             setState(() {
                                                               selectedMeatPortion = meatPortion;
                                                               item.selectedMeatPortion = meatPortion;
+                                                              if (item.selectedMeatPortion!['name'] != "Normal Meat") {
+                                                                itemRemarks['98'] = meatPortion['name'];
+                                                              }
                                                               meatPrice = meatPortion['price'];
                                                             });
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
@@ -399,6 +402,9 @@ class ProductItemState extends State<ProductItem> {
                                                             setState(() {
                                                               selectedMeePortion = meePortion;
                                                               item.selectedMeePortion = meePortion;
+                                                              if (item.selectedMeePortion!['name'] != "Normal Mee") {
+                                                                itemRemarks['99'] = meePortion['name'];
+                                                              }
                                                               meePrice = meePortion['price'];
                                                             });
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);

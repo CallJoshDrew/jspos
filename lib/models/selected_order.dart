@@ -142,6 +142,7 @@ class SelectedOrder {
 
         // Use MapEquality().equals for deep equality check
         bool areRemarksEqual = MapEquality().equals(i.itemRemarks, item.itemRemarks);
+        // why can't set to const for above?
         // print('Are remarks equal: $areRemarksEqual');
 
         return i.name == item.name &&

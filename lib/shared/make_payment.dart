@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/selected_order.dart';
 
@@ -72,6 +71,24 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     } else {
       return bill;
     }
+  }
+
+  Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
+    Map<String, dynamic> filteredRemarks = {};
+    if (itemRemarks != null) {
+      itemRemarks.forEach((key, value) {
+        // Add your conditions here
+        if (key != '98' && key != '99') {
+          filteredRemarks[key] = value;
+        }
+      });
+    }
+    return filteredRemarks;
+  }
+
+  String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
+    final filteredRemarks = filterRemarks(itemRemarks);
+    return filteredRemarks.values.join(', ');
   }
 
   @override
@@ -200,13 +217,32 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                         children: [
                                                           Row(
                                                             children: [
-                                                              Text(
-                                                                '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
-                                                                style: const TextStyle(
-                                                                  fontSize: 22,
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
+                                                              item.selection && item.selectedChoice != null
+                                                                  ? Row(
+                                                                    children: [
+                                                                      Text(
+                                                                          "${index + 1}.${item.selectedChoice!['name']} ",
+                                                                          style: const TextStyle(
+                                                                            fontSize: 22,
+                                                                            color: Colors.white,
+                                                                          ),
+                                                                        ),
+                                                                        Text(
+                                                                          "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
+                                                                          style: const TextStyle(
+                                                                            fontSize: 22,
+                                                                            color: Colors.white,
+                                                                          ),
+                                                                        ),
+                                                                    ],
+                                                                  )
+                                                                  : Text(
+                                                                      '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
+                                                                      style: const TextStyle(
+                                                                        fontSize: 22,
+                                                                        color: Colors.white,
+                                                                      ),
+                                                                    ),
                                                               const SizedBox(width: 10.0),
                                                               Text(
                                                                 'x ${item.quantity}',
@@ -220,28 +256,90 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                             ],
                                                           ),
                                                           Padding(
-                                                            padding: const EdgeInsets.only(left: 25),
-                                                            child: Row(
+                                                            padding: const EdgeInsets.only(left: 20),
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                item.selectedType != null && item.category != "Cakes"
-                                                                    ? Text(
-                                                                        "${item.selectedType!['name']}",
-                                                                        style: TextStyle(
-                                                                          fontSize: 22,
-                                                                          color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
-                                                                        ),
-                                                                      )
-                                                                    : const SizedBox.shrink(),
-                                                                Wrap(
-                                                                  children: [
-                                                                    item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true
-                                                                        ? Text(
-                                                                            item.itemRemarks?.values.join(', ') ?? '',
+                                                                item.selection && item.selectedType != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "${item.selectedType!['name']} ",
+                                                                            style: const TextStyle(fontSize: 22, color: Colors.white),
+                                                                          ),
+                                                                          Text(
+                                                                            "( + ${item.selectedType!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
-                                                                              fontSize: 20,
-                                                                              color: Colors.orangeAccent,
+                                                                              fontSize: 22,
+                                                                              color: Color.fromARGB(255, 114, 226, 118),
                                                                             ),
                                                                           )
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                item.selection && item.selectedMeePortion != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "${item.selectedMeePortion!['name']} ",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 22,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                          Text(
+                                                                            "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 22,
+                                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                item.selection && item.selectedMeatPortion != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "${item.selectedMeatPortion!['name']} ",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 22,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                          Text(
+                                                                            "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 22,
+                                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                    const SizedBox(height: 4),
+                                                                Wrap(
+                                                                  children: [
+                                                                    item.selection && item.selectedMeatPortion != null
+                                                                     && filterRemarks(item.itemRemarks).isNotEmpty == true
+                                                                        ? Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                                'Remarks: ',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 22,
+                                                                                  color: Colors.white,
+                                                                                ),
+                                                                              ),
+                                                                              Text(
+                                                                                getFilteredRemarks(item.itemRemarks),
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 22,
+                                                                                  color: Colors.orangeAccent,
+                                                                                ),
+                                                                              )
+                                                                          ],
+                                                                        )
                                                                         : const SizedBox.shrink(),
                                                                   ],
                                                                 ),

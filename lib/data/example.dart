@@ -18,7 +18,7 @@ class MakePaymentPage extends StatefulWidget {
 
 class MakePaymentPageState extends State<MakePaymentPage> {
   String selectedPaymentMethod = "Cash";
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   double _change = 0.0;
 
   void _calculateChange() {
