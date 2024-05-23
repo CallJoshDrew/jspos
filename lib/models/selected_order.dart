@@ -167,12 +167,6 @@ class SelectedOrder {
     // print('Added Item: ${item}');
   }
 
-  // Add the print statements here
-  // print('Existing item remarks: ${i.itemRemarks}');
-  // print('New item remarks: ${item.itemRemarks}');
-  // print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
-  // print('New item remarks type: ${item.itemRemarks.runtimeType}');
-
   // solely for item in the orderDetails which has selection is true
   void updateItem(Item item) {
     // Find the index of the item with the same id
@@ -281,3 +275,10 @@ class SelectedOrder {
     }
   }
 }
+
+
+  // Add the print statements here
+  // print('Existing item remarks: ${i.itemRemarks}');
+  // print('New item remarks: ${item.itemRemarks}');
+  // print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
+  // print('New item remarks type: ${item.itemRemarks.runtimeType}');

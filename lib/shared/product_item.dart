@@ -50,6 +50,7 @@ class ProductItemState extends State<ProductItem> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the status bar height
     return GestureDetector(
       onTap: () {
         Item item = Item(
@@ -79,16 +80,10 @@ class ProductItemState extends State<ProductItem> {
         double meatPrice = widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null ? widget.meatPortion[0]['price']! : 0.00;
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
         double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
-        
+
         void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
           setState(() {
             subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
-            // print('Price of Selected Choice: $choicePrice');
-            // print('Price of Selected Type: $typePrice');
-            // print('Price of Selected Meat: $meatPrice');
-            // print('Price of Selected Mee: $meePrice');
-            // print('Total Price: $subTotalPrice');
-            // print('-------------------------');
           });
         }
 
@@ -143,7 +138,7 @@ class ProductItemState extends State<ProductItem> {
                     return states.contains(MaterialState.pressed) ? Colors.green[700]! : Colors.green;
                   } else {
                     // If the button is pressed or the remark has not been added, make the background black
-                    return states.contains(MaterialState.pressed) ? Colors.green : Colors.black;
+                    return states.contains(MaterialState.pressed) ? Colors.green : const Color(0xff1f2029);
                   }
                 },
               ),
@@ -183,41 +178,56 @@ class ProductItemState extends State<ProductItem> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
+              var screenSize = MediaQuery.of(context).size; // Get the screen size
+              var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
               return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
-                  return Dialog(
-                    insetPadding: EdgeInsets.zero, // Make dialog full-screen
-                    backgroundColor: Colors.black87,
-                    child: AlertDialog(
-                      title: Text(
-                        item.originalName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
+                  return Scaffold(
+                    body: Dialog(
+                      insetPadding: EdgeInsets.zero, // Make dialog full-screen
                       backgroundColor: Colors.black,
-                      // second color const Color(0xff1f2029),
-                      shadowColor: Colors.black,
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Colors.deepOrange, width: 2), // This is the border color
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      content: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          maxWidth: 1600,
-                          minHeight: 800,
-                        ),
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                      child: SizedBox(
+                        width: screenSize.width, 
+                        height: screenSize.height - statusBarHeight,
+                        // backgroundColor: const Color(0xff1f2029),
+                        // second color const Color(0xff1f2029),
+                        // shadowColor: Colors.black,
+                        // elevation: 5,
+                        // shape: RoundedRectangleBorder(
+                        //   side: const BorderSide(color: Colors.green, width: 2), // This is the border color
+                        //   borderRadius: BorderRadius.circular(10.0),
+                        // ),
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: SingleChildScrollView(
                             child: Column(
                               children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Colors.white10,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(14.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          item.originalName,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
                                 // First row
                                 Row(
                                   children: [
                                     SizedBox(
-                                      width: 160,
-                                      height: 160,
+                                      width: 100,
+                                      height: 100,
                                       child: ClipRRect(
                                         borderRadius: const BorderRadius.all(Radius.circular(10)),
                                         child: Image.asset(
@@ -246,7 +256,7 @@ class ProductItemState extends State<ProductItem> {
                                       child: Text('RM ${subTotalPrice.toStringAsFixed(2)}',
                                           textAlign: TextAlign.right,
                                           style: const TextStyle(
-                                            fontSize: 22,
+                                            fontSize: 24,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           )),
@@ -531,63 +541,69 @@ class ProductItemState extends State<ProductItem> {
                             ),
                           ),
                         ),
+                        // actions: [
+                        //   TextButton(
+                        //     style: TextButton.styleFrom(
+                        //       backgroundColor: Colors.green,
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //       ),
+                        //     ),
+                        //     child: const Padding(
+                        //       padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
+                        //       child: Text(
+                        //         'Confirm',
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.bold,
+                        //           color: Colors.white,
+                        //           fontSize: 24,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     onPressed: () {
+                        //       item.selectedChoice = selectedChoice;
+                        //       item.selectedType = selectedType;
+                        //       item.selectedMeatPortion = selectedMeatPortion;
+                        //       item.selectedMeePortion = selectedMeePortion;
+
+                        //       updateItemRemarks();
+
+                        //       calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                        //       item.price = subTotalPrice;
+                        //       // widget.selectedOrder.updateTotalCost(0);
+                        //       // widget.updateOrderStatus!();
+                        //       widget.onItemAdded(item);
+                        //       Navigator.of(context).pop();
+                        //     },
+                        //   ),
+                        //   const SizedBox(width: 10),
+                        //   TextButton(
+                        //     style: TextButton.styleFrom(
+                        //       backgroundColor: Colors.white,
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         // side: const BorderSide(color: Colors.green, width: 1),
+                        //       ),
+                        //     ),
+                        //     child: const Padding(
+                        //       padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
+                        //       child: Text(
+                        //         'Cancel',
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.bold,
+                        //           color: Colors.black,
+                        //           fontSize: 24,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     onPressed: () {
+                        //       itemRemarks = {};
+                        //       _controller.text = '';
+                        //       Navigator.of(context).pop();
+                        //     },
+                        //   ),
+                        // ],
                       ),
-                      actions: [
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.deepOrange,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Text(
-                            'Confirm',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                          onPressed: () {
-                            item.selectedChoice = selectedChoice;
-                            item.selectedType = selectedType;
-                            item.selectedMeatPortion = selectedMeatPortion;
-                            item.selectedMeePortion = selectedMeePortion;
-
-                            updateItemRemarks();
-
-                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                            item.price = subTotalPrice;
-                            // widget.selectedOrder.updateTotalCost(0);
-                            // widget.updateOrderStatus!();
-                            widget.onItemAdded(item);
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              // side: const BorderSide(color: Colors.deepOrange, width: 1),
-                            ),
-                          ),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepOrange,
-                              fontSize: 18,
-                            ),
-                          ),
-                          onPressed: () {
-                            itemRemarks = {};
-                            _controller.text = '';
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
                     ),
                   );
                 },
@@ -643,3 +659,10 @@ class ProductItemState extends State<ProductItem> {
     );
   }
 }
+
+// print('Price of Selected Choice: $choicePrice');
+// print('Price of Selected Type: $typePrice');
+// print('Price of Selected Meat: $meatPrice');
+// print('Price of Selected Mee: $meePrice');
+// print('Total Price: $subTotalPrice');
+// print('-------------------------');
