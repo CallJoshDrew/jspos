@@ -79,7 +79,7 @@ class ProductItemState extends State<ProductItem> {
         double meatPrice = widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null ? widget.meatPortion[0]['price']! : 0.00;
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
         double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
-        print(item.originalName);
+        
         void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
           setState(() {
             subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
@@ -93,26 +93,28 @@ class ProductItemState extends State<ProductItem> {
         }
 
         void updateItemRemarks() {
-          Map<String, Map<dynamic, dynamic>> portions = {
-            '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
-            '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
-          };
+          if (selectedMeePortion != null && selectedMeatPortion != null) {
+            Map<String, Map<dynamic, dynamic>> portions = {
+              '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
+              '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
+            };
 
-          portions.forEach((key, value) {
-            Map<dynamic, dynamic> portion = value['portion'];
-            String normalName = value['normalName'];
+            portions.forEach((key, value) {
+              Map<dynamic, dynamic> portion = value['portion'];
+              String normalName = value['normalName'];
 
-            if (itemRemarks.containsKey(key)) {
-              if (portion['name'] != normalName) {
+              if (itemRemarks.containsKey(key)) {
+                if (portion['name'] != normalName) {
+                  itemRemarks[key] = portion['name'];
+                } else {
+                  itemRemarks.remove(key);
+                }
+              } else if (portion['name'] != normalName) {
                 itemRemarks[key] = portion['name'];
-              } else {
-                itemRemarks.remove(key);
               }
-            } else if (portion['name'] != normalName) {
-              itemRemarks[key] = portion['name'];
-            }
-          });
-          
+            });
+          }
+
           // Add the user's comment with a key of '100'
           if (item.itemRemarks != null) {
             itemRemarks['100'] = _controller.text;
@@ -164,7 +166,7 @@ class ProductItemState extends State<ProductItem> {
                   // If the remark is not in itemRemarks, add it
                   itemRemarks[key] = data['remarks'];
                 }
-                print('itemRemarks selection:$itemRemarks');
+                // print('itemRemarks selection:$itemRemarks');
               });
             },
             child: Text(
@@ -519,7 +521,7 @@ class ProductItemState extends State<ProductItem> {
                                           )..addAll(itemRemarks);
                                           itemRemarks = sortedItemRemarks;
                                           item.itemRemarks = itemRemarks;
-                                          print(item.itemRemarks);
+                                          // print(item.itemRemarks);
                                         });
                                       },
                                     )

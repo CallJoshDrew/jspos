@@ -164,7 +164,7 @@ class SelectedOrder {
       }
     }
     calculateItemsAndQuantities();
-    print('Added Item: ${item}');
+    // print('Added Item: ${item}');
   }
 
   // Add the print statements here

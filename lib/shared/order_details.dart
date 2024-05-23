@@ -39,13 +39,13 @@ class _OrderDetailsState extends State<OrderDetails> {
   Map<String, dynamic> itemRemarks = {};
   final TextEditingController _controller = TextEditingController();
   void prettyPrintOrder() {
-    print('Order Number: ${widget.selectedOrder.orderNumber}');
-    print('Table Name: ${widget.selectedOrder.tableName}');
-    print('Order Type: ${widget.selectedOrder.orderType}');
-    print('Order Time: ${widget.selectedOrder.orderTime}');
-    print('Order Date: ${widget.selectedOrder.orderDate}');
-    print('Status: ${widget.selectedOrder.status}');
-    print('-------------------------');
+    // print('Order Number: ${widget.selectedOrder.orderNumber}');
+    // print('Table Name: ${widget.selectedOrder.tableName}');
+    // print('Order Type: ${widget.selectedOrder.orderType}');
+    // print('Order Time: ${widget.selectedOrder.orderTime}');
+    // print('Order Date: ${widget.selectedOrder.orderDate}');
+    // print('Status: ${widget.selectedOrder.status}');
+    // print('-------------------------');
   }
 
   @override
@@ -256,7 +256,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       child: GestureDetector(
         onTap: () {
           itemRemarks = Map<String, dynamic>.from(item.itemRemarks ?? {});
-          print('item.itemRemarks is: ${item.itemRemarks}');
+          // print('item.itemRemarks is: ${item.itemRemarks}');
           Map<String, dynamic>? selectedChoice = item.selectedChoice;
           Map<String, dynamic>? selectedType = item.selectedType;
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
@@ -286,25 +286,27 @@ class _OrderDetailsState extends State<OrderDetails> {
           String? comment = item.itemRemarks!['100'];
           _controller.text = comment ?? '';
           void updateItemRemarks() {
-            Map<String, Map<dynamic, dynamic>> portions = {
-              '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
-              '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
-            };
+            if (selectedMeePortion != null && selectedMeatPortion != null) {
+              Map<String, Map<dynamic, dynamic>> portions = {
+                '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
+                '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
+              };
 
-            portions.forEach((key, value) {
-              Map<dynamic, dynamic> portion = value['portion'];
-              String normalName = value['normalName'];
+              portions.forEach((key, value) {
+                Map<dynamic, dynamic> portion = value['portion'];
+                String normalName = value['normalName'];
 
-              if (itemRemarks.containsKey(key)) {
-                if (portion['name'] != normalName) {
+                if (itemRemarks.containsKey(key)) {
+                  if (portion['name'] != normalName) {
+                    itemRemarks[key] = portion['name'];
+                  } else {
+                    itemRemarks.remove(key);
+                  }
+                } else if (portion['name'] != normalName) {
                   itemRemarks[key] = portion['name'];
-                } else {
-                  itemRemarks.remove(key);
                 }
-              } else if (portion['name'] != normalName) {
-                itemRemarks[key] = portion['name'];
-              }
-            });
+              });
+            }
 
             if (item.itemRemarks != {} && comment != null && _controller.text.trim() != '') {
               itemRemarks['100'] = _controller.text;
@@ -351,8 +353,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                     // If the remark is not in itemRemarks, add it
                     itemRemarks[key] = data['remarks'];
                   }
-                  print('itemRemarks selection:$itemRemarks');
-                  print('item.itemRemarks:${item.itemRemarks}');
+                  // print('itemRemarks selection:$itemRemarks');
+                  // print('item.itemRemarks:${item.itemRemarks}');
                 });
               },
               child: Text(

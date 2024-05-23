@@ -118,10 +118,10 @@ class _DineInPageState extends State<DineInPage> {
             order.showEditBtn = true;
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-            print('Selected Table: ');
-            print('selectedOrder items: ${selectedOrder.items}');
-            print('tempCartItems: $tempCartItems');
-            print('-------------------------');
+            // print('Selected Table: ');
+            // print('selectedOrder items: ${selectedOrder.items}');
+            // print('tempCartItems: $tempCartItems');
+            // print('-------------------------');
           }
         }
       }
@@ -173,8 +173,8 @@ class _DineInPageState extends State<DineInPage> {
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
-    print("selecteded item: $item");
-    print("tempCartItems: $tempCartItems");
+    // print("selecteded item: $item");
+    // print("tempCartItems: $tempCartItems");
     // print("selectedOrder.status: ${selectedOrder.status}");
     // print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
     if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
