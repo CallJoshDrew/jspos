@@ -298,21 +298,24 @@ class _DineInPageState extends State<DineInPage> {
       prettyPrintTable();
     });
   }
+  // print('Selected Order After Payment: ${selectedOrder}');
 
   void handlePaymentBtn() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MakePaymentPage(
-          payment: MakePayment(selectedOrder: selectedOrder),
+          selectedOrder: selectedOrder,
+          updateOrderStatus: updateOrderStatus,
         ),
       ),
     );
-    // setState(() {
-    //   selectedOrder.makePayment();
-    //   updateOrderStatus();
-    // }); Need to put this in the Payment Page after confirm payment.
   }
+
+  // setState(() {
+  //   selectedOrder.makePayment();
+  //   updateOrderStatus();
+  // }); Need to put this in the Payment Page after confirm payment.
 
   //
   VoidCallback? handleMethod;

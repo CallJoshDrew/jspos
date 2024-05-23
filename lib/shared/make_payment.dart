@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/selected_order.dart';
 
-class MakePayment {
-  final SelectedOrder selectedOrder;
-
-  MakePayment({required this.selectedOrder});
-}
-
 class MakePaymentPage extends StatefulWidget {
-  final MakePayment payment;
+  final SelectedOrder selectedOrder;
+  final VoidCallback? updateOrderStatus;
 
-  const MakePaymentPage({super.key, required this.payment});
+  const MakePaymentPage({super.key, required this.selectedOrder, required this.updateOrderStatus});
 
   @override
   MakePaymentPageState createState() => MakePaymentPageState();
@@ -28,7 +23,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
 
   void _calculateChange() {
     double amountReceived = double.tryParse(_controller.text) ?? 0.0;
-    _change = amountReceived - widget.payment.selectedOrder.totalPrice;
+    _change = amountReceived - widget.selectedOrder.totalPrice;
   }
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
@@ -94,7 +89,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   @override
   void initState() {
     super.initState();
-    originalBill = widget.payment.selectedOrder.totalPrice; // Initialize originalBill here
+    originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
   }
 
@@ -102,7 +97,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-
+    double fractionAmount = widget.selectedOrder.totalPrice - widget.selectedOrder.totalPrice.floor();
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
       body: Dialog(
@@ -127,7 +122,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.payment.selectedOrder.orderNumber,
+                          widget.selectedOrder.orderNumber,
                           style: const TextStyle(
                             fontSize: 24,
                             color: Colors.white,
@@ -143,7 +138,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                         Row(
                           children: [
                             Text(
-                              '${widget.payment.selectedOrder.orderTime} -',
+                              '${widget.selectedOrder.orderTime} -',
                               style: const TextStyle(
                                 fontSize: 24,
                                 color: Colors.white,
@@ -151,7 +146,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              '${widget.payment.selectedOrder.orderDate}',
+                              '${widget.selectedOrder.orderDate}',
                               style: const TextStyle(
                                 fontSize: 24,
                                 color: Colors.white,
@@ -175,7 +170,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: () {
-                                Map<String, List<Item>> categorizedItems = categorizeItems(widget.payment.selectedOrder.items);
+                                Map<String, List<Item>> categorizedItems = categorizeItems(widget.selectedOrder.items);
                                 Map<String, int> totalQuantities = calculateTotalQuantities(categorizedItems);
                                 Map<String, double> totalPrices = calculateTotalPrices(categorizedItems);
                                 List<Widget> categoryWidgets = [];
@@ -422,7 +417,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.payment.selectedOrder.subTotal.toStringAsFixed(2),
+                                          widget.selectedOrder.subTotal.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -436,12 +431,13 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.payment.selectedOrder.serviceCharge.toStringAsFixed(2),
+                                          widget.selectedOrder.serviceCharge.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 10),
+                                    (fractionAmount < 0.50) ?
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -454,7 +450,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
-                                    ),
+                                    ): const SizedBox.shrink(),
                                     // custom doted line.
                                     Container(
                                       margin: const EdgeInsets.symmetric(vertical: 22),
@@ -548,7 +544,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
+                                    (fractionAmount < 0.50) ? Row(
                                       children: [
                                         const Expanded(
                                           child: Column(
@@ -604,7 +600,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           ],
                                         ),
                                       ],
-                                    ),
+                                    )  : const SizedBox.shrink(),
                                     const SizedBox(height: 20),
                                     const Padding(
                                       padding: EdgeInsets.only(bottom: 10),
@@ -630,7 +626,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           onPressed: () {
                                             setState(() {
                                               selectedPaymentMethod = value;
-                                              widget.payment.selectedOrder.paymentMethod = value;
+                                              widget.selectedOrder.paymentMethod = value;
                                             });
                                           },
                                           child: Padding(
@@ -752,6 +748,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 ),
                                                               ),
                                                               onPressed: () {
+
                                                                 Navigator.of(context).pop();
                                                               },
                                                               child: const Padding(

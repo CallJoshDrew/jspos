@@ -134,22 +134,14 @@ class SelectedOrder {
       }
       // Try to find an item in items with the same properties as the new item
       var existingItem = items.firstWhereOrNull((i) {
-        // Add the print statements here
-        // print('Existing item remarks: ${i.itemRemarks}');
-        // print('New item remarks: ${item.itemRemarks}');
-        // print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
-        // print('New item remarks type: ${item.itemRemarks.runtimeType}');
-
         // Use MapEquality().equals for deep equality check
         bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
-        // why can't set to const for above?
-        // print('Are remarks equal: $areRemarksEqual');
 
         return i.name == item.name &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
             i.selectedType?['name'] == item.selectedType?['name'] &&
             i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
-            i.selectedMeePortion?['name']  == item.selectedMeePortion?['name'] &&
+            i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
             areRemarksEqual; // Use the result of the deep equality check
       });
 
@@ -174,6 +166,12 @@ class SelectedOrder {
     calculateItemsAndQuantities();
     print('Added Item: ${item}');
   }
+
+  // Add the print statements here
+  // print('Existing item remarks: ${i.itemRemarks}');
+  // print('New item remarks: ${item.itemRemarks}');
+  // print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
+  // print('New item remarks type: ${item.itemRemarks.runtimeType}');
 
   // solely for item in the orderDetails which has selection is true
   void updateItem(Item item) {

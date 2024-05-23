@@ -78,19 +78,56 @@ class ProductItemState extends State<ProductItem> {
         double typePrice = widget.types.isNotEmpty && widget.types[0]['price'] != null ? widget.types[0]['price']! : 0.00;
         double meatPrice = widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null ? widget.meatPortion[0]['price']! : 0.00;
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
-
-        double totalPrice = choicePrice + typePrice + meatPrice + meePrice;
+        double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
         print(item.originalName);
         void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
           setState(() {
-            totalPrice = choicePrice + typePrice + meatPrice + meePrice;
+            subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
             // print('Price of Selected Choice: $choicePrice');
             // print('Price of Selected Type: $typePrice');
             // print('Price of Selected Meat: $meatPrice');
             // print('Price of Selected Mee: $meePrice');
-            // print('Total Price: $totalPrice');
+            // print('Total Price: $subTotalPrice');
             // print('-------------------------');
           });
+        }
+
+        void updateItemRemarks() {
+          Map<String, Map<dynamic, dynamic>> portions = {
+            '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
+            '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
+          };
+
+          portions.forEach((key, value) {
+            Map<dynamic, dynamic> portion = value['portion'];
+            String normalName = value['normalName'];
+
+            if (itemRemarks.containsKey(key)) {
+              if (portion['name'] != normalName) {
+                itemRemarks[key] = portion['name'];
+              } else {
+                itemRemarks.remove(key);
+              }
+            } else if (portion['name'] != normalName) {
+              itemRemarks[key] = portion['name'];
+            }
+          });
+          
+          // Add the user's comment with a key of '100'
+          if (item.itemRemarks != null) {
+            itemRemarks['100'] = _controller.text;
+          }
+          SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+            (a, b) => int.parse(a).compareTo(int.parse(b)),
+          )..addAll(itemRemarks);
+
+          itemRemarks = sortedItemRemarks;
+          // print('itemRemarks after sorting: $itemRemarks');
+          item.itemRemarks = itemRemarks;
+          itemRemarks = {};
+          // print('itemRemarks after clearing: $itemRemarks');
+          _controller.text = '';
+          // print('_controller.text after clearing: ${_controller.text}');
         }
 
         Widget remarkButton(Map<String, dynamic> data) {
@@ -204,7 +241,7 @@ class ProductItemState extends State<ProductItem> {
                                       ],
                                     ),
                                     Expanded(
-                                      child: Text('RM ${totalPrice.toStringAsFixed(2)}',
+                                      child: Text('RM ${subTotalPrice.toStringAsFixed(2)}',
                                           textAlign: TextAlign.right,
                                           style: const TextStyle(
                                             fontSize: 22,
@@ -233,7 +270,6 @@ class ProductItemState extends State<ProductItem> {
                                                           onPressed: () {
                                                             setState(() {
                                                               selectedChoice = choice;
-                                                              item.selectedChoice = choice;
                                                               choicePrice = choice['price'];
                                                             });
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
@@ -288,7 +324,6 @@ class ProductItemState extends State<ProductItem> {
                                                           onPressed: () {
                                                             setState(() {
                                                               selectedType = type;
-                                                              item.selectedType = type;
                                                               typePrice = type['price'];
                                                             });
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
@@ -328,64 +363,6 @@ class ProductItemState extends State<ProductItem> {
                                           : Container(), // Empty container if types is empty
                                     ),
                                     const SizedBox(width: 10),
-                                    // selectedMeat Portion
-                                    Expanded(
-                                      child: widget.meatPortion.isNotEmpty
-                                          ? ElevatedButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return SimpleDialog(
-                                                      title: const Text('Select Meat Portion'),
-                                                      children: widget.meatPortion.map<SimpleDialogOption>((meatPortion) {
-                                                        return SimpleDialogOption(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              selectedMeatPortion = meatPortion;
-                                                              item.selectedMeatPortion = meatPortion;
-                                                              if (item.selectedMeatPortion!['name'] != "Normal Meat") {
-                                                                itemRemarks['98'] = meatPortion['name'];
-                                                              }
-                                                              meatPrice = meatPortion['price'];
-                                                            });
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                            Navigator.pop(context);
-                                                          },
-                                                          child: Text(
-                                                            '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
-                                                            style: const TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.black,
-                                                              fontSize: 18,
-                                                            ),
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(15),
-                                                child: Text(
-                                                  '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : Container(), // Empty container
-                                    ),
-                                    const SizedBox(width: 10),
                                     // selectedMee Portion
                                     Expanded(
                                       child: widget.meePortion.isNotEmpty
@@ -401,10 +378,6 @@ class ProductItemState extends State<ProductItem> {
                                                           onPressed: () {
                                                             setState(() {
                                                               selectedMeePortion = meePortion;
-                                                              item.selectedMeePortion = meePortion;
-                                                              if (item.selectedMeePortion!['name'] != "Normal Mee") {
-                                                                itemRemarks['99'] = meePortion['name'];
-                                                              }
                                                               meePrice = meePortion['price'];
                                                             });
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
@@ -433,6 +406,60 @@ class ProductItemState extends State<ProductItem> {
                                                 padding: const EdgeInsets.all(15),
                                                 child: Text(
                                                   '${selectedMeePortion!['name']} (RM ${selectedMeePortion!['price'].toStringAsFixed(2)})',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(), // Empty container
+                                    ),
+                                    const SizedBox(width: 10),
+                                    // selectedMeat Portion
+                                    Expanded(
+                                      child: widget.meatPortion.isNotEmpty
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return SimpleDialog(
+                                                      title: const Text('Select Meat Portion'),
+                                                      children: widget.meatPortion.map<SimpleDialogOption>((meatPortion) {
+                                                        return SimpleDialogOption(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedMeatPortion = meatPortion;
+                                                              meatPrice = meatPortion['price'];
+                                                            });
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Text(
+                                                            '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.black,
+                                                              fontSize: 18,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5), // This is the border radius
+                                                ),
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(15),
+                                                child: Text(
+                                                  '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
                                                   style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
@@ -520,20 +547,17 @@ class ProductItemState extends State<ProductItem> {
                             ),
                           ),
                           onPressed: () {
-                            // Add the user's comment with a key of '100'
-                            if (item.itemRemarks != null) {
-                              itemRemarks['100'] = _controller.text;
-                            }
-                            SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-                              (a, b) => int.parse(a).compareTo(int.parse(b)),
-                            )..addAll(itemRemarks);
-                            itemRemarks = sortedItemRemarks;
-                            print('itemRemarks after sorting: $itemRemarks'); // Debug print
-                            item.itemRemarks = itemRemarks;
-                            itemRemarks = {};
-                            print('itemRemarks after clearing: $itemRemarks'); // Debug print
-                            _controller.text = '';
-                            print('_controller.text after clearing: ${_controller.text}'); // Debug print
+                            item.selectedChoice = selectedChoice;
+                            item.selectedType = selectedType;
+                            item.selectedMeatPortion = selectedMeatPortion;
+                            item.selectedMeePortion = selectedMeePortion;
+
+                            updateItemRemarks();
+
+                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                            item.price = subTotalPrice;
+                            // widget.selectedOrder.updateTotalCost(0);
+                            // widget.updateOrderStatus!();
                             widget.onItemAdded(item);
                             Navigator.of(context).pop();
                           },

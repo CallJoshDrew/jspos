@@ -262,10 +262,12 @@ class _OrderDetailsState extends State<OrderDetails> {
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
           Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
 
+          // these are ui display only, not yet saved into item.price
           double choicePrice = item.selectedChoice?['price'] ?? 0;
           double typePrice = item.selectedType?['price'] ?? 0;
           double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
+
           double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
 
           void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
@@ -283,6 +285,38 @@ class _OrderDetailsState extends State<OrderDetails> {
 
           String? comment = item.itemRemarks!['100'];
           _controller.text = comment ?? '';
+          void updateItemRemarks() {
+            Map<String, Map<dynamic, dynamic>> portions = {
+              '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
+              '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
+            };
+
+            portions.forEach((key, value) {
+              Map<dynamic, dynamic> portion = value['portion'];
+              String normalName = value['normalName'];
+
+              if (itemRemarks.containsKey(key)) {
+                if (portion['name'] != normalName) {
+                  itemRemarks[key] = portion['name'];
+                } else {
+                  itemRemarks.remove(key);
+                }
+              } else if (portion['name'] != normalName) {
+                itemRemarks[key] = portion['name'];
+              }
+            });
+
+            if (item.itemRemarks != {} && comment != null && _controller.text.trim() != '') {
+              itemRemarks['100'] = _controller.text;
+            }
+
+            SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+              (a, b) => int.parse(a).compareTo(int.parse(b)),
+            )..addAll(itemRemarks);
+
+            item.itemRemarks = sortedItemRemarks;
+          }
+
           Widget remarkButton(Map<String, dynamic> data) {
             return ElevatedButton(
               style: ButtonStyle(
@@ -423,9 +457,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               onPressed: () {
                                                                 setState(() {
                                                                   selectedChoice = choice;
-                                                                  item.selectedChoice = choice;
                                                                   choicePrice = choice['price'];
-                                                                  item.name = choice['name'];
                                                                 });
                                                                 calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                                 Navigator.pop(context);
@@ -479,10 +511,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               onPressed: () {
                                                                 setState(() {
                                                                   selectedType = type;
-                                                                  item.selectedType = type;
                                                                   typePrice = type['price'];
                                                                 });
-                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                                 Navigator.pop(context);
                                                               },
                                                               child: Text(
@@ -519,64 +549,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               : Container(), // Empty container if types is empty
                                         ),
                                         const SizedBox(width: 10),
-                                        // selectedMeat Portion
-                                        Expanded(
-                                          child: item.meatPortion.isNotEmpty
-                                              ? ElevatedButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return SimpleDialog(
-                                                          title: const Text('Select Meat Portion'),
-                                                          children: item.meatPortion.map<SimpleDialogOption>((meatPortion) {
-                                                            return SimpleDialogOption(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedMeatPortion = meatPortion;
-                                                                  item.selectedMeatPortion = meatPortion;
-                                                                  if (item.selectedMeatPortion!['name'] != "Normal Meat") {
-                                                                    itemRemarks['98'] = meatPortion['name'];
-                                                                  }
-                                                                  meatPrice = meatPortion['price'];
-                                                                });
-                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                                Navigator.pop(context);
-                                                              },
-                                                              child: Text(
-                                                                '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
-                                                                style: const TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.black,
-                                                                  fontSize: 18,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(15),
-                                                    child: Text(
-                                                      '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
-                                                      style: const TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(), // Empty container
-                                        ),
-                                        const SizedBox(width: 10),
                                         // selectedMee Portion
                                         Expanded(
                                           child: item.meePortion.isNotEmpty
@@ -592,10 +564,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               onPressed: () {
                                                                 setState(() {
                                                                   selectedMeePortion = meePortion;
-                                                                  item.selectedMeePortion = meePortion;
-                                                                  if (item.selectedMeePortion!['name'] != "Normal Mee") {
-                                                                    itemRemarks['99'] = meePortion['name'];
-                                                                  }
                                                                   meePrice = meePortion['price'];
                                                                 });
                                                                 calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
@@ -624,6 +592,60 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     padding: const EdgeInsets.all(15),
                                                     child: Text(
                                                       '${selectedMeePortion!['name']} (RM ${selectedMeePortion!['price'].toStringAsFixed(2)})',
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(), // Empty container
+                                        ),
+                                        const SizedBox(width: 10),
+                                        // selectedMeat Portion
+                                        Expanded(
+                                          child: item.meatPortion.isNotEmpty
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return SimpleDialog(
+                                                          title: const Text('Select Meat Portion'),
+                                                          children: item.meatPortion.map<SimpleDialogOption>((meatPortion) {
+                                                            return SimpleDialogOption(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedMeatPortion = meatPortion;
+                                                                  meatPrice = meatPortion['price'];
+                                                                });
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Text(
+                                                                '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.black,
+                                                                  fontSize: 18,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(15),
+                                                    child: Text(
+                                                      '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.bold,
                                                         color: Colors.black,
@@ -716,14 +738,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                               // SubTotal, Service Charges Total OnPressed Function
                               onPressed: () {
                                 setState(() {
-                                  // Add the user's comment with a key of '100'
-                                  if (item.itemRemarks != {} && comment != null && _controller.text.trim() != '') {
-                                    itemRemarks['100'] = _controller.text;
-                                  }
-                                  SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-                                    (a, b) => int.parse(a).compareTo(int.parse(b)),
-                                  )..addAll(itemRemarks);
-                                  item.itemRemarks = sortedItemRemarks;
+                                  item.selectedChoice = selectedChoice;
+                                  item.name = selectedChoice!['name'];
+                                  item.selectedType = selectedType;
+                                  item.selectedMeatPortion = selectedMeatPortion;
+                                  item.selectedMeePortion = selectedMeePortion;
+
+                                  updateItemRemarks();
+
+                                  calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                   item.price = subTotalPrice;
                                   widget.selectedOrder.updateTotalCost(0);
                                   widget.updateOrderStatus!();
