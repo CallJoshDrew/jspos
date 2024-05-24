@@ -982,21 +982,11 @@ class _OrderDetailsState extends State<OrderDetails> {
           children: [
             Row(
               children: [
-                // Padding(
-                //   padding: const EdgeInsets.all(10.0),
-                //   child: Text(
-                //             '${index + 1}.',
-                //             style: const TextStyle(
-                //               fontSize: 20,
-                //               fontWeight: FontWeight.bold,
-                //               color: Colors.white,
-                //             ),
-                //           ),
-                // ),
                 // Item Image and Index Number
                 Container(
-                  height: 80,
-                  width: 100,
+                  height: 55,
+                  width: 55,
+                  margin: const EdgeInsets.only(left: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
@@ -1005,51 +995,65 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ),
                 ),
-
+                
                 // Item Name and Price
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15.0, right: 10.0),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
                           children: [
-                            Text(
-                              '${index + 1}. $name',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${index + 1}. $name',
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 10.0),
+                                item.selection == true && item.selectedType != null
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(right: 10.0),
+                                        child: Text(
+                                          "( ${item.selectedType!['name']} )",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                                // Showing the Item Price UI
+                                // Text(
+                                //   'RM ${price.toStringAsFixed(2)}',
+                                //   style: TextStyle(
+                                //     fontSize: 20,
+                                //     fontWeight: FontWeight.bold,
+                                //     color: Colors.green[300],
+                                //   ),
+                                // ),
+                              ],
                             ),
-                            const SizedBox(width: 10.0),
-                            item.selection == true && item.selectedType != null
-                                ? Padding(
-                                    padding: const EdgeInsets.only(right: 10.0),
-                                    child: Text(
-                                      "( ${item.selectedType!['name']} )",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
                           ],
                         ),
+                        // To Edit, Increase, Decrease and Remove item
                         showEditBtn
                             ? Padding(
-                                padding: const EdgeInsets.only(right: 20),
+                                padding: const EdgeInsets.only(right: 0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      'x ${item.quantity}',
+                                      '${item.quantity} x',
                                       style: const TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 26,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -1057,81 +1061,76 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   ],
                                 ),
                               )
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          item.quantity++;
+                            : Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        item.quantity++;
+                                        widget.selectedOrder.updateTotalCost(0);
+                                        widget.selectedOrder.calculateItemsAndQuantities();
+                                        widget.updateOrderStatus!();
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 40, // Adjust this value to change the width of the rectangle
+                                      height: 40, // Adjust this value to change the height of the rectangle
+                                      decoration: BoxDecoration(
+                                        color: Colors.green[700],
+                                        borderRadius: BorderRadius.circular(10), // Adjust this value to change the roundness of the rectangle corners
+                                      ),
+                                      child: const Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    '${item.quantity}',
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (item.quantity > 1) {
+                                          item.quantity--;
                                           widget.selectedOrder.updateTotalCost(0);
                                           widget.selectedOrder.calculateItemsAndQuantities();
                                           widget.updateOrderStatus!();
-                                        });
-                                      },
-                                      child: CircleAvatar(
-                                        radius: 16, // Adjust this value to change the size of the CircleAvatar
-                                        backgroundColor: Colors.green[700]!,
-                                        child: const Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 40, // Adjust this value to change the width of the rectangle
+                                      height: 40, // Adjust this value to change the height of the rectangle
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange[800]!,
+                                        borderRadius: BorderRadius.circular(10), // Adjust this value to change the roundness of the rectangle corners
                                       ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      '${item.quantity}',
-                                      style: const TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
+                                      child: const Icon(
+                                        Icons.remove,
                                         color: Colors.white,
+                                        size: 24,
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          if (item.quantity > 1) {
-                                            item.quantity--;
-                                            widget.selectedOrder.updateTotalCost(0);
-                                            widget.selectedOrder.calculateItemsAndQuantities();
-                                            widget.updateOrderStatus!();
-                                          }
-                                        });
-                                      },
-                                      child: CircleAvatar(
-                                        radius: 16, // Adjust this value to change the size of the CircleAvatar
-                                        backgroundColor: Colors.orange[800]!,
-                                        child: const Icon(
-                                          Icons.remove,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                        // Showing the Item Price UI
-                        // Text(
-                        //   'RM ${price.toStringAsFixed(2)}',
-                        //   style: TextStyle(
-                        //     fontSize: 20,
-                        //     fontWeight: FontWeight.bold,
-                        //     color: Colors.green[300],
-                        //   ),
-                        // )
                       ],
                     ),
                   ),
                 ),
-                // To Edit, Increase, Decrease and Remove item
+                
               ],
             ),
-            // Remarks & Comments UI
+            // Item Remarks & Comments UI
             Wrap(
               children: [
                 // Text for selectedMeatPortion
@@ -1145,7 +1144,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             right: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 16.0 : 0.0),
                         margin: EdgeInsets.only(top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 12.0 : 0.0),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(10),
                           color: Colors.white10,
                         ),
                         child: Text(
@@ -1155,6 +1154,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       )
                     : const SizedBox.shrink(),
