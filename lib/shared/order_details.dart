@@ -274,12 +274,6 @@ class _OrderDetailsState extends State<OrderDetails> {
             setState(() {
               subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
               item.price = subTotalPrice;
-              // print('Price of Selected Choice: $choicePrice');
-              // print('Price of Selected Type: $typePrice');
-              // print('Price of Selected Meat: $meatPrice');
-              // print('Price of Selected Mee: $meePrice');
-              // print('Total Price: $subTotalPrice');
-              // print('-------------------------');
             });
           }
 
@@ -390,6 +384,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: [
+                                    //Item Heading Title
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
@@ -410,7 +405,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       ),
                                     ),
                                     const SizedBox(height: 20),
-                                    // First row
+                                    // Item Image, Name, Price
                                     Container(
                                       padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
                                       decoration: BoxDecoration(
@@ -534,282 +529,367 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       ),
                                     ),
                                     const SizedBox(height: 20),
-                                    // Second row
+                                    // First Row for selection of Choices & Types
                                     Row(
-                                      children: [
-                                        // selectedChoice
-                                        Expanded(
-                                          child: item.choices.isNotEmpty
-                                              ? ElevatedButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return SimpleDialog(
-                                                          title: const Text('Select Flavor'),
-                                                          children: item.choices.map<SimpleDialogOption>((choice) {
-                                                            return SimpleDialogOption(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedChoice = choice;
-                                                                  choicePrice = choice['price'];
-                                                                });
-                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                                Navigator.pop(context);
-                                                              },
-                                                              child: Text(
-                                                                '${choice['name']} (RM ${choice['price'].toStringAsFixed(2)})',
-                                                                style: const TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.black,
-                                                                  fontSize: 22,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(15),
-                                                    child: Text(
-                                                      '${selectedChoice!['name']} (RM ${selectedChoice!['price'].toStringAsFixed(2)})',
-                                                      style: const TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black,
-                                                        fontSize: 22,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(), // Empty container if choices is empty
-                                        ),
-                                        const SizedBox(width: 10),
-                                        // selectedType
-                                        Expanded(
-                                          child: item.types.isNotEmpty
-                                              ? ElevatedButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return SimpleDialog(
-                                                          title: const Text('Select Variation'),
-                                                          children: item.types.map<SimpleDialogOption>((type) {
-                                                            return SimpleDialogOption(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedType = type;
-                                                                  typePrice = type['price'];
-                                                                });
-                                                                Navigator.pop(context);
-                                                              },
-                                                              child: Text(
-                                                                '${type['name']} + RM ${type['price'].toStringAsFixed(2)}',
-                                                                style: const TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.black,
-                                                                  fontSize: 22,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(15),
-                                                    child: Text(
-                                                      '${selectedType!['name']} + RM ${selectedType!['price'].toStringAsFixed(2)}',
-                                                      style: const TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black,
-                                                        fontSize: 22,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(), // Empty container if types is empty
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        // selectedMee Portion
-                                        Expanded(
-                                          child: item.meePortion.isNotEmpty
-                                              ? ElevatedButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return SimpleDialog(
-                                                          title: const Text('Select Mee Portion'),
-                                                          children: item.meePortion.map<SimpleDialogOption>((meePortion) {
-                                                            return SimpleDialogOption(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedMeePortion = meePortion;
-                                                                  meePrice = meePortion['price'];
-                                                                });
-                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                                Navigator.pop(context);
-                                                              },
-                                                              child: Text(
-                                                                '${meePortion['name']} (RM ${meePortion['price'].toStringAsFixed(2)})',
-                                                                style: const TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.black,
-                                                                  fontSize: 22,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(15),
-                                                    child: Text(
-                                                      '${selectedMeePortion!['name']} (RM ${selectedMeePortion!['price'].toStringAsFixed(2)})',
-                                                      style: const TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black,
-                                                        fontSize: 22,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(), // Empty container
-                                        ),
-                                        const SizedBox(width: 10),
-                                        // selectedMeat Portion
-                                        Expanded(
-                                          child: item.meatPortion.isNotEmpty
-                                              ? ElevatedButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return SimpleDialog(
-                                                          title: const Text('Select Meat Portion'),
-                                                          children: item.meatPortion.map<SimpleDialogOption>((meatPortion) {
-                                                            return SimpleDialogOption(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedMeatPortion = meatPortion;
-                                                                  meatPrice = meatPortion['price'];
-                                                                });
-                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                                Navigator.pop(context);
-                                                              },
-                                                              child: Text(
-                                                                '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
-                                                                style: const TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.black,
-                                                                  fontSize: 22,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(15),
-                                                    child: Text(
-                                                      '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
-                                                      style: const TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black,
-                                                        fontSize: 22,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(), // Empty container
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // First row
-                                        const Text(
-                                          'Select Buttons to add Remarks',
-                                          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        // remarks buttons
-                                        Wrap(
-                                          spacing: 8.0, // gap between adjacent chips
-                                          runSpacing: 4.0, // gap between lines
-                                          children: remarksData
-                                              .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
-                                              .map((data) => Padding(
-                                                    padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
-                                                    child: remarkButton(data),
-                                                  ))
-                                              .toList(),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        TextField(
-                                          controller: _controller,
-                                          style: const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
-                                          decoration: const InputDecoration(
-                                            contentPadding: EdgeInsets.all(20),
-                                            fillColor: Colors.white,
-                                            filled: true,
-                                            border: OutlineInputBorder(),
-                                            labelText: 'Write Additional Comments here',
-                                            labelStyle: TextStyle(color: Colors.grey, fontSize: 24, fontWeight: FontWeight.bold),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(color: Colors.grey),
+                                        // 1.selectedChoice
+                                        Expanded(
+                                          child: Container(
+                                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff1f2029),
+                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                if (item.choices.isNotEmpty) ...[
+                                                  const Text(
+                                                    '1.Select Your Flavor',
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 24,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Wrap(
+                                                    spacing: 14, // space between buttons horizontally
+                                                    runSpacing: 14, // space between buttons vertically
+                                                    children: item.choices.map((choice) {
+                                                      return ElevatedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            selectedChoice = choice;
+                                                            choicePrice = choice['price'];
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                          });
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: selectedChoice == choice
+                                                              ? Colors.orange
+                                                              : Colors.white, // Change the color based on the selected button
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          // side: const BorderSide(color: Colors.white),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10),
+                                                          child: Text(
+                                                            '${choice['name']}',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: selectedChoice == choice
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 22,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ] else ...[
+                                                  const SizedBox.shrink(),
+                                                ],
+                                              ],
                                             ),
                                           ),
-                                          onChanged: (text) {
-                                            // This callback is called each time the text changes
-                                            setState(() {
-                                              if (text.isEmpty) {
-                                                // If the text is empty, remove the key '100' from itemRemarks
-                                                itemRemarks.remove('100');
-                                              } else {
-                                                // Add the user's comment with a key of '100'
-                                                itemRemarks['100'] = text;
-                                              }
-                                              SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-                                                (a, b) => int.parse(a).compareTo(int.parse(b)),
-                                              )..addAll(itemRemarks);
-                                              itemRemarks = sortedItemRemarks;
-                                            });
-                                          },
+                                        ),
+                                        if (item.types.isNotEmpty) const SizedBox(width: 20),
+                                        // 2.selectedType
+                                        if (item.types.isNotEmpty) ...[
+                                          Expanded(
+                                            child: Container(
+                                              padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    "2.Select Your Preference",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 24,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Wrap(
+                                                    spacing: 14, // space between buttons horizontally
+                                                    runSpacing: 14, // space between buttons vertically
+                                                    children: item.types.map((type) {
+                                                      return ElevatedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            selectedType = type;
+                                                            typePrice = type['price'];
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                          });
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: selectedType == type
+                                                              ? Colors.orange
+                                                              : Colors.white, // Change the color based on the selected button
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          // side: const BorderSide(color: Colors.white),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10),
+                                                          child: Text(
+                                                            '${type['name']}',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: selectedType == type
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 22,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ] else ...[
+                                          const SizedBox.shrink(),
+                                        ],
+                                      ],
+                                    ),
+                                    // Second Row for selection of Mee & Meat Portions
+                                    Row(
+                                      children: [
+                                        if (item.meePortion.isNotEmpty) ...[
+                                          Expanded(
+                                            child: Container(
+                                              padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                                              margin: const EdgeInsets.only(top: 20),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    '3.Select Your Desired Serving Size',
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 24,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Wrap(
+                                                    spacing: 14, // space between buttons horizontally
+                                                    runSpacing: 14, // space between buttons vertically
+                                                    children: item.meePortion.map((meePortion) {
+                                                      return ElevatedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            selectedMeePortion = meePortion;
+                                                            meePrice = meePortion['price'];
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                          });
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: selectedMeePortion == meePortion
+                                                              ? Colors.orange
+                                                              : Colors.white, // Change the color based on the selected button
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          // side: const BorderSide(color: Colors.white),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10),
+                                                          child: Text(
+                                                            '${meePortion['name']}',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: selectedMeePortion == meePortion
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 22,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ] else ...[
+                                          const SizedBox.shrink(),
+                                        ],
+                                        if (item.meatPortion.isNotEmpty) const SizedBox(width: 20),
+                                        if (item.meatPortion.isNotEmpty) ...[
+                                          Expanded(
+                                            child: Container(
+                                              padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                                              margin: const EdgeInsets.only(top: 20),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    '4.Select Your Meat Portion Level',
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 24,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Wrap(
+                                                    spacing: 14, // space between buttons horizontally
+                                                    runSpacing: 14, // space between buttons vertically
+                                                    children: item.meatPortion.map((meatPortion) {
+                                                      return ElevatedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            selectedMeatPortion = meatPortion;
+                                                            meatPrice = meatPortion['price'];
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                          });
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: selectedMeatPortion == meatPortion
+                                                              ? Colors.orange
+                                                              : Colors.white, // Change the color based on the selected button
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                          // side: const BorderSide(color: Colors.white),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10),
+                                                          child: Text(
+                                                            '${meatPortion['name']}',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: selectedMeatPortion == meatPortion
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 22,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ] else ...[
+                                          const SizedBox.shrink(),
+                                        ],
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            padding: const EdgeInsets.fromLTRB(20, 30, 10, 20),
+                                            margin: const EdgeInsets.only(top: 20),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff1f2029),
+                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // First row
+                                                const Text(
+                                                  'Press Buttons to add Remarks',
+                                                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                // remarks buttons
+                                                Wrap(
+                                                  spacing: 6.0, // gap between adjacent chips
+                                                  runSpacing: 3.0, // gap between lines
+                                                  children: remarksData
+                                                      .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
+                                                      .map((data) => Padding(
+                                                            padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
+                                                            child: remarkButton(data),
+                                                          ))
+                                                      .toList(),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 20),
+                                        Expanded(
+                                          child: Container(
+                                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 25),
+                                            margin: const EdgeInsets.only(top: 20),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff1f2029),
+                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Please write additional remarks here',
+                                                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                TextField(
+                                                  controller: _controller,
+                                                  style: const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+                                                  decoration: const InputDecoration(
+                                                    contentPadding: EdgeInsets.all(10),
+                                                    fillColor: Colors.white,
+                                                    filled: true,
+                                                    border: OutlineInputBorder(),
+                                                    // labelText: 'Write Additional Comments here',
+                                                    // labelStyle: TextStyle(color: Colors.grey, fontSize: 24, fontWeight: FontWeight.bold),
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(color: Colors.grey),
+                                                    ),
+                                                  ),
+                                                  onChanged: (text) {
+                                                    // This callback is called each time the text changes
+                                                    setState(() {
+                                                      if (text.isEmpty) {
+                                                        // If the text is empty, remove the key '100' from itemRemarks
+                                                        itemRemarks.remove('100');
+                                                      } else {
+                                                        // Add the user's comment with a key of '100'
+                                                        itemRemarks['100'] = text;
+                                                      }
+                                                      SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                                                        (a, b) => int.parse(a).compareTo(int.parse(b)),
+                                                      )..addAll(itemRemarks);
+                                                      itemRemarks = sortedItemRemarks;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         )
                                       ],
                                     ),
@@ -1050,11 +1130,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ),
                 // To Edit, Increase, Decrease and Remove item
               ],
-
-
-
-
-
             ),
             // Remarks & Comments UI
             Wrap(
@@ -1083,7 +1158,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ),
                       )
                     : const SizedBox.shrink(),
-                
               ],
             ),
           ],

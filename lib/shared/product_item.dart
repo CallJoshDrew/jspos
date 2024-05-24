@@ -197,6 +197,7 @@ class ProductItemState extends State<ProductItem> {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
+                                //Item Heading Title
                                 Container(
                                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: const Color(0xff1f2029)),
                                   child: Padding(
@@ -214,7 +215,7 @@ class ProductItemState extends State<ProductItem> {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                // First row
+                                // Item Image, Name, Price
                                 Container(
                                   padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
                                   decoration: BoxDecoration(
@@ -339,11 +340,11 @@ class ProductItemState extends State<ProductItem> {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                // Second row
+                                // First Row for selection of Choices & Types
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // selectedChoice
+                                    // 1.selectedChoice
                                     Expanded(
                                       child: Container(
                                         padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
@@ -356,7 +357,7 @@ class ProductItemState extends State<ProductItem> {
                                           children: [
                                             if (widget.choices.isNotEmpty) ...[
                                               const Text(
-                                                'Select Your Flavor',
+                                                '1.Select Your Flavor',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
@@ -409,7 +410,7 @@ class ProductItemState extends State<ProductItem> {
                                       ),
                                     ),
                                     if (widget.types.isNotEmpty) const SizedBox(width: 20),
-                                    // selectedType
+                                    // 2.selectedType
                                     if (widget.types.isNotEmpty) ...[
                                       Expanded(
                                         child: Container(
@@ -422,7 +423,7 @@ class ProductItemState extends State<ProductItem> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                "Select Your Preference",
+                                                "2.Select Your Preference",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
@@ -475,6 +476,7 @@ class ProductItemState extends State<ProductItem> {
                                     ],
                                   ],
                                 ),
+                                // Second Row for selection of Mee & Meat Portions
                                 Row(
                                   children: [
                                     if (widget.meePortion.isNotEmpty) ...[
@@ -490,7 +492,7 @@ class ProductItemState extends State<ProductItem> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                'Select Your Desired Serving Size',
+                                                '3.Select Your Desired Serving Size',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
@@ -556,7 +558,7 @@ class ProductItemState extends State<ProductItem> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                'Select Your Meat Portion Level',
+                                                '4.Select Your Meat Portion Level',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
