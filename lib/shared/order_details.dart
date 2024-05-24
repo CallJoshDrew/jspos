@@ -277,7 +277,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             });
           }
 
-          String? comment = item.itemRemarks!['100'];
+          String? comment = item.itemRemarks != null ? item.itemRemarks!['100'] : null;
           _controller.text = comment ?? '';
           void updateItemRemarks() {
             if (selectedMeePortion != null && selectedMeatPortion != null) {
