@@ -330,7 +330,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       return states.contains(MaterialState.pressed) ? Colors.green[700]! : Colors.green;
                     } else {
                       // If the button is pressed or the remark has not been added, make the background black
-                      return states.contains(MaterialState.pressed) ? Colors.green : const Color(0xff1f2029);
+                      return states.contains(MaterialState.pressed) ? Colors.green : Colors.black;
                     }
                   },
                 ),
@@ -371,434 +371,525 @@ class _OrderDetailsState extends State<OrderDetails> {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
+                  var screenSize = MediaQuery.of(context).size; // Get the screen size
+                  var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
                   return StatefulBuilder(
                     builder: (BuildContext context, StateSetter setState) {
-                      return Dialog(
-                        insetPadding: EdgeInsets.zero, // Make dialog full-screen
-                        backgroundColor: const Color(0xff1f2029),
-                        child: AlertDialog(
-                          backgroundColor:const Color(0xff1f2029),
-                          // shadowColor: Colors.black,
-                          // elevation: 5,
-                          // shape: RoundedRectangleBorder(
-                          //   side: const BorderSide(color: Colors.green, width: 2), // This is the border color
-                          //   borderRadius: BorderRadius.circular(5.0),
-                          // ),
-                          content: ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              maxWidth: 1600,
-                              minHeight: 800,
+                      return Scaffold(
+                        body: Dialog(
+                          insetPadding: EdgeInsets.zero, // Make dialog full-screen
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            width: screenSize.width,
+                            height: screenSize.height - statusBarHeight,
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
                             ),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white10,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(14.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            item.originalName,
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: const Color(0xff1f2029),
                                       ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  // First row
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 100,
-                                        height: 100,
-                                        child: ClipRRect(
-                                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                          child: Image.asset(
-                                            item.image,
-                                            fit: BoxFit.cover,
-                                          ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(14.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${item.category}:  ${item.originalName}',
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      const SizedBox(width: 20),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    // First row
+                                    Container(
+                                      padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: const Color(0xff1f2029),
+                                      ),
+                                      child: Row(
                                         children: [
-                                          Text(
-                                            selectedChoice != null && selectedType != null
-                                                ? '${selectedChoice!['name']} (${selectedType!['name']})'
-                                                : 'Select Flavor and Type',
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                          SizedBox(
+                                            width: 160,
+                                            height: 160,
+                                            child: ClipRRect(
+                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                              child: Image.asset(
+                                                item.image,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
+                                          const SizedBox(width: 20),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              item.selection && selectedChoice != null
+                                                  ? Row(
+                                                      children: [
+                                                        Text(
+                                                          selectedChoice != null ? '${selectedChoice!['name']}' : 'Select Flavor and Type',
+                                                          style: const TextStyle(
+                                                            fontSize: 24,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(width: 10),
+                                                        Text(
+                                                          "( + ${selectedChoice!['price'].toStringAsFixed(2)} )",
+                                                          style: const TextStyle(
+                                                            fontSize: 24,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Color.fromARGB(255, 114, 226, 118),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    )
+                                                  : const SizedBox.shrink(),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  item.selection && selectedType != null
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "${selectedType!['name']} ",
+                                                              style: const TextStyle(fontSize: 22, color: Colors.white),
+                                                            ),
+                                                            Text(
+                                                              "( + ${selectedType!['price'].toStringAsFixed(2)} )",
+                                                              style: const TextStyle(
+                                                                fontSize: 22,
+                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                  item.selection && selectedMeePortion != null
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "${selectedMeePortion!['name']} ",
+                                                              style: const TextStyle(
+                                                                fontSize: 22,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "( + ${selectedMeePortion!['price'].toStringAsFixed(2)} )",
+                                                              style: const TextStyle(
+                                                                fontSize: 22,
+                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                  item.selection && selectedMeatPortion != null
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "${selectedMeatPortion!['name']} ",
+                                                              style: const TextStyle(
+                                                                fontSize: 22,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "( + ${selectedMeatPortion!['price'].toStringAsFixed(2)} )",
+                                                              style: const TextStyle(
+                                                                fontSize: 22,
+                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          Expanded(
+                                            child: Text('RM ${subTotalPrice.toStringAsFixed(2)}',
+                                                textAlign: TextAlign.right,
+                                                style: const TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                )),
+                                          ),
                                         ],
                                       ),
-                                      Expanded(
-                                        child: Text('RM ${subTotalPrice.toStringAsFixed(2)}',
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  // Second row
-                                  Row(
-                                    children: [
-                                      // selectedChoice
-                                      Expanded(
-                                        child: item.choices.isNotEmpty
-                                            ? ElevatedButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return SimpleDialog(
-                                                        title: const Text('Select Flavor'),
-                                                        children: item.choices.map<SimpleDialogOption>((choice) {
-                                                          return SimpleDialogOption(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                selectedChoice = choice;
-                                                                choicePrice = choice['price'];
-                                                              });
-                                                              calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                              Navigator.pop(context);
-                                                            },
-                                                            child: Text(
-                                                              '${choice['name']} (RM ${choice['price'].toStringAsFixed(2)})',
-                                                              style: const TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.black,
-                                                                fontSize: 18,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    // Second row
+                                    Row(
+                                      children: [
+                                        // selectedChoice
+                                        Expanded(
+                                          child: item.choices.isNotEmpty
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return SimpleDialog(
+                                                          title: const Text('Select Flavor'),
+                                                          children: item.choices.map<SimpleDialogOption>((choice) {
+                                                            return SimpleDialogOption(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedChoice = choice;
+                                                                  choicePrice = choice['price'];
+                                                                });
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Text(
+                                                                '${choice['name']} (RM ${choice['price'].toStringAsFixed(2)})',
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.black,
+                                                                  fontSize: 22,
+                                                                ),
                                                               ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                  ),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(15),
-                                                  child: Text(
-                                                    '${selectedChoice!['name']} (RM ${selectedChoice!['price'].toStringAsFixed(2)})',
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 18,
+                                                            );
+                                                          }).toList(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
                                                     ),
                                                   ),
-                                                ),
-                                              )
-                                            : Container(), // Empty container if choices is empty
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // selectedType
-                                      Expanded(
-                                        child: item.types.isNotEmpty
-                                            ? ElevatedButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return SimpleDialog(
-                                                        title: const Text('Select Variation'),
-                                                        children: item.types.map<SimpleDialogOption>((type) {
-                                                          return SimpleDialogOption(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                selectedType = type;
-                                                                typePrice = type['price'];
-                                                              });
-                                                              Navigator.pop(context);
-                                                            },
-                                                            child: Text(
-                                                              '${type['name']} + RM ${type['price'].toStringAsFixed(2)}',
-                                                              style: const TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.black,
-                                                                fontSize: 18,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                  ),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(15),
-                                                  child: Text(
-                                                    '${selectedType!['name']} + RM ${selectedType!['price'].toStringAsFixed(2)}',
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 18,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(15),
+                                                    child: Text(
+                                                      '${selectedChoice!['name']} (RM ${selectedChoice!['price'].toStringAsFixed(2)})',
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 22,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              )
-                                            : Container(), // Empty container if types is empty
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // selectedMee Portion
-                                      Expanded(
-                                        child: item.meePortion.isNotEmpty
-                                            ? ElevatedButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return SimpleDialog(
-                                                        title: const Text('Select Mee Portion'),
-                                                        children: item.meePortion.map<SimpleDialogOption>((meePortion) {
-                                                          return SimpleDialogOption(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                selectedMeePortion = meePortion;
-                                                                meePrice = meePortion['price'];
-                                                              });
-                                                              calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                              Navigator.pop(context);
-                                                            },
-                                                            child: Text(
-                                                              '${meePortion['name']} (RM ${meePortion['price'].toStringAsFixed(2)})',
-                                                              style: const TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.black,
-                                                                fontSize: 18,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                  ),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(15),
-                                                  child: Text(
-                                                    '${selectedMeePortion!['name']} (RM ${selectedMeePortion!['price'].toStringAsFixed(2)})',
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(), // Empty container
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // selectedMeat Portion
-                                      Expanded(
-                                        child: item.meatPortion.isNotEmpty
-                                            ? ElevatedButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return SimpleDialog(
-                                                        title: const Text('Select Meat Portion'),
-                                                        children: item.meatPortion.map<SimpleDialogOption>((meatPortion) {
-                                                          return SimpleDialogOption(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                selectedMeatPortion = meatPortion;
-                                                                meatPrice = meatPortion['price'];
-                                                              });
-                                                              calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                              Navigator.pop(context);
-                                                            },
-                                                            child: Text(
-                                                              '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
-                                                              style: const TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.black,
-                                                                fontSize: 18,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(5), // This is the border radius
-                                                  ),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(15),
-                                                  child: Text(
-                                                    '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(), // Empty container
-                                      ),
-                                      const SizedBox(width: 10),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // First row
-                                      const Text(
-                                        'Press the buttons to add remarks',
-                                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      // remarks buttons
-                                      Wrap(
-                                        spacing: 8.0, // gap between adjacent chips
-                                        runSpacing: 4.0, // gap between lines
-                                        children: remarksData
-                                            .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
-                                            .map((data) => Padding(
-                                                  padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
-                                                  child: remarkButton(data),
-                                                ))
-                                            .toList(),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      TextField(
-                                        controller: _controller,
-                                        style: const TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
-                                        decoration: const InputDecoration(
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                          border: OutlineInputBorder(),
-                                          labelText: 'Write comments or remarks here',
-                                          labelStyle: TextStyle(color: Colors.grey, fontSize: 22, fontWeight: FontWeight.bold),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.grey),
-                                          ),
+                                                )
+                                              : Container(), // Empty container if choices is empty
                                         ),
-                                        onChanged: (text) {
-                                          // This callback is called each time the text changes
-                                          setState(() {
-                                            if (text.isEmpty) {
-                                              // If the text is empty, remove the key '100' from itemRemarks
-                                              itemRemarks.remove('100');
-                                            } else {
-                                              // Add the user's comment with a key of '100'
-                                              itemRemarks['100'] = text;
-                                            }
-                                            SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-                                              (a, b) => int.parse(a).compareTo(int.parse(b)),
-                                            )..addAll(itemRemarks);
-                                            itemRemarks = sortedItemRemarks;
-                                          });
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                ],
+                                        const SizedBox(width: 10),
+                                        // selectedType
+                                        Expanded(
+                                          child: item.types.isNotEmpty
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return SimpleDialog(
+                                                          title: const Text('Select Variation'),
+                                                          children: item.types.map<SimpleDialogOption>((type) {
+                                                            return SimpleDialogOption(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedType = type;
+                                                                  typePrice = type['price'];
+                                                                });
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Text(
+                                                                '${type['name']} + RM ${type['price'].toStringAsFixed(2)}',
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.black,
+                                                                  fontSize: 22,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(15),
+                                                    child: Text(
+                                                      '${selectedType!['name']} + RM ${selectedType!['price'].toStringAsFixed(2)}',
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 22,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(), // Empty container if types is empty
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        // selectedMee Portion
+                                        Expanded(
+                                          child: item.meePortion.isNotEmpty
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return SimpleDialog(
+                                                          title: const Text('Select Mee Portion'),
+                                                          children: item.meePortion.map<SimpleDialogOption>((meePortion) {
+                                                            return SimpleDialogOption(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedMeePortion = meePortion;
+                                                                  meePrice = meePortion['price'];
+                                                                });
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Text(
+                                                                '${meePortion['name']} (RM ${meePortion['price'].toStringAsFixed(2)})',
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.black,
+                                                                  fontSize: 22,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(15),
+                                                    child: Text(
+                                                      '${selectedMeePortion!['name']} (RM ${selectedMeePortion!['price'].toStringAsFixed(2)})',
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 22,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(), // Empty container
+                                        ),
+                                        const SizedBox(width: 10),
+                                        // selectedMeat Portion
+                                        Expanded(
+                                          child: item.meatPortion.isNotEmpty
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return SimpleDialog(
+                                                          title: const Text('Select Meat Portion'),
+                                                          children: item.meatPortion.map<SimpleDialogOption>((meatPortion) {
+                                                            return SimpleDialogOption(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedMeatPortion = meatPortion;
+                                                                  meatPrice = meatPortion['price'];
+                                                                });
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Text(
+                                                                '${meatPortion['name']} (RM ${meatPortion['price'].toStringAsFixed(2)})',
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.black,
+                                                                  fontSize: 22,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5), // This is the border radius
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(15),
+                                                    child: Text(
+                                                      '${selectedMeatPortion!['name']} (RM ${selectedMeatPortion!['price'].toStringAsFixed(2)})',
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 22,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(), // Empty container
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // First row
+                                        const Text(
+                                          'Select Buttons to add Remarks',
+                                          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        // remarks buttons
+                                        Wrap(
+                                          spacing: 8.0, // gap between adjacent chips
+                                          runSpacing: 4.0, // gap between lines
+                                          children: remarksData
+                                              .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
+                                              .map((data) => Padding(
+                                                    padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
+                                                    child: remarkButton(data),
+                                                  ))
+                                              .toList(),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        TextField(
+                                          controller: _controller,
+                                          style: const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+                                          decoration: const InputDecoration(
+                                            contentPadding: EdgeInsets.all(20),
+                                            fillColor: Colors.white,
+                                            filled: true,
+                                            border: OutlineInputBorder(),
+                                            labelText: 'Write Additional Comments here',
+                                            labelStyle: TextStyle(color: Colors.grey, fontSize: 24, fontWeight: FontWeight.bold),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.grey),
+                                            ),
+                                          ),
+                                          onChanged: (text) {
+                                            // This callback is called each time the text changes
+                                            setState(() {
+                                              if (text.isEmpty) {
+                                                // If the text is empty, remove the key '100' from itemRemarks
+                                                itemRemarks.remove('100');
+                                              } else {
+                                                // Add the user's comment with a key of '100'
+                                                itemRemarks['100'] = text;
+                                              }
+                                              SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                                                (a, b) => int.parse(a).compareTo(int.parse(b)),
+                                              )..addAll(itemRemarks);
+                                              itemRemarks = sortedItemRemarks;
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20, bottom: 20),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          TextButton(
+                                            style: TextButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            child: const Padding(
+                                              padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
+                                              child: Text(
+                                                'Confirm',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: 24,
+                                                ),
+                                              ),
+                                            ),
+                                            // SubTotal, Service Charges Total OnPressed Function
+                                            onPressed: () {
+                                              setState(() {
+                                                item.selectedChoice = selectedChoice;
+                                                item.name = selectedChoice!['name'];
+                                                item.selectedType = selectedType;
+                                                item.selectedMeatPortion = selectedMeatPortion;
+                                                item.selectedMeePortion = selectedMeePortion;
+
+                                                updateItemRemarks();
+
+                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                item.price = subTotalPrice;
+                                                widget.selectedOrder.updateTotalCost(0);
+                                                widget.updateOrderStatus!();
+                                                widget.selectedOrder.updateItem(item);
+                                                Navigator.of(context).pop();
+                                              });
+                                            },
+                                          ),
+                                          const SizedBox(width: 10),
+                                          TextButton(
+                                            style: TextButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                                // side: const BorderSide(color: Colors.deepOrange, width: 1),
+                                              ),
+                                            ),
+                                            child: const Padding(
+                                              padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                  fontSize: 24,
+                                                ),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              itemRemarks = {};
+                                              _controller.text = '';
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          actions: [
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
-                                child: Text(
-                                  'Confirm',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                              ),
-                              // SubTotal, Service Charges Total OnPressed Function
-                              onPressed: () {
-                                setState(() {
-                                  item.selectedChoice = selectedChoice;
-                                  item.name = selectedChoice!['name'];
-                                  item.selectedType = selectedType;
-                                  item.selectedMeatPortion = selectedMeatPortion;
-                                  item.selectedMeePortion = selectedMeePortion;
-
-                                  updateItemRemarks();
-
-                                  calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                  item.price = subTotalPrice;
-                                  widget.selectedOrder.updateTotalCost(0);
-                                  widget.updateOrderStatus!();
-                                  widget.selectedOrder.updateItem(item);
-                                  Navigator.of(context).pop();
-                                });
-                              },
-                            ),
-                            const SizedBox(width: 10),
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  // side: const BorderSide(color: Colors.deepOrange, width: 1),
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
-                                child: Text(
-                                  'Cancel',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                itemRemarks = {};
-                                _controller.text = '';
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
                         ),
                       );
                     },
@@ -839,56 +930,111 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15.0, right: 10.0),
-                    child: Column(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Container(
-                        //   width: 24,
-                        //   height: 24,
-                        //   decoration: BoxDecoration(
-                        //     color: Colors.white,
-                        //     borderRadius: BorderRadius.circular(14),
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Colors.grey.withOpacity(0.5),
-                        //         spreadRadius: 2,
-                        //         blurRadius: 7,
-                        //         offset: const Offset(0, 3), // Shadow position
-                        //       ),
-                        //     ],
-                        //   ),
-                        //   child: Center(
-                        //     child: Text(
-                        //       (index + 1).toString(),
-                        //       style: const TextStyle(
-                        //           color: Color.fromRGBO(31, 32, 41, 1),
-                        //           fontSize: 14,
-                        //           fontWeight: FontWeight.bold),
-                        //     ),
-                        //   ),
-                        // ),
-                        Text(
-                          '${index + 1}. $name',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${index + 1}. $name',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            item.selection == true && item.selectedType != null
+                                ? Padding(
+                                    padding: const EdgeInsets.only(right: 10.0),
+                                    child: Text(
+                                      "( ${item.selectedType!['name']} )",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
                         ),
-                        const SizedBox(width: 10.0),
-                        item.selection == true && item.selectedType != null
+                        showEditBtn
                             ? Padding(
-                                padding: const EdgeInsets.only(right: 10.0),
-                                child: Text(
-                                  "( ${item.selectedType!['name']} )",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
-                                  ),
+                                padding: const EdgeInsets.only(right: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'x ${item.quantity}',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               )
-                            : const SizedBox.shrink(),
+                            : Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          item.quantity++;
+                                          widget.selectedOrder.updateTotalCost(0);
+                                          widget.selectedOrder.calculateItemsAndQuantities();
+                                          widget.updateOrderStatus!();
+                                        });
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 16, // Adjust this value to change the size of the CircleAvatar
+                                        backgroundColor: Colors.green[700]!,
+                                        child: const Icon(
+                                          Icons.add,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      '${item.quantity}',
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          if (item.quantity > 1) {
+                                            item.quantity--;
+                                            widget.selectedOrder.updateTotalCost(0);
+                                            widget.selectedOrder.calculateItemsAndQuantities();
+                                            widget.updateOrderStatus!();
+                                          }
+                                        });
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 16, // Adjust this value to change the size of the CircleAvatar
+                                        backgroundColor: Colors.orange[800]!,
+                                        child: const Icon(
+                                          Icons.remove,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                         // Showing the Item Price UI
                         // Text(
                         //   'RM ${price.toStringAsFixed(2)}',
@@ -903,74 +1049,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                 ),
                 // To Edit, Increase, Decrease and Remove item
-                showEditBtn
-                    ? Text(
-                        'x ${item.quantity}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  item.quantity++;
-                                  widget.selectedOrder.updateTotalCost(0);
-                                  widget.selectedOrder.calculateItemsAndQuantities();
-                                  widget.updateOrderStatus!();
-                                });
-                              },
-                              child: CircleAvatar(
-                                radius: 16, // Adjust this value to change the size of the CircleAvatar
-                                backgroundColor: Colors.green[700]!,
-                                child: const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              '${item.quantity}',
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (item.quantity > 1) {
-                                    item.quantity--;
-                                    widget.selectedOrder.updateTotalCost(0);
-                                    widget.selectedOrder.calculateItemsAndQuantities();
-                                    widget.updateOrderStatus!();
-                                  }
-                                });
-                              },
-                              child: CircleAvatar(
-                                radius: 16, // Adjust this value to change the size of the CircleAvatar
-                                backgroundColor: Colors.orange[800]!,
-                                child: const Icon(
-                                  Icons.remove,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
               ],
+
+
+
+
+
             ),
             // Remarks & Comments UI
             Wrap(
@@ -999,54 +1083,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ),
                       )
                     : const SizedBox.shrink(),
-                // if (item.selectedMeatPortion != null && item.selectedMeatPortion!['name'] != "Normal Meat")
-                //   Row(
-                //     children: [
-                //       Container(
-                //         padding: EdgeInsets.only(
-                //             left: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
-                //             top: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0,
-                //             right: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
-                //             bottom: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0),
-                //         margin: EdgeInsets.only(top: item.selection && item.selectedMeatPortion != null ? 12.0 : 0.0),
-                //         decoration: BoxDecoration(
-                //           borderRadius: BorderRadius.circular(5),
-                //           // color: Colors.white,
-                //         ),
-                //         child: Text(
-                //           "${item.selectedMeatPortion!['name']}",
-                //           style: const TextStyle(
-                //             fontSize: 18,
-                //             fontWeight: FontWeight.bold,
-                //             color: Colors.white,
-                //           ),
-                //         ),
-                //       ),
-                //       const SizedBox(width: 10),
-                //       // Text for selectedMeePortion
-                //       if (item.selectedMeePortion != null && item.selectedMeePortion!['name'] != "Normal Mee")
-                //         Container(
-                //           padding: EdgeInsets.only(
-                //               left: item.selection && item.selectedMeePortion != null ? 16.0 : 0.0,
-                //               top: item.selection && item.selectedMeePortion != null ? 10.0 : 0.0,
-                //               right: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
-                //               bottom: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0),
-                //           margin: EdgeInsets.only(top: item.selection && item.selectedMeePortion != null ? 12.0 : 0.0),
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(5),
-                //             // color: Colors.white,
-                //           ),
-                //           child: Text(
-                //             "${item.selectedMeePortion!['name']}",
-                //             style: const TextStyle(
-                //               fontSize: 18,
-                //               fontWeight: FontWeight.bold,
-                //               color: Colors.white,
-                //             ),
-                //           ),
-                //         ),
-                //     ],
-                //   ),
+                
               ],
             ),
           ],
@@ -1140,3 +1177,78 @@ class _OrderDetailsState extends State<OrderDetails> {
     }
   }
 }
+
+// Container(
+//   width: 24,
+//   height: 24,
+//   decoration: BoxDecoration(
+//     color: Colors.white,
+//     borderRadius: BorderRadius.circular(14),
+//     boxShadow: [
+//       BoxShadow(
+//         color: Colors.grey.withOpacity(0.5),
+//         spreadRadius: 2,
+//         blurRadius: 7,
+//         offset: const Offset(0, 3), // Shadow position
+//       ),
+//     ],
+//   ),
+//   child: Center(
+//     child: Text(
+//       (index + 1).toString(),
+//       style: const TextStyle(
+//           color: Color.fromRGBO(31, 32, 41, 1),
+//           fontSize: 14,
+//           fontWeight: FontWeight.bold),
+//     ),
+//   ),
+// ),
+
+// if (item.selectedMeatPortion != null && item.selectedMeatPortion!['name'] != "Normal Meat")
+//   Row(
+//     children: [
+//       Container(
+//         padding: EdgeInsets.only(
+//             left: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
+//             top: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0,
+//             right: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
+//             bottom: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0),
+//         margin: EdgeInsets.only(top: item.selection && item.selectedMeatPortion != null ? 12.0 : 0.0),
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(5),
+//           // color: Colors.white,
+//         ),
+//         child: Text(
+//           "${item.selectedMeatPortion!['name']}",
+//           style: const TextStyle(
+//             fontSize: 18,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.white,
+//           ),
+//         ),
+//       ),
+//       const SizedBox(width: 10),
+//       // Text for selectedMeePortion
+//       if (item.selectedMeePortion != null && item.selectedMeePortion!['name'] != "Normal Mee")
+//         Container(
+//           padding: EdgeInsets.only(
+//               left: item.selection && item.selectedMeePortion != null ? 16.0 : 0.0,
+//               top: item.selection && item.selectedMeePortion != null ? 10.0 : 0.0,
+//               right: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
+//               bottom: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0),
+//           margin: EdgeInsets.only(top: item.selection && item.selectedMeePortion != null ? 12.0 : 0.0),
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(5),
+//             // color: Colors.white,
+//           ),
+//           child: Text(
+//             "${item.selectedMeePortion!['name']}",
+//             style: const TextStyle(
+//               fontSize: 18,
+//               fontWeight: FontWeight.bold,
+//               color: Colors.white,
+//             ),
+//           ),
+//         ),
+//     ],
+//   ),

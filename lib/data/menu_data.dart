@@ -484,6 +484,7 @@ final List<Map<String, dynamic>> menu = [
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Less Mee", "price": 0.00},
       {"name": "Extra Mee", "price": 2.00}
     ]
   },

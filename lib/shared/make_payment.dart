@@ -437,7 +437,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       ],
                                     ),
                                     const SizedBox(height: 10),
-                                    (fractionAmount < 0.50) ?
+                                    (fractionAmount < 0.50 && fractionAmount > 0.00) ?
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -544,7 +544,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    (fractionAmount < 0.50) ? Row(
+                                    (fractionAmount < 0.50 && fractionAmount > 0.00) ? Row(
                                       children: [
                                         const Expanded(
                                           child: Column(

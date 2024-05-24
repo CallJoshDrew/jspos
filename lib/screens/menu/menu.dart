@@ -20,7 +20,7 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  String selectedCategory = 'All';
+  String selectedCategory = 'Cakes';
   Widget _closedButtton() {
     return Container(
       margin: const EdgeInsets.only(right: 15),
@@ -66,7 +66,7 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 14,
+      flex: 12,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -87,17 +87,17 @@ class _MenuPageState extends State<MenuPage> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = 'All';
-                      });
-                    },
-                    child: _itemTab(
-                      title: 'All',
-                      isActive: selectedCategory == 'All',
-                    ),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     setState(() {
+                  //       selectedCategory = 'All';
+                  //     });
+                  //   },
+                  //   child: _itemTab(
+                  //     title: 'All',
+                  //     isActive: selectedCategory == 'All',
+                  //   ),
+                  // ),
                   ...categories.map((category) {
                     return GestureDetector(
                       onTap: () {
@@ -117,10 +117,10 @@ class _MenuPageState extends State<MenuPage> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 4,
-                childAspectRatio: (1 / 1.2),
+                childAspectRatio: (1 / 1.3), // set the individual container height
                 children: menu
                     .where((item) =>
-                        selectedCategory == 'All' ||
+                        // selectedCategory == 'All' ||
                         item['category'] == selectedCategory)
                     .map((item) {
                   return ProductItem(
@@ -196,7 +196,7 @@ class _MenuPageState extends State<MenuPage> {
                 title,
                 style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
@@ -204,7 +204,7 @@ class _MenuPageState extends State<MenuPage> {
                 subTitle,
                 style: const TextStyle(
                     color: Colors.white54,
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
             ],

@@ -454,7 +454,7 @@ class _DineInPageState extends State<DineInPage> {
       children: [
         showMenu == false
             ? Expanded(
-                flex: 14,
+                flex: 12,
                 child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: Column(
@@ -539,7 +539,7 @@ class _DineInPageState extends State<DineInPage> {
                 onItemAdded: onItemAdded,
               ),
         Expanded(
-          flex: 6,
+          flex: 8,
           child: OrderDetails(
             selectedOrder: selectedOrder,
             orderStatusColor: orderStatusColor,

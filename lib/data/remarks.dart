@@ -1,10 +1,9 @@
 List<Map<String, dynamic>> remarksData = [
-  {'id': '1', 'category': 'Dish', 'remarks': 'Less Mee'},
-  {'id': '5', 'category': 'Dish', 'remarks': 'No Vege'},
-  {'id': '7', 'category': 'Dish', 'remarks': 'Take Out'}, 
-  {'id': '8', 'category': 'Dish', 'remarks': 'GrabFood'}, 
-  {'id': '9', 'category': 'Dish', 'remarks': 'FoodPanda'}, 
-  {'id': '10', 'category': 'Dish', 'remarks': 'ShopeeFood'}, 
+  {'id': '1', 'category': 'Dish', 'remarks': 'No Vege'},
+  {'id': '2', 'category': 'Dish', 'remarks': 'Take Out'}, 
+  {'id': '3', 'category': 'Dish', 'remarks': 'GrabFood'}, 
+  {'id': '4', 'category': 'Dish', 'remarks': 'FoodPanda'}, 
+  {'id': '5', 'category': 'Dish', 'remarks': 'ShopeeFood'}, 
 
   {'id': '21', 'category': 'Drinks', 'remarks': 'Less Ice'},
   {'id': '22', 'category': 'Drinks', 'remarks': 'Less Sugar'},
@@ -14,8 +13,8 @@ List<Map<String, dynamic>> remarksData = [
   {'id': '26', 'category': 'Drinks', 'remarks': 'Less Nai'},
   {'id': '27', 'category': 'Drinks', 'remarks': 'Extra Nai'},
   {'id': '28', 'category': 'Drinks', 'remarks': 'Take Out'},
-  {'id': '29', 'category': 'Dish', 'remarks': 'GrabFood'}, 
-  {'id': '30', 'category': 'Dish', 'remarks': 'FoodPanda'},
-  {'id': '31', 'category': 'Dish', 'remarks': 'ShopeeFood'},
+  {'id': '29', 'category': 'Drinks', 'remarks': 'GrabFood'}, 
+  {'id': '30', 'category': 'Drinks', 'remarks': 'FoodPanda'},
+  {'id': '31', 'category': 'Drinks', 'remarks': 'ShopeeFood'},
 ];
   
