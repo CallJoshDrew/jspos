@@ -302,15 +302,19 @@ class _OrderDetailsState extends State<OrderDetails> {
               });
             }
 
-            if (item.itemRemarks != {} && comment != null && _controller.text.trim() != '') {
-              itemRemarks['100'] = _controller.text;
+            String? newComment = _controller.text.trim();
+            if (item.itemRemarks != {} && comment != null && newComment != '') {
+              itemRemarks['100'] = newComment;
             }
 
             SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
               (a, b) => int.parse(a).compareTo(int.parse(b)),
             )..addAll(itemRemarks);
 
-            item.itemRemarks = sortedItemRemarks;
+            // Check if itemRemarks has actually changed before updating item.itemRemarks
+            if (item.itemRemarks.toString() != sortedItemRemarks.toString()) {
+              item.itemRemarks = sortedItemRemarks;
+            }
           }
 
           Widget remarkButton(Map<String, dynamic> data) {
@@ -995,7 +999,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ),
                 ),
-                
+
                 // Item Name and Price
                 Expanded(
                   child: Padding(
@@ -1127,7 +1131,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ),
                 ),
-                
               ],
             ),
             // Item Remarks & Comments UI
