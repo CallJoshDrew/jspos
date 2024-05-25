@@ -1,9 +1,11 @@
+
+import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
-class SelectedOrder {
+class SelectedOrder with ChangeNotifier {
   String orderNumber;
   String tableName;
   String orderType;
@@ -180,6 +182,7 @@ class SelectedOrder {
       items.add(item);
     }
     calculateItemsAndQuantities();
+     notifyListeners();
   }
 
   void resetDefault() {

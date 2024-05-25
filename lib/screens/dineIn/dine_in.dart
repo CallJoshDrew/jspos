@@ -192,36 +192,36 @@ class _DineInPageState extends State<DineInPage> {
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
     // If the lengths of the lists are not equal, the lists are not equal
     if (list1.length != list2.length) {
-      print('Lists have different lengths');
+      // print('Lists have different lengths');
       return false;
     }
 
-    // Sort the lists by item name
-    list1.sort((a, b) => a.name.compareTo(b.name));
-    list2.sort((a, b) => a.name.compareTo(b.name));
+    // Create new lists that are sorted copies of the original lists
+    List<Item> sortedList1 = List.from(list1)..sort((a, b) => a.name.compareTo(b.name));
+    List<Item> sortedList2 = List.from(list2)..sort((a, b) => a.name.compareTo(b.name));
 
     // Compare the items in the sorted lists
-    for (int i = 0; i < list1.length; i++) {
-      print('Comparing item ${i + 1}');
-      print('List 1 item: ${list1[i].name}, quantity: ${list1[i].quantity}');
-      print('List 2 item: ${list2[i].name}, quantity: ${list2[i].quantity}');
+    for (int i = 0; i < sortedList1.length; i++) {
+      // print('Comparing item ${i + 1}');
+      // print('List 1 item: ${sortedList1[i].name}, quantity: ${sortedList1[i].quantity}');
+      // print('List 2 item: ${sortedList2[i].name}, quantity: ${sortedList2[i].quantity}');
 
-      if (list1[i].name != list2[i].name) {
-        print('Items have different names');
+      if (sortedList1[i].name != sortedList2[i].name) {
+        // print('Items have different names');
         return false;
       }
-      if (list1[i].quantity != list2[i].quantity) {
-        print('Items have different quantities');
+      if (sortedList1[i].quantity != sortedList2[i].quantity) {
+        // print('Items have different quantities');
         return false;
       }
-      if (list1[i].itemRemarks != list2[i].itemRemarks) {
-        print('Items have different itemRemarks');
+      if (sortedList1[i].itemRemarks != sortedList2[i].itemRemarks) {
+        // print('Items have different itemRemarks');
         return false;
       }
     }
 
     // If no differences were found, the lists are equal
-    print('No differences found, lists are equal');
+    // print('No differences found, lists are equal');
     return true;
   }
 

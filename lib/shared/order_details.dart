@@ -1,9 +1,5 @@
 import 'dart:collection';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
@@ -316,7 +312,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               item.itemRemarks = sortedItemRemarks;
             }
           }
-
+          // remarkButton Widget
           Widget remarkButton(Map<String, dynamic> data) {
             return ElevatedButton(
               style: ButtonStyle(
@@ -364,7 +360,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               ),
             );
           }
-
+          // This is the selection process for item.selection is true
           if (!widget.selectedOrder.showEditBtn && item.selection) {
             showDialog(
                 context: context,
@@ -935,7 +931,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 item.price = subTotalPrice;
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.updateOrderStatus!();
-                                                widget.selectedOrder.updateItem(item);
+                                                widget.selectedOrder.addItem(item);
                                                 Navigator.of(context).pop();
                                               });
                                             },
