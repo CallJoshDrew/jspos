@@ -73,8 +73,8 @@ class _MainPageState extends State<MainPage> {
       body: Row(
         children: [
           Container(
-            width: 130,
-            padding: const EdgeInsets.only(top: 50, right: 16, left: 16),
+            width: 80,
+            padding: const EdgeInsets.only(top: 40, right: 5, left: 5),
             height: MediaQuery.of(context).size.height,
             child: _sideMenu(),
           ),
@@ -119,18 +119,18 @@ class _MainPageState extends State<MainPage> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10), //this is the circle size
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             color: Colors.deepOrangeAccent,
           ),
-          child: const Icon(Icons.fastfood, color: Colors.white, size: 30),
+          child: const Icon(Icons.fastfood, color: Colors.white, size: 20),
         ),
         const SizedBox(height: 10),
         const Text(
           'JSPOS',
           style: TextStyle(
-              color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
         )
       ],
     );
@@ -138,35 +138,34 @@ class _MainPageState extends State<MainPage> {
 
   Widget _itemMenu({required String menu, required IconData icon}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 9),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: GestureDetector(
         onTap: () => _setPage(menu),
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: AnimatedContainer(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.fromLTRB(4, 6, 4, 6), 
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(5),
                 color: pageActive == menu
                     ? Colors.deepOrangeAccent
                     : Colors.transparent,
               ),
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.slowMiddle,
               child: Column(
                 children: [
                   Icon(
                     icon,
                     color: isSideMenuEnabled == true ? Colors.white : Colors.grey[600],
-                    size: 45,
+                    size: 30,
                   ),
                   const SizedBox(height: 5),
                   Text(
                     menu,
                     style: TextStyle(
                         color: isSideMenuEnabled == true ? Colors.white: Colors.grey[600],
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
+                        fontSize: 12,),
                   ),
                 ],
               )),

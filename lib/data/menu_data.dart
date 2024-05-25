@@ -135,7 +135,7 @@ final List<Map<String, dynamic>> menu = [
   },
   {
     "id": "20",
-    "name": "Butter Chocolate Cake",
+    "name": "Butter Choc Cake",
     "category": "Cakes",
     "price": 3.00,
     "image": "assets/cakes/butterChocolateCake.png"
@@ -409,14 +409,14 @@ final List<Map<String, dynamic>> menu = [
   },
   {
     "id": "75",
-    "name": "F&N Orange.png",
+    "name": "F&N Orange",
     "category": "Drinks",
     "price": 2.50,
     "image": "assets/drinks/F&NOrange.png"
   },
   {
     "id": "76",
-    "name": "Yeo's Chrysanthemum",
+    "name": "Yeo's Chrys.",
     "category": "Drinks",
     "price": 2.50,
     "image": "assets/drinks/chrysanthemum.png"

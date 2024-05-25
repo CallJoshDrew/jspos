@@ -172,7 +172,7 @@ class ProductItemState extends State<ProductItem> {
             ),
           );
         }
-
+        // item selection
         if (item.selection) {
           showDialog(
             context: context,
@@ -784,9 +784,7 @@ class ProductItemState extends State<ProductItem> {
       },
       // individual item container
       child: Container(
-        height: 300,
-        margin: const EdgeInsets.only(right: 20, bottom: 20),
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: const Color(0xff1f2029),
@@ -794,31 +792,38 @@ class ProductItemState extends State<ProductItem> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // item image
             Container(
-              height: 140,
+              height: 80,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
                   image: AssetImage(widget.image),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              widget.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                widget.name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
             ),
-            Expanded(
-              child: Text(
-                'RM ${widget.price.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 20,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Expanded(
+                child: Text(
+                  'RM ${widget.price.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ),

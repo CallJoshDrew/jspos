@@ -413,75 +413,70 @@ class _DineInPageState extends State<DineInPage> {
             ? Expanded(
                 flex: 12,
                 child: Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.fromLTRB(15, 10, 10, 0),
+                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                         child: Text("Please Select Table",
                             style: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
+                              fontSize: 16,
                             )),
                       ),
-                      const SizedBox(height: 10),
                       //Table UI 
                       Expanded(
                         child: GridView.builder(
                           itemCount: tables.length,
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 4, // Adjust the number of items per row
-                            childAspectRatio: 2 / 1, // Adjust the aspect ratio of the items
-                            crossAxisSpacing: 10, // Add horizontal spacing
-                            mainAxisSpacing: 10, // Add vertical spacing
+                            childAspectRatio: 2/1, // The width will be twice of its height
+                            crossAxisSpacing: 6, // Add horizontal spacing
+                            mainAxisSpacing: 6, // Add vertical spacing
                           ),
                           itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0), // Add padding to each card
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    pressedButtonIndex = index;
-                                    _handleSetTables(tables[index]['name'], index);
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.black,
-                                  backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
+                            return ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  pressedButtonIndex = index;
+                                  _handleSetTables(tables[index]['name'], index);
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                elevation: 5, // elevation of the button
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    tables[index]['name'],
+                                    style: TextStyle(
+                                        fontSize: pressedButtonIndex == index ? 12 : 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: pressedButtonIndex == index ? Colors.white : Colors.black),
                                   ),
-                                  elevation: 5, // elevation of the button
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      tables[index]['name'],
-                                      style: TextStyle(
-                                          fontSize: pressedButtonIndex == index ? 22 : 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                  const SizedBox(width: 10),
+                                  if (tables[index]['occupied'])
+                                    Icon(
+                                      Icons.dining,
+                                      color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
+                                      size: pressedButtonIndex == index ? 20 : 20,
                                     ),
-                                    const SizedBox(width: 10),
-                                    if (tables[index]['occupied'])
-                                      Icon(
-                                        Icons.dining,
-                                        color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                        size: pressedButtonIndex == index ? 40 : 40,
-                                      ),
-
-                                    // if (tables[index]['occupied'])
-                                    //   Text(
-                                    //     'Seated',
-                                    //     style: TextStyle(
-                                    //         fontSize: 22,
-                                    //         color: pressedButtonIndex == index ? Colors.white: Colors.deepOrange),
-                                    //   ),
-                                  ],
-                                ),
+                            
+                                  // if (tables[index]['occupied'])
+                                  //   Text(
+                                  //     'Seated',
+                                  //     style: TextStyle(
+                                  //         fontSize: 22,
+                                  //         color: pressedButtonIndex == index ? Colors.white: Colors.deepOrange),
+                                  //   ),
+                                ],
                               ),
                             );
                           },

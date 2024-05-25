@@ -47,7 +47,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       itemsByCategory[item.category]!.add(item);
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
       child: Column(
         children: [
           _orderNumber(
@@ -61,7 +61,6 @@ class _OrderDetailsState extends State<OrderDetails> {
             updateOrderStatus: widget.updateOrderStatus,
             action: Container(),
           ),
-          const SizedBox(height: 10),
           Expanded(
             flex: 2,
             child: SizedBox(
@@ -78,13 +77,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                 itemBuilder: (context, index) {
                   String category = itemsByCategory.keys.elementAt(index);
                   List<Item> items = itemsByCategory[category]!;
-
+                  // Categories Title before item image, name, quantity,
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10, bottom: 8),
-                        child: Text(category, style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text(category, style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                       // Category title
                       Column(
@@ -108,10 +107,10 @@ class _OrderDetailsState extends State<OrderDetails> {
           ),
           // Category, Items, Quantity UI
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
             margin: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(5),
               color: const Color(0xff1f2029),
               border: Border.all(
                 color: Colors.white10,
@@ -129,9 +128,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                         children: [
                           Text(
                             '$category: ${widget.selectedOrder.categories[category]?['itemQuantity'].toString()}',
-                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                           ),
-                          const SizedBox(height: 10),
                         ],
                       );
                     }).toList(),
@@ -142,22 +140,20 @@ class _OrderDetailsState extends State<OrderDetails> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: widget.orderStatusColor,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 0),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                   ),
                   onPressed: widget.handleMethod,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(widget.orderStatusIcon, size: 32),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                        child: Text(
-                          widget.orderStatus,
-                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
+                      Icon(widget.orderStatusIcon, size: 22),
+                      const SizedBox(width: 10),
+                      Text(
+                        widget.orderStatus,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ],
                   ),
@@ -182,9 +178,9 @@ class _OrderDetailsState extends State<OrderDetails> {
     // required ValueNotifier<bool> isVisible,
   }) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(5),
         color: const Color(0xff1f2029),
         border: Border.all(
           color: Colors.white10,
@@ -195,67 +191,62 @@ class _OrderDetailsState extends State<OrderDetails> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                // show Edit Button when it is true
-                showEditBtn
-                    ? ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.selectedOrder.updateShowEditBtn(false);
-                          });
-                          if (handlefreezeMenu != null) {
-                            handlefreezeMenu();
-                          }
-                          if (updateOrderStatus != null) {
-                            updateOrderStatus();
-                          }
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.green[800]!),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0), // Adjust this value as needed
-                            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Order Number
+              Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              // show Edit Button when it is true
+              showEditBtn
+                  ? ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          widget.selectedOrder.updateShowEditBtn(false);
+                        });
+                        if (handlefreezeMenu != null) {
+                          handlefreezeMenu();
+                        }
+                        if (updateOrderStatus != null) {
+                          updateOrderStatus();
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.green[800]!),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0), // Adjust this value as needed
                           ),
                         ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text('Edit', style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
-                              SizedBox(width: 10),
-                              Icon(
-                                Icons.assignment_add,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                            ],
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text('Edit', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+                          SizedBox(width: 10),
+                          Icon(
+                            Icons.assignment_add,
+                            color: Colors.white,
+                            size: 20,
                           ),
-                        ),
-                      )
-                    : const SizedBox(height: 50.0),
-              ],
-            ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox(height: 50.0),
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 status,
-                style: const TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold),
               ),
               Text(
                 "$timeStamp, $date",
-                style: const TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -280,10 +271,10 @@ class _OrderDetailsState extends State<OrderDetails> {
     required String category,
   }) {
     Widget child = Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(5),
         color: const Color(0xff1f2029),
       ),
       child: GestureDetector(
@@ -1023,11 +1014,11 @@ class _OrderDetailsState extends State<OrderDetails> {
               children: [
                 // Item Image and Index Number
                 Container(
-                  height: 55,
-                  width: 55,
-                  margin: const EdgeInsets.only(left: 10),
+                  height: 35,
+                  width: 35,
+                  margin: const EdgeInsets.only(left: 0),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(5),
                     image: DecorationImage(
                       image: AssetImage(image),
                       fit: BoxFit.cover,
@@ -1038,7 +1029,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 // Item Name and Price
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 10.0),
+                    padding: const EdgeInsets.only(left: 8, right: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1050,7 +1041,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Text(
                                   '${index + 1}. $name',
                                   style: const TextStyle(
-                                    fontSize: 22,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -1062,7 +1053,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         child: Text(
                                           "( ${item.selectedType!['name']} )",
                                           style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                             color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
                                           ),
@@ -1073,7 +1064,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 // Text(
                                 //   'RM ${price.toStringAsFixed(2)}',
                                 //   style: TextStyle(
-                                //     fontSize: 20,
+                                //     fontSize: 14,
                                 //     fontWeight: FontWeight.bold,
                                 //     color: Colors.green[300],
                                 //   ),
@@ -1092,7 +1083,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     Text(
                                       'x ${item.quantity}',
                                       style: const TextStyle(
-                                        fontSize: 26,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -1112,29 +1103,29 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       });
                                     },
                                     child: Container(
-                                      width: 40, // Adjust this value to change the width of the rectangle
-                                      height: 40, // Adjust this value to change the height of the rectangle
+                                      width: 25, // Adjust this value to change the width of the rectangle
+                                      height: 25, // Adjust this value to change the height of the rectangle
                                       decoration: BoxDecoration(
                                         color: Colors.green[700],
-                                        borderRadius: BorderRadius.circular(10), // Adjust this value to change the roundness of the rectangle corners
+                                        borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
                                       ),
                                       child: const Icon(
                                         Icons.add,
                                         color: Colors.white,
-                                        size: 24,
+                                        size: 18,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 6),
                                   Text(
                                     '${item.quantity}',
                                     style: const TextStyle(
-                                      fontSize: 22,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 6),
                                   InkWell(
                                     onTap: () {
                                       setState(() {
@@ -1147,16 +1138,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       });
                                     },
                                     child: Container(
-                                      width: 40, // Adjust this value to change the width of the rectangle
-                                      height: 40, // Adjust this value to change the height of the rectangle
+                                      width: 25, // Adjust this value to change the width of the rectangle
+                                      height: 25, // Adjust this value to change the height of the rectangle
                                       decoration: BoxDecoration(
                                         color: Colors.orange[800]!,
-                                        borderRadius: BorderRadius.circular(10), // Adjust this value to change the roundness of the rectangle corners
+                                        borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
                                       ),
                                       child: const Icon(
                                         Icons.remove,
                                         color: Colors.white,
-                                        size: 24,
+                                        size: 18,
                                       ),
                                     ),
                                   ),
@@ -1176,19 +1167,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ? Container(
                         width: double.infinity,
                         padding: EdgeInsets.only(
-                            left: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 16.0 : 0.0,
+                            left: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0,
                             top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0,
                             bottom: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0,
-                            right: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 16.0 : 0.0),
-                        margin: EdgeInsets.only(top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 12.0 : 0.0),
+                            right: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0),
+                        margin: EdgeInsets.only(top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 8.0 : 0.0),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(5),
                           color: Colors.white10,
                         ),
                         child: Text(
                           item.itemRemarks?.values.join(', ') ?? '',
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -1270,12 +1261,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Icon(
                   Icons.cancel,
                   color: Colors.white,
-                  size: 36,
+                  size: 30,
                 ),
                 Text(
                   "Delete",
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

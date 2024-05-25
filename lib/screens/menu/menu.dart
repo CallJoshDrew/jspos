@@ -10,11 +10,7 @@ class MenuPage extends StatefulWidget {
   // final void Function() onClick and final VoidCallback hold a reference to a function that takes no arguments and returns void.
   // The main difference is that VoidCallback is a bit more concise and is commonly used in Flutter for event handlers and callbacks.
   final Function(Item) onItemAdded;
-  const MenuPage(
-      {super.key,
-      required this.selectedOrder,
-      required this.onClick,
-      required this.onItemAdded});
+  const MenuPage({super.key, required this.selectedOrder, required this.onClick, required this.onItemAdded});
   @override
   State<MenuPage> createState() => _MenuPageState();
 }
@@ -23,7 +19,7 @@ class _MenuPageState extends State<MenuPage> {
   String selectedCategory = categories[0];
   Widget _closedButtton() {
     return Container(
-      margin: const EdgeInsets.only(right: 15),
+      margin: const EdgeInsets.only(right: 0),
       child: ElevatedButton(
         onPressed: () {
           setState(() {
@@ -31,30 +27,24 @@ class _MenuPageState extends State<MenuPage> {
           });
         },
         style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(Colors.green[800]!),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.green[800]!),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(5.0), // Adjust this value as needed
+              borderRadius: BorderRadius.circular(5),
             ),
           ),
         ),
         child: const Padding(
-          padding: EdgeInsets.all(10.0),
+          padding: EdgeInsets.all(0.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('Close',
-                  style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold)),
+              Text('Close', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
               SizedBox(width: 5),
               Icon(
                 Icons.cancel,
                 color: Colors.white,
-                size: 30,
+                size: 20,
               ),
             ],
           ),
@@ -68,36 +58,25 @@ class _MenuPageState extends State<MenuPage> {
     return Expanded(
       flex: 12,
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.only(bottom: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.only(left: 5),
               child: _topMenu(
                 title: 'SMH Restaurant',
-                subTitle: '28 March 2024',
+                subTitle: 'today date',
                 action: _closedButtton(),
               ),
             ), // Add spacing between _topMenu and ListView
             // Categories of Menu
             Container(
-              height: 100,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              height: 45,
+              padding: const EdgeInsets.symmetric(vertical: 0),
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     setState(() {
-                  //       selectedCategory = 'All';
-                  //     });
-                  //   },
-                  //   child: _itemTab(
-                  //     title: 'All',
-                  //     isActive: selectedCategory == 'All',
-                  //   ),
-                  // ),
                   ...categories.map((category) {
                     return GestureDetector(
                       onTap: () {
@@ -115,30 +94,38 @@ class _MenuPageState extends State<MenuPage> {
               ),
             ),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 4,
-                childAspectRatio: (1 / 1.3), // set the individual container height
-                children: menu
-                    .where((item) =>
-                        // selectedCategory == 'All' ||
-                        item['category'] == selectedCategory)
-                    .map((item) {
-                  return ProductItem(
-                    onItemAdded: widget.onItemAdded,
-                    id: item['id'],
-                    name: item['name'],
-                    image: item['image'],
-                    category: item['category'],
-                    price: item['price'],
-                    selection: item['selection'] ?? false,
-                    choices: item['choices'] ?? [],
-                    types: item['types'] ?? [],
-                    meatPortion: item['meat portion'] ?? [],
-                    meePortion: item['mee portion'] ?? [],
-                    selectedChoice: null,
-                    selectedType: null,
-                  );
-                }).toList(),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: const BoxDecoration(
+                  // color: Colors.white,
+                ),
+                child: GridView.count(
+                  crossAxisCount: 4,
+                  childAspectRatio: (1 / 1.35), // width 1 / height 1.3
+                  crossAxisSpacing: 10, // Add horizontal spacing
+                  mainAxisSpacing: 10, // Add vertical spacing// set the individual container height
+                  children: menu
+                      .where((item) =>
+                          // selectedCategory == 'All' ||
+                          item['category'] == selectedCategory)
+                      .map((item) {
+                    return ProductItem(
+                      onItemAdded: widget.onItemAdded,
+                      id: item['id'],
+                      name: item['name'],
+                      image: item['image'],
+                      category: item['category'],
+                      price: item['price'],
+                      selection: item['selection'] ?? false,
+                      choices: item['choices'] ?? [],
+                      types: item['types'] ?? [],
+                      meatPortion: item['meat portion'] ?? [],
+                      meePortion: item['mee portion'] ?? [],
+                      selectedChoice: null,
+                      selectedType: null,
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           ],
@@ -153,14 +140,12 @@ class _MenuPageState extends State<MenuPage> {
     required bool isActive,
   }) {
     return Container(
-      width: 180,
-      margin: const EdgeInsets.only(right: 25),
+      width: 100,
+      margin: const EdgeInsets.only(right: 15),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(5),
           color: const Color(0xff1f2029),
-          border: isActive
-              ? Border.all(color: Colors.deepOrangeAccent, width: 3)
-              : Border.all(color: const Color(0xff1f2029), width: 3)),
+          border: isActive ? Border.all(color: Colors.deepOrangeAccent, width: 2) : Border.all(color: const Color(0xff1f2029), width: 2)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -171,8 +156,7 @@ class _MenuPageState extends State<MenuPage> {
           // const SizedBox(width: 15),
           Text(
             title,
-            style: const TextStyle(
-                fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: isActive ? FontWeight.bold : FontWeight.normal),
           )
         ],
       ),
@@ -184,33 +168,23 @@ class _MenuPageState extends State<MenuPage> {
     required String subTitle,
     required action,
   }) {
-    return Row(
+    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                subTitle,
-                style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          Expanded(flex: 1, child: Container(width: double.infinity)),
-          Container(child: action)
-        ]);
+          Text(
+            subTitle,
+            style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      Expanded(flex: 1, child: Container(width: double.infinity)),
+      Container(child: action)
+    ]);
   }
 }
