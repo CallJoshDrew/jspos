@@ -44,34 +44,6 @@ class _DineInPageState extends State<DineInPage> {
       totalQuantity: 0,
       categoryList: categories,
   );
-  void prettyPrintTable() {
-    // print('Selected Table Index: $selectedTableIndex');
-    // print('-------------------------');
-    // print('Tables');
-    // print('Table ID: ${tables!['id']}');
-    // print('Table Name: ${tables!['name']}');
-    // print('Occupied: ${tables!['occupied']}');
-    // print('Order Number: ${tables!['orderNumber']}');
-    // print('-------------------------');
-    // print('-------------------------');
-    // print('PrettyPrint Orders: ${widget.orders.toString()}');
-    // print('-------------------------');
-    // print('-------------------------');
-    // print(widget.orders.toString());
-    // print('-------------------------');
-    // print('-------------------------');
-    // print('Pretty Print:');
-    // print('SelectedOrder Number: ${selectedOrder.orderNumber}');
-    // print('SelectedOrder Table Name: ${selectedOrder.tableName}');
-    // print('-------------------------');
-    // print('Order Type: ${selectedOrder.orderType}');
-    // print('Order Time: ${selectedOrder.orderTime}');
-    // print('Order Date: ${selectedOrder.orderDate}');
-    // print('Order items: ${selectedOrder.items}');
-    // print('Order subTotal: ${selectedOrder.subTotal}');
-    // print('Status: ${selectedOrder.status}');
-    // print('Items: ${selectedOrder.items}');
-  }
 
   String generateID(String tableName) {
     final paddedCounter = orderCounter.toString().padLeft(4, '0');
@@ -121,10 +93,7 @@ class _DineInPageState extends State<DineInPage> {
             order.showEditBtn = true;
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-            // print('Selected Table: ');
-            // print('selectedOrder items: ${selectedOrder.items}');
-            // print('tempCartItems: $tempCartItems');
-            // print('-------------------------');
+            selectedOrder.calculateItemsAndQuantities();
           }
         }
       }
@@ -176,10 +145,6 @@ class _DineInPageState extends State<DineInPage> {
   void addItemtoCart(item) {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
-    // print("selecteded item: $item");
-    // print("tempCartItems: $tempCartItems");
-    // print("selectedOrder.status: ${selectedOrder.status}");
-    // print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
     if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       orderStatusColor = Colors.green[800]!;
       handleMethod = handleUpdateOrderBtn;
@@ -232,7 +197,6 @@ class _DineInPageState extends State<DineInPage> {
         selectedOrder.resetDefault();
         updateOrderStatus();
         handlefreezeMenu();
-        prettyPrintTable();
       });
     } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
       _showConfirmationDialog();
@@ -282,7 +246,6 @@ class _DineInPageState extends State<DineInPage> {
       widget.orders.addOrder(selectedOrder.copyWith(categories));
       updateOrderStatus();
       handlefreezeMenu();
-      prettyPrintTable();
     });
   }
 
@@ -294,7 +257,6 @@ class _DineInPageState extends State<DineInPage> {
       widget.orders.addOrder(selectedOrder.copyWith(categories));
       updateOrderStatus();
       handlefreezeMenu();
-      prettyPrintTable();
     });
   }
   // print('Selected Order After Payment: ${selectedOrder}');
@@ -399,10 +361,6 @@ class _DineInPageState extends State<DineInPage> {
   IconData orderStatusIcon = Icons.shopping_cart;
 
   void updateOrderStatus() {
-    // print("selectedOrder items:${selectedOrder.items}");
-    // print("tempCartItems :$tempCartItems");
-    // print("updateOrderStatus :${selectedOrder.status}");
-
     setState(() {
       if (selectedOrder.status == "Start Your Order") {
         orderStatus = "Empty Cart";
@@ -469,6 +427,7 @@ class _DineInPageState extends State<DineInPage> {
                             )),
                       ),
                       const SizedBox(height: 10),
+                      //Table UI 
                       Expanded(
                         child: GridView.builder(
                           itemCount: tables.length,
@@ -502,7 +461,7 @@ class _DineInPageState extends State<DineInPage> {
                                     Text(
                                       tables[index]['name'],
                                       style: TextStyle(
-                                          fontSize: pressedButtonIndex == index ? 28 : 22,
+                                          fontSize: pressedButtonIndex == index ? 22 : 22,
                                           fontWeight: FontWeight.bold,
                                           color: pressedButtonIndex == index ? Colors.white : Colors.black),
                                     ),
@@ -511,7 +470,7 @@ class _DineInPageState extends State<DineInPage> {
                                       Icon(
                                         Icons.dining,
                                         color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                        size: pressedButtonIndex == index ? 46 : 40,
+                                        size: pressedButtonIndex == index ? 40 : 40,
                                       ),
 
                                     // if (tables[index]['occupied'])
@@ -554,3 +513,41 @@ class _DineInPageState extends State<DineInPage> {
     );
   }
 }
+
+// void prettyPrintTable() {
+    // print('Selected Table Index: $selectedTableIndex');
+    // print('-------------------------');
+    // print('Tables');
+    // print('Table ID: ${tables!['id']}');
+    // print('Table Name: ${tables!['name']}');
+    // print('Occupied: ${tables!['occupied']}');
+    // print('Order Number: ${tables!['orderNumber']}');
+    // print('-------------------------');
+    // print('-------------------------');
+    // print('PrettyPrint Orders: ${widget.orders.toString()}');
+    // print('-------------------------');
+    // print('-------------------------');
+    // print(widget.orders.toString());
+    // print('-------------------------');
+    // print('-------------------------');
+    // print('Pretty Print:');
+    // print('SelectedOrder Number: ${selectedOrder.orderNumber}');
+    // print('SelectedOrder Table Name: ${selectedOrder.tableName}');
+    // print('-------------------------');
+    // print('Order Type: ${selectedOrder.orderType}');
+    // print('Order Time: ${selectedOrder.orderTime}');
+    // print('Order Date: ${selectedOrder.orderDate}');
+    // print('Order items: ${selectedOrder.items}');
+    // print('Order subTotal: ${selectedOrder.subTotal}');
+    // print('Status: ${selectedOrder.status}');
+    // print('Items: ${selectedOrder.items}');
+
+    // print("selecteded item: $item");
+    // print("tempCartItems: $tempCartItems");
+    // print("selectedOrder.status: ${selectedOrder.status}");
+    // print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
+    // print('Selected Table: ');
+    // print('selectedOrder items: ${selectedOrder.items}');
+    // print('tempCartItems: $tempCartItems');
+    // print('-------------------------');
+// }

@@ -61,38 +61,49 @@ class _OrderDetailsState extends State<OrderDetails> {
             updateOrderStatus: widget.updateOrderStatus,
             action: Container(),
           ),
+          const SizedBox(height: 10),
           Expanded(
             flex: 2,
-            child: ListView.builder(
-              itemCount: itemsByCategory.keys.length,
-              itemBuilder: (context, index) {
-                String category = itemsByCategory.keys.elementAt(index);
-                List<Item> items = itemsByCategory[category]!;
+            child: SizedBox(
+              // padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(14),
+              //   border: Border.all(
+              //     color: Colors.white10,
+              //     width: 1,
+              //   ),
+              // ),
+              child: ListView.builder(
+                itemCount: itemsByCategory.keys.length,
+                itemBuilder: (context, index) {
+                  String category = itemsByCategory.keys.elementAt(index);
+                  List<Item> items = itemsByCategory[category]!;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10, bottom: 8),
-                      child: Text(category, style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
-                    ),
-                    // Category title
-                    Column(
-                      children: items
-                          .map((item) => _itemOrder(
-                                image: item.image,
-                                name: item.name,
-                                item: item,
-                                price: item.price,
-                                index: items.indexOf(item),
-                                category: item.category,
-                                showEditBtn: widget.selectedOrder.showEditBtn,
-                              ))
-                          .toList(),
-                    ),
-                  ],
-                );
-              },
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10, bottom: 8),
+                        child: Text(category, style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                      // Category title
+                      Column(
+                        children: items
+                            .map((item) => _itemOrder(
+                                  image: item.image,
+                                  name: item.name,
+                                  item: item,
+                                  price: item.price,
+                                  index: items.indexOf(item),
+                                  category: item.category,
+                                  showEditBtn: widget.selectedOrder.showEditBtn,
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
           // Category, Items, Quantity UI
@@ -103,7 +114,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               borderRadius: BorderRadius.circular(14),
               color: const Color(0xff1f2029),
               border: Border.all(
-                color: Colors.green,
+                color: Colors.white10,
                 width: 1,
               ),
             ),
