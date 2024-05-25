@@ -20,7 +20,7 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  String selectedCategory = 'Cakes';
+  String selectedCategory = categories[0];
   Widget _closedButtton() {
     return Container(
       margin: const EdgeInsets.only(right: 15),

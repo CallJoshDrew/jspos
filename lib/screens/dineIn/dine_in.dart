@@ -6,6 +6,8 @@ import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
+import 'package:jspos/data/menu_data.dart';
+
 
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
@@ -23,23 +25,24 @@ class _DineInPageState extends State<DineInPage> {
   List<Item> tempCartItems = [];
   SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
-    tableName: "Table Name",
-    orderType: "Dine-In",
-    orderTime: "Order Time",
-    orderDate: "Order Date",
-    status: "Start Your Order",
-    items: [], // Add your items here
-    subTotal: 0,
-    serviceCharge: 0,
-    totalPrice: 0,
-    quantity: 0,
-    paymentMethod: "Cash",
-    remarks: "No Remarks",
-    showEditBtn: false,
-    itemCounts: {},
-    itemQuantities: {},
-    totalItems: 0,
-    totalQuantity: 0,
+      tableName: "Table Name",
+      orderType: "Dine-In",
+      orderTime: "Order Time",
+      orderDate: "Order Date",
+      status: "Start Your Order",
+      items: [], // Add your items here
+      subTotal: 0,
+      serviceCharge: 0,
+      totalPrice: 0,
+      quantity: 0,
+      paymentMethod: "Cash",
+      remarks: "No Remarks",
+      showEditBtn: false,
+      itemCounts: {},
+      itemQuantities: {},
+      totalItems: 0,
+      totalQuantity: 0,
+      categoryList: categories,
   );
   void prettyPrintTable() {
     // print('Selected Table Index: $selectedTableIndex');
@@ -95,7 +98,7 @@ class _DineInPageState extends State<DineInPage> {
           tables[index]['occupied'] = true;
 
           // Generate a new instance of selectedOrder first, and then only assign it's fields and details to the selectedOrder
-          selectedOrder = selectedOrder.newInstance();
+          selectedOrder = selectedOrder.newInstance(categories);
           selectedOrder.orderNumber = orderNumber;
           selectedOrder.tableName = tableName;
           selectedOrder.updateStatus("Ordering");
@@ -195,17 +198,14 @@ class _DineInPageState extends State<DineInPage> {
       // print('Lists have different lengths');
       return false;
     }
-
     // Create new lists that are sorted copies of the original lists
     List<Item> sortedList1 = List.from(list1)..sort((a, b) => a.name.compareTo(b.name));
     List<Item> sortedList2 = List.from(list2)..sort((a, b) => a.name.compareTo(b.name));
-
     // Compare the items in the sorted lists
     for (int i = 0; i < sortedList1.length; i++) {
       // print('Comparing item ${i + 1}');
       // print('List 1 item: ${sortedList1[i].name}, quantity: ${sortedList1[i].quantity}');
       // print('List 2 item: ${sortedList2[i].name}, quantity: ${sortedList2[i].quantity}');
-
       if (sortedList1[i].name != sortedList2[i].name) {
         // print('Items have different names');
         return false;
@@ -219,7 +219,6 @@ class _DineInPageState extends State<DineInPage> {
         return false;
       }
     }
-
     // If no differences were found, the lists are equal
     // print('No differences found, lists are equal');
     return true;
@@ -280,7 +279,7 @@ class _DineInPageState extends State<DineInPage> {
       selectedOrder.placeOrder();
       tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
       // Add a new SelectedOrder object to the orders list
-      widget.orders.addOrder(selectedOrder.copyWith());
+      widget.orders.addOrder(selectedOrder.copyWith(categories));
       updateOrderStatus();
       handlefreezeMenu();
       prettyPrintTable();
@@ -292,7 +291,7 @@ class _DineInPageState extends State<DineInPage> {
       selectedOrder.placeOrder();
       tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
       // Add a new SelectedOrder object to the orders list
-      widget.orders.addOrder(selectedOrder.copyWith());
+      widget.orders.addOrder(selectedOrder.copyWith(categories));
       updateOrderStatus();
       handlefreezeMenu();
       prettyPrintTable();

@@ -1,4 +1,4 @@
-final List<String> categories = ["Cakes", "Drinks", "Dish"];
+final List<String> categories = ["Cakes", "Dishes", "Drinks"];
 final List<Map<String, dynamic>> menu = [
   {
     "id": "1",
@@ -431,24 +431,24 @@ final List<Map<String, dynamic>> menu = [
   {
     "id": "101",
     "name": "Kono Mee",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 8.00,
-    "image": "assets/dish/konoMee.png",
+    "image": "assets/dishes/konoMee.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 8.00},
-      {"name": "Ayam Goreng", "price": 8.00},
-      {"name": "Sui Kau", "price": 9.00},
-      {"name": "Seafood", "price": 10.00},
-      {"name": "Udang", "price": 12.00}
+      {"name": "Kono Mee Campur", "price": 8.00},
+      {"name": "Kono Mee Ayam Goreng", "price": 8.00},
+      {"name": "Kono Mee Sui Kau", "price": 9.00},
+      {"name": "Kono Mee Seafood", "price": 10.00},
+      {"name": "Kono Mee Udang", "price": 12.00}
     ]
   },
   {
     "id": "102",
     "name": "Goreng Kering",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 9.00,
-    "image": "assets/dish/gorengKering.png",
+    "image": "assets/dishes/gorengKering.png",
     "selection": true,
     "choices": [
       {"name": "Goreng Kering Campur", "price": 9.00},
@@ -460,9 +460,9 @@ final List<Map<String, dynamic>> menu = [
   {
     "id": "103",
     "name": "Goreng Basah",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 8.00,
-    "image": "assets/dish/gorengBasah.png",
+    "image": "assets/dishes/gorengBasah.png",
     "selection": true,
     "choices": [
       {"name": "Goreng Basah Campur", "price": 8.00},
@@ -491,64 +491,64 @@ final List<Map<String, dynamic>> menu = [
   {
     "id": "104",
     "name": "Laksa",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 10.00,
-    "image": "assets/dish/laksa.png",
+    "image": "assets/dishes/laksa.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 10.00},
-      {"name": "Ayam Goreng", "price": 10.00},
-      {"name": "Sui Kau", "price": 10.00},
-      {"name": "Seafood", "price": 12.00}
+      {"name": "Laksa Campur", "price": 10.00},
+      {"name": "Laksa Ayam Goreng", "price": 10.00},
+      {"name": "Laksa Sui Kau", "price": 10.00},
+      {"name": "Laksa Seafood", "price": 12.00}
     ]
   },
   {
     "id": "105",
     "name": "Lo Mee",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 10.00,
-    "image": "assets/dish/loMee.png",
+    "image": "assets/dishes/loMee.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 10.00},
-      {"name": "Ayam", "price": 10.00},
-      {"name": "Sui Kau", "price": 10.00},
-      {"name": "Seafood", "price": 12.00}
+      {"name": "Lo Mee Campur", "price": 10.00},
+      {"name": "Lo Mee Ayam", "price": 10.00},
+      {"name": "Lo Mee Sui Kau", "price": 10.00},
+      {"name": "Lo Mee Seafood", "price": 12.00}
     ]
   },
   {
     "id": "106",
     "name": "Watan Hor",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 10.00,
-    "image": "assets/dish/watanHor.png",
+    "image": "assets/dishes/watanHor.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 10.00},
-      {"name": "Ayam", "price": 10.00},
-      {"name": "Sui Kau", "price": 10.00},
-      {"name": "Seafood", "price": 12.00}
+      {"name": "Watan Hor Campur", "price": 10.00},
+      {"name": "Watan Hor Ayam", "price": 10.00},
+      {"name": "Watan Hor Sui Kau", "price": 10.00},
+      {"name": "Watan Hor Seafood", "price": 12.00}
     ]
   },
   {
     "id": "107",
     "name": "Nasi Ayam",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 7.00,
-    "image": "assets/dish/nasiAyam.png"
+    "image": "assets/dishes/nasiAyam.png"
   },
   {
     "id": "108",
     "name": "Nasi Goreng Ayam",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 7.00,
-    "image": "assets/dish/nasiGorengAyam.png"
+    "image": "assets/dishes/nasiGorengAyam.png"
   },
   {
     "id": "109",
     "name": "Sui Kau",
-    "category": "Dish",
+    "category": "Dishes",
     "price": 9.00,
-    "image": "assets/dish/suiKau.png"
+    "image": "assets/dishes/suiKau.png"
   },
 ];

@@ -1,9 +1,9 @@
 List<Map<String, dynamic>> remarksData = [
-  {'id': '1', 'category': 'Dish', 'remarks': 'No Vege'},
-  {'id': '2', 'category': 'Dish', 'remarks': 'Take Out'}, 
-  {'id': '3', 'category': 'Dish', 'remarks': 'GrabFood'}, 
-  {'id': '4', 'category': 'Dish', 'remarks': 'FoodPanda'}, 
-  {'id': '5', 'category': 'Dish', 'remarks': 'ShopeeFood'}, 
+  {'id': '1', 'category': 'Dishes', 'remarks': 'No Vege'},
+  {'id': '2', 'category': 'Dishes', 'remarks': 'Take Out'}, 
+  {'id': '3', 'category': 'Dishes', 'remarks': 'GrabFood'}, 
+  {'id': '4', 'category': 'Dishes', 'remarks': 'FoodPanda'}, 
+  {'id': '5', 'category': 'Dishes', 'remarks': 'ShopeeFood'}, 
 
   {'id': '21', 'category': 'Drinks', 'remarks': 'Less Ice'},
   {'id': '22', 'category': 'Drinks', 'remarks': 'Less Sugar'},

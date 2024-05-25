@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:intl/intl.dart';
@@ -24,9 +23,7 @@ class SelectedOrder with ChangeNotifier {
   Map<String, int> itemQuantities;
   int totalItems = 0;
   int totalQuantity = 0;
-  Map<String, int> cakes;
-  Map<String, int> drinks;
-  Map<String, int> dish;
+  Map<String, Map<String, int>> categories;
 
   // constructor must have the same name as its class.
   SelectedOrder({
@@ -48,19 +45,17 @@ class SelectedOrder with ChangeNotifier {
     required this.itemQuantities,
     this.totalItems = 0,
     this.totalQuantity = 0,
-    Map<String, int>? cakes,
-    Map<String, int>? drinks,
-    Map<String, int>? dish,
-  })  : cakes = cakes ?? {'itemCount': 0, 'itemQuantity': 0},
-        drinks = drinks ?? {'itemCount': 0, 'itemQuantity': 0},
-        dish = dish ?? {'itemCount': 0, 'itemQuantity': 0};
+    required List<String> categoryList,
+  }) : categories = {
+          for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
+        };
   @override
   // methods
   String toString() {
     return '{\n\torderNumber: $orderNumber, \n\ttableName: $tableName, \n\torderType: $orderType, \n\tstatus: $status, \n\titems: [\n\t\t${items.join(',\n\t\t')}\n\t], \n\tsubTotal: $subTotal, \n\tserviceCharge: $serviceCharge, \n\ttotalPrice: $totalPrice, \n\tquantity: $quantity, \n\tpaymentMethod: $paymentMethod, \n\tremarks: $remarks, \n\tshowEditBtn: $showEditBtn\n}';
   }
 
-  SelectedOrder newInstance() {
+  SelectedOrder newInstance(List<String> categoryList) {
     return SelectedOrder(
       orderNumber: "Order Number",
       tableName: "Table Name",
@@ -80,13 +75,11 @@ class SelectedOrder with ChangeNotifier {
       itemQuantities: {},
       totalItems: 0,
       totalQuantity: 0,
-      cakes: {'itemCount': 0, 'itemQuantity': 0},
-      drinks: {'itemCount': 0, 'itemQuantity': 0},
-      dish: {'itemCount': 0, 'itemQuantity': 0},
+      categoryList: categoryList,
     );
   }
 
-  SelectedOrder copyWith() {
+  SelectedOrder copyWith(List<String> categoryList) {
     return SelectedOrder(
       orderNumber: orderNumber,
       tableName: tableName,
@@ -106,6 +99,7 @@ class SelectedOrder with ChangeNotifier {
       itemQuantities: itemQuantities,
       totalItems: totalItems,
       totalQuantity: totalQuantity,
+      categoryList: categoryList,
     );
   }
 
@@ -182,7 +176,7 @@ class SelectedOrder with ChangeNotifier {
       items.add(item);
     }
     calculateItemsAndQuantities();
-     notifyListeners();
+    notifyListeners();
   }
 
   void resetDefault() {
@@ -248,32 +242,22 @@ class SelectedOrder with ChangeNotifier {
   }
 
   void calculateItemsAndQuantities() {
-    // Reset the counts and quantities
-    cakes['itemCount'] = 0;
-    cakes['itemQuantity'] = 0;
-    drinks['itemCount'] = 0;
-    drinks['itemQuantity'] = 0;
-    dish['itemCount'] = 0;
-    dish['itemQuantity'] = 0;
+    // Reset the counts and quantities for each category
+    for (var category in categories.keys) {
+      categories[category] = {'itemCount': 0, 'itemQuantity': 0};
+    }
 
     // Iterate over each item in the items list
     for (var item in items) {
-      switch (item.category) {
-        case 'Cakes':
-          cakes['itemCount'] = (cakes['itemCount'] ?? 0) + 1;
-          cakes['itemQuantity'] = (cakes['itemQuantity'] ?? 0) + (item.quantity);
-          break;
-        case 'Drinks':
-          drinks['itemCount'] = (drinks['itemCount'] ?? 0) + 1;
-          drinks['itemQuantity'] = (drinks['itemQuantity'] ?? 0) + (item.quantity);
-          break;
-        case 'Dish':
-          dish['itemCount'] = (dish['itemCount'] ?? 0) + 1;
-          dish['itemQuantity'] = (dish['itemQuantity'] ?? 0) + (item.quantity);
-          break;
-        default:
-          // Handle other categories if necessary
-          break;
+      // Check if the item's category exists in the categories map
+      if (categories.containsKey(item.category)) {
+        categories[item.category]?['itemCount'] = (categories[item.category]?['itemCount'] ?? 0) + 1;
+        categories[item.category]?['itemQuantity'] = (categories[item.category]?['itemQuantity'] ?? 0) + (item.quantity);
+
+        // Print the itemCount and itemQuantity for the category
+        print('Category: ${item.category}');
+        print('itemCount: ${categories[item.category]?['itemCount']}');
+        print('itemQuantity: ${categories[item.category]?['itemQuantity']}');
       }
     }
   }
