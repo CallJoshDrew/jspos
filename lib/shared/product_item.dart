@@ -786,7 +786,7 @@ class ProductItemState extends State<ProductItem> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(5),
           color: const Color(0xff1f2029),
         ),
         child: Column(
@@ -794,16 +794,18 @@ class ProductItemState extends State<ProductItem> {
           children: [
             // item image
             Container(
-              height: 80,
+              height: 60,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    topRight: Radius.circular(5)),
                 image: DecorationImage(
                   image: AssetImage(widget.image),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Text(
@@ -815,7 +817,8 @@ class ProductItemState extends State<ProductItem> {
                 ),
               ),
             ),
-            Expanded(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Text(
                 'RM ${widget.price.toStringAsFixed(2)}',
                 style: const TextStyle(

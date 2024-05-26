@@ -55,76 +55,82 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 5),
-          child: _topMenu(
-            title: 'SMH Restaurant',
-            subTitle: 'today date',
-            action: _closedButtton(),
-          ),
-        ), // Add spacing between _topMenu and ListView
-        // Categories of Menu
-        Container(
-          height: 45,
-          padding: const EdgeInsets.symmetric(vertical: 0),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              ...categories.map((category) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedCategory = category;
-                    });
-                  },
-                  child: _itemTab(
-                    title: category,
-                    isActive: selectedCategory == category,
-                  ),
-                );
-              }),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            decoration: const BoxDecoration(
-              // color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 5),
+            child: _topMenu(
+              title: 'SMH Restaurant',
+              subTitle: 'today date',
+              action: _closedButtton(),
             ),
-            child: GridView.count(
-              crossAxisCount: 5,
-              childAspectRatio: (1 / 1.8), // width 1 / height 1.3
-              crossAxisSpacing: 10, // Add horizontal spacing
-              mainAxisSpacing: 10, // Add vertical spacing// set the individual container height
-              children: menu
-                  .where((item) =>
-                      // selectedCategory == 'All' ||
-                      item['category'] == selectedCategory)
-                  .map((item) {
-                return ProductItem(
-                  onItemAdded: widget.onItemAdded,
-                  id: item['id'],
-                  name: item['name'],
-                  image: item['image'],
-                  category: item['category'],
-                  price: item['price'],
-                  selection: item['selection'] ?? false,
-                  choices: item['choices'] ?? [],
-                  types: item['types'] ?? [],
-                  meatPortion: item['meat portion'] ?? [],
-                  meePortion: item['mee portion'] ?? [],
-                  selectedChoice: null,
-                  selectedType: null,
-                );
-              }).toList(),
+          ), // Add spacing between _topMenu and ListView
+          // Categories of Menu
+          Padding(
+            padding: const EdgeInsets.only(bottom: 0),
+            child: SizedBox(
+              height: 45,
+              // padding: const EdgeInsets.symmetric(vertical: 0),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  ...categories.map((category) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedCategory = category;
+                        });
+                      },
+                      child: _itemTab(
+                        title: category,
+                        isActive: selectedCategory == category,
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(bottom:10),
+              // decoration: const BoxDecoration(
+              //     color: Colors.white,
+              //     ),
+              child: GridView.count(
+                crossAxisCount: 4,
+                childAspectRatio: (1 / 1.4), // width 1 / height 1.3
+                crossAxisSpacing: 15, // Add horizontal spacing
+                mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
+                children: menu
+                    .where((item) =>
+                        // selectedCategory == 'All' ||
+                        item['category'] == selectedCategory)
+                    .map((item) {
+                  return ProductItem(
+                    onItemAdded: widget.onItemAdded,
+                    id: item['id'],
+                    name: item['name'],
+                    image: item['image'],
+                    category: item['category'],
+                    price: item['price'],
+                    selection: item['selection'] ?? false,
+                    choices: item['choices'] ?? [],
+                    types: item['types'] ?? [],
+                    meatPortion: item['meat portion'] ?? [],
+                    meePortion: item['mee portion'] ?? [],
+                    selectedChoice: null,
+                    selectedType: null,
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

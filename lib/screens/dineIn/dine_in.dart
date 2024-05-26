@@ -410,7 +410,7 @@ class _DineInPageState extends State<DineInPage> {
       children: [
         showMenu == false
             ? Expanded(
-                flex: 12,
+                flex: 11,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -483,7 +483,7 @@ class _DineInPageState extends State<DineInPage> {
                 ),
               )
             : Expanded(
-                flex: 12,
+                flex: 11,
                 child: MenuPage(
                   onClick: _handleCloseMenu,
                   selectedOrder: selectedOrder,
@@ -491,7 +491,7 @@ class _DineInPageState extends State<DineInPage> {
                 ),
               ),
         Expanded(
-          flex: 8,
+          flex: 9,
           child: OrderDetails(
             selectedOrder: selectedOrder,
             orderStatusColor: orderStatusColor,

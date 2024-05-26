@@ -80,12 +80,12 @@ class _MainPageState extends State<MainPage> {
           ),
           Expanded(
             child: Container(
-              margin: const EdgeInsets.only(top: 24, right: 12),
-              padding: const EdgeInsets.only(top: 12, right: 12, left: 12),
+              margin: const EdgeInsets.only(top: 24, right: 0),
+              padding: const EdgeInsets.only(top: 12, right: 0, left: 0), // control the pageView width (dineIn + OrderDetails)
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12)),
+                // borderRadius: BorderRadius.only(
+                //     topLeft: Radius.circular(0),
+                //     topRight: Radius.circular(0)),
                 color: Color(0xff17181f),
               ),
               child: _pageView(),
