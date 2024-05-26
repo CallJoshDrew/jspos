@@ -411,75 +411,78 @@ class _DineInPageState extends State<DineInPage> {
         showMenu == false
             ? Expanded(
                 flex: 11,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                      child: Text("Please Select Table",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          )),
-                    ),
-                    //Table UI
-                    Expanded(
-                      child: GridView.builder(
-                        itemCount: tables.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4, // Adjust the number of items per row
-                          childAspectRatio: 2 / 1, // The width will be twice of its height
-                          crossAxisSpacing: 6, // Add horizontal spacing
-                          mainAxisSpacing: 6, // Add vertical spacing
-                        ),
-                        itemBuilder: (context, index) {
-                          return ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                pressedButtonIndex = index;
-                                _handleSetTables(tables[index]['name'], index);
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              elevation: 5, // elevation of the button
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  tables[index]['name'],
-                                  style: TextStyle(
-                                      fontSize: pressedButtonIndex == index ? 12 : 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: pressedButtonIndex == index ? Colors.white : Colors.black),
-                                ),
-                                const SizedBox(width: 10),
-                                if (tables[index]['occupied'])
-                                  Icon(
-                                    Icons.dining,
-                                    color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                    size: pressedButtonIndex == index ? 20 : 20,
-                                  ),
-
-                                // if (tables[index]['occupied'])
-                                //   Text(
-                                //     'Seated',
-                                //     style: TextStyle(
-                                //         fontSize: 22,
-                                //         color: pressedButtonIndex == index ? Colors.white: Colors.deepOrange),
-                                //   ),
-                              ],
-                            ),
-                          );
-                        },
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                        child: Text("Please Select Table",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            )),
                       ),
-                    )
-                  ],
+                      //Table UI
+                      Expanded(
+                        child: GridView.builder(
+                          itemCount: tables.length,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // Adjust the number of items per row
+                            childAspectRatio: 2 / 1, // The width will be twice of its height
+                            crossAxisSpacing: 10, // Add horizontal spacing
+                            mainAxisSpacing: 10, // Add vertical spacing
+                          ),
+                          itemBuilder: (context, index) {
+                            return ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  pressedButtonIndex = index;
+                                  _handleSetTables(tables[index]['name'], index);
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                elevation: 5, // elevation of the button
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    tables[index]['name'],
+                                    style: TextStyle(
+                                        fontSize: pressedButtonIndex == index ? 12 : 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  if (tables[index]['occupied'])
+                                    Icon(
+                                      Icons.dining,
+                                      color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
+                                      size: pressedButtonIndex == index ? 20 : 20,
+                                    ),
+                  
+                                  // if (tables[index]['occupied'])
+                                  //   Text(
+                                  //     'Seated',
+                                  //     style: TextStyle(
+                                  //         fontSize: 22,
+                                  //         color: pressedButtonIndex == index ? Colors.white: Colors.deepOrange),
+                                  //   ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               )
             : Expanded(

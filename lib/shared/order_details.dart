@@ -62,14 +62,6 @@ class _OrderDetailsState extends State<OrderDetails> {
         Expanded(
           flex: 2,
           child: SizedBox(
-            // padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            // decoration: BoxDecoration(
-            //   borderRadius: BorderRadius.circular(14),
-            //   border: Border.all(
-            //     color: Colors.white10,
-            //     width: 1,
-            //   ),
-            // ),
             child: ListView.builder(
               itemCount: itemsByCategory.keys.length,
               itemBuilder: (context, index) {
@@ -79,10 +71,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10, bottom: 8),
-                      child: Text(category, style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                    ),
+                    Text(category, style: const TextStyle(fontSize: 12, color: Colors.white,)),
                     // Category title
                     Column(
                       children: items

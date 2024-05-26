@@ -806,6 +806,7 @@ class ProductItemState extends State<ProductItem> {
               ),
             ),
             const SizedBox(height: 6),
+            // item name price
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Text(
@@ -813,7 +814,7 @@ class ProductItemState extends State<ProductItem> {
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 13,
                 ),
               ),
             ),
@@ -823,7 +824,7 @@ class ProductItemState extends State<ProductItem> {
                 'RM ${widget.price.toStringAsFixed(2)}',
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 14,
+                  fontSize: 13,
                 ),
               ),
             ),

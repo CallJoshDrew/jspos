@@ -4,7 +4,7 @@
 // Menu Categories font is 16,
 // Menu Restaurant Name font is 16, date font is 14,
 
-// Product item name font is 14, price font is 14, image height is 60,
+// Product item name font is 13, price font is 13, image height is 60,
 // OrderDetails Page
 // Categories Font is 14,
 // Placed order & Print font is 16
