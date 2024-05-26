@@ -8,7 +8,6 @@ import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
 import 'package:jspos/data/menu_data.dart';
 
-
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
   final Orders orders;
@@ -25,24 +24,24 @@ class _DineInPageState extends State<DineInPage> {
   List<Item> tempCartItems = [];
   SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
-      tableName: "Table Name",
-      orderType: "Dine-In",
-      orderTime: "Order Time",
-      orderDate: "Order Date",
-      status: "Start Your Order",
-      items: [], // Add your items here
-      subTotal: 0,
-      serviceCharge: 0,
-      totalPrice: 0,
-      quantity: 0,
-      paymentMethod: "Cash",
-      remarks: "No Remarks",
-      showEditBtn: false,
-      itemCounts: {},
-      itemQuantities: {},
-      totalItems: 0,
-      totalQuantity: 0,
-      categoryList: categories,
+    tableName: "Table Name",
+    orderType: "Dine-In",
+    orderTime: "Order Time",
+    orderDate: "Order Date",
+    status: "Start Your Order",
+    items: [], // Add your items here
+    subTotal: 0,
+    serviceCharge: 0,
+    totalPrice: 0,
+    quantity: 0,
+    paymentMethod: "Cash",
+    remarks: "No Remarks",
+    showEditBtn: false,
+    itemCounts: {},
+    itemQuantities: {},
+    totalItems: 0,
+    totalQuantity: 0,
+    categoryList: categories,
   );
 
   String generateID(String tableName) {
@@ -412,84 +411,84 @@ class _DineInPageState extends State<DineInPage> {
         showMenu == false
             ? Expanded(
                 flex: 12,
-                child: Padding(
-                  padding: const EdgeInsets.all(0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                        child: Text("Please Select Table",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            )),
-                      ),
-                      //Table UI 
-                      Expanded(
-                        child: GridView.builder(
-                          itemCount: tables.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4, // Adjust the number of items per row
-                            childAspectRatio: 2/1, // The width will be twice of its height
-                            crossAxisSpacing: 6, // Add horizontal spacing
-                            mainAxisSpacing: 6, // Add vertical spacing
-                          ),
-                          itemBuilder: (context, index) {
-                            return ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  pressedButtonIndex = index;
-                                  _handleSetTables(tables[index]['name'], index);
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                elevation: 5, // elevation of the button
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    tables[index]['name'],
-                                    style: TextStyle(
-                                        fontSize: pressedButtonIndex == index ? 12 : 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: pressedButtonIndex == index ? Colors.white : Colors.black),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  if (tables[index]['occupied'])
-                                    Icon(
-                                      Icons.dining,
-                                      color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                      size: pressedButtonIndex == index ? 20 : 20,
-                                    ),
-                            
-                                  // if (tables[index]['occupied'])
-                                  //   Text(
-                                  //     'Seated',
-                                  //     style: TextStyle(
-                                  //         fontSize: 22,
-                                  //         color: pressedButtonIndex == index ? Colors.white: Colors.deepOrange),
-                                  //   ),
-                                ],
-                              ),
-                            );
-                          },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      child: Text("Please Select Table",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          )),
+                    ),
+                    //Table UI
+                    Expanded(
+                      child: GridView.builder(
+                        itemCount: tables.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4, // Adjust the number of items per row
+                          childAspectRatio: 2 / 1, // The width will be twice of its height
+                          crossAxisSpacing: 6, // Add horizontal spacing
+                          mainAxisSpacing: 6, // Add vertical spacing
                         ),
-                      )
-                    ],
-                  ),
+                        itemBuilder: (context, index) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                pressedButtonIndex = index;
+                                _handleSetTables(tables[index]['name'], index);
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              elevation: 5, // elevation of the button
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  tables[index]['name'],
+                                  style: TextStyle(
+                                      fontSize: pressedButtonIndex == index ? 12 : 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                ),
+                                const SizedBox(width: 10),
+                                if (tables[index]['occupied'])
+                                  Icon(
+                                    Icons.dining,
+                                    color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
+                                    size: pressedButtonIndex == index ? 20 : 20,
+                                  ),
+
+                                // if (tables[index]['occupied'])
+                                //   Text(
+                                //     'Seated',
+                                //     style: TextStyle(
+                                //         fontSize: 22,
+                                //         color: pressedButtonIndex == index ? Colors.white: Colors.deepOrange),
+                                //   ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
                 ),
               )
-            : MenuPage(
-                onClick: _handleCloseMenu,
-                selectedOrder: selectedOrder,
-                onItemAdded: onItemAdded,
+            : Expanded(
+                flex: 12,
+                child: MenuPage(
+                  onClick: _handleCloseMenu,
+                  selectedOrder: selectedOrder,
+                  onItemAdded: onItemAdded,
+                ),
               ),
         Expanded(
           flex: 8,
@@ -510,39 +509,39 @@ class _DineInPageState extends State<DineInPage> {
 }
 
 // void prettyPrintTable() {
-    // print('Selected Table Index: $selectedTableIndex');
-    // print('-------------------------');
-    // print('Tables');
-    // print('Table ID: ${tables!['id']}');
-    // print('Table Name: ${tables!['name']}');
-    // print('Occupied: ${tables!['occupied']}');
-    // print('Order Number: ${tables!['orderNumber']}');
-    // print('-------------------------');
-    // print('-------------------------');
-    // print('PrettyPrint Orders: ${widget.orders.toString()}');
-    // print('-------------------------');
-    // print('-------------------------');
-    // print(widget.orders.toString());
-    // print('-------------------------');
-    // print('-------------------------');
-    // print('Pretty Print:');
-    // print('SelectedOrder Number: ${selectedOrder.orderNumber}');
-    // print('SelectedOrder Table Name: ${selectedOrder.tableName}');
-    // print('-------------------------');
-    // print('Order Type: ${selectedOrder.orderType}');
-    // print('Order Time: ${selectedOrder.orderTime}');
-    // print('Order Date: ${selectedOrder.orderDate}');
-    // print('Order items: ${selectedOrder.items}');
-    // print('Order subTotal: ${selectedOrder.subTotal}');
-    // print('Status: ${selectedOrder.status}');
-    // print('Items: ${selectedOrder.items}');
+// print('Selected Table Index: $selectedTableIndex');
+// print('-------------------------');
+// print('Tables');
+// print('Table ID: ${tables!['id']}');
+// print('Table Name: ${tables!['name']}');
+// print('Occupied: ${tables!['occupied']}');
+// print('Order Number: ${tables!['orderNumber']}');
+// print('-------------------------');
+// print('-------------------------');
+// print('PrettyPrint Orders: ${widget.orders.toString()}');
+// print('-------------------------');
+// print('-------------------------');
+// print(widget.orders.toString());
+// print('-------------------------');
+// print('-------------------------');
+// print('Pretty Print:');
+// print('SelectedOrder Number: ${selectedOrder.orderNumber}');
+// print('SelectedOrder Table Name: ${selectedOrder.tableName}');
+// print('-------------------------');
+// print('Order Type: ${selectedOrder.orderType}');
+// print('Order Time: ${selectedOrder.orderTime}');
+// print('Order Date: ${selectedOrder.orderDate}');
+// print('Order items: ${selectedOrder.items}');
+// print('Order subTotal: ${selectedOrder.subTotal}');
+// print('Status: ${selectedOrder.status}');
+// print('Items: ${selectedOrder.items}');
 
-    // print("selecteded item: $item");
-    // print("tempCartItems: $tempCartItems");
-    // print("selectedOrder.status: ${selectedOrder.status}");
-    // print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
-    // print('Selected Table: ');
-    // print('selectedOrder items: ${selectedOrder.items}');
-    // print('tempCartItems: $tempCartItems');
-    // print('-------------------------');
+// print("selecteded item: $item");
+// print("tempCartItems: $tempCartItems");
+// print("selectedOrder.status: ${selectedOrder.status}");
+// print("selectedOrder.showEditBtn: ${selectedOrder.showEditBtn}");
+// print('Selected Table: ');
+// print('selectedOrder items: ${selectedOrder.items}');
+// print('tempCartItems: $tempCartItems');
+// print('-------------------------');
 // }

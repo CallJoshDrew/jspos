@@ -11,8 +11,8 @@
 // Order Number font is 14
 // Edit Button font is 16, Icon is 20
 // Items list - Item Name and selectedType font is 14, Quantity font is x 20
-// Increase & Decrease Quantity size is 20, Container size is 30 width, 30 height
-// items list - item.itemRemarks size is 14
+// Increase & Decrease Quantity font size is 16, Container size is 20 width, 20 height, icon + - size 14
+// items list - item.itemRemarks size is 12
 
 
 // Setting files

@@ -46,123 +46,120 @@ class _OrderDetailsState extends State<OrderDetails> {
       }
       itemsByCategory[item.category]!.add(item);
     }
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-      child: Column(
-        children: [
-          _orderNumber(
-            title: widget.selectedOrder.orderNumber,
-            status: widget.selectedOrder.status,
-            showEditBtn: widget.selectedOrder.showEditBtn,
-            timeStamp: (widget.selectedOrder.orderTime?.toString() ?? 'Order Time'),
-            date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
-            // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
-            handlefreezeMenu: widget.handlefreezeMenu,
-            updateOrderStatus: widget.updateOrderStatus,
-            action: Container(),
-          ),
-          Expanded(
-            flex: 2,
-            child: SizedBox(
-              // padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(14),
-              //   border: Border.all(
-              //     color: Colors.white10,
-              //     width: 1,
-              //   ),
-              // ),
-              child: ListView.builder(
-                itemCount: itemsByCategory.keys.length,
-                itemBuilder: (context, index) {
-                  String category = itemsByCategory.keys.elementAt(index);
-                  List<Item> items = itemsByCategory[category]!;
-                  // Categories Title before item image, name, quantity,
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, bottom: 8),
-                        child: Text(category, style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                      ),
-                      // Category title
-                      Column(
-                        children: items
-                            .map((item) => _itemOrder(
-                                  image: item.image,
-                                  name: item.name,
-                                  item: item,
-                                  price: item.price,
-                                  index: items.indexOf(item),
-                                  category: item.category,
-                                  showEditBtn: widget.selectedOrder.showEditBtn,
-                                ))
-                            .toList(),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-          // Category, Items, Quantity UI
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
-            margin: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: const Color(0xff1f2029),
-              border: Border.all(
-                color: Colors.white10,
-                width: 1,
-              ),
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: categories.map((category) {
-                      return Column(
-                        children: [
-                          Text(
-                            '$category: ${widget.selectedOrder.categories[category]?['itemQuantity'].toString()}',
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: widget.orderStatusColor,
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+    return Column(
+      children: [
+        _orderNumber(
+          title: widget.selectedOrder.orderNumber,
+          status: widget.selectedOrder.status,
+          showEditBtn: widget.selectedOrder.showEditBtn,
+          timeStamp: (widget.selectedOrder.orderTime?.toString() ?? 'Order Time'),
+          date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
+          // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
+          handlefreezeMenu: widget.handlefreezeMenu,
+          updateOrderStatus: widget.updateOrderStatus,
+          action: Container(),
+        ),
+        Expanded(
+          flex: 2,
+          child: SizedBox(
+            // padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+            // decoration: BoxDecoration(
+            //   borderRadius: BorderRadius.circular(14),
+            //   border: Border.all(
+            //     color: Colors.white10,
+            //     width: 1,
+            //   ),
+            // ),
+            child: ListView.builder(
+              itemCount: itemsByCategory.keys.length,
+              itemBuilder: (context, index) {
+                String category = itemsByCategory.keys.elementAt(index);
+                List<Item> items = itemsByCategory[category]!;
+                // Categories Title before item image, name, quantity,
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, bottom: 8),
+                      child: Text(category, style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
-                  ),
-                  onPressed: widget.handleMethod,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(widget.orderStatusIcon, size: 22),
-                      const SizedBox(width: 10),
-                      Text(
-                        widget.orderStatus,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                    // Category title
+                    Column(
+                      children: items
+                          .map((item) => _itemOrder(
+                                image: item.image,
+                                name: item.name,
+                                item: item,
+                                price: item.price,
+                                index: items.indexOf(item),
+                                category: item.category,
+                                showEditBtn: widget.selectedOrder.showEditBtn,
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-        ],
-      ),
+        ),
+        // Category, Items, Quantity UI
+        Container(
+          padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: const Color(0xff1f2029),
+            border: Border.all(
+              color: Colors.white10,
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: categories.map((category) {
+                    return Column(
+                      children: [
+                        Text(
+                          '$category: ${widget.selectedOrder.categories[category]?['itemQuantity'].toString()}',
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: widget.orderStatusColor,
+                  padding: const EdgeInsets.symmetric(vertical: 0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                onPressed: widget.handleMethod,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(widget.orderStatusIcon, size: 22),
+                    const SizedBox(width: 10),
+                    Text(
+                      widget.orderStatus,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -1029,52 +1026,46 @@ class _OrderDetailsState extends State<OrderDetails> {
                 // Item Name and Price
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    padding: const EdgeInsets.only(left: 8, right: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${index + 1}. $name',
-                                  style: const TextStyle(
+                        Text(
+                          '${index + 1}. $name',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            // fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        item.selection == true && item.selectedType != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child: Text(
+                                  "( ${item.selectedType!['name']} )",
+                                  style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    // fontWeight: FontWeight.bold,
+                                    color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
                                   ),
                                 ),
-                                const SizedBox(width: 10.0),
-                                item.selection == true && item.selectedType != null
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(right: 10.0),
-                                        child: Text(
-                                          "( ${item.selectedType!['name']} )",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox.shrink(),
-                                // Showing the Item Price UI
-                                // Text(
-                                //   'RM ${price.toStringAsFixed(2)}',
-                                //   style: TextStyle(
-                                //     fontSize: 14,
-                                //     fontWeight: FontWeight.bold,
-                                //     color: Colors.green[300],
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        // To Edit, Increase, Decrease and Remove item
-                        showEditBtn
+                              )
+                            : const SizedBox.shrink(),
+                        // Showing the Item Price UI
+                        // Text(
+                        //   'RM ${price.toStringAsFixed(2)}',
+                        //   style: TextStyle(
+                        //     fontSize: 14,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: Colors.green[300],
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+                showEditBtn
                             ? Padding(
                                 padding: const EdgeInsets.only(right: 0),
                                 child: Row(
@@ -1083,7 +1074,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     Text(
                                       'x ${item.quantity}',
                                       style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -1091,72 +1082,71 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   ],
                                 ),
                               )
-                            : Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        item.quantity++;
-                                        widget.selectedOrder.updateTotalCost(0);
-                                        widget.selectedOrder.calculateItemsAndQuantities();
-                                        widget.updateOrderStatus!();
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 25, // Adjust this value to change the width of the rectangle
-                                      height: 25, // Adjust this value to change the height of the rectangle
-                                      decoration: BoxDecoration(
-                                        color: Colors.green[700],
-                                        borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
-                                      ),
-                                      child: const Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                        size: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    '${item.quantity}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        if (item.quantity > 1) {
-                                          item.quantity--;
+                            : Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          item.quantity++;
                                           widget.selectedOrder.updateTotalCost(0);
                                           widget.selectedOrder.calculateItemsAndQuantities();
                                           widget.updateOrderStatus!();
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 25, // Adjust this value to change the width of the rectangle
-                                      height: 25, // Adjust this value to change the height of the rectangle
-                                      decoration: BoxDecoration(
-                                        color: Colors.orange[800]!,
-                                        borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
-                                      ),
-                                      child: const Icon(
-                                        Icons.remove,
-                                        color: Colors.white,
-                                        size: 18,
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 20, // Adjust this value to change the width of the rectangle
+                                        height: 20, // Adjust this value to change the height of the rectangle
+                                        decoration: BoxDecoration(
+                                          color: Colors.green[700],
+                                          borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
+                                        ),
+                                        child: const Icon(
+                                          Icons.add,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                      ],
-                    ),
-                  ),
-                ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '${item.quantity}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          if (item.quantity > 1) {
+                                            item.quantity--;
+                                            widget.selectedOrder.updateTotalCost(0);
+                                            widget.selectedOrder.calculateItemsAndQuantities();
+                                            widget.updateOrderStatus!();
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 20, // Adjust this value to change the width of the rectangle
+                                        height: 20, // Adjust this value to change the height of the rectangle
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange[800]!,
+                                          borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
+                                        ),
+                                        child: const Icon(
+                                          Icons.remove,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ),
               ],
             ),
             // Item Remarks & Comments UI
@@ -1167,11 +1157,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ? Container(
                         width: double.infinity,
                         padding: EdgeInsets.only(
-                            left: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0,
-                            top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0,
-                            bottom: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0,
-                            right: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 10.0 : 0.0),
-                        margin: EdgeInsets.only(top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 8.0 : 0.0),
+                            left: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0,
+                            top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0,
+                            bottom: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0,
+                            right: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0),
+                        margin: EdgeInsets.only(top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.white10,
@@ -1179,8 +1169,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         child: Text(
                           item.itemRemarks?.values.join(', ') ?? '',
                           style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,

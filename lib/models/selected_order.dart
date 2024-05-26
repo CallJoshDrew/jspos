@@ -255,9 +255,9 @@ class SelectedOrder with ChangeNotifier {
         categories[item.category]?['itemQuantity'] = (categories[item.category]?['itemQuantity'] ?? 0) + (item.quantity);
 
         // Print the itemCount and itemQuantity for the category
-        print('Category: ${item.category}');
-        print('itemCount: ${categories[item.category]?['itemCount']}');
-        print('itemQuantity: ${categories[item.category]?['itemQuantity']}');
+        // print('Category: ${item.category}');
+        // print('itemCount: ${categories[item.category]?['itemCount']}');
+        // print('itemQuantity: ${categories[item.category]?['itemQuantity']}');
       }
     }
   }

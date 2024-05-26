@@ -810,20 +810,17 @@ class ProductItemState extends State<ProductItem> {
                 widget.name,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   fontSize: 14,
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Expanded(
-                child: Text(
-                  'RM ${widget.price.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+            Expanded(
+              child: Text(
+                'RM ${widget.price.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
                 ),
               ),
             ),
