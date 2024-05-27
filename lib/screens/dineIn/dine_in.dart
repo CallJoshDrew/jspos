@@ -47,7 +47,7 @@ class _DineInPageState extends State<DineInPage> {
   String generateID(String tableName) {
     final paddedCounter = orderCounter.toString().padLeft(4, '0');
     final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s'), '');
-    final orderNumber = '#$tableNameWithoutSpace-$paddedCounter';
+    final orderNumber = '#Table$tableNameWithoutSpace-$paddedCounter';
     orderCounter++;
     return orderNumber;
   }
@@ -119,13 +119,13 @@ class _DineInPageState extends State<DineInPage> {
                   // Icons.check_circle,
                   Icons.add,
                   color: Colors.white,
-                  size: 28,
+                  size: 20,
                 ),
                 const SizedBox(width: 5), // provide some space between the icon and text
                 Text(
                   "RM ${item.price.toStringAsFixed(2)}",
                   style: const TextStyle(
-                    fontSize: 26,
+                    fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -135,9 +135,6 @@ class _DineInPageState extends State<DineInPage> {
           ),
         ),
       );
-      // Future.delayed(Duration.zero, () {
-      //   prettyPrintTable();
-      // });
     });
   }
 
@@ -302,47 +299,50 @@ class _DineInPageState extends State<DineInPage> {
           ),
           title: const Text(
             'Confirmation',
-            style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 14, color: Colors.white),
           ),
           content: Text(
             selectedOrder.status == "Placed Order" ? "Do you want to 'Cancel Changes'?" : "Do you want to 'Cancel Order'?",
-            style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, color: Colors.white),
           ),
           actions: <Widget>[
             TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                   ),
+                  padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
                 ),
                 child: const Text(
                   'Yes',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 14,
                   ),
                 ),
                 onPressed: () {
                   handleYesButtonPress();
                   Navigator.of(context).pop();
                 }),
-            const SizedBox(width: 6),
+            const SizedBox(width: 2),
             TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  // side: const BorderSide(color: Colors.deepOrange, width: 1),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
                 ),
-              ),
               child: const Text(
                 'No',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
                   color: Colors.deepOrange,
-                  fontSize: 18,
+                  fontSize: 14,
                 ),
               ),
               onPressed: () {
@@ -410,7 +410,7 @@ class _DineInPageState extends State<DineInPage> {
       children: [
         showMenu == false
             ? Expanded(
-                flex: 11,
+                flex: 12,
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
@@ -429,8 +429,8 @@ class _DineInPageState extends State<DineInPage> {
                         child: GridView.builder(
                           itemCount: tables.length,
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3, // Adjust the number of items per row
-                            childAspectRatio: 2 / 1, // The width will be twice of its height
+                            crossAxisCount: 4, // Adjust the number of items per row
+                            childAspectRatio: 1.8 / 1, // The width will be twice of its height
                             crossAxisSpacing: 10, // Add horizontal spacing
                             mainAxisSpacing: 10, // Add vertical spacing
                           ),
@@ -453,28 +453,32 @@ class _DineInPageState extends State<DineInPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    tables[index]['name'],
-                                    style: TextStyle(
-                                        fontSize: pressedButtonIndex == index ? 12 : 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Table',
+                                        style: TextStyle(
+                                            fontSize: pressedButtonIndex == index ? 12 : 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                      ),
+                                      Text(
+                                        tables[index]['name'],
+                                        style: TextStyle(
+                                            fontSize: pressedButtonIndex == index ? 12 : 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 3),
                                   if (tables[index]['occupied'])
                                     Icon(
-                                      Icons.dining,
+                                      Icons.dinner_dining_rounded,
                                       color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                      size: pressedButtonIndex == index ? 20 : 20,
+                                      size: pressedButtonIndex == index ? 30 : 30,
                                     ),
-                  
-                                  // if (tables[index]['occupied'])
-                                  //   Text(
-                                  //     'Seated',
-                                  //     style: TextStyle(
-                                  //         fontSize: 22,
-                                  //         color: pressedButtonIndex == index ? Colors.white: Colors.deepOrange),
-                                  //   ),
                                 ],
                               ),
                             );
@@ -486,7 +490,7 @@ class _DineInPageState extends State<DineInPage> {
                 ),
               )
             : Expanded(
-                flex: 11,
+                flex: 12,
                 child: MenuPage(
                   onClick: _handleCloseMenu,
                   selectedOrder: selectedOrder,
@@ -494,7 +498,7 @@ class _DineInPageState extends State<DineInPage> {
                 ),
               ),
         Expanded(
-          flex: 9,
+          flex: 8,
           child: OrderDetails(
             selectedOrder: selectedOrder,
             orderStatusColor: orderStatusColor,

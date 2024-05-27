@@ -115,7 +115,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                   Container(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(5),
                       color: Colors.green,
                     ),
                     child: Row(
@@ -124,14 +124,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                         Text(
                           widget.selectedOrder.orderNumber,
                           style: const TextStyle(
-                            fontSize: 24,
+                            fontSize: 14,
                             color: Colors.white,
                           ),
                         ),
                         const Text(
                           'Verifying Bill before Payment Transaction',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 14,
                             color: Colors.white,
                           ),
                         ),
@@ -140,7 +140,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                             Text(
                               '${widget.selectedOrder.orderTime} -',
                               style: const TextStyle(
-                                fontSize: 24,
+                                fontSize: 14,
                                 color: Colors.white,
                               ),
                             ),
@@ -148,7 +148,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                             Text(
                               '${widget.selectedOrder.orderDate}',
                               style: const TextStyle(
-                                fontSize: 24,
+                                fontSize: 14,
                                 color: Colors.white,
                               ),
                             ),
@@ -157,7 +157,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,8 +181,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       child: Text(
                                         '$category: ${totalQuantities[category]}',
                                         style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
                                           color: Colors.white,
                                         ),
                                       ),
@@ -194,10 +193,10 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                         int index = entry.key;
                                         Item item = entry.value;
                                         return Container(
-                                          padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                          margin: const EdgeInsets.fromLTRB(0, 0, 15, 10),
+                                          padding: const EdgeInsets.fromLTRB(6, 10, 6, 10),
+                                          margin: const EdgeInsets.fromLTRB(0, 0, 15, 6),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(5),
                                             color: const Color(0xff1f2029),
                                           ),
                                           child: Column(
@@ -218,14 +217,16 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                         Text(
                                                                           "${index + 1}.${item.selectedChoice!['name']} ",
                                                                           style: const TextStyle(
-                                                                            fontSize: 22,
+                                                                            fontSize: 14,
+                                                                            fontWeight: FontWeight.bold,
                                                                             color: Colors.white,
                                                                           ),
                                                                         ),
                                                                         Text(
                                                                           "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
                                                                           style: const TextStyle(
-                                                                            fontSize: 22,
+                                                                            fontSize: 14,
+                                                                            fontWeight: FontWeight.bold,
                                                                             color: Colors.white,
                                                                           ),
                                                                         ),
@@ -234,24 +235,23 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   : Text(
                                                                       '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
                                                                       style: const TextStyle(
-                                                                        fontSize: 22,
+                                                                        fontSize: 14,
                                                                         color: Colors.white,
                                                                       ),
                                                                     ),
-                                                              const SizedBox(width: 10.0),
+                                                              const SizedBox(width: 6),
                                                               Text(
                                                                 'x ${item.quantity}',
                                                                 style: const TextStyle(
-                                                                  fontSize: 22,
+                                                                  fontSize: 14,
                                                                   fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
                                                                 ),
                                                               ),
-                                                              const SizedBox(width: 10),
                                                             ],
                                                           ),
                                                           Padding(
-                                                            padding: const EdgeInsets.only(left: 20),
+                                                            padding: const EdgeInsets.only(left: 12),
                                                             child: Column(
                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
@@ -260,12 +260,12 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                         children: [
                                                                           Text(
                                                                             "${item.selectedType!['name']} ",
-                                                                            style: const TextStyle(fontSize: 22, color: Colors.white),
+                                                                            style: const TextStyle(fontSize: 14, color: Colors.white),
                                                                           ),
                                                                           Text(
                                                                             "( + ${item.selectedType!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
-                                                                              fontSize: 22,
+                                                                              fontSize: 14,
                                                                               color: Color.fromARGB(255, 114, 226, 118),
                                                                             ),
                                                                           )
@@ -278,14 +278,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                           Text(
                                                                             "${item.selectedMeePortion!['name']} ",
                                                                             style: const TextStyle(
-                                                                              fontSize: 22,
+                                                                              fontSize: 14,
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
                                                                           Text(
                                                                             "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
-                                                                              fontSize: 22,
+                                                                              fontSize: 14,
                                                                               color: Color.fromARGB(255, 114, 226, 118),
                                                                             ),
                                                                           )
@@ -298,21 +298,20 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                           Text(
                                                                             "${item.selectedMeatPortion!['name']} ",
                                                                             style: const TextStyle(
-                                                                              fontSize: 22,
+                                                                              fontSize: 14,
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
                                                                           Text(
                                                                             "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
-                                                                              fontSize: 22,
+                                                                              fontSize: 14,
                                                                               color: Color.fromARGB(255, 114, 226, 118),
                                                                             ),
                                                                           )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                const SizedBox(height: 4),
                                                                 Wrap(
                                                                   children: [
                                                                     item.selection &&
@@ -323,14 +322,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                               const Text(
                                                                                 'Remarks: ',
                                                                                 style: TextStyle(
-                                                                                  fontSize: 22,
+                                                                                  fontSize: 14,
                                                                                   color: Colors.white,
                                                                                 ),
                                                                               ),
                                                                               Text(
                                                                                 getFilteredRemarks(item.itemRemarks),
                                                                                 style: const TextStyle(
-                                                                                  fontSize: 22,
+                                                                                  fontSize: 14,
                                                                                   color: Colors.orangeAccent,
                                                                                 ),
                                                                               )
@@ -349,7 +348,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                   Text(
                                                     (item.price * item.quantity).toStringAsFixed(2),
                                                     style: const TextStyle(
-                                                      fontSize: 22,
+                                                      fontSize: 14,
                                                       color: Colors.white,
                                                     ),
                                                   ),
@@ -372,8 +371,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           Text(
                                             'Total $category :   ${totalPrices[category]?.toStringAsFixed(2)}',
                                             style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
                                               color: Colors.white,
                                             ),
                                           ),
@@ -394,17 +392,17 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                         child: Container(
                           padding: const EdgeInsets.only(bottom: 10),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(5),
                             color: const Color(0xff1f2029),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                                padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
                                 margin: const EdgeInsets.symmetric(vertical: 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                                   color: Colors.white,
                                 ),
                                 child: Column(
@@ -414,46 +412,45 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       children: [
                                         const Text(
                                           'Sub Total',
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
                                           widget.selectedOrder.subTotal.toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 10),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         const Text(
                                           'Service Charges',
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
                                           widget.selectedOrder.serviceCharge.toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 10),
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00) ?
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Rounding Adjustment',
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                        Text(
-                                          '- ${(originalBill - adjustedBill).toStringAsFixed(2)}',
-                                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                      ],
-                                    ): const SizedBox.shrink(),
+                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
+                                        ? Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text(
+                                                'Rounding Adjustment',
+                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                              ),
+                                              Text(
+                                                '- ${(originalBill - adjustedBill).toStringAsFixed(2)}',
+                                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                              ),
+                                            ],
+                                          )
+                                        : const SizedBox.shrink(),
                                     // custom doted line.
                                     Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 22),
+                                      margin: const EdgeInsets.symmetric(vertical: 12),
                                       child: LayoutBuilder(
                                         builder: (BuildContext context, BoxConstraints constraints) {
                                           final boxWidth = constraints.constrainWidth();
@@ -478,17 +475,17 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       children: [
                                         const Text(
                                           'Total (RM)',
-                                          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
                                           (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
                                     // custom doted line.
                                     Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 22),
+                                      margin: const EdgeInsets.symmetric(vertical: 12),
                                       child: LayoutBuilder(
                                         builder: (BuildContext context, BoxConstraints constraints) {
                                           final boxWidth = constraints.constrainWidth();
@@ -513,115 +510,119 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       children: [
                                         const Text(
                                           'Amount Received',
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
                                           _controller.text.isEmpty ? '0.00' : _controller.text,
-                                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 10),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         const Text(
                                           'Amount Change',
-                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
                                           '- ${_change.toStringAsFixed(2)}',
-                                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 20),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(20, 0, 10, 20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00) ? Row(
-                                      children: [
-                                        const Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
+                                        ? Row(
                                             children: [
-                                              Text(
-                                                "Allow Rounding Adjustment?",
-                                                style: TextStyle(fontSize: 24, color: Colors.white),
-                                                textAlign: TextAlign.start,
+                                              const Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Allow Rounding Adjustment?",
+                                                      style: TextStyle(fontSize: 14, color: Colors.white),
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                    Text(
+                                                      "- Less than 0.50",
+                                                      style: TextStyle(fontSize: 12, color: Colors.white),
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              Text(
-                                                "- Less than 0.50",
-                                                style: TextStyle(fontSize: 20, color: Colors.white),
-                                                textAlign: TextAlign.start,
+                                              ToggleButtons(
+                                                onPressed: (int index) {
+                                                  setState(() {
+                                                    for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                                                      if (buttonIndex == index) {
+                                                        isSelected[buttonIndex] = true;
+                                                        if (index == 0) {
+                                                          adjustedBill = roundBill(originalBill);
+                                                          isRoundingApplied = true;
+                                                        } else {
+                                                          adjustedBill = originalBill;
+                                                          isRoundingApplied = false;
+                                                        }
+                                                      } else {
+                                                        isSelected[buttonIndex] = false;
+                                                      }
+                                                    }
+                                                  });
+                                                },
+                                                isSelected: isSelected,
+                                                fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
+                                                selectedBorderColor: Colors.green,
+                                                borderRadius: BorderRadius.circular(4),
+                                                borderWidth: 1.0,
+                                                borderColor: Colors.white,
+                                                children: const <Widget>[
+                                                  Padding(
+                                                    padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
+                                                    child: Text('Yes', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
+                                                    child: Text('No', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                                                  ),
+                                                ],
                                               ),
                                             ],
-                                          ),
-                                        ),
-                                        ToggleButtons(
-                                          onPressed: (int index) {
-                                            setState(() {
-                                              for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                                if (buttonIndex == index) {
-                                                  isSelected[buttonIndex] = true;
-                                                  if (index == 0) {
-                                                    adjustedBill = roundBill(originalBill);
-                                                    isRoundingApplied = true;
-                                                  } else {
-                                                    adjustedBill = originalBill;
-                                                    isRoundingApplied = false;
-                                                  }
-                                                } else {
-                                                  isSelected[buttonIndex] = false;
-                                                }
-                                              }
-                                            });
-                                          },
-                                          isSelected: isSelected,
-                                          fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
-                                          selectedBorderColor: Colors.green,
-                                          borderRadius: BorderRadius.circular(4),
-                                          borderWidth: 1.0,
-                                          borderColor: Colors.white,
-                                          children: const <Widget>[
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(30, 6, 30, 6),
-                                              child: Text('Yes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(30, 6, 30, 6),
-                                              child: Text('No', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )  : const SizedBox.shrink(),
-                                    const SizedBox(height: 20),
-                                    const Padding(
-                                      padding: EdgeInsets.only(bottom: 10),
-                                      child: Text(
-                                        "Payment Method",
-                                        style: TextStyle(fontSize: 24, color: Colors.white),
-                                        textAlign: TextAlign.start,
-                                      ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      "Payment Method",
+                                      style: TextStyle(fontSize: 14, color: Colors.white),
+                                      textAlign: TextAlign.start,
                                     ),
                                     Wrap(
                                       alignment: WrapAlignment.start,
-                                      spacing: 10.0,
-                                      runSpacing: 10,
+                                      spacing: 6,
+                                      runSpacing: 0,
                                       children: <String>['Cash', 'DuitNow', 'FoodPanda', 'GrabFood', 'ShopeeFood'].map((String value) {
                                         return ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: selectedPaymentMethod == value ? Colors.white : Colors.black87,
-                                            backgroundColor: selectedPaymentMethod == value ? Colors.green : Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
+                                          style: ButtonStyle(
+                                            foregroundColor: MaterialStateProperty.all<Color>(
+                                              selectedPaymentMethod == value ? Colors.white : Colors.black87,
                                             ),
+                                            backgroundColor: MaterialStateProperty.all<Color>(
+                                              selectedPaymentMethod == value ? Colors.green : Colors.white,
+                                            ),
+                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                            padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                           ),
                                           onPressed: () {
                                             setState(() {
@@ -629,13 +630,10 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                               widget.selectedOrder.paymentMethod = value;
                                             });
                                           },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              value,
-                                              style: const TextStyle(
-                                                fontSize: 22,
-                                              ),
+                                          child: Text(
+                                            value,
+                                            style: const TextStyle(
+                                              fontSize: 12,
                                             ),
                                           ),
                                         );
@@ -647,7 +645,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       children: [
                                         const Text(
                                           "Please Enter the Amount Received",
-                                          style: TextStyle(fontSize: 24, color: Colors.white),
+                                          style: TextStyle(fontSize: 14, color: Colors.white),
                                           textAlign: TextAlign.start,
                                         ),
                                         Container(
@@ -665,14 +663,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: TextField(
                                               controller: _controller,
-                                              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                                               keyboardType: TextInputType.number,
                                               textAlign: TextAlign.center,
                                               decoration: const InputDecoration(
                                                 border: InputBorder.none,
                                                 labelStyle: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 24,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -727,7 +725,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                           Text(
                                                             'Are you sure?',
                                                             textAlign: TextAlign.center,
-                                                            style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold),
+                                                            style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
                                                           ),
                                                         ],
                                                       ),
@@ -748,12 +746,11 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 ),
                                                               ),
                                                               onPressed: () {
-
                                                                 Navigator.of(context).pop();
                                                               },
                                                               child: const Padding(
                                                                 padding: EdgeInsets.all(6.0),
-                                                                child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 24)),
+                                                                child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
                                                               ),
                                                             ),
                                                             const SizedBox(width: 30),
@@ -771,7 +768,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                               },
                                                               child: const Padding(
                                                                 padding: EdgeInsets.all(6.0),
-                                                                child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 24)),
+                                                                child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 14)),
                                                               ),
                                                             ),
                                                           ],
@@ -787,7 +784,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Accept',
-                                              style: TextStyle(fontSize: 24, color: Colors.white),
+                                              style: TextStyle(fontSize: 14, color: Colors.white),
                                             ),
                                           ),
                                         ),
@@ -805,7 +802,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Cancel',
-                                              style: TextStyle(fontSize: 24, color: Colors.black),
+                                              style: TextStyle(fontSize: 14, color: Colors.black),
                                             ),
                                           ),
                                         ),

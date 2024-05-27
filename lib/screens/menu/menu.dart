@@ -33,6 +33,7 @@ class _MenuPageState extends State<MenuPage> {
               borderRadius: BorderRadius.circular(5),
             ),
           ),
+          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 6, 12, 6)), // Add padding inside the button
         ),
         child: const Padding(
           padding: EdgeInsets.all(0.0),
@@ -56,7 +57,7 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -102,7 +103,7 @@ class _MenuPageState extends State<MenuPage> {
               //     ),
               child: GridView.count(
                 crossAxisCount: 4,
-                childAspectRatio: (1 / 1.4), // width 1 / height 1.3
+                childAspectRatio: (1 / 1.3), // width 1 / height 1.3
                 crossAxisSpacing: 15, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
                 children: menu

@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
@@ -47,6 +48,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       itemsByCategory[item.category]!.add(item);
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _orderNumber(
           title: widget.selectedOrder.orderNumber,
@@ -60,7 +62,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           action: Container(),
         ),
         Expanded(
-          flex: 2,
+          flex: 1,
           child: SizedBox(
             child: ListView.builder(
               itemCount: itemsByCategory.keys.length,
@@ -71,7 +73,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(category, style: const TextStyle(fontSize: 12, color: Colors.white,)),
+                    Text(category,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        )),
                     // Category title
                     Column(
                       children: items
@@ -164,7 +170,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     // required ValueNotifier<bool> isVisible,
   }) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+      padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         color: const Color(0xff1f2029),
@@ -181,10 +187,29 @@ class _OrderDetailsState extends State<OrderDetails> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Order Number
-              Text(
-                title,
-                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        status,
+                        style: const TextStyle(color: Colors.green, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "$timeStamp, $date",
+                    style: const TextStyle(color: Colors.white54, fontSize: 14),
+                  ),
+                ],
               ),
+
               // show Edit Button when it is true
               showEditBtn
                   ? ElevatedButton(
@@ -203,37 +228,25 @@ class _OrderDetailsState extends State<OrderDetails> {
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.green[800]!),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0), // Adjust this value as needed
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
                         ),
+                        padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text('Edit', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
-                          SizedBox(width: 10),
+                          Text('Edit', style: TextStyle(fontSize: 14, color: Colors.white)),
+                          SizedBox(width: 6),
                           Icon(
-                            Icons.assignment_add,
+                            Icons.edit_square,
                             color: Colors.white,
-                            size: 20,
+                            size: 18,
                           ),
                         ],
                       ),
                     )
                   : const SizedBox(height: 50.0),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                status,
-                style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "$timeStamp, $date",
-                style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold),
-              ),
             ],
           ),
           Row(
@@ -258,7 +271,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   }) {
     Widget child = Container(
       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         color: const Color(0xff1f2029),
@@ -350,7 +363,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(20, 10, 20, 10)), //
+                padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), //
               ),
               onPressed: () {
                 setState(() {
@@ -369,7 +382,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               child: Text(
                 data['remarks'],
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -389,7 +402,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         body: Dialog(
                           insetPadding: EdgeInsets.zero, // Make dialog full-screen
                           child: Container(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(10),
                             width: screenSize.width,
                             height: screenSize.height - statusBarHeight,
                             decoration: const BoxDecoration(
@@ -400,26 +413,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: [
-                                    //Item Heading Title
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: const Color(0xff1f2029),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(14.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '${item.category}:  ${item.originalName}',
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
                                     const SizedBox(height: 20),
                                     // Item Image, Name, Price
                                     Container(
@@ -431,8 +424,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       child: Row(
                                         children: [
                                           SizedBox(
-                                            width: 160,
-                                            height: 160,
+                                            width: 110,
+                                            height: 110,
                                             child: ClipRRect(
                                               borderRadius: const BorderRadius.all(Radius.circular(10)),
                                               child: Image.asset(
@@ -445,22 +438,28 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
+                                              //Item Heading Title
+                                              // Text(
+                                              //   '${item.category}:  ${item.originalName}',
+                                              //   textAlign: TextAlign.center,
+                                              //   style: const TextStyle(fontSize: 14, color: Colors.white),
+                                              // ),
                                               item.selection && selectedChoice != null
                                                   ? Row(
                                                       children: [
                                                         Text(
                                                           selectedChoice != null ? '${selectedChoice!['name']}' : 'Select Flavor and Type',
                                                           style: const TextStyle(
-                                                            fontSize: 24,
+                                                            fontSize: 14,
                                                             fontWeight: FontWeight.bold,
                                                             color: Colors.white,
                                                           ),
                                                         ),
                                                         const SizedBox(width: 10),
                                                         Text(
-                                                          "( + ${selectedChoice!['price'].toStringAsFixed(2)} )",
+                                                          "( ${selectedChoice!['price'].toStringAsFixed(2)} )",
                                                           style: const TextStyle(
-                                                            fontSize: 24,
+                                                            fontSize: 14,
                                                             fontWeight: FontWeight.bold,
                                                             color: Color.fromARGB(255, 114, 226, 118),
                                                           ),
@@ -476,12 +475,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           children: [
                                                             Text(
                                                               "${selectedType!['name']} ",
-                                                              style: const TextStyle(fontSize: 22, color: Colors.white),
+                                                              style: const TextStyle(fontSize: 14, color: Colors.white),
                                                             ),
                                                             Text(
                                                               "( + ${selectedType!['price'].toStringAsFixed(2)} )",
                                                               style: const TextStyle(
-                                                                fontSize: 22,
+                                                                fontSize: 14,
                                                                 color: Color.fromARGB(255, 114, 226, 118),
                                                               ),
                                                             )
@@ -494,14 +493,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             Text(
                                                               "${selectedMeePortion!['name']} ",
                                                               style: const TextStyle(
-                                                                fontSize: 22,
+                                                                fontSize: 14,
                                                                 color: Colors.white,
                                                               ),
                                                             ),
                                                             Text(
                                                               "( + ${selectedMeePortion!['price'].toStringAsFixed(2)} )",
                                                               style: const TextStyle(
-                                                                fontSize: 22,
+                                                                fontSize: 14,
                                                                 color: Color.fromARGB(255, 114, 226, 118),
                                                               ),
                                                             )
@@ -514,14 +513,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             Text(
                                                               "${selectedMeatPortion!['name']} ",
                                                               style: const TextStyle(
-                                                                fontSize: 22,
+                                                                fontSize: 14,
                                                                 color: Colors.white,
                                                               ),
                                                             ),
                                                             Text(
                                                               "( + ${selectedMeatPortion!['price'].toStringAsFixed(2)} )",
                                                               style: const TextStyle(
-                                                                fontSize: 22,
+                                                                fontSize: 14,
                                                                 color: Color.fromARGB(255, 114, 226, 118),
                                                               ),
                                                             )
@@ -536,7 +535,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             child: Text('RM ${subTotalPrice.toStringAsFixed(2)}',
                                                 textAlign: TextAlign.right,
                                                 style: const TextStyle(
-                                                  fontSize: 22,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
                                                 )),
@@ -544,7 +543,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 20),
+                                    const SizedBox(height: 10),
                                     // First Row for selection of Choices & Types
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -552,7 +551,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         // 1.selectedChoice
                                         Expanded(
                                           child: Container(
-                                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                                            padding: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               color: const Color(0xff1f2029),
                                               borderRadius: BorderRadius.circular(5), // Set the border radius here.
@@ -564,15 +563,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   const Text(
                                                     '1.Select Your Flavor',
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.white,
-                                                      fontSize: 24,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 10),
                                                   Wrap(
-                                                    spacing: 14, // space between buttons horizontally
-                                                    runSpacing: 14, // space between buttons vertically
+                                                    spacing: 6, // space between buttons horizontally
+                                                    runSpacing: 0, // space between buttons vertically
                                                     children: item.choices.map((choice) {
                                                       return ElevatedButton(
                                                         onPressed: () {
@@ -582,26 +579,24 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                           });
                                                         },
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: selectedChoice == choice
-                                                              ? Colors.orange
-                                                              : Colors.white, // Change the color based on the selected button
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(5),
+                                                        style: ButtonStyle(
+                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                            selectedChoice == choice ? Colors.orange : Colors.white,
                                                           ),
-                                                          // side: const BorderSide(color: Colors.white),
-                                                        ),
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(10),
-                                                          child: Text(
-                                                            '${choice['name']}',
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: selectedChoice == choice
-                                                                  ? Colors.white
-                                                                  : Colors.black, // Change the text color based on the selected button
-                                                              fontSize: 22,
+                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(5),
                                                             ),
+                                                          ),
+                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                        ),
+                                                        child: Text(
+                                                          '${choice['name']}',
+                                                          style: TextStyle(
+                                                            color: selectedChoice == choice
+                                                                ? Colors.white
+                                                                : Colors.black, // Change the text color based on the selected button
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                       );
@@ -614,12 +609,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             ),
                                           ),
                                         ),
-                                        if (item.types.isNotEmpty) const SizedBox(width: 20),
+                                        if (item.types.isNotEmpty) const SizedBox(width: 10),
                                         // 2.selectedType
                                         if (item.types.isNotEmpty) ...[
                                           Expanded(
                                             child: Container(
-                                              padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                                              padding: const EdgeInsets.all(10),
                                               decoration: BoxDecoration(
                                                 color: const Color(0xff1f2029),
                                                 borderRadius: BorderRadius.circular(5), // Set the border radius here.
@@ -630,15 +625,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   const Text(
                                                     "2.Select Your Preference",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.white,
-                                                      fontSize: 24,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 10),
                                                   Wrap(
-                                                    spacing: 14, // space between buttons horizontally
-                                                    runSpacing: 14, // space between buttons vertically
+                                                    spacing: 6, // space between buttons horizontally
+                                                    runSpacing: 0, // space between buttons vertically
                                                     children: item.types.map((type) {
                                                       return ElevatedButton(
                                                         onPressed: () {
@@ -648,26 +641,24 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                           });
                                                         },
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: selectedType == type
-                                                              ? Colors.orange
-                                                              : Colors.white, // Change the color based on the selected button
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(5),
+                                                        style: ButtonStyle(
+                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                            selectedType == type ? Colors.orange : Colors.white,
                                                           ),
-                                                          // side: const BorderSide(color: Colors.white),
-                                                        ),
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(10),
-                                                          child: Text(
-                                                            '${type['name']}',
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: selectedType == type
-                                                                  ? Colors.white
-                                                                  : Colors.black, // Change the text color based on the selected button
-                                                              fontSize: 22,
+                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(5),
                                                             ),
+                                                          ),
+                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                        ),
+                                                        child: Text(
+                                                          '${type['name']}',
+                                                          style: TextStyle(
+                                                            color: selectedType == type
+                                                                ? Colors.white
+                                                                : Colors.black, // Change the text color based on the selected button
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                       );
@@ -688,8 +679,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         if (item.meePortion.isNotEmpty) ...[
                                           Expanded(
                                             child: Container(
-                                              padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
-                                              margin: const EdgeInsets.only(top: 20),
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.only(top: 10),
                                               decoration: BoxDecoration(
                                                 color: const Color(0xff1f2029),
                                                 borderRadius: BorderRadius.circular(5), // Set the border radius here.
@@ -700,15 +691,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   const Text(
                                                     '3.Select Your Desired Serving Size',
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.white,
-                                                      fontSize: 24,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 10),
                                                   Wrap(
-                                                    spacing: 14, // space between buttons horizontally
-                                                    runSpacing: 14, // space between buttons vertically
+                                                    spacing: 6, // space between buttons horizontally
+                                                    runSpacing: 0, // space between buttons vertically
                                                     children: item.meePortion.map((meePortion) {
                                                       return ElevatedButton(
                                                         onPressed: () {
@@ -718,26 +707,25 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                           });
                                                         },
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: selectedMeePortion == meePortion
-                                                              ? Colors.orange
-                                                              : Colors.white, // Change the color based on the selected button
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(5),
+                                                        style: ButtonStyle(
+                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                            selectedMeePortion == meePortion ? Colors.orange : Colors.white,
                                                           ),
-                                                          // side: const BorderSide(color: Colors.white),
-                                                        ),
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(10),
-                                                          child: Text(
-                                                            '${meePortion['name']}',
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: selectedMeePortion == meePortion
-                                                                  ? Colors.white
-                                                                  : Colors.black, // Change the text color based on the selected button
-                                                              fontSize: 22,
+                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(5),
                                                             ),
+                                                          ),
+                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                        ),
+                                                        child: Text(
+                                                          '${meePortion['name']}',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: selectedMeePortion == meePortion
+                                                                ? Colors.white
+                                                                : Colors.black, // Change the text color based on the selected button
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                       );
@@ -750,12 +738,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         ] else ...[
                                           const SizedBox.shrink(),
                                         ],
-                                        if (item.meatPortion.isNotEmpty) const SizedBox(width: 20),
+                                        if (item.meatPortion.isNotEmpty) const SizedBox(width: 10),
                                         if (item.meatPortion.isNotEmpty) ...[
                                           Expanded(
                                             child: Container(
-                                              padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
-                                              margin: const EdgeInsets.only(top: 20),
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.only(top: 10),
                                               decoration: BoxDecoration(
                                                 color: const Color(0xff1f2029),
                                                 borderRadius: BorderRadius.circular(5), // Set the border radius here.
@@ -766,15 +754,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   const Text(
                                                     '4.Select Your Meat Portion Level',
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.white,
-                                                      fontSize: 24,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 10),
                                                   Wrap(
-                                                    spacing: 14, // space between buttons horizontally
-                                                    runSpacing: 14, // space between buttons vertically
+                                                    spacing: 6, // space between buttons horizontally
+                                                    runSpacing: 0, // space between buttons vertically
                                                     children: item.meatPortion.map((meatPortion) {
                                                       return ElevatedButton(
                                                         onPressed: () {
@@ -784,26 +770,24 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
                                                           });
                                                         },
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: selectedMeatPortion == meatPortion
-                                                              ? Colors.orange
-                                                              : Colors.white, // Change the color based on the selected button
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(5),
+                                                        style: ButtonStyle(
+                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                            selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
                                                           ),
-                                                          // side: const BorderSide(color: Colors.white),
-                                                        ),
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(10),
-                                                          child: Text(
-                                                            '${meatPortion['name']}',
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: selectedMeatPortion == meatPortion
-                                                                  ? Colors.white
-                                                                  : Colors.black, // Change the text color based on the selected button
-                                                              fontSize: 22,
+                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(5),
                                                             ),
+                                                          ),
+                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                        ),
+                                                        child: Text(
+                                                          '${meatPortion['name']}',
+                                                          style: TextStyle(
+                                                            color: selectedMeatPortion == meatPortion
+                                                                ? Colors.white
+                                                                : Colors.black, // Change the text color based on the selected button
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                       );
@@ -824,8 +808,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       children: [
                                         Expanded(
                                           child: Container(
-                                            padding: const EdgeInsets.fromLTRB(20, 30, 10, 20),
-                                            margin: const EdgeInsets.only(top: 20),
+                                            padding: const EdgeInsets.all(10),
+                                            margin: const EdgeInsets.only(top: 10),
                                             decoration: BoxDecoration(
                                               color: const Color(0xff1f2029),
                                               borderRadius: BorderRadius.circular(5), // Set the border radius here.
@@ -836,30 +820,26 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 // First row
                                                 const Text(
                                                   'Press Buttons to add Remarks',
-                                                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                                  style: TextStyle(color: Colors.white, fontSize: 14),
                                                 ),
-                                                const SizedBox(height: 10),
                                                 // remarks buttons
                                                 Wrap(
                                                   spacing: 6.0, // gap between adjacent chips
-                                                  runSpacing: 3.0, // gap between lines
+                                                  runSpacing: 0, // gap between lines
                                                   children: remarksData
                                                       .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
-                                                      .map((data) => Padding(
-                                                            padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
-                                                            child: remarkButton(data),
-                                                          ))
+                                                      .map((data) => remarkButton(data))
                                                       .toList(),
                                                 ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 20),
+                                        const SizedBox(width: 10),
                                         Expanded(
                                           child: Container(
-                                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 25),
-                                            margin: const EdgeInsets.only(top: 20),
+                                            padding: const EdgeInsets.all(10),
+                                            margin: const EdgeInsets.only(top: 10),
                                             decoration: BoxDecoration(
                                               color: const Color(0xff1f2029),
                                               borderRadius: BorderRadius.circular(5), // Set the border radius here.
@@ -869,39 +849,40 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               children: [
                                                 const Text(
                                                   'Please write additional remarks here',
-                                                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                                  style: TextStyle(color: Colors.white, fontSize: 14),
                                                 ),
-                                                const SizedBox(height: 10),
-                                                TextField(
-                                                  controller: _controller,
-                                                  style: const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
-                                                  decoration: const InputDecoration(
-                                                    contentPadding: EdgeInsets.all(10),
-                                                    fillColor: Colors.white,
-                                                    filled: true,
-                                                    border: OutlineInputBorder(),
-                                                    // labelText: 'Write Additional Comments here',
-                                                    // labelStyle: TextStyle(color: Colors.grey, fontSize: 24, fontWeight: FontWeight.bold),
-                                                    focusedBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide(color: Colors.grey),
+                                                const SizedBox(height: 3),
+                                                SizedBox(
+                                                  height: 45,
+                                                  child: TextField(
+                                                    controller: _controller,
+                                                    style: const TextStyle(color: Colors.black, fontSize: 14),
+                                                    decoration: const InputDecoration(
+                                                      contentPadding: EdgeInsets.all(10),
+                                                      fillColor: Colors.white,
+                                                      filled: true,
+                                                      border: OutlineInputBorder(),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderSide: BorderSide(color: Colors.grey),
+                                                      ),
                                                     ),
+                                                    onChanged: (text) {
+                                                      // This callback is called each time the text changes
+                                                      setState(() {
+                                                        if (text.isEmpty) {
+                                                          // If the text is empty, remove the key '100' from itemRemarks
+                                                          itemRemarks.remove('100');
+                                                        } else {
+                                                          // Add the user's comment with a key of '100'
+                                                          itemRemarks['100'] = text;
+                                                        }
+                                                        SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                                                          (a, b) => int.parse(a).compareTo(int.parse(b)),
+                                                        )..addAll(itemRemarks);
+                                                        itemRemarks = sortedItemRemarks;
+                                                      });
+                                                    },
                                                   ),
-                                                  onChanged: (text) {
-                                                    // This callback is called each time the text changes
-                                                    setState(() {
-                                                      if (text.isEmpty) {
-                                                        // If the text is empty, remove the key '100' from itemRemarks
-                                                        itemRemarks.remove('100');
-                                                      } else {
-                                                        // Add the user's comment with a key of '100'
-                                                        itemRemarks['100'] = text;
-                                                      }
-                                                      SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-                                                        (a, b) => int.parse(a).compareTo(int.parse(b)),
-                                                      )..addAll(itemRemarks);
-                                                      itemRemarks = sortedItemRemarks;
-                                                    });
-                                                  },
                                                 ),
                                               ],
                                             ),
@@ -910,26 +891,26 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       ],
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 20, bottom: 20),
+                                      padding: const EdgeInsets.only(top: 10, bottom: 10),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           TextButton(
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: Colors.green,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            child: const Padding(
-                                              padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
-                                              child: Text(
-                                                'Confirm',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontSize: 24,
+                                            style: ButtonStyle(
+                                              backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5),
                                                 ),
+                                              ),
+                                              padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                                            ),
+                                            child: const Text(
+                                              'Confirm',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 14,
                                               ),
                                             ),
                                             // SubTotal, Service Charges Total OnPressed Function
@@ -954,22 +935,21 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           ),
                                           const SizedBox(width: 10),
                                           TextButton(
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10),
-                                                // side: const BorderSide(color: Colors.deepOrange, width: 1),
-                                              ),
-                                            ),
-                                            child: const Padding(
-                                              padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                  fontSize: 24,
+                                            style: ButtonStyle(
+                                              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5),
                                                 ),
+                                              ),
+                                              padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                                            ),
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                fontSize: 14,
                                               ),
                                             ),
                                             onPressed: () {
@@ -1012,41 +992,53 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                 ),
 
-                // Item Name and Price
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Item Name and Price
                         Text(
                           '${index + 1}. $name',
                           style: const TextStyle(
                             fontSize: 14,
-                            // fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(width: 10.0),
-                        item.selection == true && item.selectedType != null
-                            ? Padding(
-                                padding: const EdgeInsets.only(right: 10.0),
-                                child: Text(
-                                  "( ${item.selectedType!['name']} )",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    // fontWeight: FontWeight.bold,
-                                    color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
+                        Wrap(
+                          children: [
+                            item.selection == true && item.selectedType != null
+                                ? Padding(
+                                    padding: const EdgeInsets.only(right: 10.0),
+                                    child: Text(
+                                      "( ${item.selectedType!['name']} )",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                            // Item Remarks & Comments UI
+                            item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true
+                                ? Text(
+                                    item.itemRemarks?.values.join(', ') ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
+                        ),
+
                         // Showing the Item Price UI
                         // Text(
                         //   'RM ${price.toStringAsFixed(2)}',
                         //   style: TextStyle(
                         //     fontSize: 14,
-                        //     fontWeight: FontWeight.bold,
+                        //     fontWeight: FontWeight.bold,ß
                         //     color: Colors.green[300],
                         //   ),
                         // ),
@@ -1054,117 +1046,89 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ),
                 ),
+                const SizedBox(width: 10.0),
                 showEditBtn
-                            ? Padding(
-                                padding: const EdgeInsets.only(right: 0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'x ${item.quantity}',
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          item.quantity++;
-                                          widget.selectedOrder.updateTotalCost(0);
-                                          widget.selectedOrder.calculateItemsAndQuantities();
-                                          widget.updateOrderStatus!();
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 20, // Adjust this value to change the width of the rectangle
-                                        height: 20, // Adjust this value to change the height of the rectangle
-                                        decoration: BoxDecoration(
-                                          color: Colors.green[700],
-                                          borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
-                                        ),
-                                        child: const Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                          size: 14,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      '${item.quantity}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          if (item.quantity > 1) {
-                                            item.quantity--;
-                                            widget.selectedOrder.updateTotalCost(0);
-                                            widget.selectedOrder.calculateItemsAndQuantities();
-                                            widget.updateOrderStatus!();
-                                          }
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 20, // Adjust this value to change the width of the rectangle
-                                        height: 20, // Adjust this value to change the height of the rectangle
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange[800]!,
-                                          borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
-                                        ),
-                                        child: const Icon(
-                                          Icons.remove,
-                                          color: Colors.white,
-                                          size: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'x ${item.quantity}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-              ],
-            ),
-            // Item Remarks & Comments UI
-            Wrap(
-              children: [
-                // Text for selectedMeatPortion
-                item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true
-                    ? Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.only(
-                            left: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0,
-                            top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0,
-                            bottom: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0,
-                            right: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0),
-                        margin: EdgeInsets.only(top: item.selection && item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true ? 6.0 : 0.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.white10,
-                        ),
-                        child: Text(
-                          item.itemRemarks?.values.join(', ') ?? '',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
+                          ],
                         ),
                       )
-                    : const SizedBox.shrink(),
+                    : Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  item.quantity++;
+                                  widget.selectedOrder.updateTotalCost(0);
+                                  widget.selectedOrder.calculateItemsAndQuantities();
+                                  widget.updateOrderStatus!();
+                                });
+                              },
+                              child: Container(
+                                width: 20, // Adjust this value to change the width of the rectangle
+                                height: 20, // Adjust this value to change the height of the rectangle
+                                decoration: BoxDecoration(
+                                  color: Colors.green[700],
+                                  borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
+                                ),
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${item.quantity}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (item.quantity > 1) {
+                                    item.quantity--;
+                                    widget.selectedOrder.updateTotalCost(0);
+                                    widget.selectedOrder.calculateItemsAndQuantities();
+                                    widget.updateOrderStatus!();
+                                  }
+                                });
+                              },
+                              child: Container(
+                                width: 20, // Adjust this value to change the width of the rectangle
+                                height: 20, // Adjust this value to change the height of the rectangle
+                                decoration: BoxDecoration(
+                                  color: Colors.orange[800]!,
+                                  borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
+                                ),
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
               ],
             ),
           ],
@@ -1211,13 +1175,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                     const Icon(
                       Icons.cancel,
                       color: Colors.white,
-                      size: 28,
+                      size: 20,
                     ),
                     const SizedBox(width: 5),
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 26,
+                        fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1232,19 +1196,19 @@ class _OrderDetailsState extends State<OrderDetails> {
         background: Container(
           color: Colors.red,
           child: const Padding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
                   Icons.cancel,
                   color: Colors.white,
-                  size: 30,
+                  size: 20,
                 ),
                 Text(
                   "Delete",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

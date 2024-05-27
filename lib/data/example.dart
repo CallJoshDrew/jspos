@@ -1,19 +1,42 @@
 // JSPOS Title font is 12, logo is 20, all border circular is 5
 // Table Text font is 12, icon is 20, "Please Select Table" font is 15,
+// Snackbar font is 14, icon is 20,
+// Menu Page
 // Menu Close font is 14, icon is 20,
 // Menu Categories font is 16,
 // Menu Restaurant Name font is 16, date font is 14,
 
 // Product item name font is 13, price font is 13, image height is 60,
+
 // OrderDetails Page
+// Snackbar font is 14, icon is 20,
 // Categories Font is 14,
 // Placed order & Print font is 16
-// Order Number font is 14
-// Edit Button font is 16, Icon is 20
+// Order Number font is 16, Order Status font is 16, Order Data and Time font is 14
+// Edit Button font is 14, Icon is 20
 // Items list - Item Name and selectedType font is 14, Quantity font is x 20
-// Increase & Decrease Quantity font size is 16, Container size is 20 width, 20 height, icon + - size 14
+// Increase & Decrease Quantity font size is 14, Container size is 20 width, 20 height, icon + - size 14
 // items list - item.itemRemarks size is 12
+// Delete font is 14
 
+// Product Items Selection
+// data['remarks'], font is 14
+// {item.category}:  ${item.originalName} font is 14
+// ${selectedChoice!['name']}' : 'Select Flavor and Type', and "( + ${selectedChoice!['price'].toStringAsFixed(2)} )", font is 14
+// "${selectedType!['name']} " and "( + ${selectedType!['price'].toStringAsFixed(2)} )", font is 14
+// "${selectedMeePortion!['name']} " and "( + ${selectedMeePortion!['price'].toStringAsFixed(2)} )", font is 14
+// "${selectedMeatPortion!['name']} ", and "( + ${selectedMeatPortion!['price'].toStringAsFixed(2)} )" font is 14
+// ('RM ${subTotalPrice.toStringAsFixed(2)}', font is 16
+// '1.Select Your Flavor', font is 14
+//  '${choice['name']}', font is 14
+//  "2.Select Your Preference", font is 14
+// '${type['name']}', font is 14
+// '3.Select Your Desired Serving Size', font is 14
+// '${meePortion['name']}', font is 14
+// '4.Select Your Meat Portion Level', font is 14
+// '${meatPortion['name']}', font is 14
+// 'Press Buttons to add Remarks' and 'Please write additional remarks here' and TextField, font is 14
+//  'Confirm'and 'Cancel' font is 14
 
 // Setting files
 // AvdId=Honor_Pad_X8_API_32
