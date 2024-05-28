@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/models/orders.dart';
-import 'package:jspos/screens/reports/reports.dart';
+// import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/history/history.dart';
-import 'package:jspos/screens/settings/settings.dart';
+// import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';
 import 'package:jspos/screens/dineIn/dine_in.dart';
-import 'package:jspos/screens/takeOut/take_out.dart';
+// import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
   const JPOSApp({super.key});
@@ -46,14 +46,14 @@ class _MainPageState extends State<MainPage> {
     switch (pageActive) {
       case 'Dine In':
         return DineInPage(freezeSideMenu: freezeSideMenu, orders: orders);
-      case 'Take Out':
-        return TakeOutPage(freezeSideMenu: freezeSideMenu);
+      // case 'Take Out':
+      //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return const HistoryPage();
-      case 'Reports':
-        return const ReportsPage();
-      case 'Settings':
-        return const SettingsPage();
+      // case 'Reports':
+      //   return const ReportsPage();
+      // case 'Settings':
+      //   return const SettingsPage();
 
       default:
         return const HomePage();
@@ -105,10 +105,10 @@ class _MainPageState extends State<MainPage> {
         Expanded(
           child: ListView(children: [
             _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
-            _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
+            // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
-            _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
-            _itemMenu(menu: 'Settings', icon: Icons.tune),
+            // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
+            // _itemMenu(menu: 'Settings', icon: Icons.tune),
           ]),
         )
       ]),

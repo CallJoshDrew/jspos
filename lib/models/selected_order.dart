@@ -15,15 +15,18 @@ class SelectedOrder with ChangeNotifier {
   double subTotal;
   double serviceCharge;
   double totalPrice;
-  int quantity;
   String paymentMethod;
-  String remarks;
   bool showEditBtn;
-  Map<String, int> itemCounts;
-  Map<String, int> itemQuantities;
-  int totalItems = 0;
-  int totalQuantity = 0;
   Map<String, Map<String, int>> categories;
+  double amountReceived = 0;
+  double amountChanged = 0;
+  double roundingAdjustment = 0;
+  // int quantity;
+  // String remarks;
+  // Map<String, int> itemCounts;
+  // Map<String, int> itemQuantities;
+  // int totalItems = 0;
+  // int totalQuantity = 0;
 
   // constructor must have the same name as its class.
   SelectedOrder({
@@ -37,22 +40,42 @@ class SelectedOrder with ChangeNotifier {
     required this.subTotal,
     required this.serviceCharge,
     required this.totalPrice,
-    required this.quantity,
     this.paymentMethod = "Cash",
-    this.remarks = "No Remarks",
     this.showEditBtn = false,
-    required this.itemCounts,
-    required this.itemQuantities,
-    this.totalItems = 0,
-    this.totalQuantity = 0,
     required List<String> categoryList,
+    this.amountReceived = 0,
+    this.amountChanged = 0,
+    this.roundingAdjustment = 0,
+    // required this.quantity,
+    // this.remarks = "No Remarks",
+    // required this.itemCounts,
+    // required this.itemQuantities,
+    // this.totalItems = 0,
+    // this.totalQuantity = 0,
   }) : categories = {
           for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
         };
   @override
   // methods
   String toString() {
-    return '{\n\torderNumber: $orderNumber, \n\ttableName: $tableName, \n\torderType: $orderType, \n\tstatus: $status, \n\titems: [\n\t\t${items.join(',\n\t\t')}\n\t], \n\tsubTotal: $subTotal, \n\tserviceCharge: $serviceCharge, \n\ttotalPrice: $totalPrice, \n\tquantity: $quantity, \n\tpaymentMethod: $paymentMethod, \n\tremarks: $remarks, \n\tshowEditBtn: $showEditBtn\n}';
+    return 'SelectedOrder(\n'
+        '\torderNumber: $orderNumber,\n'
+        '\ttableName: $tableName,\n'
+        '\torderType: $orderType,\n'
+        '\torderTime: $orderTime,\n'
+        '\torderDate: $orderDate,\n'
+        '\tstatus: $status,\n'
+        // '\titems: [\n\t\t${items.join(',\n\t\t')}\n\t],\n' // Updated
+        '\tsubTotal: $subTotal,\n'
+        '\tserviceCharge: $serviceCharge,\n'
+        '\ttotalPrice: $totalPrice,\n'
+        '\tpaymentMethod: $paymentMethod,\n'
+        '\tshowEditBtn: $showEditBtn,\n'
+        '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n' // Updated
+        '\tamountReceived: $amountReceived,\n'
+        '\tamountChanged: $amountChanged,\n'
+        '\troundingAdjustment: $roundingAdjustment\n'
+        ')';
   }
 
   SelectedOrder newInstance(List<String> categoryList) {
@@ -67,15 +90,18 @@ class SelectedOrder with ChangeNotifier {
       subTotal: 0,
       serviceCharge: 0,
       totalPrice: 0,
-      quantity: 0,
       paymentMethod: "Cash",
-      remarks: "No Remarks",
       showEditBtn: false,
-      itemCounts: {},
-      itemQuantities: {},
-      totalItems: 0,
-      totalQuantity: 0,
       categoryList: categoryList,
+      amountReceived: 0,
+      amountChanged: 0,
+      roundingAdjustment: 0,
+      // quantity: 0,
+      // remarks: "No Remarks",
+      // itemCounts: {},
+      // itemQuantities: {},
+      // totalItems: 0,
+      // totalQuantity: 0,
     );
   }
 
@@ -91,15 +117,18 @@ class SelectedOrder with ChangeNotifier {
       subTotal: subTotal,
       serviceCharge: serviceCharge,
       totalPrice: totalPrice,
-      quantity: quantity,
       paymentMethod: paymentMethod,
-      remarks: remarks,
       showEditBtn: showEditBtn,
-      itemCounts: itemCounts,
-      itemQuantities: itemQuantities,
-      totalItems: totalItems,
-      totalQuantity: totalQuantity,
       categoryList: categoryList,
+      amountReceived: amountReceived,
+      amountChanged: amountChanged,
+      roundingAdjustment: roundingAdjustment,
+      // quantity: quantity,
+      // remarks: remarks,
+      // itemCounts: itemCounts,
+      // itemQuantities: itemQuantities,
+      // totalItems: totalItems,
+      // totalQuantity: totalQuantity,
     );
   }
 
@@ -240,6 +269,13 @@ class SelectedOrder with ChangeNotifier {
     updateTotalPrice();
     updateStatus('Paid');
   }
+
+  // void makePayment(amoundReceived, amountChanged, roundingAdjustment) {
+  //   updateSubTotal();
+  //   updateServiceCharge(0);
+  //   totalPrice =
+  //   updateStatus('Paid');
+  // }
 
   void calculateItemsAndQuantities() {
     // Reset the counts and quantities for each category

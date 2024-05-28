@@ -33,15 +33,18 @@ class _DineInPageState extends State<DineInPage> {
     subTotal: 0,
     serviceCharge: 0,
     totalPrice: 0,
-    quantity: 0,
     paymentMethod: "Cash",
-    remarks: "No Remarks",
     showEditBtn: false,
-    itemCounts: {},
-    itemQuantities: {},
-    totalItems: 0,
-    totalQuantity: 0,
     categoryList: categories,
+    amountReceived: 0,
+    amountChanged: 0,
+    roundingAdjustment: 0,
+    // quantity: 0,
+    // remarks: "No Remarks",
+    // itemCounts: {},
+    // itemQuantities: {},
+    // totalItems: 0,
+    // totalQuantity: 0,
   );
 
   String generateID(String tableName) {
@@ -330,14 +333,14 @@ class _DineInPageState extends State<DineInPage> {
             const SizedBox(width: 2),
             TextButton(
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
                 ),
+                padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+              ),
               child: const Text(
                 'No',
                 style: TextStyle(

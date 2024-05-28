@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/selected_order.dart';
 
@@ -15,15 +17,33 @@ class MakePaymentPage extends StatefulWidget {
 class MakePaymentPageState extends State<MakePaymentPage> {
   String selectedPaymentMethod = "Cash";
   final TextEditingController _controller = TextEditingController();
-  double _change = 0.0;
   late double originalBill; // Declare originalBill
   late double adjustedBill;
   bool isRoundingApplied = false;
   List<bool> isSelected = [false, true];
+  double amountReceived = 0.0;
+  double amountChanged = 0.0;
+  double roundingAdjustment = 0.0;
 
   void _calculateChange() {
-    double amountReceived = double.tryParse(_controller.text) ?? 0.0;
-    _change = amountReceived - widget.selectedOrder.totalPrice;
+    if (_controller.text.isEmpty) {
+      amountReceived = double.parse(adjustedBill.toStringAsFixed(2));
+    } else {
+      num? parsedValue = num.tryParse(_controller.text);
+      if (parsedValue != null) {
+        amountReceived = parsedValue.toDouble();
+      } else {
+        // Handle the error: _controller.text is not a valid number
+        // For example, you could set amountReceived to a default value:
+        amountReceived = 0.0;
+      }
+    }
+    if (isRoundingApplied) {
+      adjustedBill = roundBill(originalBill);
+    }
+    double calculatedChange = amountReceived - (isRoundingApplied ? adjustedBill : originalBill); // calculates the change
+    amountChanged = calculatedChange < 0 ? 0.0 : calculatedChange; // if the calculated change is negative, set amountChanged to 0.0
+    amountChanged = double.parse(amountChanged.toStringAsFixed(2)); // rounds amountChanged to two decimal places and converts it back to a double.
   }
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
@@ -102,12 +122,15 @@ class MakePaymentPageState extends State<MakePaymentPage> {
       backgroundColor: const Color(0xff1f2029),
       body: Dialog(
         backgroundColor: Colors.black,
-        insetPadding: EdgeInsets.zero, // Remove any padding
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0), // Set the border radius here
+        ),
+        insetPadding: const EdgeInsets.only(top: 25), // Remove any padding
         child: SizedBox(
           width: screenSize.width, // Set width to screen width
           height: screenSize.height - statusBarHeight, // Subtract the status bar height from the screen height
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +180,6 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,7 +393,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           Text(
                                             'Total $category :   ${totalPrices[category]?.toStringAsFixed(2)}',
                                             style: const TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                               color: Colors.white,
                                             ),
                                           ),
@@ -390,7 +412,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                       Expanded(
                         flex: 4,
                         child: Container(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: const Color(0xff1f2029),
@@ -442,7 +464,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                               ),
                                               Text(
-                                                '- ${(originalBill - adjustedBill).toStringAsFixed(2)}',
+                                                '- ${(roundingAdjustment).toStringAsFixed(2)}',
                                                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                               ),
                                             ],
@@ -513,7 +535,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          _controller.text.isEmpty ? '0.00' : _controller.text,
+                                          _controller.text.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2) : _controller.text,
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -526,7 +548,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          '- ${_change.toStringAsFixed(2)}',
+                                          '- ${amountChanged.toStringAsFixed(2)}',
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -559,41 +581,43 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                   ],
                                                 ),
                                               ),
-                                              ToggleButtons(
-                                                onPressed: (int index) {
-                                                  setState(() {
-                                                    for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                                      if (buttonIndex == index) {
-                                                        isSelected[buttonIndex] = true;
-                                                        if (index == 0) {
-                                                          adjustedBill = roundBill(originalBill);
-                                                          isRoundingApplied = true;
+                                              SizedBox(
+                                                height: 40,
+                                                child: ToggleButtons(
+                                                  onPressed: (int index) {
+                                                    setState(() {
+                                                      for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                                                        if (buttonIndex == index) {
+                                                          isSelected[buttonIndex] = true;
+                                                          // index 0 is Yes, index 1 is No.
+                                                          if (index == 0) {
+                                                            adjustedBill = roundBill(originalBill);
+                                                            roundingAdjustment = double.parse((originalBill - adjustedBill).toStringAsFixed(2));
+                                                            isRoundingApplied = true;
+                                                          } else {
+                                                            adjustedBill = originalBill;
+                                                            roundingAdjustment = 0.0;
+                                                            isRoundingApplied = false;
+                                                          }
+                                                          // Call _calculateChange after updating adjustedBill and isRoundingApplied
+                                                          _calculateChange();
                                                         } else {
-                                                          adjustedBill = originalBill;
-                                                          isRoundingApplied = false;
+                                                          isSelected[buttonIndex] = false;
                                                         }
-                                                      } else {
-                                                        isSelected[buttonIndex] = false;
                                                       }
-                                                    }
-                                                  });
-                                                },
-                                                isSelected: isSelected,
-                                                fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
-                                                selectedBorderColor: Colors.green,
-                                                borderRadius: BorderRadius.circular(4),
-                                                borderWidth: 1.0,
-                                                borderColor: Colors.white,
-                                                children: const <Widget>[
-                                                  Padding(
-                                                    padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
-                                                    child: Text('Yes', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
-                                                    child: Text('No', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
-                                                  ),
-                                                ],
+                                                    });
+                                                  },
+                                                  isSelected: isSelected,
+                                                  fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
+                                                  selectedBorderColor: Colors.green,
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  borderWidth: 1.0,
+                                                  borderColor: Colors.white,
+                                                  children: const <Widget>[
+                                                    Text('Yes', style: TextStyle(fontSize: 14, color: Colors.white)),
+                                                    Text('No', style: TextStyle(fontSize: 14, color: Colors.white)),
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           )
@@ -639,7 +663,6 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                         );
                                       }).toList(),
                                     ),
-                                    const SizedBox(height: 30),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -648,56 +671,53 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, color: Colors.white),
                                           textAlign: TextAlign.start,
                                         ),
-                                        Container(
-                                          width: 200,
-                                          height: 60,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 1,
-                                            ),
-                                            borderRadius: BorderRadius.circular(10), // Set the border radius here.
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextField(
-                                              controller: _controller,
-                                              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-                                              keyboardType: TextInputType.number,
-                                              textAlign: TextAlign.center,
-                                              decoration: const InputDecoration(
-                                                border: InputBorder.none,
-                                                labelStyle: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                        SizedBox(
+                                          width: 100,
+                                          height: 40,
+                                          child: TextField(
+                                            controller: _controller,
+                                            style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                                            keyboardType: TextInputType.number,
+                                            textAlign: TextAlign.center,
+                                            decoration: InputDecoration(
+                                              hintText: (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
+                                              hintStyle: const TextStyle(color: Colors.green),
+                                              contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                              fillColor: Colors.white,
+                                              filled: true,
+                                              border: const OutlineInputBorder(),
+                                              focusedBorder: const OutlineInputBorder(
+                                                borderSide: BorderSide(color: Colors.grey),
                                               ),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  _calculateChange();
-                                                  _controller.text = value;
-                                                  _controller.selection = TextSelection.fromPosition(
-                                                    TextPosition(offset: _controller.text.length),
-                                                  );
-                                                });
-                                              },
                                             ),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _calculateChange();
+                                                if (value.isEmpty) {
+                                                  _controller.text = (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2);
+                                                }
+                                                _controller.selection = TextSelection.fromPosition(
+                                                  TextPosition(offset: _controller.text.length),
+                                                );
+                                              });
+                                            },
                                           ),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 40),
+                                    const SizedBox(height: 10),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end, // This will space the buttons evenly in the row.
                                       children: [
                                         ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green, // This sets the background color.
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10), // This sets the border radius.
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(5),
+                                              ),
                                             ),
+                                            padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
                                           onPressed: () {
                                             showDialog(
@@ -715,8 +735,8 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                     ),
                                                     content: ConstrainedBox(
                                                       constraints: const BoxConstraints(
-                                                        minWidth: 300,
-                                                        minHeight: 70,
+                                                        minWidth: 200,
+                                                        minHeight: 40,
                                                       ),
                                                       child: const Row(
                                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -725,14 +745,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                           Text(
                                                             'Are you sure?',
                                                             textAlign: TextAlign.center,
-                                                            style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                                            style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
                                                     actions: [
                                                       Padding(
-                                                        padding: const EdgeInsets.only(bottom: 10, left: 40, right: 40),
+                                                        padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
@@ -741,25 +761,32 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                                                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                                                   RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(10.0),
+                                                                    borderRadius: BorderRadius.circular(5),
                                                                   ),
                                                                 ),
                                                               ),
                                                               onPressed: () {
+                                                                setState(() {
+                                                                  // print('selectedOrder: ${widget.selectedOrder}');
+                                                                  print('adjustedBill: $adjustedBill');
+                                                                  print('Amount Recevied: $amountReceived');
+                                                                  print('Amount Change: $amountChanged');
+                                                                  print('Rounding Adjustment: $roundingAdjustment');
+                                                                });
                                                                 Navigator.of(context).pop();
                                                               },
                                                               child: const Padding(
-                                                                padding: EdgeInsets.all(6.0),
+                                                                padding: EdgeInsets.all(6),
                                                                 child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 30),
+                                                            const SizedBox(width: 20),
                                                             TextButton(
                                                               style: ButtonStyle(
                                                                 backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                                                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                                                   RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(10.0),
+                                                                    borderRadius: BorderRadius.circular(5),
                                                                   ),
                                                                 ),
                                                               ),
@@ -767,7 +794,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 Navigator.of(context).pop();
                                                               },
                                                               child: const Padding(
-                                                                padding: EdgeInsets.all(6.0),
+                                                                padding: EdgeInsets.all(6),
                                                                 child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 14)),
                                                               ),
                                                             ),
@@ -780,30 +807,28 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                               },
                                             );
                                           },
-                                          child: const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Accept',
-                                              style: TextStyle(fontSize: 14, color: Colors.white),
-                                            ),
+                                          child: const Text(
+                                            'Accept',
+                                            style: TextStyle(fontSize: 14, color: Colors.white),
                                           ),
                                         ),
-                                        const SizedBox(width: 20),
+                                        const SizedBox(width: 10),
                                         ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10), // This sets the border radius.
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(5),
+                                              ),
                                             ),
+                                            padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          child: const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Cancel',
-                                              style: TextStyle(fontSize: 14, color: Colors.black),
-                                            ),
+                                          child: const Text(
+                                            'Cancel',
+                                            style: TextStyle(fontSize: 14, color: Colors.black),
                                           ),
                                         ),
                                       ],
