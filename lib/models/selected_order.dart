@@ -263,18 +263,28 @@ class SelectedOrder with ChangeNotifier {
     updateOrderDateTime();
   }
 
-  void makePayment() {
-    updateSubTotal();
-    updateServiceCharge(0);
-    updateTotalPrice();
-    updateStatus('Paid');
-  }
-
-  // void makePayment(amoundReceived, amountChanged, roundingAdjustment) {
+  // void makePayment() {
   //   updateSubTotal();
   //   updateServiceCharge(0);
-  //   totalPrice =
+  //   updateTotalPrice();
   //   updateStatus('Paid');
+  // }
+
+  // void makePayment(double amountReceived, double amountChanged, double roundingAdjustment, String selectedPaymentMethod) {
+  //   updateSubTotal();
+  //   updateServiceCharge(0);
+  //   totalPrice = amountReceived - amountChanged;
+  //   amountReceived = amountReceived;
+  //   amountChanged = amountChanged;
+  //   roundingAdjustment = roundingAdjustment;
+  //   paymentMethod = selectedPaymentMethod;
+  //   updateStatus("Paid");
+  //   print('totalPrice: $totalPrice');
+  //   print('amountReceived: $amountReceived');
+  //   print('amountChanged: $amountChanged');
+  //   print('roundingAdjustment: $roundingAdjustment');
+  //   print('status: $status');
+  //   print('paymentMethod: $paymentMethod');
   // }
 
   void calculateItemsAndQuantities() {

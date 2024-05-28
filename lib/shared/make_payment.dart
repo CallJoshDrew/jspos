@@ -1,14 +1,16 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/item.dart';
+import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 
 class MakePaymentPage extends StatefulWidget {
   final SelectedOrder selectedOrder;
   final VoidCallback? updateOrderStatus;
+  final Orders orders;
 
-  const MakePaymentPage({super.key, required this.selectedOrder, required this.updateOrderStatus});
+  const MakePaymentPage({super.key, required this.selectedOrder, required this.updateOrderStatus, required this.orders});
 
   @override
   MakePaymentPageState createState() => MakePaymentPageState();
@@ -111,6 +113,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     super.initState();
     originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
+    log('initState called, adjustedBill is now $adjustedBill');
   }
 
   @override
@@ -767,12 +770,20 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                               ),
                                                               onPressed: () {
                                                                 setState(() {
-                                                                  // print('selectedOrder: ${widget.selectedOrder}');
-                                                                  print('adjustedBill: $adjustedBill');
-                                                                  print('Amount Recevied: $amountReceived');
-                                                                  print('Amount Change: $amountChanged');
-                                                                  print('Rounding Adjustment: $roundingAdjustment');
+                                                                  _calculateChange();
+                                                                  widget.selectedOrder.totalPrice =
+                                                                      double.parse((amountReceived - amountChanged).toStringAsFixed(2));
+                                                                  widget.selectedOrder.amountReceived = amountReceived;
+                                                                  widget.selectedOrder.amountChanged = amountChanged;
+                                                                  widget.selectedOrder.roundingAdjustment = roundingAdjustment;
+                                                                  widget.selectedOrder.paymentMethod = selectedPaymentMethod;
+                                                                  widget.selectedOrder.status = 'Paid';
+                                                                  // print(widget.selectedOrder);
+                                                                  widget.updateOrderStatus!();
+                                                                  widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
+                                                                  log('${widget.orders}');
                                                                 });
+                                                                Navigator.of(context).pop();
                                                                 Navigator.of(context).pop();
                                                               },
                                                               child: const Padding(

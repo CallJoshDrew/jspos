@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';

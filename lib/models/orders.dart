@@ -10,8 +10,16 @@ class Orders {
   String toString() {
     return 'Orders: $data';
   }
+
   void addOrder(SelectedOrder order) {
-    data.add(order);
+    final existingOrderIndex = data.indexWhere((o) => o.orderNumber == order.orderNumber);
+    if (existingOrderIndex != -1) {
+      // Replace the existing order
+      data[existingOrderIndex] = order;
+    } else {
+      // Add the new order
+      data.add(order);
+    }
   }
 
   SelectedOrder? getOrder(String orderNumber) {

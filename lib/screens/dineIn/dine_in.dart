@@ -7,6 +7,7 @@ import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
 import 'package:jspos/data/menu_data.dart';
+import 'dart:developer';
 
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
@@ -243,6 +244,7 @@ class _DineInPageState extends State<DineInPage> {
       tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
       // Add a new SelectedOrder object to the orders list
       widget.orders.addOrder(selectedOrder.copyWith(categories));
+      log('${widget.orders}');
       updateOrderStatus();
       handlefreezeMenu();
     });
@@ -267,6 +269,7 @@ class _DineInPageState extends State<DineInPage> {
         builder: (context) => MakePaymentPage(
           selectedOrder: selectedOrder,
           updateOrderStatus: updateOrderStatus,
+          orders: widget.orders,
         ),
       ),
     );
