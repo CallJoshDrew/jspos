@@ -20,7 +20,7 @@ class DineInPage extends StatefulWidget {
 class _DineInPageState extends State<DineInPage> {
   bool showMenu = false;
   int orderCounter = 1;
-  int? selectedTableIndex;
+  late int selectedTableIndex;
   String orderNumber = "";
   List<Item> tempCartItems = [];
   SelectedOrder selectedOrder = SelectedOrder(
@@ -45,7 +45,7 @@ class _DineInPageState extends State<DineInPage> {
     // itemCounts: {},
     // itemQuantities: {},
     // totalItems: 0,
-    // totalQuantity: 0,
+    totalQuantity: 0,
   );
 
   String generateID(String tableName) {
@@ -153,8 +153,8 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void resetSelectedTable() {
-    tables[selectedTableIndex!]['occupied'] = false;
-    tables[selectedTableIndex!]['orderNumber'] = "";
+    tables[selectedTableIndex]['occupied'] = false;
+    tables[selectedTableIndex]['orderNumber'] = "";
   }
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
@@ -238,17 +238,28 @@ class _DineInPageState extends State<DineInPage> {
     showMenu = !showMenu;
   }
 
-  void handlePlaceOrderBtn() {
-    setState(() {
-      selectedOrder.placeOrder();
-      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-      // Add a new SelectedOrder object to the orders list
-      widget.orders.addOrder(selectedOrder.copyWith(categories));
-      log('${widget.orders}');
-      updateOrderStatus();
-      handlefreezeMenu();
-    });
-  }
+  void handlePlaceOrderBtn() async {
+  setState(() {
+    selectedOrder.placeOrder();
+    tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+    // Add a new SelectedOrder object to the orders list
+    widget.orders.addOrder(selectedOrder.copyWith(categories));
+  });
+
+  // Wait for the next frame so that setState has a chance to rebuild the widget
+  await Future.delayed(Duration.zero);
+
+  // Now log the state
+  // log('${widget.orders}');
+  updateOrderStatus();
+  handlefreezeMenu();
+  log('-------------------------');
+  log('Handle Place Order Btn');
+  log('$selectedOrder}');
+  log('${widget.orders}');
+  log('-------------------------');
+}
+
 
   void handleUpdateOrderBtn() {
     setState(() {
@@ -270,6 +281,8 @@ class _DineInPageState extends State<DineInPage> {
           selectedOrder: selectedOrder,
           updateOrderStatus: updateOrderStatus,
           orders: widget.orders,
+          tables: tables,
+          selectedTableIndex: selectedTableIndex,
         ),
       ),
     );

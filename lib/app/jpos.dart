@@ -49,7 +49,7 @@ class _MainPageState extends State<MainPage> {
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
-        return const HistoryPage();
+        return HistoryPage( orders: orders);
       // case 'Reports':
       //   return const ReportsPage();
       // case 'Settings':
@@ -80,8 +80,8 @@ class _MainPageState extends State<MainPage> {
           ),
           Expanded(
             child: Container(
-              margin: const EdgeInsets.only(top: 24, right: 0),
-              padding: const EdgeInsets.only(top: 12, right: 0, left: 0), // control the pageView width (dineIn + OrderDetails)
+              // margin: const EdgeInsets.only(top: 0, right: 0),
+              padding: const EdgeInsets.only(top: 30, right: 0, left: 0), // control the pageView width (dineIn + OrderDetails)
               decoration: const BoxDecoration(
                 // borderRadius: BorderRadius.only(
                 //     topLeft: Radius.circular(0),

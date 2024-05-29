@@ -1,24 +1,18 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/item.dart';
-import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 
-class MakePaymentPage extends StatefulWidget {
-  final SelectedOrder selectedOrder;
-  final VoidCallback? updateOrderStatus;
-  final Orders orders;
-  final List<Map<String, dynamic>> tables;
-  final int selectedTableIndex;
+class HistoryOrderPage extends StatefulWidget {
+  final SelectedOrder historyOrder;
 
-  const MakePaymentPage({super.key, required this.selectedOrder, required this.updateOrderStatus, required this.orders, required this.tables, required this.selectedTableIndex});
+  const HistoryOrderPage({super.key, required this.historyOrder});
 
   @override
-  MakePaymentPageState createState() => MakePaymentPageState();
+  HistoryOrderPageState createState() => HistoryOrderPageState();
 }
 
-class MakePaymentPageState extends State<MakePaymentPage> {
+class HistoryOrderPageState extends State<HistoryOrderPage> {
   String selectedPaymentMethod = "Cash";
   final TextEditingController _controller = TextEditingController();
   late double originalBill; // Declare originalBill
@@ -29,26 +23,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   double amountChanged = 0.0;
   double roundingAdjustment = 0.0;
 
-  void _calculateChange() {
-    if (_controller.text.isEmpty) {
-      amountReceived = double.parse(adjustedBill.toStringAsFixed(2));
-    } else {
-      num? parsedValue = num.tryParse(_controller.text);
-      if (parsedValue != null) {
-        amountReceived = parsedValue.toDouble();
-      } else {
-        // Handle the error: _controller.text is not a valid number
-        // For example, you could set amountReceived to a default value:
-        amountReceived = 0.0;
-      }
-    }
-    if (isRoundingApplied) {
-      adjustedBill = roundBill(originalBill);
-    }
-    double calculatedChange = amountReceived - (isRoundingApplied ? adjustedBill : originalBill); // calculates the change
-    amountChanged = calculatedChange < 0 ? 0.0 : calculatedChange; // if the calculated change is negative, set amountChanged to 0.0
-    amountChanged = double.parse(amountChanged.toStringAsFixed(2)); // rounds amountChanged to two decimal places and converts it back to a double.
-  }
+  
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
@@ -113,7 +88,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   @override
   void initState() {
     super.initState();
-    originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
+    originalBill = widget.historyOrder.totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
     log('initState called, adjustedBill is now $adjustedBill');
   }
@@ -122,7 +97,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-    double fractionAmount = widget.selectedOrder.totalPrice - widget.selectedOrder.totalPrice.floor();
+    double fractionAmount = widget.historyOrder.totalPrice - widget.historyOrder.totalPrice.floor();
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
       body: Dialog(
@@ -150,14 +125,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.selectedOrder.orderNumber,
+                          widget.historyOrder.orderNumber,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.white,
                           ),
                         ),
                         const Text(
-                          'Verifying Bill before Payment Transaction',
+                          'Status: Completed',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.white,
@@ -166,7 +141,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                         Row(
                           children: [
                             Text(
-                              '${widget.selectedOrder.orderTime} -',
+                              '${widget.historyOrder.orderTime} -',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -174,7 +149,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              '${widget.selectedOrder.orderDate}',
+                              '${widget.historyOrder.orderDate}',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -197,7 +172,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: () {
-                                Map<String, List<Item>> categorizedItems = categorizeItems(widget.selectedOrder.items);
+                                Map<String, List<Item>> categorizedItems = categorizeItems(widget.historyOrder.items);
                                 Map<String, int> totalQuantities = calculateTotalQuantities(categorizedItems);
                                 Map<String, double> totalPrices = calculateTotalPrices(categorizedItems);
                                 List<Widget> categoryWidgets = [];
@@ -420,16 +395,16 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                           padding: const EdgeInsets.only(bottom: 0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: const Color(0xff1f2029),
+                            // color: const Color(0xff1f2029),
                           ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Container(
                                 padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
                                 margin: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
                                   color: Colors.white,
                                 ),
                                 child: Column(
@@ -442,7 +417,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.selectedOrder.subTotal.toStringAsFixed(2),
+                                          widget.historyOrder.subTotal.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -455,7 +430,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.selectedOrder.serviceCharge.toStringAsFixed(2),
+                                          widget.historyOrder.serviceCharge.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -561,296 +536,18 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(20, 0, 10, 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
-                                        ? Row(
-                                            children: [
-                                              const Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Allow Rounding Adjustment?",
-                                                      style: TextStyle(fontSize: 14, color: Colors.white),
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                    Text(
-                                                      "- Less than 0.50",
-                                                      style: TextStyle(fontSize: 12, color: Colors.white),
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 40,
-                                                child: ToggleButtons(
-                                                  onPressed: (int index) {
-                                                    setState(() {
-                                                      for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                                        if (buttonIndex == index) {
-                                                          isSelected[buttonIndex] = true;
-                                                          // index 0 is Yes, index 1 is No.
-                                                          if (index == 0) {
-                                                            adjustedBill = roundBill(originalBill);
-                                                            roundingAdjustment = double.parse((originalBill - adjustedBill).toStringAsFixed(2));
-                                                            isRoundingApplied = true;
-                                                          } else {
-                                                            adjustedBill = originalBill;
-                                                            roundingAdjustment = 0.0;
-                                                            isRoundingApplied = false;
-                                                          }
-                                                          // Call _calculateChange after updating adjustedBill and isRoundingApplied
-                                                          _calculateChange();
-                                                        } else {
-                                                          isSelected[buttonIndex] = false;
-                                                        }
-                                                      }
-                                                    });
-                                                  },
-                                                  isSelected: isSelected,
-                                                  fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
-                                                  selectedBorderColor: Colors.green,
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderWidth: 1.0,
-                                                  borderColor: Colors.white,
-                                                  children: const <Widget>[
-                                                    Text('Yes', style: TextStyle(fontSize: 14, color: Colors.white)),
-                                                    Text('No', style: TextStyle(fontSize: 14, color: Colors.white)),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : const SizedBox.shrink(),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      "Payment Method",
-                                      style: TextStyle(fontSize: 14, color: Colors.white),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                    Wrap(
-                                      alignment: WrapAlignment.start,
-                                      spacing: 6,
-                                      runSpacing: 0,
-                                      children: <String>['Cash', 'DuitNow', 'FoodPanda', 'GrabFood', 'ShopeeFood'].map((String value) {
-                                        return ElevatedButton(
-                                          style: ButtonStyle(
-                                            foregroundColor: MaterialStateProperty.all<Color>(
-                                              selectedPaymentMethod == value ? Colors.white : Colors.black87,
-                                            ),
-                                            backgroundColor: MaterialStateProperty.all<Color>(
-                                              selectedPaymentMethod == value ? Colors.green : Colors.white,
-                                            ),
-                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                            padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              selectedPaymentMethod = value;
-                                              widget.selectedOrder.paymentMethod = value;
-                                            });
-                                          },
-                                          child: Text(
-                                            value,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          "Please Enter the Amount Received",
-                                          style: TextStyle(fontSize: 14, color: Colors.white),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          height: 40,
-                                          child: TextField(
-                                            controller: _controller,
-                                            style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
-                                            keyboardType: TextInputType.number,
-                                            textAlign: TextAlign.center,
-                                            decoration: InputDecoration(
-                                              hintText: (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
-                                              hintStyle: const TextStyle(color: Colors.green),
-                                              contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                              fillColor: Colors.white,
-                                              filled: true,
-                                              border: const OutlineInputBorder(),
-                                              focusedBorder: const OutlineInputBorder(
-                                                borderSide: BorderSide(color: Colors.grey),
-                                              ),
-                                            ),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _calculateChange();
-                                                if (value.isEmpty) {
-                                                  _controller.text = (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2);
-                                                }
-                                                _controller.selection = TextSelection.fromPosition(
-                                                  TextPosition(offset: _controller.text.length),
-                                                );
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end, // This will space the buttons evenly in the row.
-                                      children: [
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                            padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                          ),
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return Dialog(
-                                                  insetPadding: EdgeInsets.zero, // Make dialog full-screen
-                                                  backgroundColor: Colors.black87,
-                                                  child: AlertDialog(
-                                                    backgroundColor: const Color(0xff1f2029),
-                                                    elevation: 5,
-                                                    shape: RoundedRectangleBorder(
-                                                      side: const BorderSide(color: Colors.green, width: 2), // This is the border color
-                                                      borderRadius: BorderRadius.circular(10.0),
-                                                    ),
-                                                    content: ConstrainedBox(
-                                                      constraints: const BoxConstraints(
-                                                        minWidth: 200,
-                                                        minHeight: 40,
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                        children: [
-                                                          Text(
-                                                            'Are you sure?',
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            TextButton(
-                                                              style: ButtonStyle(
-                                                                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  _calculateChange();
-                                                                  widget.selectedOrder.totalPrice =
-                                                                      double.parse((amountReceived - amountChanged).toStringAsFixed(2));
-                                                                  widget.selectedOrder.amountReceived = amountReceived;
-                                                                  widget.selectedOrder.amountChanged = amountChanged;
-                                                                  widget.selectedOrder.roundingAdjustment = roundingAdjustment;
-                                                                  widget.selectedOrder.paymentMethod = selectedPaymentMethod;
-                                                                  widget.selectedOrder.status = 'Paid';
-                                                                  widget.updateOrderStatus!();
-                                                                  widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
-                                                                  widget.tables[widget.selectedTableIndex]['orderNumber'] = '';
-                                                                  widget.tables[widget.selectedTableIndex]['occupied'] = false;
-                                                                  log('${widget.tables}');
-                                                                  log('${widget.selectedOrder}');
-                                                                  log('${widget.orders}');
-                                                                });
-                                                                Navigator.of(context).pop();
-                                                                Navigator.of(context).pop();
-                                                              },
-                                                              child: const Padding(
-                                                                padding: EdgeInsets.all(6),
-                                                                child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(width: 20),
-                                                            TextButton(
-                                                              style: ButtonStyle(
-                                                                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              onPressed: () {
-                                                                Navigator.of(context).pop();
-                                                              },
-                                                              child: const Padding(
-                                                                padding: EdgeInsets.all(6),
-                                                                child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 14)),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: const Text(
-                                            'Accept',
-                                            style: TextStyle(fontSize: 14, color: Colors.white),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                            padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text(
-                                            'Cancel',
-                                            style: TextStyle(fontSize: 14, color: Colors.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.redAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
                                 ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Close'),
                               ),
                             ],
                           ),

@@ -760,13 +760,21 @@ class ProductItemState extends State<ProductItem> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: const Color(0xff1f2029),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.grey.withOpacity(0.1), // Change this color to customize your shadow
+          //     spreadRadius: 2,
+          //     blurRadius: 2,
+          //     offset: const Offset(1, 1), // Changes position of shadow
+          //   ),
+          // ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // item image
             Container(
-              height: 60,
+              height: 70,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                 image: DecorationImage(

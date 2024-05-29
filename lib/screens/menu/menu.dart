@@ -104,7 +104,7 @@ class _MenuPageState extends State<MenuPage> {
               child: GridView.count(
                 crossAxisCount: 4,
                 childAspectRatio: (1 / 1.3), // width 1 / height 1.3
-                crossAxisSpacing: 15, // Add horizontal spacing
+                crossAxisSpacing: 20, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
                 children: menu
                     .where((item) =>

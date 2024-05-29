@@ -210,7 +210,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               ),
 
               // show Edit Button when it is true
-              showEditBtn
+              (showEditBtn && widget.selectedOrder.status != "Paid")
                   ? ElevatedButton(
                       onPressed: () {
                         setState(() {
@@ -1146,7 +1146,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           if (showEditBtn) {
             // If showEditBtn is true, do not allow the dismiss action
             return Future.value(false);
-          }
+          } 
           // Otherwise, allow the dismiss action
           return Future.value(true);
         },

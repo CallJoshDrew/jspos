@@ -5,8 +5,8 @@ class Orders {
   final List<SelectedOrder> data;
 
   Orders({required this.data});
+
   @override
-  // methods
   String toString() {
     return 'Orders: $data';
   }
@@ -26,3 +26,7 @@ class Orders {
     return data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
   }
 }
+  // // New method to get all orders as a list
+  // List<SelectedOrder> getAllOrders() {
+  //   return data;
+  // }

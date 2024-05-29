@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:intl/intl.dart';
@@ -21,12 +23,7 @@ class SelectedOrder with ChangeNotifier {
   double amountReceived = 0;
   double amountChanged = 0;
   double roundingAdjustment = 0;
-  // int quantity;
-  // String remarks;
-  // Map<String, int> itemCounts;
-  // Map<String, int> itemQuantities;
-  // int totalItems = 0;
-  // int totalQuantity = 0;
+  int totalQuantity = 0;
 
   // constructor must have the same name as its class.
   SelectedOrder({
@@ -51,7 +48,7 @@ class SelectedOrder with ChangeNotifier {
     // required this.itemCounts,
     // required this.itemQuantities,
     // this.totalItems = 0,
-    // this.totalQuantity = 0,
+    this.totalQuantity = 0,
   }) : categories = {
           for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
         };
@@ -69,6 +66,7 @@ class SelectedOrder with ChangeNotifier {
         '\tsubTotal: $subTotal,\n'
         '\tserviceCharge: $serviceCharge,\n'
         '\ttotalPrice: $totalPrice,\n'
+        '\ttotalQuantity: $totalQuantity,\n'
         '\tpaymentMethod: $paymentMethod,\n'
         '\tshowEditBtn: $showEditBtn,\n'
         '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n' // Updated
@@ -101,7 +99,7 @@ class SelectedOrder with ChangeNotifier {
       // itemCounts: {},
       // itemQuantities: {},
       // totalItems: 0,
-      // totalQuantity: 0,
+      totalQuantity: 0,
     );
   }
 
@@ -123,14 +121,14 @@ class SelectedOrder with ChangeNotifier {
       amountReceived: amountReceived,
       amountChanged: amountChanged,
       roundingAdjustment: roundingAdjustment,
+      totalQuantity: totalQuantity,
+    );
+  }
       // quantity: quantity,
       // remarks: remarks,
       // itemCounts: itemCounts,
       // itemQuantities: itemQuantities,
       // totalItems: totalItems,
-      // totalQuantity: totalQuantity,
-    );
-  }
 
   void addItem(Item item) {
     // If the item.selection is true, change the name and price of the item
@@ -189,7 +187,6 @@ class SelectedOrder with ChangeNotifier {
       }
     }
     calculateItemsAndQuantities();
-    // print('Added Item: ${item}');
   }
 
   // solely for item in the orderDetails which has selection is true
@@ -293,6 +290,9 @@ class SelectedOrder with ChangeNotifier {
       categories[category] = {'itemCount': 0, 'itemQuantity': 0};
     }
 
+    // Reset totalQuantity
+    totalQuantity = 0;
+
     // Iterate over each item in the items list
     for (var item in items) {
       // Check if the item's category exists in the categories map
@@ -300,15 +300,19 @@ class SelectedOrder with ChangeNotifier {
         categories[item.category]?['itemCount'] = (categories[item.category]?['itemCount'] ?? 0) + 1;
         categories[item.category]?['itemQuantity'] = (categories[item.category]?['itemQuantity'] ?? 0) + (item.quantity);
 
+        // Add the item's quantity to the totalQuantity
+        totalQuantity += item.quantity;
+      }
+    }
+
+    log('Total Quantity: $totalQuantity');
+  }
+}
+
         // Print the itemCount and itemQuantity for the category
         // print('Category: ${item.category}');
         // print('itemCount: ${categories[item.category]?['itemCount']}');
         // print('itemQuantity: ${categories[item.category]?['itemQuantity']}');
-      }
-    }
-  }
-}
-
 
   // Add the print statements here
   // print('Existing item remarks: ${i.itemRemarks}');
