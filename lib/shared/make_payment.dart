@@ -11,8 +11,9 @@ class MakePaymentPage extends StatefulWidget {
   final Orders orders;
   final List<Map<String, dynamic>> tables;
   final int selectedTableIndex;
+  final void Function(int index, String orderNumber, bool isOccupied) updateTables;
 
-  const MakePaymentPage({super.key, required this.selectedOrder, required this.updateOrderStatus, required this.orders, required this.tables, required this.selectedTableIndex});
+  const MakePaymentPage({super.key, required this.selectedOrder, required this.updateOrderStatus, required this.orders, required this.tables, required this.selectedTableIndex, required this.updateTables });
 
   @override
   MakePaymentPageState createState() => MakePaymentPageState();
@@ -782,8 +783,10 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   widget.selectedOrder.status = 'Paid';
                                                                   widget.updateOrderStatus!();
                                                                   widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
-                                                                  widget.tables[widget.selectedTableIndex]['orderNumber'] = '';
+                                                                  var emptyOrderNumber = '';
+                                                                  widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
                                                                   widget.tables[widget.selectedTableIndex]['occupied'] = false;
+                                                                  widget.updateTables(widget.selectedTableIndex, emptyOrderNumber, false);
                                                                   // log('${widget.tables}');
                                                                   // log('${widget.selectedOrder}');
                                                                   // log('${widget.orders}');

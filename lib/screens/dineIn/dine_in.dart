@@ -57,6 +57,33 @@ class _DineInPageState extends State<DineInPage> {
     return orderNumber;
   }
 
+  void printTables() {
+    // Get the 'tables' box
+    var tablesBox = Hive.box('tables');
+
+    // Get the tables list from the box
+    List<Map<String, dynamic>> tables = tablesBox.get('tables');
+
+    // Print the tables list to the console
+    log('Tables: $tables');
+  }
+
+  void updateTables(int index, String orderNumber, bool isOccupied) async {
+    if (Hive.isBoxOpen('tables')) {
+      // Get the 'tables' box
+      var tablesBox = Hive.box('tables');
+
+      // Get the tables list from the box
+      List<Map<String, dynamic>> tables = tablesBox.get('tables');
+      tables[index]['orderNumber'] = orderNumber;
+      tables[index]['occupied'] = isOccupied;
+
+      // Write the updated tables list back to the box
+      tablesBox.put('tables', tables);
+      printTables();
+    }
+  }
+
   int pressedButtonIndex = -1;
   // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
@@ -68,10 +95,12 @@ class _DineInPageState extends State<DineInPage> {
       if (index != -1 && index < tables.length) {
         // If the table is not occupied, generate a new orderNumber
         if (!tables[index]['occupied']) {
+          var isOccupied = true;
           handlefreezeMenu();
           orderNumber = generateID(tableName);
           tables[index]['orderNumber'] = orderNumber;
-          tables[index]['occupied'] = true;
+          tables[index]['occupied'] = isOccupied;
+          updateTables(index, orderNumber, isOccupied);
 
           // Generate a new instance of selectedOrder first, and then only assign it's fields and details to the selectedOrder
           selectedOrder = selectedOrder.newInstance(categories);
@@ -154,8 +183,10 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void resetSelectedTable() {
+    var resetOrderNumber = "";
     tables[selectedTableIndex]['occupied'] = false;
-    tables[selectedTableIndex]['orderNumber'] = "";
+    tables[selectedTableIndex]['orderNumber'] = resetOrderNumber;
+    updateTables(selectedTableIndex, resetOrderNumber, false);
   }
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
@@ -258,7 +289,7 @@ class _DineInPageState extends State<DineInPage> {
     if (Hive.isBoxOpen('orders')) {
       var ordersBox = Hive.box('orders');
       ordersBox.put('orders', widget.orders);
-      printOrders();
+      // printOrders();
     }
 
     // Wait for the next frame so that setState has a chance to rebuild the widget
@@ -297,6 +328,7 @@ class _DineInPageState extends State<DineInPage> {
           orders: widget.orders,
           tables: tables,
           selectedTableIndex: selectedTableIndex,
+          updateTables: updateTables,
         ),
       ),
     );
