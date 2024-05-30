@@ -240,9 +240,11 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void printOrders() async {
-    var ordersBox = await Hive.openBox('orders');
-    var orders = ordersBox.get('orders');
-    log('Orders: $orders');
+    if (Hive.isBoxOpen('orders')) {
+      var ordersBox = Hive.box('orders');
+      var orders = ordersBox.get('orders');
+      log('Orders: $orders');
+    }
   }
 
   void handlePlaceOrderBtn() async {
@@ -253,9 +255,12 @@ class _DineInPageState extends State<DineInPage> {
       widget.orders.addOrder(selectedOrder.copyWith(categories));
     });
     // Save the updated orders object to Hive
-    var ordersBox = await Hive.openBox('orders');
-    ordersBox.put('orders', widget.orders);
-    printOrders();
+    if (Hive.isBoxOpen('orders')) {
+      var ordersBox = Hive.box('orders');
+      ordersBox.put('orders', widget.orders);
+      printOrders();
+    }
+
     // Wait for the next frame so that setState has a chance to rebuild the widget
     await Future.delayed(Duration.zero);
 
@@ -512,7 +517,33 @@ class _DineInPageState extends State<DineInPage> {
                             );
                           },
                         ),
-                      )
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.redAccent,
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () async {
+                          var ordersBox = Hive.box('orders');
+                          await ordersBox.clear();
+                          log('All data in orders box has been cleared.');
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Clear',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                            ),
+                            SizedBox(width: 10),
+                            Icon(Icons.close, size: 22),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -542,6 +573,13 @@ class _DineInPageState extends State<DineInPage> {
     );
   }
 }
+
+// close it when you seldom use it, in our case, we need it because of consistently write and read. 
+// @override
+// void dispose() {
+//   Hive.box('orders').close();
+//   super.dispose();
+// }
 
 // void prettyPrintTable() {
 // print('Selected Table Index: $selectedTableIndex');

@@ -115,7 +115,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     super.initState();
     originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
-    log('initState called, adjustedBill is now $adjustedBill');
+    // log('initState called, adjustedBill is now $adjustedBill');
   }
 
   @override
@@ -784,9 +784,9 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
                                                                   widget.tables[widget.selectedTableIndex]['orderNumber'] = '';
                                                                   widget.tables[widget.selectedTableIndex]['occupied'] = false;
-                                                                  log('${widget.tables}');
-                                                                  log('${widget.selectedOrder}');
-                                                                  log('${widget.orders}');
+                                                                  // log('${widget.tables}');
+                                                                  // log('${widget.selectedOrder}');
+                                                                  // log('${widget.orders}');
                                                                 });
                                                                 Navigator.of(context).pop();
                                                                 Navigator.of(context).pop();

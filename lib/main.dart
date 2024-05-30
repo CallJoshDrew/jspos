@@ -13,6 +13,7 @@ void main() async {
   Hive.registerAdapter(OrdersAdapter()); // register the OrdersAdapter: Orders must be the same name class and file name.
   Hive.registerAdapter(SelectedOrderAdapter()); 
   Hive.registerAdapter(ItemAdapter()); 
+  Hive.openBox('orders');
   runApp(const ProviderScope(child: JPOSApp()));
 }
 
