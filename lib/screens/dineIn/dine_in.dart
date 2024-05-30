@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:jspos/data/tables_data.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -19,6 +18,20 @@ class DineInPage extends StatefulWidget {
 }
 
 class _DineInPageState extends State<DineInPage> {
+  List<Map<String, dynamic>> tables = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadTables();
+    handleMethod = defaultMethod;
+  }
+
+  void loadTables() async {
+    var tablesBox = await Hive.openBox('tables');
+    tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
+    setState(() {}); // Call setState to trigger a rebuild of the widget
+  }
   bool showMenu = false;
   int orderCounter = 1;
   late int selectedTableIndex;
@@ -61,26 +74,28 @@ class _DineInPageState extends State<DineInPage> {
     // Get the 'tables' box
     var tablesBox = Hive.box('tables');
 
-    // Get the tables list from the box
-    List<Map<String, dynamic>> tables = tablesBox.get('tables');
+    List<Map<String, dynamic>> tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
 
     // Print the tables list to the console
     log('Tables: $tables');
   }
 
   void updateTables(int index, String orderNumber, bool isOccupied) async {
-    if (Hive.isBoxOpen('tables')) {
-      // Get the 'tables' box
-      var tablesBox = Hive.box('tables');
-
-      // Get the tables list from the box
-      List<Map<String, dynamic>> tables = tablesBox.get('tables');
-      tables[index]['orderNumber'] = orderNumber;
-      tables[index]['occupied'] = isOccupied;
-
-      // Write the updated tables list back to the box
-      tablesBox.put('tables', tables);
-      printTables();
+    try {
+      if (Hive.isBoxOpen('tables')) {
+        // Get the 'tables' box
+        var tablesBox = Hive.box('tables');
+        // Get the tables list from the box and cast it to the correct type
+        List<Map<String, dynamic>> tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
+        tables[index]['orderNumber'] = orderNumber;
+        tables[index]['occupied'] = isOccupied;
+        // Write the updated tables list back to the box
+        tablesBox.put('tables', tables);
+        printTables();
+      }
+    } catch (e) {
+      log('DINEIN Page: Failed to update tables in Hive: $e');
+      // Handle the exception as appropriate for your app
     }
   }
 
@@ -107,15 +122,11 @@ class _DineInPageState extends State<DineInPage> {
           selectedOrder.orderNumber = orderNumber;
           selectedOrder.tableName = tableName;
           selectedOrder.updateStatus("Ordering");
-
           tempCartItems = [];
           // below these are important updates for the UI, have to manually update it to cause rerender in orderDetails page.
           orderStatus = "Empty Cart";
           orderStatusColor = Colors.grey[700]!;
           orderStatusIcon = Icons.shopping_cart;
-          // Print orderNumber and selectedOrder details to the console
-          // print('New orderNumber: $orderNumber');
-          // print('selectedOrder details: $selectedOrder');
         } else {
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
@@ -131,9 +142,26 @@ class _DineInPageState extends State<DineInPage> {
         }
       }
     });
-
-    // Call updateOrderStatus() after the state has been updated
+    saveSelectedOrderToHive();
     updateOrderStatus();
+  }
+
+  void printSelectedOrders() {
+    var selectedOrderBox = Hive.box('selectedOrder');
+    var selectedOrder = selectedOrderBox.get('selectedOrder');
+    log('selectedOrder: $selectedOrder');
+  }
+
+  void saveSelectedOrderToHive() async {
+    try {
+      if (Hive.isBoxOpen('tables')) {
+        var selectedOrderBox = await Hive.openBox('selectedOrder');
+        await selectedOrderBox.put('selectedOrder', selectedOrder);
+        // printSelectedOrders();
+      }
+    } catch (e) {
+      log('Failed to save selectedOrder to Hive: $e');
+    }
   }
 
   void onItemAdded(Item item) {
@@ -176,7 +204,7 @@ class _DineInPageState extends State<DineInPage> {
     selectedOrder.addItem(item);
     selectedOrder.updateTotalCost(0);
     if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
-      orderStatusColor = Colors.green[800]!;
+      orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
       handleMethod = handleUpdateOrderBtn;
     }
     updateOrderStatus();
@@ -230,15 +258,17 @@ class _DineInPageState extends State<DineInPage> {
         updateOrderStatus();
         handlefreezeMenu();
       });
+      saveSelectedOrderToHive();
     } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
       _showConfirmationDialog();
     } else if (selectedOrder.status == "Placed Order" && areItemListsEqual(tempCartItems, selectedOrder.items)) {
       handlefreezeMenu();
       selectedOrder.updateShowEditBtn(true);
       orderStatus = "Make Payment";
-      orderStatusColor = Colors.green[800]!;
+      orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
       orderStatusIcon = Icons.monetization_on;
       handleMethod = handlePaymentBtn;
+      saveSelectedOrderToHive();
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       _showConfirmationDialog();
     }
@@ -346,11 +376,6 @@ class _DineInPageState extends State<DineInPage> {
     // when Dart creates a new object, it first initializes all the instance variables before it runs the constructor. Therefore, instance methods aren’t available yet.
     // handleMethod is initialized in the initState method, which is called exactly once and then never again for each State object. It’s the first method called after a State object is created, and it’s called before the build method
   }
-  @override
-  void initState() {
-    super.initState();
-    handleMethod = defaultMethod;
-  }
 
   Future<void> _showConfirmationDialog() async {
     return showDialog<void>(
@@ -433,21 +458,21 @@ class _DineInPageState extends State<DineInPage> {
         orderStatusIcon = Icons.shopping_cart;
         // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
         //   orderStatus = "Update Order & Print";
-        //   orderStatusColor = isSameItems ? Colors.grey[500]! : Colors.green[800]!;
+        //   orderStatusColor = isSameItems ? Colors.grey[500]! : const Color.fromRGBO(46, 125, 50, 1);
         //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
       } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
         orderStatus = "Place Order & Print";
-        orderStatusColor = Colors.green[800]!;
+        orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
         handleMethod = handlePlaceOrderBtn;
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false) {
         orderStatus = "Update Orders & Print";
-        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? Colors.grey[700]! : Colors.green[800]!;
+        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? Colors.grey[700]! : const Color.fromRGBO(46, 125, 50, 1);
         handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items) ? defaultMethod : handleUpdateOrderBtn; // Disabled
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
         orderStatus = "Make Payment";
-        orderStatusColor = Colors.green[800]!;
+        orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
         handleMethod = handlePaymentBtn;
         orderStatusIcon = Icons.monetization_on;
       } else if (selectedOrder.status == "Paid") {
