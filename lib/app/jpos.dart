@@ -8,7 +8,8 @@ import 'package:jspos/screens/dineIn/dine_in.dart';
 // import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
-  const JPOSApp({super.key});
+  final Orders orders;
+  const JPOSApp({super.key, required this.orders});
 
   // This widget is the root of your application.
   @override
@@ -19,13 +20,14 @@ class JPOSApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MainPage(),
+      home: MainPage(orders: orders),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+   final Orders orders;
+  const MainPage({super.key, required this.orders});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -34,7 +36,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String pageActive = "Dine In";
   bool isSideMenuEnabled = true;
-  Orders orders = Orders(data: []);
 
   void freezeSideMenu() {
     setState(() {
@@ -45,11 +46,11 @@ class _MainPageState extends State<MainPage> {
   _pageView() {
     switch (pageActive) {
       case 'Dine In':
-        return DineInPage(freezeSideMenu: freezeSideMenu, orders: orders);
+        return DineInPage(freezeSideMenu: freezeSideMenu, orders: widget.orders);
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
-        return HistoryPage( orders: orders);
+        return HistoryPage( orders: widget.orders);
       // case 'Reports':
       //   return const ReportsPage();
       // case 'Settings':

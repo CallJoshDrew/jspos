@@ -28,10 +28,17 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void loadTables() async {
-    var tablesBox = await Hive.openBox('tables');
-    tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
+    var tablesBox = Hive.box('tables');
+    var data = tablesBox.get('tables');
+    if (data != null) {
+      tables = (data as List).map((item) => Map<String, dynamic>.from(item)).toList();
+    } else {
+      // Handle the case where 'tables' is not in the box
+      // For example, you might want to initialize 'tables' with default values
+    }
     setState(() {}); // Call setState to trigger a rebuild of the widget
   }
+
   bool showMenu = false;
   int orderCounter = 1;
   late int selectedTableIndex;
@@ -91,7 +98,7 @@ class _DineInPageState extends State<DineInPage> {
         tables[index]['occupied'] = isOccupied;
         // Write the updated tables list back to the box
         tablesBox.put('tables', tables);
-        printTables();
+        // printTables();
       }
     } catch (e) {
       log('DINEIN Page: Failed to update tables in Hive: $e');
@@ -125,7 +132,7 @@ class _DineInPageState extends State<DineInPage> {
           tempCartItems = [];
           // below these are important updates for the UI, have to manually update it to cause rerender in orderDetails page.
           orderStatus = "Empty Cart";
-          orderStatusColor = Colors.grey[700]!;
+          orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
           orderStatusIcon = Icons.shopping_cart;
         } else {
           // If the table is occupied, use the existing orderNumber
@@ -142,6 +149,7 @@ class _DineInPageState extends State<DineInPage> {
         }
       }
     });
+     printTables();
     saveSelectedOrderToHive();
     updateOrderStatus();
   }
@@ -160,7 +168,7 @@ class _DineInPageState extends State<DineInPage> {
         // printSelectedOrders();
       }
     } catch (e) {
-      log('Failed to save selectedOrder to Hive: $e');
+      log('DINEIN Page: Failed to save selectedOrder to Hive: $e');
     }
   }
 
@@ -319,21 +327,12 @@ class _DineInPageState extends State<DineInPage> {
     if (Hive.isBoxOpen('orders')) {
       var ordersBox = Hive.box('orders');
       ordersBox.put('orders', widget.orders);
-      // printOrders();
+      printOrders();
     }
-
     // Wait for the next frame so that setState has a chance to rebuild the widget
     await Future.delayed(Duration.zero);
-
-    // Now log the state
-    // log('${widget.orders}');
     updateOrderStatus();
     handlefreezeMenu();
-    // log('-------------------------');
-    // log('Handle Place Order Btn');
-    // log('$selectedOrder}');
-    // log('${widget.orders}');
-    // log('-------------------------');
   }
 
   void handleUpdateOrderBtn() {
@@ -342,11 +341,16 @@ class _DineInPageState extends State<DineInPage> {
       tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
       // Add a new SelectedOrder object to the orders list
       widget.orders.addOrder(selectedOrder.copyWith(categories));
+      // Save the updated orders object to Hive
+    if (Hive.isBoxOpen('orders')) {
+      var ordersBox = Hive.box('orders');
+      ordersBox.put('orders', widget.orders);
+      printOrders();
+    }
       updateOrderStatus();
       handlefreezeMenu();
     });
   }
-  // print('Selected Order After Payment: ${selectedOrder}');
 
   void handlePaymentBtn() {
     Navigator.push(
@@ -446,14 +450,14 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   String orderStatus = "Empty Cart";
-  Color orderStatusColor = Colors.grey[700]!;
+  Color orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
   IconData orderStatusIcon = Icons.shopping_cart;
 
   void updateOrderStatus() {
     setState(() {
       if (selectedOrder.status == "Start Your Order") {
         orderStatus = "Empty Cart";
-        orderStatusColor = Colors.grey[700]!;
+        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
         handleMethod = defaultMethod; // Disabled
         orderStatusIcon = Icons.shopping_cart;
         // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
@@ -467,7 +471,7 @@ class _DineInPageState extends State<DineInPage> {
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false) {
         orderStatus = "Update Orders & Print";
-        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? Colors.grey[700]! : const Color.fromRGBO(46, 125, 50, 1);
+        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? const Color.fromRGBO(97, 97, 97, 1) : const Color.fromRGBO(46, 125, 50, 1);
         handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items) ? defaultMethod : handleUpdateOrderBtn; // Disabled
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
@@ -477,12 +481,12 @@ class _DineInPageState extends State<DineInPage> {
         orderStatusIcon = Icons.monetization_on;
       } else if (selectedOrder.status == "Paid") {
         orderStatus = "COMPLETED (PAID)";
-        orderStatusColor = Colors.grey[700]!;
-        // handleMethod = handleCheckOutBtn;
+        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+        handleMethod = defaultMethod;
         orderStatusIcon = Icons.check_circle;
       } else if (selectedOrder.status == "COMPLETED (PAID)") {
         orderStatus = "Paid with DuitNow";
-        orderStatusColor = Colors.grey[700]!;
+        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
         handleMethod = defaultMethod; // Disabled
       } else if (selectedOrder.status == "Cancelled") {
         orderStatus = "Cancelled";
@@ -595,11 +599,11 @@ class _DineInPageState extends State<DineInPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Clear',
+                              'Clear Local Storage Data',
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                             SizedBox(width: 10),
-                            Icon(Icons.close, size: 22),
+                            Icon(Icons.cancel, size: 20),
                           ],
                         ),
                       ),

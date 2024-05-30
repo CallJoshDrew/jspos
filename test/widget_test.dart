@@ -8,13 +8,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jspos/app/jpos.dart';
+import 'package:jspos/models/orders.dart';
 
 // import 'package:jspos/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Create a mock Orders object
+    final mockOrders = Orders(data: []);
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const JPOSApp());
+    await tester.pumpWidget( JPOSApp(orders: mockOrders));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
