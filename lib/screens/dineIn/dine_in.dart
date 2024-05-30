@@ -586,7 +586,9 @@ class _DineInPageState extends State<DineInPage> {
                         ),
                         onPressed: () async {
                           var ordersBox = Hive.box('orders');
+                          var tablesBox = Hive.box('tables');
                           await ordersBox.clear();
+                          await tablesBox.clear();
                           log('All data in orders box has been cleared.');
                         },
                         child: const Row(
