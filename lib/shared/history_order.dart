@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:developer'; // for log function
 import 'package:flutter/material.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -90,7 +90,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
     super.initState();
     originalBill = widget.historyOrder.totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
-    log('initState called, adjustedBill is now $adjustedBill');
+    // log('initState called, adjustedBill is now $adjustedBill');
   }
 
   @override

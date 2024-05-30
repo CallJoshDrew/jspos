@@ -1,21 +1,44 @@
+import 'package:hive/hive.dart';
+
+part 'item.g.dart';  // Name of the generated TypeAdapter file
+
+@HiveType(typeId: 2)
 class Item {
+  @HiveField(0)
   String id;
+  @HiveField(1)
   String name;
+  @HiveField(2)
   final String originalName;
+  @HiveField(3)
   final String category;
+  @HiveField(4)
   int quantity;
+  @HiveField(5)
   double price;
+  @HiveField(6)
   final double originalPrice;
+  @HiveField(7)
   final String image;
+  @HiveField(8)
   final bool selection;
+  @HiveField(9)
   List<Map<String, dynamic>> choices;
+  @HiveField(10)
   List<Map<String, dynamic>> types;
+  @HiveField(11)
   List<Map<String, dynamic>> meatPortion;
+  @HiveField(12)
   List<Map<String, dynamic>> meePortion;
+  @HiveField(13)
   Map<String, dynamic>? selectedChoice;
+  @HiveField(14)
   Map<String, dynamic>? selectedType;
+  @HiveField(15)
   Map<String, dynamic>? selectedMeatPortion;
+  @HiveField(16)
   Map<String, dynamic>? selectedMeePortion;
+  @HiveField(17)
   Map<String, dynamic>? itemRemarks;
 
   Item({
@@ -36,9 +59,8 @@ class Item {
     this.selectedMeePortion,
     this.itemRemarks,
   })  : originalPrice = price,
-        originalName = name; // Set originalPrice equal to price here
+        originalName = name;
 
-  // make sure you update this so that it print out all the fields
   @override
   String toString() {
     return 'Item: {\n'
@@ -85,6 +107,7 @@ class Item {
     );
   }
 }
+
 
 
 // {

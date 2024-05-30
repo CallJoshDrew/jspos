@@ -1,31 +1,49 @@
-import 'dart:developer';
-
+import 'dart:developer'; // for log function
 import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
+import 'package:hive/hive.dart';
 
+part 'selected_order.g.dart';
+
+@HiveType(typeId: 1)
 class SelectedOrder with ChangeNotifier {
+  @HiveField(0)
   String orderNumber;
+  @HiveField(1)
   String tableName;
+  @HiveField(2)
   String orderType;
+  @HiveField(3)
   String? orderDate;
+  @HiveField(4)
   String? orderTime;
+  @HiveField(5)
   String status;
+  @HiveField(6)
   List<Item> items;
+  @HiveField(7)
   double subTotal;
+  @HiveField(8)
   double serviceCharge;
+  @HiveField(9)
   double totalPrice;
+  @HiveField(10)
   String paymentMethod;
+  @HiveField(11)
   bool showEditBtn;
+  @HiveField(12)
   Map<String, Map<String, int>> categories;
+  @HiveField(13)
   double amountReceived = 0;
+  @HiveField(14)
   double amountChanged = 0;
+  @HiveField(15)
   double roundingAdjustment = 0;
+  @HiveField(16)
   int totalQuantity = 0;
-
-  // constructor must have the same name as its class.
   SelectedOrder({
     required this.orderNumber,
     required this.tableName,
@@ -43,11 +61,6 @@ class SelectedOrder with ChangeNotifier {
     this.amountReceived = 0,
     this.amountChanged = 0,
     this.roundingAdjustment = 0,
-    // required this.quantity,
-    // this.remarks = "No Remarks",
-    // required this.itemCounts,
-    // required this.itemQuantities,
-    // this.totalItems = 0,
     this.totalQuantity = 0,
   }) : categories = {
           for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
@@ -62,14 +75,14 @@ class SelectedOrder with ChangeNotifier {
         '\torderTime: $orderTime,\n'
         '\torderDate: $orderDate,\n'
         '\tstatus: $status,\n'
-        // '\titems: [\n\t\t${items.join(',\n\t\t')}\n\t],\n' // Updated
+        '\titems: [\n\t\t${items.join(',\n\t\t')}\n\t],\n'
         '\tsubTotal: $subTotal,\n'
         '\tserviceCharge: $serviceCharge,\n'
         '\ttotalPrice: $totalPrice,\n'
         '\ttotalQuantity: $totalQuantity,\n'
         '\tpaymentMethod: $paymentMethod,\n'
         '\tshowEditBtn: $showEditBtn,\n'
-        '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n' // Updated
+        '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n'
         '\tamountReceived: $amountReceived,\n'
         '\tamountChanged: $amountChanged,\n'
         '\troundingAdjustment: $roundingAdjustment\n'
@@ -94,11 +107,6 @@ class SelectedOrder with ChangeNotifier {
       amountReceived: 0,
       amountChanged: 0,
       roundingAdjustment: 0,
-      // quantity: 0,
-      // remarks: "No Remarks",
-      // itemCounts: {},
-      // itemQuantities: {},
-      // totalItems: 0,
       totalQuantity: 0,
     );
   }
@@ -124,11 +132,6 @@ class SelectedOrder with ChangeNotifier {
       totalQuantity: totalQuantity,
     );
   }
-      // quantity: quantity,
-      // remarks: remarks,
-      // itemCounts: itemCounts,
-      // itemQuantities: itemQuantities,
-      // totalItems: totalItems,
 
   void addItem(Item item) {
     // If the item.selection is true, change the name and price of the item
@@ -159,7 +162,6 @@ class SelectedOrder with ChangeNotifier {
       var existingItem = items.firstWhereOrNull((i) {
         // Use MapEquality().equals for deep equality check
         bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
-
         return i.name == item.name &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
             i.selectedType?['name'] == item.selectedType?['name'] &&
@@ -167,7 +169,6 @@ class SelectedOrder with ChangeNotifier {
             i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
             areRemarksEqual; // Use the result of the deep equality check
       });
-
       if (existingItem != null) {
         // If an item with the same properties is found, increase its quantity
         existingItem.quantity += 1;
@@ -193,7 +194,6 @@ class SelectedOrder with ChangeNotifier {
   void updateItem(Item item) {
     // Find the index of the item with the same id
     int index = items.indexWhere((i) => i.id == item.id);
-
     // If the item is found, update it
     if (index != -1) {
       items[index] = item;
@@ -260,62 +260,67 @@ class SelectedOrder with ChangeNotifier {
     updateOrderDateTime();
   }
 
-  // void makePayment() {
-  //   updateSubTotal();
-  //   updateServiceCharge(0);
-  //   updateTotalPrice();
-  //   updateStatus('Paid');
-  // }
-
-  // void makePayment(double amountReceived, double amountChanged, double roundingAdjustment, String selectedPaymentMethod) {
-  //   updateSubTotal();
-  //   updateServiceCharge(0);
-  //   totalPrice = amountReceived - amountChanged;
-  //   amountReceived = amountReceived;
-  //   amountChanged = amountChanged;
-  //   roundingAdjustment = roundingAdjustment;
-  //   paymentMethod = selectedPaymentMethod;
-  //   updateStatus("Paid");
-  //   print('totalPrice: $totalPrice');
-  //   print('amountReceived: $amountReceived');
-  //   print('amountChanged: $amountChanged');
-  //   print('roundingAdjustment: $roundingAdjustment');
-  //   print('status: $status');
-  //   print('paymentMethod: $paymentMethod');
-  // }
-
   void calculateItemsAndQuantities() {
     // Reset the counts and quantities for each category
     for (var category in categories.keys) {
       categories[category] = {'itemCount': 0, 'itemQuantity': 0};
     }
-
     // Reset totalQuantity
     totalQuantity = 0;
-
-    // Iterate over each item in the items list
     for (var item in items) {
       // Check if the item's category exists in the categories map
       if (categories.containsKey(item.category)) {
         categories[item.category]?['itemCount'] = (categories[item.category]?['itemCount'] ?? 0) + 1;
         categories[item.category]?['itemQuantity'] = (categories[item.category]?['itemQuantity'] ?? 0) + (item.quantity);
-
-        // Add the item's quantity to the totalQuantity
         totalQuantity += item.quantity;
       }
     }
-
-    log('Total Quantity: $totalQuantity');
+    // log('Total Quantity: $totalQuantity');
   }
 }
+// quantity: 0,
+// remarks: "No Remarks",
+// itemCounts: {},
+// itemQuantities: {},
+// totalItems: 0,
 
-        // Print the itemCount and itemQuantity for the category
-        // print('Category: ${item.category}');
-        // print('itemCount: ${categories[item.category]?['itemCount']}');
-        // print('itemQuantity: ${categories[item.category]?['itemQuantity']}');
+// quantity: quantity,
+// remarks: remarks,
+// itemCounts: itemCounts,
+// itemQuantities: itemQuantities,
+// totalItems: totalItems,
 
-  // Add the print statements here
-  // print('Existing item remarks: ${i.itemRemarks}');
-  // print('New item remarks: ${item.itemRemarks}');
-  // print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
-  // print('New item remarks type: ${item.itemRemarks.runtimeType}');
+// void makePayment() {
+//   updateSubTotal();
+//   updateServiceCharge(0);
+//   updateTotalPrice();
+//   updateStatus('Paid');
+// }
+
+// void makePayment(double amountReceived, double amountChanged, double roundingAdjustment, String selectedPaymentMethod) {
+//   updateSubTotal();
+//   updateServiceCharge(0);
+//   totalPrice = amountReceived - amountChanged;
+//   amountReceived = amountReceived;
+//   amountChanged = amountChanged;
+//   roundingAdjustment = roundingAdjustment;
+//   paymentMethod = selectedPaymentMethod;
+//   updateStatus("Paid");
+//   print('totalPrice: $totalPrice');
+//   print('amountReceived: $amountReceived');
+//   print('amountChanged: $amountChanged');
+//   print('roundingAdjustment: $roundingAdjustment');
+//   print('status: $status');
+//   print('paymentMethod: $paymentMethod');
+// }
+
+// Print the itemCount and itemQuantity for the category
+// print('Category: ${item.category}');
+// print('itemCount: ${categories[item.category]?['itemCount']}');
+// print('itemQuantity: ${categories[item.category]?['itemQuantity']}');
+
+// Add the print statements here
+// print('Existing item remarks: ${i.itemRemarks}');
+// print('New item remarks: ${item.itemRemarks}');
+// print('Existing item remarks type: ${i.itemRemarks.runtimeType}');
+// print('New item remarks type: ${item.itemRemarks.runtimeType}');

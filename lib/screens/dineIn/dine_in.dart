@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/data/tables_data.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
@@ -40,13 +41,13 @@ class _DineInPageState extends State<DineInPage> {
     amountReceived: 0,
     amountChanged: 0,
     roundingAdjustment: 0,
-    // quantity: 0,
-    // remarks: "No Remarks",
-    // itemCounts: {},
-    // itemQuantities: {},
-    // totalItems: 0,
     totalQuantity: 0,
   );
+  // quantity: 0,
+  // remarks: "No Remarks",
+  // itemCounts: {},
+  // itemQuantities: {},
+  // totalItems: 0,
 
   String generateID(String tableName) {
     final paddedCounter = orderCounter.toString().padLeft(4, '0');
@@ -238,28 +239,36 @@ class _DineInPageState extends State<DineInPage> {
     showMenu = !showMenu;
   }
 
+  void printOrders() async {
+    var ordersBox = await Hive.openBox('orders');
+    var orders = ordersBox.get('orders');
+    log('Orders: $orders');
+  }
+
   void handlePlaceOrderBtn() async {
-  setState(() {
-    selectedOrder.placeOrder();
-    tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-    // Add a new SelectedOrder object to the orders list
-    widget.orders.addOrder(selectedOrder.copyWith(categories));
-  });
+    setState(() {
+      selectedOrder.placeOrder();
+      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+      // Add a new SelectedOrder object to the orders list
+      widget.orders.addOrder(selectedOrder.copyWith(categories));
+    });
+    // Save the updated orders object to Hive
+    var ordersBox = await Hive.openBox('orders');
+    ordersBox.put('orders', widget.orders);
+    printOrders();
+    // Wait for the next frame so that setState has a chance to rebuild the widget
+    await Future.delayed(Duration.zero);
 
-  // Wait for the next frame so that setState has a chance to rebuild the widget
-  await Future.delayed(Duration.zero);
-
-  // Now log the state
-  // log('${widget.orders}');
-  updateOrderStatus();
-  handlefreezeMenu();
-  log('-------------------------');
-  log('Handle Place Order Btn');
-  log('$selectedOrder}');
-  log('${widget.orders}');
-  log('-------------------------');
-}
-
+    // Now log the state
+    // log('${widget.orders}');
+    updateOrderStatus();
+    handlefreezeMenu();
+    // log('-------------------------');
+    // log('Handle Place Order Btn');
+    // log('$selectedOrder}');
+    // log('${widget.orders}');
+    // log('-------------------------');
+  }
 
   void handleUpdateOrderBtn() {
     setState(() {
