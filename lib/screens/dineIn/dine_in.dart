@@ -8,6 +8,8 @@ import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
 import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
+import 'package:jspos/data/tables_data.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
@@ -92,13 +94,18 @@ class _DineInPageState extends State<DineInPage> {
       if (Hive.isBoxOpen('tables')) {
         // Get the 'tables' box
         var tablesBox = Hive.box('tables');
-        // Get the tables list from the box and cast it to the correct type
-        List<Map<String, dynamic>> tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
-        tables[index]['orderNumber'] = orderNumber;
-        tables[index]['occupied'] = isOccupied;
-        // Write the updated tables list back to the box
-        tablesBox.put('tables', tables);
-        // printTables();
+        var rawTables = tablesBox.get('tables');
+        if (rawTables != null) {
+          // Get the tables list from the box and cast it to the correct type
+          List<Map<String, dynamic>> tables = (rawTables as List).map((item) => Map<String, dynamic>.from(item)).toList();
+          tables[index]['orderNumber'] = orderNumber;
+          tables[index]['occupied'] = isOccupied;
+          // Write the updated tables list back to the box
+          tablesBox.put('tables', tables);
+          // printTables();
+        } else {
+          log('DINEIN Page: Tables data is null');
+        }
       }
     } catch (e) {
       log('DINEIN Page: Failed to update tables in Hive: $e');
@@ -149,7 +156,7 @@ class _DineInPageState extends State<DineInPage> {
         }
       }
     });
-     printTables();
+    printTables();
     saveSelectedOrderToHive();
     updateOrderStatus();
   }
@@ -223,6 +230,19 @@ class _DineInPageState extends State<DineInPage> {
     tables[selectedTableIndex]['occupied'] = false;
     tables[selectedTableIndex]['orderNumber'] = resetOrderNumber;
     updateTables(selectedTableIndex, resetOrderNumber, false);
+  }
+
+  void resetTables() async {
+    for (var table in defaultTables) {
+      table['occupied'] = false;
+      table['orderNumber'] = '';
+    }
+
+    // Get the 'tables' box
+    var tablesBox = Hive.box('tables');
+
+    // Write the updated defaultTables list back to the box
+    await tablesBox.put('tables', defaultTables);
   }
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
@@ -342,11 +362,11 @@ class _DineInPageState extends State<DineInPage> {
       // Add a new SelectedOrder object to the orders list
       widget.orders.addOrder(selectedOrder.copyWith(categories));
       // Save the updated orders object to Hive
-    if (Hive.isBoxOpen('orders')) {
-      var ordersBox = Hive.box('orders');
-      ordersBox.put('orders', widget.orders);
-      printOrders();
-    }
+      if (Hive.isBoxOpen('orders')) {
+        var ordersBox = Hive.box('orders');
+        ordersBox.put('orders', widget.orders);
+        printOrders();
+      }
       updateOrderStatus();
       handlefreezeMenu();
     });
@@ -498,141 +518,176 @@ class _DineInPageState extends State<DineInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        showMenu == false
-            ? Expanded(
-                flex: 12,
-                child: Container(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                        child: Text("Please Select Table",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            )),
-                      ),
-                      //Table UI
-                      Expanded(
-                        child: GridView.builder(
-                          itemCount: tables.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4, // Adjust the number of items per row
-                            childAspectRatio: 1.8 / 1, // The width will be twice of its height
-                            crossAxisSpacing: 10, // Add horizontal spacing
-                            mainAxisSpacing: 10, // Add vertical spacing
-                          ),
-                          itemBuilder: (context, index) {
-                            return ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  pressedButtonIndex = index;
-                                  _handleSetTables(tables[index]['name'], index);
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
+    return FutureBuilder(
+      future: Future.value( Hive.box('tables').get('tables'), // Fetch data after delay
+      ),
+      // future: Future.delayed(
+      //   const Duration(milliseconds: 1500), // Delay of 1 second
+      //   () => Hive.box('tables').get('tables'), // Fetch data after delay
+      // ),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // SpinningLines, FoldingCube,  DancingSquare
+          return Container();
+          // const SpinKitChasingDots(
+          //   color: Colors.white,
+          //   size: 100.0,
+          // ); // Show a loading spinner while waiting for data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // Show an error message if something goes wrong
+        } else {
+          List<Map<String, dynamic>> tables = (snapshot.data as List).map((item) => Map<String, dynamic>.from(item)).toList();
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              showMenu == false
+                  ? Expanded(
+                      flex: 12,
+                      child: Container(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                              child: Text("Please Select Table",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  )),
+                            ),
+                            //Table UI
+                            Expanded(
+                              child: GridView.builder(
+                                itemCount: tables.length,
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4, // Adjust the number of items per row
+                                  childAspectRatio: 1.8 / 1, // The width will be twice of its height
+                                  crossAxisSpacing: 10, // Add horizontal spacing
+                                  mainAxisSpacing: 10, // Add vertical spacing
                                 ),
-                                elevation: 5, // elevation of the button
+                                itemBuilder: (context, index) {
+                                  return ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        pressedButtonIndex = index;
+                                        _handleSetTables(tables[index]['name'], index);
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.black,
+                                      backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      elevation: 5, // elevation of the button
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Table',
+                                              style: TextStyle(
+                                                  fontSize: pressedButtonIndex == index ? 12 : 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                            ),
+                                            Text(
+                                              tables[index]['name'],
+                                              style: TextStyle(
+                                                  fontSize: pressedButtonIndex == index ? 12 : 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(width: 3),
+                                        if (tables[index]['occupied'])
+                                          Icon(
+                                            Icons.dinner_dining_rounded,
+                                            color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
+                                            size: pressedButtonIndex == index ? 30 : 30,
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
-                              child: Row(
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.redAccent,
+                                padding: const EdgeInsets.symmetric(vertical: 0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: () async {
+                                var ordersBox = Hive.box('orders');
+                                var tablesBox = Hive.box('tables');
+                                await ordersBox.clear();
+                                await tablesBox.clear();
+                                log('All data in orders box has been cleared.');
+
+                                setState(() {
+                                  widget.orders.clearOrders();
+                                  resetTables();
+                                  selectedOrder.resetDefault();
+                                });
+
+                                if (tablesBox.isEmpty) {
+                                  tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
+                                }
+
+                                log('Tables data has been reset to the default values.');
+                                log('tables $tables');
+                              },
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Table',
-                                        style: TextStyle(
-                                            fontSize: pressedButtonIndex == index ? 12 : 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: pressedButtonIndex == index ? Colors.white : Colors.black),
-                                      ),
-                                      Text(
-                                        tables[index]['name'],
-                                        style: TextStyle(
-                                            fontSize: pressedButtonIndex == index ? 12 : 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: pressedButtonIndex == index ? Colors.white : Colors.black),
-                                      ),
-                                    ],
+                                  Text(
+                                    'Clear Local Storage Data',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                                   ),
-                                  const SizedBox(width: 3),
-                                  if (tables[index]['occupied'])
-                                    Icon(
-                                      Icons.dinner_dining_rounded,
-                                      color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                      size: pressedButtonIndex == index ? 30 : 30,
-                                    ),
+                                  SizedBox(width: 10),
+                                  Icon(Icons.cancel, size: 20),
                                 ],
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.redAccent,
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: () async {
-                          var ordersBox = Hive.box('orders');
-                          var tablesBox = Hive.box('tables');
-                          await ordersBox.clear();
-                          await tablesBox.clear();
-                          log('All data in orders box has been cleared.');
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Clear Local Storage Data',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
-                            SizedBox(width: 10),
-                            Icon(Icons.cancel, size: 20),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              )
-            : Expanded(
-                flex: 12,
-                child: MenuPage(
-                  onClick: _handleCloseMenu,
+                    )
+                  : Expanded(
+                      flex: 12,
+                      child: MenuPage(
+                        onClick: _handleCloseMenu,
+                        selectedOrder: selectedOrder,
+                        onItemAdded: onItemAdded,
+                      ),
+                    ),
+              Expanded(
+                flex: 8,
+                child: OrderDetails(
                   selectedOrder: selectedOrder,
+                  orderStatusColor: orderStatusColor,
+                  orderStatusIcon: orderStatusIcon,
+                  orderStatus: orderStatus,
+                  handleMethod: handleMethod,
+                  handlefreezeMenu: handlefreezeMenu,
+                  updateOrderStatus: updateOrderStatus,
                   onItemAdded: onItemAdded,
                 ),
               ),
-        Expanded(
-          flex: 8,
-          child: OrderDetails(
-            selectedOrder: selectedOrder,
-            orderStatusColor: orderStatusColor,
-            orderStatusIcon: orderStatusIcon,
-            orderStatus: orderStatus,
-            handleMethod: handleMethod,
-            handlefreezeMenu: handlefreezeMenu,
-            updateOrderStatus: updateOrderStatus,
-            onItemAdded: onItemAdded,
-          ),
-        ),
-      ],
+            ],
+          );
+        }
+      },
     );
   }
 }

@@ -28,6 +28,9 @@ class Orders {
   SelectedOrder? getOrder(String orderNumber) {
     return data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
   }
+  void clearOrders() {
+    data.clear();
+  }
 }
 
   // // New method to get all orders as a list

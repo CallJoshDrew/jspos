@@ -212,8 +212,16 @@ class SelectedOrder with ChangeNotifier {
     items = [];
     orderTime = "Order Time";
     orderDate = "Order Date";
-    updateTotalCost(0);
-    // calculateItemsAndQuantities();
+    subTotal = 0;
+    serviceCharge = 0;
+    totalPrice = 0;
+    paymentMethod = "Cash";
+    showEditBtn = false;
+    categories = categories;
+    amountReceived = 0;
+    amountChanged = 0;
+    roundingAdjustment = 0;
+    totalQuantity = 0;
   }
 
   void updateSubTotal() {

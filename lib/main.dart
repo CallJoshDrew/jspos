@@ -22,7 +22,7 @@ void main() async {
   var tablesBox = await Hive.openBox('tables');
   
   if (tablesBox.isEmpty) {
-    tablesBox.put('tables', tables.map((item) => Map<String, dynamic>.from(item)).toList());
+    tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
   }
 
   Orders? ordersData = ordersBox.get('orders');
@@ -40,3 +40,4 @@ void main() async {
   // log('Tables: $tablesData');
 
 
+  

@@ -1,4 +1,4 @@
-final List<Map<String, dynamic>> tables = [
+final List<Map<String, dynamic>> defaultTables = [
     { "id": 1, "name": "1", "occupied": false, "orderNumber": ""},
     { "id": 2, "name": "2", "occupied": false, "orderNumber": ""},
     { "id": 3, "name": "3", "occupied": false, "orderNumber": ""},
