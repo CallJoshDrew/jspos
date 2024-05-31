@@ -23,11 +23,9 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
   double amountChanged = 0.0;
   double roundingAdjustment = 0.0;
 
-  
-
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
-
+    log('History Order Page: ${widget.historyOrder}');
     for (var item in items) {
       if (!categorizedItems.containsKey(item.category)) {
         categorizedItems[item.category] = [];
@@ -97,7 +95,6 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-    double fractionAmount = widget.historyOrder.totalPrice - widget.historyOrder.totalPrice.floor();
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
       body: Dialog(
@@ -128,30 +125,46 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                           widget.historyOrder.orderNumber,
                           style: const TextStyle(
                             fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Text(
-                          'Status: Completed',
-                          style: TextStyle(
-                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
                         Row(
                           children: [
+                            const Text(
+                              'Status: Completed',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                             Text(
-                              '${widget.historyOrder.orderTime} -',
+                              ' (Paid with ${widget.historyOrder.paymentMethod})',
                               style: const TextStyle(
-                                fontSize: 14,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              'Transaction Time:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              '${widget.historyOrder.orderDate}',
+                              widget.historyOrder.paymentTime,
                               style: const TextStyle(
-                                fontSize: 14,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
@@ -435,21 +448,19 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                         ),
                                       ],
                                     ),
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
-                                        ? Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                'Rounding Adjustment',
-                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                              ),
-                                              Text(
-                                                '- ${(roundingAdjustment).toStringAsFixed(2)}',
-                                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                              ),
-                                            ],
-                                          )
-                                        : const SizedBox.shrink(),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Rounding Adjustment',
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                        ),
+                                        Text(
+                                          '- ${(roundingAdjustment).toStringAsFixed(2)}',
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                        ),
+                                      ],
+                                    ),
                                     // custom doted line.
                                     Container(
                                       margin: const EdgeInsets.symmetric(vertical: 12),
@@ -480,7 +491,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
+                                          widget.historyOrder.totalPrice.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -515,7 +526,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          _controller.text.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2) : _controller.text,
+                                          widget.historyOrder.amountReceived.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -528,7 +539,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          '- ${amountChanged.toStringAsFixed(2)}',
+                                          '- ${widget.historyOrder.amountChanged.toStringAsFixed(2)}',
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],

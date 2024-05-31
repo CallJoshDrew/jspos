@@ -19,7 +19,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xff1f2029),
+        color: Colors.black,
       ),
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       margin: const EdgeInsets.only(top: 10),
@@ -31,7 +31,6 @@ class _HistoryPageState extends State<HistoryPage> {
           minWidth: 800,
           headingTextStyle: const TextStyle(color: Colors.white, inherit: false),
           headingRowDecoration: const BoxDecoration(color: Colors.green),
-
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
           sortArrowBuilder: (bool sorted, bool ascending) {
@@ -40,7 +39,7 @@ class _HistoryPageState extends State<HistoryPage> {
               return Icon(
                 ascending ? Icons.arrow_circle_up : Icons.arrow_circle_down,
                 color: Colors.white,
-                size:0,
+                size: 0,
               );
             } else {
               return Container(); // No icon when not sorted or not the sorted column
@@ -78,7 +77,7 @@ class _HistoryPageState extends State<HistoryPage> {
               size: ColumnSize.L,
               label: const Center(
                   child: Text(
-                'Order Time',
+                'Transaction',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.white,
@@ -90,29 +89,11 @@ class _HistoryPageState extends State<HistoryPage> {
                   _sortAscending = ascending;
                   if (ascending) {
                     widget.orders.data.sort((a, b) {
-                      if (a.orderTime != null && b.orderTime != null) {
-                        return a.orderTime!.compareTo(b.orderTime!);
-                      }
-                      if (a.orderTime != null) {
-                        return -1; // a is first if b is null
-                      }
-                      if (b.orderTime != null) {
-                        return 1; // b is first if a is null
-                      }
-                      return 0; // if both are null, they're equal
+                      return a.paymentTime.compareTo(b.paymentTime);
                     });
                   } else {
                     widget.orders.data.sort((a, b) {
-                      if (a.orderTime != null && b.orderTime != null) {
-                        return b.orderTime!.compareTo(a.orderTime!);
-                      }
-                      if (a.orderTime != null) {
-                        return 1; // a is last if b is null
-                      }
-                      if (b.orderTime != null) {
-                        return -1; // b is last if a is null
-                      }
-                      return 0; // if both are null, they're equal
+                      return b.paymentTime.compareTo(a.paymentTime);
                     });
                   }
                 });
@@ -223,8 +204,8 @@ class _HistoryPageState extends State<HistoryPage> {
 
             return DataRow(
               color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-                if (states.contains(MaterialState.hovered)) return Colors.red;
-                return Colors.white10;
+                if (states.contains(MaterialState.hovered)) return Colors.white10;
+                return const Color(0xff1f2029);
               }),
               cells: <DataCell>[
                 DataCell(Center(

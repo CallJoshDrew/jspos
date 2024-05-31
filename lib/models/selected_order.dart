@@ -44,6 +44,8 @@ class SelectedOrder with ChangeNotifier {
   double roundingAdjustment = 0;
   @HiveField(16)
   int totalQuantity = 0;
+  @HiveField(17)
+  String paymentTime = "Today";
   SelectedOrder({
     required this.orderNumber,
     required this.tableName,
@@ -62,6 +64,7 @@ class SelectedOrder with ChangeNotifier {
     this.amountChanged = 0,
     this.roundingAdjustment = 0,
     this.totalQuantity = 0,
+    this.paymentTime = "Today",
   }) : categories = {
           for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
         };
@@ -108,6 +111,7 @@ class SelectedOrder with ChangeNotifier {
       amountChanged: 0,
       roundingAdjustment: 0,
       totalQuantity: 0,
+      paymentTime: "Today",
     );
   }
 
@@ -130,6 +134,7 @@ class SelectedOrder with ChangeNotifier {
       amountChanged: amountChanged,
       roundingAdjustment: roundingAdjustment,
       totalQuantity: totalQuantity,
+      paymentTime: paymentTime,
     );
   }
 
@@ -222,6 +227,7 @@ class SelectedOrder with ChangeNotifier {
     amountChanged = 0;
     roundingAdjustment = 0;
     totalQuantity = 0;
+    paymentTime = "Today";
   }
 
   void updateSubTotal() {
@@ -253,6 +259,11 @@ class SelectedOrder with ChangeNotifier {
     DateTime now = DateTime.now();
     orderDate = DateFormat('d MMMM yyyy').format(now); // Outputs: 5 May 2024
     orderTime = DateFormat('h:mm a').format(now); // Outputs: 1:03 AM
+  }
+
+  void addPaymentDateTime() {
+    DateTime now = DateTime.now();
+    paymentTime = DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
   }
 
   void updateShowEditBtn(bool editBtn) {

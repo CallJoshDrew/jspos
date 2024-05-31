@@ -781,6 +781,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   widget.selectedOrder.roundingAdjustment = roundingAdjustment;
                                                                   widget.selectedOrder.paymentMethod = selectedPaymentMethod;
                                                                   widget.selectedOrder.status = 'Paid';
+                                                                  widget.selectedOrder.addPaymentDateTime();
                                                                   widget.updateOrderStatus!();
                                                                   widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
                                                                   var emptyOrderNumber = '';
