@@ -117,18 +117,18 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _logo() {
-    return Column(
+    return const Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(10), //this is the circle size
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: Colors.deepOrangeAccent,
-          ),
-          child: const Icon(Icons.fastfood, color: Colors.white, size: 20),
-        ),
-        const SizedBox(height: 10),
-        const Text(
+        // Container(
+        //   padding: const EdgeInsets.all(10), //this is the circle size
+        //   decoration: BoxDecoration(
+        //     borderRadius: BorderRadius.circular(24),
+        //     color: Colors.deepOrangeAccent,
+        //   ),
+        //   child: const Icon(Icons.fastfood, color: Colors.white, size: 20),
+        // ),
+        SizedBox(height: 10),
+        Text(
           'JSPOS',
           style: TextStyle(
               color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),

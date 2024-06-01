@@ -9,7 +9,13 @@ import 'package:jspos/shared/make_payment.dart';
 import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 import 'package:jspos/data/tables_data.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+// import 'package:flutter_spinkit/flutter_spinkit.dart';
+// SpinningLines, FoldingCube,  DancingSquare
+          // return Container();
+          // const SpinKitChasingDots(
+          //   color: Colors.white,
+          //   size: 100.0,
+          // ); 
 
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
@@ -102,7 +108,7 @@ class _DineInPageState extends State<DineInPage> {
           tables[index]['occupied'] = isOccupied;
           // Write the updated tables list back to the box
           tablesBox.put('tables', tables);
-          // printTables();
+          printTables();
         } else {
           log('DINEIN Page: Tables data is null');
         }
@@ -170,7 +176,7 @@ class _DineInPageState extends State<DineInPage> {
   void saveSelectedOrderToHive() async {
     try {
       if (Hive.isBoxOpen('tables')) {
-        var selectedOrderBox = await Hive.openBox('selectedOrder');
+        var selectedOrderBox = Hive.box('selectedOrder');
         await selectedOrderBox.put('selectedOrder', selectedOrder);
         // printSelectedOrders();
       }
@@ -244,6 +250,15 @@ class _DineInPageState extends State<DineInPage> {
     // Write the updated defaultTables list back to the box
     await tablesBox.put('tables', defaultTables);
   }
+//   void resetSelectedTable(String orderNumber) {
+//   final existingTableIndex = data.indexWhere((t) => t.orderNumber == orderNumber);
+//   if (existingTableIndex != -1) {
+//     // Reset the existing table
+//     data[existingTableIndex].occupied = false;
+//     data[existingTableIndex].orderNumber = '';
+//   }
+// }
+
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
     // If the lengths of the lists are not equal, the lists are not equal
@@ -518,176 +533,155 @@ class _DineInPageState extends State<DineInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.value( Hive.box('tables').get('tables'), // Fetch data after delay
-      ),
-      // future: Future.delayed(
-      //   const Duration(milliseconds: 1500), // Delay of 1 second
-      //   () => Hive.box('tables').get('tables'), // Fetch data after delay
-      // ),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // SpinningLines, FoldingCube,  DancingSquare
-          return Container();
-          // const SpinKitChasingDots(
-          //   color: Colors.white,
-          //   size: 100.0,
-          // ); // Show a loading spinner while waiting for data
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}'); // Show an error message if something goes wrong
-        } else {
-          List<Map<String, dynamic>> tables = (snapshot.data as List).map((item) => Map<String, dynamic>.from(item)).toList();
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              showMenu == false
-                  ? Expanded(
-                      flex: 12,
-                      child: Container(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                              child: Text("Please Select Table",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  )),
-                            ),
-                            //Table UI
-                            Expanded(
-                              child: GridView.builder(
-                                itemCount: tables.length,
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4, // Adjust the number of items per row
-                                  childAspectRatio: 1.8 / 1, // The width will be twice of its height
-                                  crossAxisSpacing: 10, // Add horizontal spacing
-                                  mainAxisSpacing: 10, // Add vertical spacing
-                                ),
-                                itemBuilder: (context, index) {
-                                  return ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        pressedButtonIndex = index;
-                                        _handleSetTables(tables[index]['name'], index);
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.black,
-                                      backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      elevation: 5, // elevation of the button
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Table',
-                                              style: TextStyle(
-                                                  fontSize: pressedButtonIndex == index ? 12 : 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: pressedButtonIndex == index ? Colors.white : Colors.black),
-                                            ),
-                                            Text(
-                                              tables[index]['name'],
-                                              style: TextStyle(
-                                                  fontSize: pressedButtonIndex == index ? 12 : 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: pressedButtonIndex == index ? Colors.white : Colors.black),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 3),
-                                        if (tables[index]['occupied'])
-                                          Icon(
-                                            Icons.dinner_dining_rounded,
-                                            color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                            size: pressedButtonIndex == index ? 30 : 30,
-                                          ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.redAccent,
-                                padding: const EdgeInsets.symmetric(vertical: 0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              onPressed: () async {
-                                var ordersBox = Hive.box('orders');
-                                var tablesBox = Hive.box('tables');
-                                await ordersBox.clear();
-                                await tablesBox.clear();
-                                log('All data in orders box has been cleared.');
-
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        showMenu == false
+            ? Expanded(
+                flex: 12,
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                        child: Text("Please Select Table",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            )),
+                      ),
+                      //Table UI
+                      Expanded(
+                        child: GridView.builder(
+                          itemCount: tables.length,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4, // Adjust the number of items per row
+                            childAspectRatio: 1.8 / 1, // The width will be twice of its height
+                            crossAxisSpacing: 10, // Add horizontal spacing
+                            mainAxisSpacing: 10, // Add vertical spacing
+                          ),
+                          itemBuilder: (context, index) {
+                            return ElevatedButton(
+                              onPressed: () {
                                 setState(() {
-                                  widget.orders.clearOrders();
-                                  resetTables();
-                                  selectedOrder.resetDefault();
+                                  pressedButtonIndex = index;
+                                  _handleSetTables(tables[index]['name'], index);
                                 });
-
-                                if (tablesBox.isEmpty) {
-                                  tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
-                                }
-
-                                log('Tables data has been reset to the default values.');
-                                log('tables $tables');
                               },
-                              child: const Row(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                elevation: 5, // elevation of the button
+                              ),
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    'Clear Local Storage Data',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Table',
+                                        style: TextStyle(
+                                            fontSize: pressedButtonIndex == index ? 12 : 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                      ),
+                                      Text(
+                                        tables[index]['name'],
+                                        style: TextStyle(
+                                            fontSize: pressedButtonIndex == index ? 12 : 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: pressedButtonIndex == index ? Colors.white : Colors.black),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(width: 10),
-                                  Icon(Icons.cancel, size: 20),
+                                  const SizedBox(width: 3),
+                                  if (tables[index]['occupied'])
+                                    Icon(
+                                      Icons.dinner_dining_rounded,
+                                      color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
+                                      size: pressedButtonIndex == index ? 30 : 30,
+                                    ),
                                 ],
                               ),
+                            );
+                          },
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.redAccent,
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () async {
+                          var ordersBox = Hive.box('orders');
+                          var tablesBox = Hive.box('tables');
+                          await ordersBox.clear();
+                          await tablesBox.clear();
+                          log('All data in orders box has been cleared.');
+
+                          setState(() {
+                            widget.orders.clearOrders();
+                            resetTables();
+                            selectedOrder.resetDefault();
+                          });
+
+                          if (tablesBox.isEmpty) {
+                            tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
+                          }
+
+                          log('Tables data has been reset to the default values.');
+                          log('tables $tables');
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.cancel, size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Clear Local Storage Data',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                           ],
                         ),
                       ),
-                    )
-                  : Expanded(
-                      flex: 12,
-                      child: MenuPage(
-                        onClick: _handleCloseMenu,
-                        selectedOrder: selectedOrder,
-                        onItemAdded: onItemAdded,
-                      ),
-                    ),
-              Expanded(
-                flex: 8,
-                child: OrderDetails(
+                    ],
+                  ),
+                ),
+              )
+            : Expanded(
+                flex: 12,
+                child: MenuPage(
+                  onClick: _handleCloseMenu,
                   selectedOrder: selectedOrder,
-                  orderStatusColor: orderStatusColor,
-                  orderStatusIcon: orderStatusIcon,
-                  orderStatus: orderStatus,
-                  handleMethod: handleMethod,
-                  handlefreezeMenu: handlefreezeMenu,
-                  updateOrderStatus: updateOrderStatus,
                   onItemAdded: onItemAdded,
                 ),
               ),
-            ],
-          );
-        }
-      },
+        Expanded(
+          flex: 8,
+          child: OrderDetails(
+            selectedOrder: selectedOrder,
+            orderStatusColor: orderStatusColor,
+            orderStatusIcon: orderStatusIcon,
+            orderStatus: orderStatus,
+            handleMethod: handleMethod,
+            handlefreezeMenu: handlefreezeMenu,
+            updateOrderStatus: updateOrderStatus,
+            onItemAdded: onItemAdded,
+            resetSelectedTable: resetSelectedTable,
+          ),
+        ),
+      ],
     );
   }
 }

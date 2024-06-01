@@ -40,13 +40,13 @@ class _MenuPageState extends State<MenuPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('Close', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-              SizedBox(width: 5),
               Icon(
                 Icons.cancel,
                 color: Colors.white,
                 size: 20,
               ),
+              SizedBox(width: 5),
+              Text('CLOSE', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
             ],
           ),
         ),

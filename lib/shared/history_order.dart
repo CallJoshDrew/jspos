@@ -14,7 +14,7 @@ class HistoryOrderPage extends StatefulWidget {
 
 class HistoryOrderPageState extends State<HistoryOrderPage> {
   String selectedPaymentMethod = "Cash";
-  final TextEditingController _controller = TextEditingController();
+  
   late double originalBill; // Declare originalBill
   late double adjustedBill;
   bool isRoundingApplied = false;

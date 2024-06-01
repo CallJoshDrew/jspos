@@ -14,6 +14,7 @@ class Orders {
   String toString() {
     return 'Orders: { data: $data }';
   }
+
   void addOrder(SelectedOrder order) {
     final existingOrderIndex = data.indexWhere((o) => o.orderNumber == order.orderNumber);
     if (existingOrderIndex != -1) {
@@ -25,9 +26,18 @@ class Orders {
     }
   }
 
+  // void deleteOrder(SelectedOrder orderToDelete) {
+  //   final existingOrderIndex = data.indexWhere((o) => o.orderNumber == orderToDelete.orderNumber);
+  //   if (existingOrderIndex != -1) {
+  //     // Remove the existing order
+  //     data.removeAt(existingOrderIndex);
+  //   }
+  // }
+
   SelectedOrder? getOrder(String orderNumber) {
     return data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
   }
+
   void clearOrders() {
     data.clear();
   }

@@ -1,6 +1,9 @@
 import 'dart:collection';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/data/remarks.dart';
+import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/data/menu_data.dart';
@@ -13,6 +16,7 @@ class OrderDetails extends StatefulWidget {
   final VoidCallback? handleMethod;
   final VoidCallback? handlefreezeMenu;
   final VoidCallback? updateOrderStatus;
+  final VoidCallback? resetSelectedTable;
   final Function(Item item) onItemAdded;
 
   const OrderDetails({
@@ -25,6 +29,7 @@ class OrderDetails extends StatefulWidget {
     this.handlefreezeMenu,
     this.updateOrderStatus,
     required this.onItemAdded,
+    this.resetSelectedTable,
   });
 
   @override
@@ -186,29 +191,185 @@ class _OrderDetailsState extends State<OrderDetails> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Order Number
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Row(
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                      Row(
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            status,
+                            style: const TextStyle(color: Colors.green, fontSize: 16),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 6),
                       Text(
-                        status,
-                        style: const TextStyle(color: Colors.green, fontSize: 16),
+                        "$timeStamp, $date",
+                        style: const TextStyle(color: Colors.white54, fontSize: 14),
                       ),
                     ],
                   ),
-                  Text(
-                    "$timeStamp, $date",
-                    style: const TextStyle(color: Colors.white54, fontSize: 14),
-                  ),
+                  const SizedBox(width: 10),
+                  // Cancel and Remove and Delete Selected Order
+                  (!showEditBtn && widget.selectedOrder.status != "Start Your Order" && widget.selectedOrder.status != "Ordering")
+                      ? Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 2,
+                                blurRadius: 2,
+                                offset: const Offset(0, 1), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                              icon: const Icon(Icons.delete_forever, size: 20),
+                              color: Colors.redAccent,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      insetPadding: EdgeInsets.zero, // Make dialog full-screen
+                                      backgroundColor: Colors.black87,
+                                      child: AlertDialog(
+                                        backgroundColor: const Color(0xff1f2029),
+                                        elevation: 5,
+                                        shape: RoundedRectangleBorder(
+                                          side: const BorderSide(color: Colors.green, width: 2), // This is the border color
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                        content: ConstrainedBox(
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 400,
+                                            maxHeight: 80,
+                                          ),
+                                          child: const Wrap(
+                                            children: [
+                                              Text(
+                                                'Are you certain you wish to cancel this order?',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                                              ),
+                                              Text(
+                                                'Please note, once cancelled, the action is irreversible.',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                TextButton(
+                                                  style: ButtonStyle(
+                                                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                      RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(5),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    widget.resetSelectedTable?.call();
+                                                    if (Hive.isBoxOpen('orders')) {
+                                                      var ordersBox = Hive.box('orders');
+                                                      var orders = ordersBox.get('orders') as Orders;
+
+                                                      // Print the orderNumber of widget.selectedOrder
+                                                      log('Order number to delete: ${widget.selectedOrder.orderNumber}');
+
+                                                      // log the orderNumber of all orders in orders.data
+                                                      for (var order in orders.data) {
+                                                        log('Order number in list: ${order.orderNumber}');
+                                                      }
+
+                                                      // Find the index of the order to delete
+                                                      int indexToDelete =
+                                                          orders.data.indexWhere((order) => order.orderNumber == widget.selectedOrder.orderNumber);
+
+                                                      // Check if the order was found
+                                                      if (indexToDelete != -1) {
+                                                        // Remove the order from the list
+                                                        orders.data.removeAt(indexToDelete);
+                                                        log('order was found: $indexToDelete');
+
+                                                        // Put the updated list back into the box
+                                                        ordersBox.put('orders', orders);
+                                                      } else {
+                                                        log('order was not found');
+                                                      }
+
+                                                      // Get the updated Orders object from the box
+                                                      var updatedOrders = ordersBox.get('orders') as Orders;
+
+                                                      // Log the updated Orders object
+                                                      log('Updated orders: $updatedOrders');
+                                                    }
+                                                    setState(() {
+                                                      widget.selectedOrder.resetDefault();
+                                                      if (handlefreezeMenu != null) {
+                                                        handlefreezeMenu();
+                                                      }
+                                                      if (updateOrderStatus != null) {
+                                                        updateOrderStatus();
+                                                      }
+                                                    });
+
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.all(6),
+                                                    child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 20),
+                                                TextButton(
+                                                  style: ButtonStyle(
+                                                    backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                      RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(5),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.all(6),
+                                                    child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 14)),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              }),
+                        )
+                      : const SizedBox.shrink(),
                 ],
               ),
-
               // show Edit Button when it is true
               (showEditBtn && widget.selectedOrder.status != "Paid")
                   ? ElevatedButton(
@@ -224,7 +385,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.green[800]!),
+                        backgroundColor: MaterialStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5.0),
@@ -245,7 +406,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ],
                       ),
                     )
-                  : const SizedBox(height: 50.0),
+                  : const SizedBox.shrink(),
             ],
           ),
           Row(
@@ -1115,7 +1276,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 width: 20, // Adjust this value to change the width of the rectangle
                                 height: 20, // Adjust this value to change the height of the rectangle
                                 decoration: BoxDecoration(
-                                  color: Colors.orange[800]!,
+                                  color: const Color.fromRGBO(239, 108, 0, 1),
                                   borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
                                 ),
                                 child: const Icon(
@@ -1146,7 +1307,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           if (showEditBtn) {
             // If showEditBtn is true, do not allow the dismiss action
             return Future.value(false);
-          } 
+          }
           // Otherwise, allow the dismiss action
           return Future.value(true);
         },

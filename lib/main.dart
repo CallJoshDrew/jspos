@@ -18,7 +18,7 @@ void main() async {
   Hive.registerAdapter(ItemAdapter()); 
 
   var ordersBox = await Hive.openBox('orders');
-  // var selectedOrderBox = await Hive.openBox('selectedOrder');
+  var selectedOrderBox = await Hive.openBox('selectedOrder');
   var tablesBox = await Hive.openBox('tables');
   
   if (tablesBox.isEmpty) {
