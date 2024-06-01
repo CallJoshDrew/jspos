@@ -108,7 +108,7 @@ class _DineInPageState extends State<DineInPage> {
           tables[index]['occupied'] = isOccupied;
           // Write the updated tables list back to the box
           tablesBox.put('tables', tables);
-          printTables();
+          // printTables();
         } else {
           log('DINEIN Page: Tables data is null');
         }
@@ -162,7 +162,7 @@ class _DineInPageState extends State<DineInPage> {
         }
       }
     });
-    printTables();
+    // printTables();
     saveSelectedOrderToHive();
     updateOrderStatus();
   }
@@ -362,7 +362,7 @@ class _DineInPageState extends State<DineInPage> {
     if (Hive.isBoxOpen('orders')) {
       var ordersBox = Hive.box('orders');
       ordersBox.put('orders', widget.orders);
-      printOrders();
+      // printOrders();
     }
     // Wait for the next frame so that setState has a chance to rebuild the widget
     await Future.delayed(Duration.zero);
@@ -380,7 +380,7 @@ class _DineInPageState extends State<DineInPage> {
       if (Hive.isBoxOpen('orders')) {
         var ordersBox = Hive.box('orders');
         ordersBox.put('orders', widget.orders);
-        printOrders();
+        // printOrders();
       }
       updateOrderStatus();
       handlefreezeMenu();
@@ -626,8 +626,10 @@ class _DineInPageState extends State<DineInPage> {
                         onPressed: () async {
                           var ordersBox = Hive.box('orders');
                           var tablesBox = Hive.box('tables');
+                          var categoriesBox = Hive.box('categoriesBox');
                           await ordersBox.clear();
                           await tablesBox.clear();
+                          await categoriesBox.clear();
                           log('All data in orders box has been cleared.');
 
                           setState(() {

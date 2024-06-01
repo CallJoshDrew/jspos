@@ -293,12 +293,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       var orders = ordersBox.get('orders') as Orders;
 
                                                       // Print the orderNumber of widget.selectedOrder
-                                                      log('Order number to delete: ${widget.selectedOrder.orderNumber}');
+                                                      // log('Order number to delete: ${widget.selectedOrder.orderNumber}');
 
-                                                      // log the orderNumber of all orders in orders.data
-                                                      for (var order in orders.data) {
-                                                        log('Order number in list: ${order.orderNumber}');
-                                                      }
+                                                      // // log the orderNumber of all orders in orders.data
+                                                      // for (var order in orders.data) {
+                                                      //   log('Order number in list: ${order.orderNumber}');
+                                                      // }
 
                                                       // Find the index of the order to delete
                                                       int indexToDelete =
@@ -308,19 +308,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       if (indexToDelete != -1) {
                                                         // Remove the order from the list
                                                         orders.data.removeAt(indexToDelete);
-                                                        log('order was found: $indexToDelete');
+                                                        // log('order was found: $indexToDelete');
 
                                                         // Put the updated list back into the box
                                                         ordersBox.put('orders', orders);
                                                       } else {
                                                         log('order was not found');
                                                       }
-
-                                                      // Get the updated Orders object from the box
-                                                      var updatedOrders = ordersBox.get('orders') as Orders;
-
-                                                      // Log the updated Orders object
-                                                      log('Updated orders: $updatedOrders');
+                                                      // var updatedOrders = ordersBox.get('orders') as Orders;
+                                                      // log('Updated orders: $updatedOrders');
                                                     }
                                                     setState(() {
                                                       widget.selectedOrder.resetDefault();

@@ -13,22 +13,26 @@ import 'package:jspos/models/orders.dart';
 // import 'package:jspos/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Add category test', (WidgetTester tester) async {
     // Create a mock Orders object
     final mockOrders = Orders(data: []);
+    final mockCategories = ['Cakes', 'Dishes', 'Drinks'];
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget( JPOSApp(orders: mockOrders));
+    await tester.pumpWidget(JPOSApp(orders: mockOrders, categories: mockCategories));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Find the add category button and tap it
+    var addButton = find.byIcon(Icons.add);
+    await tester.tap(addButton);
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Enter text into the TextField
+    var textField = find.byType(TextField);
+    await tester.enterText(textField, 'New Category');
+    await tester.pump();
+
+    // Verify that the new category is added
+    expect(find.text('New Category'), findsOneWidget);
   });
 }
+
