@@ -626,10 +626,12 @@ class _DineInPageState extends State<DineInPage> {
                         onPressed: () async {
                           var ordersBox = Hive.box('orders');
                           var tablesBox = Hive.box('tables');
-                          var categoriesBox = Hive.box('categoriesBox');
+                          var categoriesBox = Hive.box('categories');
                           await ordersBox.clear();
                           await tablesBox.clear();
                           await categoriesBox.clear();
+                          log('Categories has been reset to the default values.');
+                          log('categoriesBox ${categoriesBox.values}');
                           log('All data in orders box has been cleared.');
 
                           setState(() {
