@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/app/jpos.dart';
 import 'package:jspos/data/tables_data.dart';
@@ -37,7 +36,7 @@ void main() async {
   String? categoriesString = categoriesBox.get('categories');
   List<String> categories = categoriesString != null ? categoriesString.split(',') : ["Cakes", "Dishes", "Drinks"];
   log('$categoriesString');
-  runApp(ProviderScope(child: JPOSApp(orders: orders, categories: categories)));
+  runApp(JPOSApp(orders: orders, categories: categories));
 }
 
   // var tablesData = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();

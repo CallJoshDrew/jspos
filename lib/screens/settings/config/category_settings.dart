@@ -14,6 +14,7 @@ class CategorySettings extends StatefulWidget {
 class CategorySettingsState extends State<CategorySettings> {
   final _formKey = GlobalKey<FormBuilderState>();
   List<String> categories = [];
+  // List<String> uiCategories = [];
 
   @override
   void initState() {
@@ -23,6 +24,7 @@ class CategorySettingsState extends State<CategorySettings> {
 
   void loadCategories() async {
     categories = CategoryController.getCategories();
+    // uiCategories = List<String>.from(categories);
     // var controllers = categories.map((_) => TextEditingController()).toList();
     // log('$categories');
     // log('$controllers');
@@ -30,7 +32,6 @@ class CategorySettingsState extends State<CategorySettings> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> uiCategories = List<String>.from(categories);
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xff1f2029),
@@ -52,12 +53,12 @@ class CategorySettingsState extends State<CategorySettings> {
                 const SizedBox(width: 10),
                 InkWell(
                   onTap: () {
-                    if (uiCategories.length < 5) {
+                    if (categories.length < 5) {
                       // limit to 5 categories
                       setState(() {
-                        uiCategories.add("");
+                        categories.add("");
                       });
-                      log('uiCategories: ${uiCategories}'); // log the UI categories
+                      log('categories: $categories'); // log the UI categories
                     } else {
                       log("Maximum number of categories reached"); // replace with your own error handling
                     }
@@ -80,7 +81,7 @@ class CategorySettingsState extends State<CategorySettings> {
             child: FormBuilder(
               key: _formKey,
               child: ListView.builder(
-                itemCount: uiCategories.length,
+                itemCount: categories.length,
                 itemBuilder: (context, index) {
                   return ListTile(
                     leading: Text(
@@ -89,7 +90,7 @@ class CategorySettingsState extends State<CategorySettings> {
                     ),
                     title: FormBuilderTextField(
                       name: 'category_$index',
-                      initialValue: uiCategories[index],
+                      initialValue: categories[index],
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -99,7 +100,7 @@ class CategorySettingsState extends State<CategorySettings> {
                       ),
                       onChanged: (value) {
                         if (value != null) {
-                          uiCategories[index] = value;
+                          categories[index] = value;
                           if (value.isNotEmpty) {
                             categories[index] = value;
                             CategoryController.setCategories(categories);
