@@ -1,5 +1,7 @@
 import 'dart:collection';
 import 'dart:developer';
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/data/remarks.dart';
@@ -248,25 +250,26 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         backgroundColor: const Color(0xff1f2029),
                                         elevation: 5,
                                         shape: RoundedRectangleBorder(
-                                          side: const BorderSide(color: Colors.green, width: 2), // This is the border color
+                                          side: const BorderSide(color: Colors.green, width: 1), // This is the border color
                                           borderRadius: BorderRadius.circular(10.0),
                                         ),
                                         content: ConstrainedBox(
                                           constraints: const BoxConstraints(
                                             maxWidth: 400,
-                                            maxHeight: 80,
+                                            maxHeight: 100,
                                           ),
                                           child: const Wrap(
+                                            alignment : WrapAlignment.center,
                                             children: [
                                               Text(
-                                                'Are you certain you wish to cancel this order?',
+                                                'Are you sure?',
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                                                style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
                                               ),
                                               Text(
                                                 'Please note, once cancelled, the action is irreversible.',
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                                                style: TextStyle(fontSize: 18, color: Colors.white),
                                               ),
                                             ],
                                           ),
@@ -1232,6 +1235,26 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   widget.selectedOrder.calculateItemsAndQuantities();
                                   widget.updateOrderStatus!();
                                 });
+                                CherryToast(
+                                  icon: Icons.check_circle,
+                                  iconColor: Colors.green,
+                                  themeColor: const Color.fromRGBO(46, 125, 50, 1),
+                                  backgroundColor: Colors.white,
+                                  title: Text(
+                                    '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  toastPosition: Position.top,
+                                  toastDuration: const Duration(milliseconds: 1000),
+                                  animationType: AnimationType.fromTop,
+                                  animationDuration: const Duration(milliseconds: 200),
+                                  autoDismiss: true,
+                                  displayCloseButton: false,
+                                ).show(context);
                               },
                               child: Container(
                                 width: 20, // Adjust this value to change the width of the rectangle
@@ -1265,6 +1288,47 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     widget.selectedOrder.updateTotalCost(0);
                                     widget.selectedOrder.calculateItemsAndQuantities();
                                     widget.updateOrderStatus!();
+                                    CherryToast(
+                                      icon: Icons.cancel,
+                                      iconColor: Colors.red,
+                                      themeColor: Colors.red,
+                                      backgroundColor: Colors.white,
+                                      title: Text(
+                                        '${item.name} (RM ${price.toStringAsFixed(2)})',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      toastPosition: Position.top,
+                                      toastDuration: const Duration(milliseconds: 1000),
+                                      animationType: AnimationType.fromTop,
+                                      animationDuration: const Duration(milliseconds: 200),
+                                      autoDismiss: true,
+                                      displayCloseButton: false,
+                                    ).show(context);
+                                  } else if (item.quantity == 1) {
+                                    CherryToast(
+                                      icon: Icons.info,
+                                      iconColor: Colors.green,
+                                      themeColor: Colors.green,
+                                      backgroundColor: Colors.white,
+                                      title: const Text(
+                                        "Swipe left/right to remove the item",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      toastPosition: Position.top,
+                                      toastDuration: const Duration(milliseconds: 1000),
+                                      animationType: AnimationType.fromTop,
+                                      animationDuration: const Duration(milliseconds: 200),
+                                      autoDismiss: true,
+                                      displayCloseButton: false,
+                                    ).show(context);
                                   }
                                 });
                               },
@@ -1318,35 +1382,53 @@ class _OrderDetailsState extends State<OrderDetails> {
             widget.updateOrderStatus!();
           });
 
-          // Then show a snackbar.
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              duration: const Duration(milliseconds: 300),
-              content: Container(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.cancel,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+          // Then show a notifications
+          CherryToast(
+            icon: Icons.cancel,
+            iconColor: Colors.red,
+            themeColor: Colors.red,
+            backgroundColor: Colors.white,
+            title: Text(
+              name,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          );
+            toastPosition: Position.top,
+            animationType: AnimationType.fromTop,
+            animationDuration: const Duration(milliseconds: 200),
+            autoDismiss: true,
+          ).show(context);
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     backgroundColor: Colors.red,
+          //     duration: const Duration(milliseconds: 300),
+          //     content: Container(
+          //       alignment: Alignment.centerRight,
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: <Widget>[
+          //           const Icon(
+          //             Icons.cancel,
+          //             color: Colors.white,
+          //             size: 20,
+          //           ),
+          //           const SizedBox(width: 5),
+          //           Text(
+          //             name,
+          //             style: const TextStyle(
+          //               fontSize: 14,
+          //               color: Colors.white,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // );
         },
         // Show a red background as the item is swiped away.
         background: Container(

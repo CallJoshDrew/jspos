@@ -9,13 +9,17 @@ import 'package:jspos/shared/make_payment.dart';
 import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 import 'package:jspos/data/tables_data.dart';
+
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
+
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 // SpinningLines, FoldingCube,  DancingSquare
-          // return Container();
-          // const SpinKitChasingDots(
-          //   color: Colors.white,
-          //   size: 100.0,
-          // ); 
+// return Container();
+// const SpinKitChasingDots(
+//   color: Colors.white,
+//   size: 100.0,
+// );
 
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
@@ -151,13 +155,32 @@ class _DineInPageState extends State<DineInPage> {
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
           var order = widget.orders.getOrder(orderNumber);
-
           // If an order with the same orderNumber exists, update selectedOrder with its details
           if (order != null) {
             order.showEditBtn = true;
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             selectedOrder.calculateItemsAndQuantities();
+            CherryToast(
+              icon: Icons.info,
+              iconColor: Colors.green,
+              themeColor: Colors.green,
+              backgroundColor: Colors.white,
+              title: Text(
+                'Table ${tables[index]['name']} is seated',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              toastPosition: Position.top,
+              toastDuration: const Duration(milliseconds: 1000),
+              animationType: AnimationType.fromTop,
+              animationDuration: const Duration(milliseconds: 200),
+              autoDismiss: true,
+              displayCloseButton: false,
+            ).show(context);
           }
         }
       }
@@ -189,35 +212,34 @@ class _DineInPageState extends State<DineInPage> {
     setState(() {
       // Try to find an item in selectedOrder.items with the same id as the new item
       addItemtoCart(item);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.green[700],
-          duration: const Duration(milliseconds: 300),
-          content: Container(
-            alignment: Alignment.centerRight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Icon(
-                  // Icons.check_circle,
-                  Icons.add,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 5), // provide some space between the icon and text
-                Text(
-                  "RM ${item.price.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+      CherryToast(
+        icon: Icons.check_circle,
+        iconColor: Colors.green,
+        themeColor: const Color.fromRGBO(46, 125, 50, 1),
+        backgroundColor: Colors.white,
+        title: Text(
+          '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      );
+        // description: Text(
+        //   "RM ${item.price.toStringAsFixed(2)}",
+        //   style: const TextStyle(
+        //     fontSize: 14,
+        //     color: Colors.black54,
+        //     fontWeight: FontWeight.bold,
+        //   ),
+        // ),
+        toastPosition: Position.top,
+        toastDuration: const Duration(milliseconds: 1000),
+        animationType: AnimationType.fromTop,
+        animationDuration: const Duration(milliseconds: 200),
+        autoDismiss: true,
+        displayCloseButton: false,
+      ).show(context);
     });
   }
 
@@ -258,7 +280,6 @@ class _DineInPageState extends State<DineInPage> {
 //     data[existingTableIndex].orderNumber = '';
 //   }
 // }
-
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
     // If the lengths of the lists are not equal, the lists are not equal
@@ -426,13 +447,32 @@ class _DineInPageState extends State<DineInPage> {
             borderRadius: BorderRadius.circular(10), // change radius here
             side: const BorderSide(color: Colors.deepOrange, width: 1), // change border color here
           ),
-          title: const Text(
-            'Confirmation',
-            style: TextStyle(fontSize: 14, color: Colors.white),
-          ),
-          content: Text(
-            selectedOrder.status == "Placed Order" ? "Do you want to 'Cancel Changes'?" : "Do you want to 'Cancel Order'?",
-            style: const TextStyle(fontSize: 18, color: Colors.white),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 300,
+              maxHeight: 80,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    const Text(
+                      'Are you sure?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      selectedOrder.status == "Placed Order" ? "Do you want to cancel changes?" : "Do you want to cancel order?",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(
@@ -690,7 +730,7 @@ class _DineInPageState extends State<DineInPage> {
   }
 }
 
-// close it when you seldom use it, in our case, we need it because of consistently write and read. 
+// close it when you seldom use it, in our case, we need it because of consistently write and read.
 // @override
 // void dispose() {
 //   Hive.box('orders').close();

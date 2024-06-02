@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/item.dart';
@@ -13,7 +15,14 @@ class MakePaymentPage extends StatefulWidget {
   final int selectedTableIndex;
   final void Function(int index, String orderNumber, bool isOccupied) updateTables;
 
-  const MakePaymentPage({super.key, required this.selectedOrder, required this.updateOrderStatus, required this.orders, required this.tables, required this.selectedTableIndex, required this.updateTables });
+  const MakePaymentPage(
+      {super.key,
+      required this.selectedOrder,
+      required this.updateOrderStatus,
+      required this.orders,
+      required this.tables,
+      required this.selectedTableIndex,
+      required this.updateTables});
 
   @override
   MakePaymentPageState createState() => MakePaymentPageState();
@@ -736,22 +745,35 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                     backgroundColor: const Color(0xff1f2029),
                                                     elevation: 5,
                                                     shape: RoundedRectangleBorder(
-                                                      side: const BorderSide(color: Colors.green, width: 2), // This is the border color
+                                                      side: const BorderSide(color: Colors.green, width: 1), // This is the border color
                                                       borderRadius: BorderRadius.circular(10.0),
                                                     ),
                                                     content: ConstrainedBox(
                                                       constraints: const BoxConstraints(
-                                                        minWidth: 200,
-                                                        minHeight: 40,
+                                                        maxWidth: 600,
+                                                        maxHeight: 100,
                                                       ),
-                                                      child: const Row(
+                                                      child: const Column(
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
-                                                          Text(
-                                                            'Are you sure?',
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                                                          Wrap(
+                                                            alignment: WrapAlignment.center,
+                                                            children: [
+                                                              Text(
+                                                                'Are you sure?',
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
+                                                              ),
+                                                              Text(
+                                                                'Please confirm you’ve received the payment, either in cash or via a digital transaction like DuitNow, before pressing ‘Confirm’.',
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Colors.white,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ],
                                                       ),
@@ -762,7 +784,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
-                                                            TextButton(
+                                                            ElevatedButton(
                                                               style: ButtonStyle(
                                                                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                                                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -770,6 +792,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                     borderRadius: BorderRadius.circular(5),
                                                                   ),
                                                                 ),
+                                                                padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                               ),
                                                               onPressed: () {
                                                                 setState(() {
@@ -792,6 +815,34 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   // log('${widget.selectedOrder}');
                                                                   // log('${widget.orders}');
                                                                 });
+                                                                CherryToast(
+                                                                  icon: Icons.check_circle,
+                                                                  iconColor: Colors.green,
+                                                                  themeColor: const Color.fromRGBO(46, 125, 50, 1),
+                                                                  backgroundColor: Colors.white,
+                                                                  title: const Text(
+                                                                    'Thank you!',
+                                                                    style: TextStyle(
+                                                                      fontSize: 14,
+                                                                      color: Colors.black,
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                  description: Text(
+                                                                    'The payment for the table  ${widget.tables[widget.selectedTableIndex]['name']} has been successfully processed.',
+                                                                    style: const TextStyle(
+                                                                      fontSize: 14,
+                                                                      // color: Colors.black,
+                                                                      // fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                  toastPosition: Position.top,
+                                                                  toastDuration: const Duration(milliseconds: 3000),
+                                                                  animationType: AnimationType.fromTop,
+                                                                  animationDuration: const Duration(milliseconds: 200),
+                                                                  autoDismiss: true,
+                                                                  displayCloseButton: false,
+                                                                ).show(context);
                                                                 Navigator.of(context).pop();
                                                                 Navigator.of(context).pop();
                                                               },
@@ -801,7 +852,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                               ),
                                                             ),
                                                             const SizedBox(width: 20),
-                                                            TextButton(
+                                                            ElevatedButton(
                                                               style: ButtonStyle(
                                                                 backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                                                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -809,13 +860,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                     borderRadius: BorderRadius.circular(5),
                                                                   ),
                                                                 ),
+                                                                padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                               ),
                                                               onPressed: () {
                                                                 Navigator.of(context).pop();
                                                               },
-                                                              child: const Padding(
-                                                                padding: EdgeInsets.all(6),
-                                                                child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 14)),
+                                                              child: const Text(
+                                                                'Cancel',
+                                                                style: TextStyle(fontSize: 14, color: Colors.black),
                                                               ),
                                                             ),
                                                           ],
