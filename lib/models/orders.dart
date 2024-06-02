@@ -25,15 +25,7 @@ class Orders {
       data.add(order);
     }
   }
-
-  // void deleteOrder(SelectedOrder orderToDelete) {
-  //   final existingOrderIndex = data.indexWhere((o) => o.orderNumber == orderToDelete.orderNumber);
-  //   if (existingOrderIndex != -1) {
-  //     // Remove the existing order
-  //     data.removeAt(existingOrderIndex);
-  //   }
-  // }
-
+  
   SelectedOrder? getOrder(String orderNumber) {
     return data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
   }
@@ -42,6 +34,14 @@ class Orders {
     data.clear();
   }
 }
+
+// void deleteOrder(SelectedOrder orderToDelete) {
+  //   final existingOrderIndex = data.indexWhere((o) => o.orderNumber == orderToDelete.orderNumber);
+  //   if (existingOrderIndex != -1) {
+  //     // Remove the existing order
+  //     data.removeAt(existingOrderIndex);
+  //   }
+  // }
 
   // // New method to get all orders as a list
   // List<SelectedOrder> getAllOrders() {

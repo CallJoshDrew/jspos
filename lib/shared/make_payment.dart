@@ -1,4 +1,4 @@
-import 'dart:developer';
+// import 'dart:developer';
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
@@ -184,7 +184,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              '${widget.selectedOrder.orderDate}',
+                              widget.selectedOrder.orderDate,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -650,18 +650,18 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       children: <String>['Cash', 'DuitNow', 'FoodPanda', 'GrabFood', 'ShopeeFood'].map((String value) {
                                         return ElevatedButton(
                                           style: ButtonStyle(
-                                            foregroundColor: MaterialStateProperty.all<Color>(
+                                            foregroundColor: WidgetStateProperty.all<Color>(
                                               selectedPaymentMethod == value ? Colors.white : Colors.black87,
                                             ),
-                                            backgroundColor: MaterialStateProperty.all<Color>(
+                                            backgroundColor: WidgetStateProperty.all<Color>(
                                               selectedPaymentMethod == value ? Colors.green : Colors.white,
                                             ),
-                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(5),
                                               ),
                                             ),
-                                            padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                           ),
                                           onPressed: () {
                                             setState(() {
@@ -726,13 +726,13 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       children: [
                                         ElevatedButton(
                                           style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                            backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(5),
                                               ),
                                             ),
-                                            padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                            padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
                                           onPressed: () {
                                             showDialog(
@@ -786,13 +786,13 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                           children: [
                                                             ElevatedButton(
                                                               style: ButtonStyle(
-                                                                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                                   RoundedRectangleBorder(
                                                                     borderRadius: BorderRadius.circular(5),
                                                                   ),
                                                                 ),
-                                                                padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                                                padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                               ),
                                                               onPressed: () {
                                                                 setState(() {
@@ -816,7 +816,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   // log('${widget.orders}');
                                                                 });
                                                                 CherryToast(
-                                                                  icon: Icons.check_circle,
+                                                                  icon: Icons.verified_rounded,
                                                                   iconColor: Colors.green,
                                                                   themeColor: const Color.fromRGBO(46, 125, 50, 1),
                                                                   backgroundColor: Colors.white,
@@ -854,13 +854,13 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                             const SizedBox(width: 20),
                                                             ElevatedButton(
                                                               style: ButtonStyle(
-                                                                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                                   RoundedRectangleBorder(
                                                                     borderRadius: BorderRadius.circular(5),
                                                                   ),
                                                                 ),
-                                                                padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                                                padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                               ),
                                                               onPressed: () {
                                                                 Navigator.of(context).pop();
@@ -887,13 +887,13 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                         const SizedBox(width: 10),
                                         ElevatedButton(
                                           style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                            backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(5),
                                               ),
                                             ),
-                                            padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                            padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
                                           onPressed: () {
                                             Navigator.of(context).pop();

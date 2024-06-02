@@ -14,7 +14,7 @@ class HistoryOrderPage extends StatefulWidget {
 
 class HistoryOrderPageState extends State<HistoryOrderPage> {
   String selectedPaymentMethod = "Cash";
-  
+
   late double originalBill; // Declare originalBill
   late double adjustedBill;
   bool isRoundingApplied = false;
@@ -116,7 +116,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.green,
+                      color: widget.historyOrder.status == "Paid" ? Colors.green : Colors.redAccent,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,16 +131,16 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                         ),
                         Row(
                           children: [
-                            const Text(
-                              'Status: Completed',
-                              style: TextStyle(
+                            Text(
+                              'Status: ${widget.historyOrder.status}',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
                             Text(
-                              ' (Paid with ${widget.historyOrder.paymentMethod})',
+                              widget.historyOrder.status == "Paid" ? ' - with ${widget.historyOrder.paymentMethod}' : '',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -151,9 +151,9 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                         ),
                         Row(
                           children: [
-                            const Text(
-                              'Transaction Time:',
-                              style: TextStyle(
+                            Text(
+                              widget.historyOrder.status == "Paid" ? 'Transaction Time:' : 'Cancalled Time',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -161,7 +161,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              widget.historyOrder.paymentTime,
+                              widget.historyOrder.status == "Paid" ? widget.historyOrder.paymentTime : widget.historyOrder.cancelledTime,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

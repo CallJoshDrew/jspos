@@ -17,8 +17,17 @@ void main() async {
 
   var ordersBox = await Hive.openBox('orders');
   var tablesBox = await Hive.openBox('tables');
-  await Hive.openBox('selectedOrder');
+  // await Hive.openBox('selectedOrder'); // why this got issues if openBox here? some of the fields are null it said.
+  // however due to the design, selectedOrder is never to be openBox here because there will be another selecetedOrder for tapao
   var categoriesBox = await Hive.openBox('categories');
+
+  // Open the box for orderCounter
+  var counterBox = await Hive.openBox('orderCounter');
+
+  // Check if the box is empty, if so, set the initial value
+  if (counterBox.isEmpty) {
+    counterBox.put('orderCounter', 1);
+  }
 
   if (tablesBox.isEmpty) {
     tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());

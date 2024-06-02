@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/shared/history_order.dart';
@@ -15,6 +18,16 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   bool _sortAscending = true;
   int _sortColumnIndex = 0;
+
+  String formatDateTime(String dateTimeString) {
+    // Parse the string into a DateTime object
+    DateFormat inputFormat = DateFormat('h:mm a, d MMMM yyyy');
+    DateTime dateTime = inputFormat.parse(dateTimeString);
+
+    // Format the DateTime object
+    return DateFormat('hh:mm a (EEEE)').format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -196,15 +209,16 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ],
           rows: widget.orders.data.asMap().entries.where((entry) {
+            log('Orders data: ${widget.orders.data}');
             SelectedOrder order = entry.value;
-            return order.status == "Paid";
+            return (order.status == "Paid" || order.status == "Cancelled");
           }).map((entry) {
             int index = entry.key;
             SelectedOrder order = entry.value;
 
             return DataRow(
-              color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-                if (states.contains(MaterialState.hovered)) return Colors.white10;
+              color: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                if (states.contains(WidgetState.hovered)) return Colors.white10;
                 return const Color(0xff1f2029);
               }),
               cells: <DataCell>[
@@ -226,7 +240,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 ))),
                 DataCell(Center(
                     child: Text(
-                  order.orderTime.toString(),
+                  order.status == "Paid" ? formatDateTime(order.paymentTime) : formatDateTime(order.cancelledTime),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,

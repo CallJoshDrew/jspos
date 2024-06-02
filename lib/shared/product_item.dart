@@ -129,26 +129,26 @@ class ProductItemState extends State<ProductItem> {
         Widget remarkButton(Map<String, dynamic> data) {
           return ElevatedButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                (Set<MaterialState> states) {
+              backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                (Set<WidgetState> states) {
                   // Check if the remark has been added to itemRemarks
                   if (itemRemarks.containsKey(data['id'].toString())) {
                     // If the button is pressed or the remark has been added, make the background green
-                    return states.contains(MaterialState.pressed) ? Colors.white : Colors.orange;
+                    return states.contains(WidgetState.pressed) ? Colors.white : Colors.orange;
                   } else {
                     // If the button is pressed or the remark has not been added, make the background black
-                    return states.contains(MaterialState.pressed) ? Colors.orange : Colors.black;
+                    return states.contains(WidgetState.pressed) ? Colors.orange : Colors.black;
                   }
                 },
               ),
-              foregroundColor: MaterialStateProperty.all(Colors.white),
-              side: MaterialStateProperty.all(const BorderSide(color: Colors.white)),
-              shape: MaterialStateProperty.all(
+              foregroundColor: WidgetStateProperty.all(Colors.white),
+              side: WidgetStateProperty.all(const BorderSide(color: Colors.white)),
+              shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
-              padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), // Add padding inside the button
+              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), // Add padding inside the button
             ),
             onPressed: () {
               setState(() {
@@ -364,15 +364,15 @@ class ProductItemState extends State<ProductItem> {
                                                       });
                                                     },
                                                     style: ButtonStyle(
-                                                      backgroundColor: MaterialStateProperty.all<Color>(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
                                                         selectedChoice == choice ? Colors.orange : Colors.white,
                                                       ),
-                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
                                                       ),
-                                                      padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                     ),
                                                     child: Text(
                                                       '${choice['name']}',
@@ -426,15 +426,15 @@ class ProductItemState extends State<ProductItem> {
                                                       });
                                                     },
                                                     style: ButtonStyle(
-                                                      backgroundColor: MaterialStateProperty.all<Color>(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
                                                         selectedType == type ? Colors.orange : Colors.white,
                                                       ),
-                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
                                                       ),
-                                                      padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                     ),
                                                     child: Text(
                                                       '${type['name']}',
@@ -492,15 +492,15 @@ class ProductItemState extends State<ProductItem> {
                                                       });
                                                     },
                                                     style: ButtonStyle(
-                                                      backgroundColor: MaterialStateProperty.all<Color>(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
                                                         selectedMeePortion == meePortion ? Colors.orange : Colors.white,
                                                       ),
-                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
                                                       ),
-                                                      padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                     ),
                                                     child: Text(
                                                       '${meePortion['name']}',
@@ -554,15 +554,15 @@ class ProductItemState extends State<ProductItem> {
                                                       });
                                                     },
                                                     style: ButtonStyle(
-                                                      backgroundColor: MaterialStateProperty.all<Color>(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
                                                         selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
                                                       ),
-                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
                                                       ),
-                                                      padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                     ),
                                                     child: Text(
                                                       '${meatPortion['name']}',
@@ -679,13 +679,13 @@ class ProductItemState extends State<ProductItem> {
                                     children: [
                                       TextButton(
                                         style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                          backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(5),
                                             ),
                                           ),
-                                          padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                         ),
                                         child: const Text(
                                           'Confirm',
@@ -714,13 +714,13 @@ class ProductItemState extends State<ProductItem> {
                                       const SizedBox(width: 10),
                                       TextButton(
                                         style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                          backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(5),
                                             ),
                                           ),
-                                          padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
                                         ),
                                         child: const Text(
                                           'Cancel',

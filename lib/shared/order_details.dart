@@ -4,6 +4,7 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -60,8 +61,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           title: widget.selectedOrder.orderNumber,
           status: widget.selectedOrder.status,
           showEditBtn: widget.selectedOrder.showEditBtn,
-          timeStamp: (widget.selectedOrder.orderTime?.toString() ?? 'Order Time'),
-          date: (widget.selectedOrder.orderDate?.toString() ?? 'Order Date'),
+          timeStamp: (widget.selectedOrder.orderTime.toString()),
+          date: (widget.selectedOrder.orderDate.toString()),
           // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
           handlefreezeMenu: widget.handlefreezeMenu,
           updateOrderStatus: widget.updateOrderStatus,
@@ -259,7 +260,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             maxHeight: 100,
                                           ),
                                           child: const Wrap(
-                                            alignment : WrapAlignment.center,
+                                            alignment: WrapAlignment.center,
                                             children: [
                                               Text(
                                                 'Are you sure?',
@@ -280,14 +281,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                TextButton(
+                                                ElevatedButton(
                                                   style: ButtonStyle(
-                                                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                    backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
                                                         borderRadius: BorderRadius.circular(5),
                                                       ),
                                                     ),
+                                                    padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                   ),
                                                   onPressed: () {
                                                     widget.resetSelectedTable?.call();
@@ -295,31 +297,33 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       var ordersBox = Hive.box('orders');
                                                       var orders = ordersBox.get('orders') as Orders;
 
-                                                      // Print the orderNumber of widget.selectedOrder
-                                                      // log('Order number to delete: ${widget.selectedOrder.orderNumber}');
-
-                                                      // // log the orderNumber of all orders in orders.data
-                                                      // for (var order in orders.data) {
-                                                      //   log('Order number in list: ${order.orderNumber}');
-                                                      // }
-
-                                                      // Find the index of the order to delete
-                                                      int indexToDelete =
+                                                      // Find the index of the order to update
+                                                      int indexToUpdate =
                                                           orders.data.indexWhere((order) => order.orderNumber == widget.selectedOrder.orderNumber);
 
                                                       // Check if the order was found
-                                                      if (indexToDelete != -1) {
-                                                        // Remove the order from the list
-                                                        orders.data.removeAt(indexToDelete);
-                                                        // log('order was found: $indexToDelete');
+                                                      if (indexToUpdate != -1) {
+                                                        // Create a copy of the selectedOrder
+                                                        var orderCopy = widget.selectedOrder.copyWith(categories);
+                                                        orderCopy.status = "Cancelled";
+                                                        String addCancelDateTime() {
+                                                          DateTime now = DateTime.now();
+                                                          return DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
+                                                        }
+
+                                                        // Set orderCopy.cancelTime using the addCancelDateTime method
+                                                        orderCopy.cancelledTime = addCancelDateTime();
+                                                        orderCopy.paymentTime = addCancelDateTime();
+                                                        // Update the order in the list
+                                                        orders.data[indexToUpdate] = orderCopy;
+                                                        log('order was found: $indexToUpdate');
 
                                                         // Put the updated list back into the box
                                                         ordersBox.put('orders', orders);
                                                       } else {
                                                         log('order was not found');
                                                       }
-                                                      // var updatedOrders = ordersBox.get('orders') as Orders;
-                                                      // log('Updated orders: $updatedOrders');
+                                                      log('orders: $orders');
                                                     }
                                                     setState(() {
                                                       widget.selectedOrder.resetDefault();
@@ -330,30 +334,46 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         updateOrderStatus();
                                                       }
                                                     });
-
+                                                    CherryToast(
+                                                      icon: Icons.cancel,
+                                                      iconColor: Colors.red,
+                                                      themeColor: Colors.red,
+                                                      backgroundColor: Colors.white,
+                                                      title: const Text(
+                                                        'The order has being cancelled!',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      toastPosition: Position.top,
+                                                      toastDuration: const Duration(milliseconds: 3000),
+                                                      animationType: AnimationType.fromTop,
+                                                      animationDuration: const Duration(milliseconds: 200),
+                                                      autoDismiss: true,
+                                                      displayCloseButton: false,
+                                                    ).show(context);
                                                     Navigator.of(context).pop();
                                                   },
-                                                  child: const Padding(
-                                                    padding: EdgeInsets.all(6),
-                                                    child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
-                                                  ),
+                                                  child: const Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
                                                 ),
                                                 const SizedBox(width: 20),
-                                                TextButton(
+                                                ElevatedButton(
                                                   style: ButtonStyle(
-                                                    backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                    backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
                                                         borderRadius: BorderRadius.circular(5),
                                                       ),
                                                     ),
+                                                    padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                   ),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                   },
-                                                  child: const Padding(
-                                                    padding: EdgeInsets.all(6),
-                                                    child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 14)),
+                                                  child: const Text(
+                                                    'Cancel',
+                                                    style: TextStyle(fontSize: 14, color: Colors.black),
                                                   ),
                                                 ),
                                               ],
@@ -384,13 +404,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                         ),
-                        padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                        padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -503,26 +523,26 @@ class _OrderDetailsState extends State<OrderDetails> {
           Widget remarkButton(Map<String, dynamic> data) {
             return ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
+                backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                  (Set<WidgetState> states) {
                     // Check if the remark has been added to itemRemarks
                     if (itemRemarks.containsKey(data['id'].toString())) {
                       // If the button is pressed or the remark has been added, make the background green
-                      return states.contains(MaterialState.pressed) ? Colors.green[700]! : Colors.green;
+                      return states.contains(WidgetState.pressed) ? Colors.green[700]! : Colors.green;
                     } else {
                       // If the button is pressed or the remark has not been added, make the background black
-                      return states.contains(MaterialState.pressed) ? Colors.green : Colors.black;
+                      return states.contains(WidgetState.pressed) ? Colors.green : Colors.black;
                     }
                   },
                 ),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-                side: MaterialStateProperty.all(const BorderSide(color: Colors.white)),
-                shape: MaterialStateProperty.all(
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+                side: WidgetStateProperty.all(const BorderSide(color: Colors.white)),
+                shape: WidgetStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), //
+                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), //
               ),
               onPressed: () {
                 setState(() {
@@ -739,15 +759,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           });
                                                         },
                                                         style: ButtonStyle(
-                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                          backgroundColor: WidgetStateProperty.all<Color>(
                                                             selectedChoice == choice ? Colors.orange : Colors.white,
                                                           ),
-                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
                                                               borderRadius: BorderRadius.circular(5),
                                                             ),
                                                           ),
-                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                         ),
                                                         child: Text(
                                                           '${choice['name']}',
@@ -801,15 +821,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           });
                                                         },
                                                         style: ButtonStyle(
-                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                          backgroundColor: WidgetStateProperty.all<Color>(
                                                             selectedType == type ? Colors.orange : Colors.white,
                                                           ),
-                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
                                                               borderRadius: BorderRadius.circular(5),
                                                             ),
                                                           ),
-                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                         ),
                                                         child: Text(
                                                           '${type['name']}',
@@ -867,15 +887,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           });
                                                         },
                                                         style: ButtonStyle(
-                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                          backgroundColor: WidgetStateProperty.all<Color>(
                                                             selectedMeePortion == meePortion ? Colors.orange : Colors.white,
                                                           ),
-                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
                                                               borderRadius: BorderRadius.circular(5),
                                                             ),
                                                           ),
-                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                         ),
                                                         child: Text(
                                                           '${meePortion['name']}',
@@ -930,15 +950,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           });
                                                         },
                                                         style: ButtonStyle(
-                                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                                          backgroundColor: WidgetStateProperty.all<Color>(
                                                             selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
                                                           ),
-                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
                                                               borderRadius: BorderRadius.circular(5),
                                                             ),
                                                           ),
-                                                          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                         ),
                                                         child: Text(
                                                           '${meatPortion['name']}',
@@ -1056,13 +1076,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         children: [
                                           TextButton(
                                             style: ButtonStyle(
-                                              backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                              backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(5),
                                                 ),
                                               ),
-                                              padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                                              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
                                             ),
                                             child: const Text(
                                               'Confirm',
@@ -1095,13 +1115,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           const SizedBox(width: 10),
                                           TextButton(
                                             style: ButtonStyle(
-                                              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                              backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(5),
                                                 ),
                                               ),
-                                              padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                                              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
                                             ),
                                             child: const Text(
                                               'Cancel',
@@ -1289,7 +1309,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     widget.selectedOrder.calculateItemsAndQuantities();
                                     widget.updateOrderStatus!();
                                     CherryToast(
-                                      icon: Icons.cancel,
+                                      icon: Icons.remove_circle,
                                       iconColor: Colors.red,
                                       themeColor: Colors.red,
                                       backgroundColor: Colors.white,
@@ -1384,7 +1404,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
           // Then show a notifications
           CherryToast(
-            icon: Icons.cancel,
+            icon: Icons.remove_circle,
             iconColor: Colors.red,
             themeColor: Colors.red,
             backgroundColor: Colors.white,
@@ -1397,9 +1417,11 @@ class _OrderDetailsState extends State<OrderDetails> {
               ),
             ),
             toastPosition: Position.top,
+            toastDuration: const Duration(milliseconds: 1000),
             animationType: AnimationType.fromTop,
             animationDuration: const Duration(milliseconds: 200),
             autoDismiss: true,
+            displayCloseButton: false,
           ).show(context);
           // ScaffoldMessenger.of(context).showSnackBar(
           //   SnackBar(

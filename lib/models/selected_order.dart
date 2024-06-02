@@ -1,4 +1,4 @@
-import 'dart:developer'; // for log function
+// import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:jspos/models/item.dart';
 import 'package:intl/intl.dart';
@@ -17,9 +17,9 @@ class SelectedOrder with ChangeNotifier {
   @HiveField(2)
   String orderType;
   @HiveField(3)
-  String? orderDate;
+  String orderDate = "Today";
   @HiveField(4)
-  String? orderTime;
+  String orderTime = "Now";
   @HiveField(5)
   String status;
   @HiveField(6)
@@ -46,12 +46,14 @@ class SelectedOrder with ChangeNotifier {
   int totalQuantity = 0;
   @HiveField(17)
   String paymentTime = "Today";
+  @HiveField(18)
+  String cancelledTime = "Today";
   SelectedOrder({
     required this.orderNumber,
     required this.tableName,
     required this.orderType,
-    required this.orderTime,
     required this.orderDate,
+    required this.orderTime,
     required this.status,
     required this.items,
     required this.subTotal,
@@ -65,6 +67,7 @@ class SelectedOrder with ChangeNotifier {
     this.roundingAdjustment = 0,
     this.totalQuantity = 0,
     this.paymentTime = "Today",
+    this.cancelledTime = "Today",
   }) : categories = {
           for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
         };
@@ -75,20 +78,22 @@ class SelectedOrder with ChangeNotifier {
         '\torderNumber: $orderNumber,\n'
         '\ttableName: $tableName,\n'
         '\torderType: $orderType,\n'
-        '\torderTime: $orderTime,\n'
         '\torderDate: $orderDate,\n'
+        '\torderTime: $orderTime,\n'
         '\tstatus: $status,\n'
-        '\titems: [\n\t\t${items.join(',\n\t\t')}\n\t],\n'
+        // '\titems: [\n\t\t${items.join(',\n\t\t')}\n\t],\n'
         '\tsubTotal: $subTotal,\n'
         '\tserviceCharge: $serviceCharge,\n'
         '\ttotalPrice: $totalPrice,\n'
-        '\ttotalQuantity: $totalQuantity,\n'
         '\tpaymentMethod: $paymentMethod,\n'
         '\tshowEditBtn: $showEditBtn,\n'
-        '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n'
         '\tamountReceived: $amountReceived,\n'
         '\tamountChanged: $amountChanged,\n'
         '\troundingAdjustment: $roundingAdjustment\n'
+        '\ttotalQuantity: $totalQuantity,\n'
+        '\tpaymentTime: $paymentTime,\n'
+        '\tcancelledTime: $cancelledTime,\n'
+        '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n'
         ')';
   }
 
@@ -97,8 +102,8 @@ class SelectedOrder with ChangeNotifier {
       orderNumber: "Order Number",
       tableName: "Table Name",
       orderType: "Dine-In",
-      orderTime: "Order Time",
       orderDate: "Order Date",
+      orderTime: "Order Time",
       status: "Start Your Order",
       items: [], // Add your items here
       subTotal: 0,
@@ -111,7 +116,8 @@ class SelectedOrder with ChangeNotifier {
       amountChanged: 0,
       roundingAdjustment: 0,
       totalQuantity: 0,
-      paymentTime: "Today",
+      paymentTime: "Payment Time",
+      cancelledTime: "Cancelled Time",
     );
   }
 
@@ -120,8 +126,8 @@ class SelectedOrder with ChangeNotifier {
       orderNumber: orderNumber,
       tableName: tableName,
       orderType: orderType,
-      orderTime: orderTime,
       orderDate: orderDate,
+      orderTime: orderTime,
       status: status,
       items: List.from(items), // Create a copy of the items list
       subTotal: subTotal,
@@ -135,6 +141,7 @@ class SelectedOrder with ChangeNotifier {
       roundingAdjustment: roundingAdjustment,
       totalQuantity: totalQuantity,
       paymentTime: paymentTime,
+      cancelledTime: cancelledTime,
     );
   }
 
@@ -264,6 +271,11 @@ class SelectedOrder with ChangeNotifier {
   void addPaymentDateTime() {
     DateTime now = DateTime.now();
     paymentTime = DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
+  }
+
+  void addCancelDateTime() {
+    DateTime now = DateTime.now();
+    cancelledTime = DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
   }
 
   void updateShowEditBtn(bool editBtn) {

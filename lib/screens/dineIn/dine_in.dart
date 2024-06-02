@@ -36,6 +36,7 @@ class _DineInPageState extends State<DineInPage> {
   void initState() {
     super.initState();
     loadTables();
+    loadTableOrderCount();
     handleMethod = defaultMethod;
   }
 
@@ -51,8 +52,18 @@ class _DineInPageState extends State<DineInPage> {
     setState(() {}); // Call setState to trigger a rebuild of the widget
   }
 
-  bool showMenu = false;
+  void loadTableOrderCount() async {
+    var counterBox = Hive.box('orderCounter');
+    var data = counterBox.get('orderCounter');
+    if (data != null) {
+      orderCounter = counterBox.get('orderCounter', defaultValue: 1);
+    } else {}
+    setState(() {});
+  }
+
   int orderCounter = 1;
+  bool showMenu = false;
+
   late int selectedTableIndex;
   String orderNumber = "";
   List<Item> tempCartItems = [];
@@ -86,6 +97,8 @@ class _DineInPageState extends State<DineInPage> {
     final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s'), '');
     final orderNumber = '#Table$tableNameWithoutSpace-$paddedCounter';
     orderCounter++;
+    // Save the updated orderCounter to Hive
+    Hive.box('orderCounter').put('orderCounter', orderCounter);
     return orderNumber;
   }
 
@@ -190,8 +203,8 @@ class _DineInPageState extends State<DineInPage> {
     updateOrderStatus();
   }
 
-  void printSelectedOrders() {
-    var selectedOrderBox = Hive.box('selectedOrder');
+  void printSelectedOrders() async {
+    var selectedOrderBox = await Hive.openBox('selectedOrder');
     var selectedOrder = selectedOrderBox.get('selectedOrder');
     log('selectedOrder: $selectedOrder');
   }
@@ -317,6 +330,8 @@ class _DineInPageState extends State<DineInPage> {
     if (selectedOrder.status == "Ordering" && selectedOrder.items.isEmpty) {
       setState(() {
         orderCounter--;
+        // Save the updated orderCounter to Hive
+        Hive.box('orderCounter').put('orderCounter', orderCounter);
         resetSelectedTable();
         selectedOrder.resetDefault();
         updateOrderStatus();
@@ -338,12 +353,12 @@ class _DineInPageState extends State<DineInPage> {
     }
   }
 
-  void handleYesButtonPress() {
+  void handleCancelBtn() {
     // yes to cancel orders or cancel changes
-    // print('Button pressed. Current selectedOrder status: ${selectedOrder.status}');
     if (selectedOrder.status == "Ordering") {
       setState(() {
         orderCounter--;
+        Hive.box('orderCounter').put('orderCounter', orderCounter);
         resetSelectedTable();
         selectedOrder.resetDefault();
       });
@@ -477,13 +492,13 @@ class _DineInPageState extends State<DineInPage> {
           actions: <Widget>[
             TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.deepOrange),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                  padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                  padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
                 ),
                 child: const Text(
                   'Yes',
@@ -493,19 +508,19 @@ class _DineInPageState extends State<DineInPage> {
                   ),
                 ),
                 onPressed: () {
-                  handleYesButtonPress();
+                  handleCancelBtn();
                   Navigator.of(context).pop();
                 }),
             const SizedBox(width: 2),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
-                padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
               ),
               child: const Text(
                 'No',
@@ -667,10 +682,13 @@ class _DineInPageState extends State<DineInPage> {
                           var ordersBox = Hive.box('orders');
                           var tablesBox = Hive.box('tables');
                           var categoriesBox = Hive.box('categories');
+                          var orderCounterBox = Hive.box('orderCounter');
                           await ordersBox.clear();
                           await tablesBox.clear();
                           await categoriesBox.clear();
-                          log('Categories has been reset to the default values.');
+                          await orderCounterBox.clear();
+                          log('Categories has been reset.');
+                          log('orderCounter has been reset.');
                           log('categoriesBox ${categoriesBox.values}');
                           log('All data in orders box has been cleared.');
 
@@ -684,7 +702,7 @@ class _DineInPageState extends State<DineInPage> {
                             tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
                           }
 
-                          log('Tables data has been reset to the default values.');
+                          log('Tables data has been reset.');
                           log('tables $tables');
                         },
                         child: const Row(

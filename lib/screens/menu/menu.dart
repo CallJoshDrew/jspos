@@ -27,13 +27,13 @@ class _MenuPageState extends State<MenuPage> {
           });
         },
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.green[800]!),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          backgroundColor: WidgetStateProperty.all<Color>(Colors.green[800]!),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
           ),
-          padding: MaterialStateProperty.all(const EdgeInsets.fromLTRB(12, 6, 12, 6)), // Add padding inside the button
+          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 6, 12, 6)), // Add padding inside the button
         ),
         child: const Padding(
           padding: EdgeInsets.all(0.0),
