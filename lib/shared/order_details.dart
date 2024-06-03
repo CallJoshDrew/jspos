@@ -323,7 +323,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       } else {
                                                         log('order was not found');
                                                       }
-                                                      log('orders: $orders');
+                                                      log('order from order Details page: $orders');
                                                     }
                                                     setState(() {
                                                       widget.selectedOrder.resetDefault();
@@ -425,7 +425,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ],
                       ),
                     )
-                  : const SizedBox.shrink(),
+                  : const SizedBox(height: 50),
             ],
           ),
           Row(

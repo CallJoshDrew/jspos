@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -19,6 +20,29 @@ class _HistoryPageState extends State<HistoryPage> {
   bool _sortAscending = true;
   int _sortColumnIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+     printOrders();
+  }
+
+  void printOrders() async {
+    var ordersBox = await Hive.openBox('orders');
+    var orders = ordersBox.get('orders') as Orders;
+
+    // Print out all orders
+    for (var order in orders.data) {
+      log('Order Number: ${order.orderNumber}, Status: ${order.status}');
+    }
+
+    // Print out only 'Paid' orders
+    var paidOrders = orders.data.where((order) => order.status == 'Paid');
+    for (var order in paidOrders) {
+      log('Paid Order Number: ${order.orderNumber}');
+    }
+    log('Orders from History: ${widget.orders.toString()}');
+  }
+
   String formatDateTime(String dateTimeString) {
     // Parse the string into a DateTime object
     DateFormat inputFormat = DateFormat('h:mm a, d MMMM yyyy');
@@ -27,7 +51,7 @@ class _HistoryPageState extends State<HistoryPage> {
     // Format the DateTime object
     return DateFormat('hh:mm a (EEEE)').format(dateTime);
   }
-
+  int filteredOrderIndex = 1;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -213,7 +237,6 @@ class _HistoryPageState extends State<HistoryPage> {
             SelectedOrder order = entry.value;
             return (order.status == "Paid" || order.status == "Cancelled");
           }).map((entry) {
-            int index = entry.key;
             SelectedOrder order = entry.value;
 
             return DataRow(
@@ -224,7 +247,7 @@ class _HistoryPageState extends State<HistoryPage> {
               cells: <DataCell>[
                 DataCell(Center(
                     child: Text(
-                  (index + 1).toString(),
+                  (filteredOrderIndex++).toString(),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,

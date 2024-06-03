@@ -1,7 +1,10 @@
 // import 'dart:developer';
+import 'dart:developer';
+
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
@@ -811,10 +814,17 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
                                                                   widget.tables[widget.selectedTableIndex]['occupied'] = false;
                                                                   widget.updateTables(widget.selectedTableIndex, emptyOrderNumber, false);
-                                                                  // log('${widget.tables}');
-                                                                  // log('${widget.selectedOrder}');
-                                                                  // log('${widget.orders}');
                                                                 });
+                                                                if (Hive.isBoxOpen('orders')) {
+                                                                  var ordersBox = Hive.box('orders');
+                                                                  ordersBox.put('orders', widget.orders);
+
+                                                                  // Print the latest orders
+                                                                  var latestOrders = ordersBox.get('orders') as Orders;
+                                                                  for (var order in latestOrders.data) {
+                                                                    log('Order Number from Payments: ${order.orderNumber}, Status: ${order.status}');
+                                                                  }
+                                                                }
                                                                 CherryToast(
                                                                   icon: Icons.verified_rounded,
                                                                   iconColor: Colors.green,

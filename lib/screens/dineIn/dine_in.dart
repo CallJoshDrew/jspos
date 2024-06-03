@@ -199,7 +199,7 @@ class _DineInPageState extends State<DineInPage> {
       }
     });
     // printTables();
-    saveSelectedOrderToHive();
+    // saveSelectedOrderToHive();
     updateOrderStatus();
   }
 
@@ -337,9 +337,9 @@ class _DineInPageState extends State<DineInPage> {
         updateOrderStatus();
         handlefreezeMenu();
       });
-      saveSelectedOrderToHive();
+      // saveSelectedOrderToHive();
     } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
-      _showConfirmationDialog();
+      _showConfirmationCancelDialog();
     } else if (selectedOrder.status == "Placed Order" && areItemListsEqual(tempCartItems, selectedOrder.items)) {
       handlefreezeMenu();
       selectedOrder.updateShowEditBtn(true);
@@ -347,9 +347,9 @@ class _DineInPageState extends State<DineInPage> {
       orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
       orderStatusIcon = Icons.monetization_on;
       handleMethod = handlePaymentBtn;
-      saveSelectedOrderToHive();
+      // saveSelectedOrderToHive();
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
-      _showConfirmationDialog();
+      _showConfirmationCancelDialog();
     }
   }
 
@@ -387,23 +387,8 @@ class _DineInPageState extends State<DineInPage> {
     }
   }
 
-  void handlePlaceOrderBtn() async {
-    setState(() {
-      selectedOrder.placeOrder();
-      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-      // Add a new SelectedOrder object to the orders list
-      widget.orders.addOrder(selectedOrder.copyWith(categories));
-    });
-    // Save the updated orders object to Hive
-    if (Hive.isBoxOpen('orders')) {
-      var ordersBox = Hive.box('orders');
-      ordersBox.put('orders', widget.orders);
-      // printOrders();
-    }
-    // Wait for the next frame so that setState has a chance to rebuild the widget
-    await Future.delayed(Duration.zero);
-    updateOrderStatus();
-    handlefreezeMenu();
+  void handlePlaceOrderBtn() {
+    _showComfirmPlaceOrdersDialog();
   }
 
   void handleUpdateOrderBtn() {
@@ -452,7 +437,7 @@ class _DineInPageState extends State<DineInPage> {
     // handleMethod is initialized in the initState method, which is called exactly once and then never again for each State object. It’s the first method called after a State object is created, and it’s called before the build method
   }
 
-  Future<void> _showConfirmationDialog() async {
+  Future<void> _showConfirmationCancelDialog() async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -526,6 +511,105 @@ class _DineInPageState extends State<DineInPage> {
                 'No',
                 style: TextStyle(
                   color: Colors.deepOrange,
+                  fontSize: 14,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showComfirmPlaceOrdersDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[900],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10), // change radius here
+            side: const BorderSide(color: Colors.green, width: 1), // change border color here
+          ),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 600,
+              maxHeight: 100,
+            ),
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    Text(
+                      'We’re about to proceed with printing.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      'Could you please confirm that all items have been selected correctly according to the client’s instructions?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+                ),
+                child: const Text(
+                  'Yes',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    selectedOrder.placeOrder();
+                    tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+                    // Add a new SelectedOrder object to the orders list
+                    widget.orders.addOrder(selectedOrder.copyWith(categories));
+                  });
+                  // Save the updated orders object to Hive
+                  if (Hive.isBoxOpen('orders')) {
+                    var ordersBox = Hive.box('orders');
+                    ordersBox.put('orders', widget.orders);
+                  }
+                  updateOrderStatus();
+                  handlefreezeMenu();
+                  Navigator.of(context).pop();
+                }),
+            const SizedBox(width: 2),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+              ),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.green,
                   fontSize: 14,
                 ),
               ),
