@@ -237,6 +237,13 @@ class SelectedOrder with ChangeNotifier {
     paymentTime = "Today";
   }
 
+  void handleCancelOrder() {
+    status = "Cancelled";
+    paymentMethod = "None";
+    paymentTime = "None";
+    showEditBtn = true;
+  }
+
   void updateSubTotal() {
     double total = items.fold(0, (total, item) => total + item.price * item.quantity);
     subTotal = double.parse(total.toStringAsFixed(2));

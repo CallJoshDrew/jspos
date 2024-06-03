@@ -667,13 +667,10 @@ class _DineInPageState extends State<DineInPage> {
         orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
         handleMethod = defaultMethod;
         orderStatusIcon = Icons.check_circle;
-      } else if (selectedOrder.status == "COMPLETED (PAID)") {
-        orderStatus = "Paid with DuitNow";
-        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
-        handleMethod = defaultMethod; // Disabled
       } else if (selectedOrder.status == "Cancelled") {
         orderStatus = "Cancelled";
-        orderStatusColor = Colors.red[500]!;
+        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+        orderStatusIcon = Icons.cancel;
         handleMethod = defaultMethod; // Disabled
       }
     });

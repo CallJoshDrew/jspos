@@ -208,7 +208,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           const SizedBox(width: 6),
                           Text(
                             status,
-                            style: const TextStyle(color: Colors.green, fontSize: 16),
+                            style: TextStyle(color: status == "Cancelled" ? Colors.red : Colors.green, fontSize: 16),
                           ),
                         ],
                       ),
@@ -305,17 +305,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       if (indexToUpdate != -1) {
                                                         // Create a copy of the selectedOrder
                                                         var orderCopy = widget.selectedOrder.copyWith(categories);
-                                                        orderCopy.status = "Cancelled";
-                                                        orderCopy.paymentTime = "None";
-                                                        orderCopy.paymentMethod = "None";
                                                         String addCancelDateTime() {
                                                           DateTime now = DateTime.now();
                                                           return DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
                                                         }
-
+                                                        orderCopy.status = "Cancelled";
                                                         // Set orderCopy.cancelTime using the addCancelDateTime method
                                                         orderCopy.cancelledTime = addCancelDateTime();
-                                                        orderCopy.paymentTime = addCancelDateTime();
+                                                        orderCopy.paymentTime = "None";
+                                                        orderCopy.paymentMethod = "None";
                                                         // Update the order in the list
                                                         orders.data[indexToUpdate] = orderCopy;
                                                         log('order was found: $indexToUpdate');
@@ -328,7 +326,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       log('order from order Details page: $orders');
                                                     }
                                                     setState(() {
-                                                      widget.selectedOrder.resetDefault();
+                                                      widget.selectedOrder.handleCancelOrder();
                                                       if (handlefreezeMenu != null) {
                                                         handlefreezeMenu();
                                                       }
@@ -392,7 +390,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ],
               ),
               // show Edit Button when it is true
-              (showEditBtn && widget.selectedOrder.status != "Paid")
+              showEditBtn && (widget.selectedOrder.status != "Paid" && widget.selectedOrder.status != "Cancelled")
                   ? ElevatedButton(
                       onPressed: () {
                         setState(() {
