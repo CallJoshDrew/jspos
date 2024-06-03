@@ -204,9 +204,15 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void printSelectedOrders() async {
-    var selectedOrderBox = await Hive.openBox('selectedOrder');
-    var selectedOrder = selectedOrderBox.get('selectedOrder');
-    log('selectedOrder: $selectedOrder');
+    try {
+      if (Hive.isBoxOpen('tables')) {
+        var selectedOrderBox = await Hive.openBox('selectedOrder');
+        var selectedOrder = selectedOrderBox.get('selectedOrder');
+        log('selectedOrder: $selectedOrder');
+      }
+    } catch (e) {
+      log('An error occurred at DineIn Page void printSelectedOrders: $e');
+    }
   }
 
   void saveSelectedOrderToHive() async {
@@ -217,7 +223,7 @@ class _DineInPageState extends State<DineInPage> {
         // printSelectedOrders();
       }
     } catch (e) {
-      log('DINEIN Page: Failed to save selectedOrder to Hive: $e');
+      log('DineIn Page: Failed to save selectedOrder to Hive: $e');
     }
   }
 
@@ -380,10 +386,14 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void printOrders() async {
-    if (Hive.isBoxOpen('orders')) {
-      var ordersBox = Hive.box('orders');
-      var orders = ordersBox.get('orders');
-      log('Orders: $orders');
+    try {
+      if (Hive.isBoxOpen('orders')) {
+        var ordersBox = Hive.box('orders');
+        var orders = ordersBox.get('orders');
+        log('Orders: $orders');
+      }
+    } catch (e) {
+      log('An error occurred at DineIn Page void printOrders: $e');
     }
   }
 
@@ -392,20 +402,24 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void handleUpdateOrderBtn() {
-    setState(() {
-      selectedOrder.placeOrder();
-      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-      // Add a new SelectedOrder object to the orders list
-      widget.orders.addOrder(selectedOrder.copyWith(categories));
-      // Save the updated orders object to Hive
-      if (Hive.isBoxOpen('orders')) {
-        var ordersBox = Hive.box('orders');
-        ordersBox.put('orders', widget.orders);
-        // printOrders();
-      }
-      updateOrderStatus();
-      handlefreezeMenu();
-    });
+    try {
+      setState(() {
+        selectedOrder.placeOrder();
+        tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+        // Add a new SelectedOrder object to the orders list
+        widget.orders.addOrder(selectedOrder.copyWith(categories));
+        // Save the updated orders object to Hive
+        if (Hive.isBoxOpen('orders')) {
+          var ordersBox = Hive.box('orders');
+          ordersBox.put('orders', widget.orders);
+          // printOrders();
+        }
+        updateOrderStatus();
+        handlefreezeMenu();
+      });
+    } catch (e) {
+      log('An error occurred in handleUpdateOrderBtn: $e');
+    }
   }
 
   void handlePaymentBtn() {
@@ -423,11 +437,6 @@ class _DineInPageState extends State<DineInPage> {
       ),
     );
   }
-
-  // setState(() {
-  //   selectedOrder.makePayment();
-  //   updateOrderStatus();
-  // }); Need to put this in the Payment Page after confirm payment.
 
   //
   VoidCallback? handleMethod;
@@ -580,20 +589,24 @@ class _DineInPageState extends State<DineInPage> {
                   ),
                 ),
                 onPressed: () {
-                  setState(() {
-                    selectedOrder.placeOrder();
-                    tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-                    // Add a new SelectedOrder object to the orders list
-                    widget.orders.addOrder(selectedOrder.copyWith(categories));
-                  });
-                  // Save the updated orders object to Hive
-                  if (Hive.isBoxOpen('orders')) {
-                    var ordersBox = Hive.box('orders');
-                    ordersBox.put('orders', widget.orders);
+                  try {
+                    setState(() {
+                      selectedOrder.placeOrder();
+                      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+                      // Add a new SelectedOrder object to the orders list
+                      widget.orders.addOrder(selectedOrder.copyWith(categories));
+                    });
+                    // Save the updated orders object to Hive
+                    if (Hive.isBoxOpen('orders')) {
+                      var ordersBox = Hive.box('orders');
+                      ordersBox.put('orders', widget.orders);
+                    }
+                    updateOrderStatus();
+                    handlefreezeMenu();
+                    Navigator.of(context).pop();
+                  } catch (e) {
+                    log('An error occurred in onPressed place order & print: $e');
                   }
-                  updateOrderStatus();
-                  handlefreezeMenu();
-                  Navigator.of(context).pop();
                 }),
             const SizedBox(width: 2),
             TextButton(
@@ -634,10 +647,6 @@ class _DineInPageState extends State<DineInPage> {
         orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
         handleMethod = defaultMethod; // Disabled
         orderStatusIcon = Icons.shopping_cart;
-        // } else if (selectedOrder.status == "Placed Order" && !selectedOrder.showEditBtn) {
-        //   orderStatus = "Update Order & Print";
-        //   orderStatusColor = isSameItems ? Colors.grey[500]! : const Color.fromRGBO(46, 125, 50, 1);
-        //   handleMethod = isSameItems ? null : handleUpdateOrderBtn; // Disabled if isSameItems is true
       } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
         orderStatus = "Place Order & Print";
         orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
@@ -646,7 +655,7 @@ class _DineInPageState extends State<DineInPage> {
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false) {
         orderStatus = "Update Orders & Print";
         orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? const Color.fromRGBO(97, 97, 97, 1) : const Color.fromRGBO(46, 125, 50, 1);
-        handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items) ? defaultMethod : handleUpdateOrderBtn; // Disabled
+        handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items) ? defaultMethod : handlePlaceOrderBtn; // Disabled
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
         orderStatus = "Make Payment";

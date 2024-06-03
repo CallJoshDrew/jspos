@@ -798,32 +798,38 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                               ),
                                                               onPressed: () {
-                                                                setState(() {
-                                                                  _calculateChange();
-                                                                  widget.selectedOrder.totalPrice =
-                                                                      double.parse((amountReceived - amountChanged).toStringAsFixed(2));
-                                                                  widget.selectedOrder.amountReceived = amountReceived;
-                                                                  widget.selectedOrder.amountChanged = amountChanged;
-                                                                  widget.selectedOrder.roundingAdjustment = roundingAdjustment;
-                                                                  widget.selectedOrder.paymentMethod = selectedPaymentMethod;
-                                                                  widget.selectedOrder.status = 'Paid';
-                                                                  widget.selectedOrder.addPaymentDateTime();
-                                                                  widget.updateOrderStatus!();
-                                                                  widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
-                                                                  var emptyOrderNumber = '';
-                                                                  widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
-                                                                  widget.tables[widget.selectedTableIndex]['occupied'] = false;
-                                                                  widget.updateTables(widget.selectedTableIndex, emptyOrderNumber, false);
-                                                                });
-                                                                if (Hive.isBoxOpen('orders')) {
-                                                                  var ordersBox = Hive.box('orders');
-                                                                  ordersBox.put('orders', widget.orders);
+                                                                try {
+                                                                  setState(() {
+                                                                    _calculateChange();
+                                                                    widget.selectedOrder.totalPrice =
+                                                                        double.parse((amountReceived - amountChanged).toStringAsFixed(2));
+                                                                    widget.selectedOrder.amountReceived = amountReceived;
+                                                                    widget.selectedOrder.amountChanged = amountChanged;
+                                                                    widget.selectedOrder.roundingAdjustment = roundingAdjustment;
+                                                                    widget.selectedOrder.paymentMethod = selectedPaymentMethod;
+                                                                    widget.selectedOrder.status = 'Paid';
+                                                                    widget.selectedOrder.cancelledTime = 'None';
+                                                                    widget.selectedOrder.addPaymentDateTime();
+                                                                    widget.updateOrderStatus!();
+                                                                    widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
+                                                                    var emptyOrderNumber = '';
+                                                                    widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
+                                                                    widget.tables[widget.selectedTableIndex]['occupied'] = false;
+                                                                    widget.updateTables(widget.selectedTableIndex, emptyOrderNumber, false);
+                                                                  });
 
-                                                                  // Print the latest orders
-                                                                  var latestOrders = ordersBox.get('orders') as Orders;
-                                                                  for (var order in latestOrders.data) {
-                                                                    log('Order Number from Payments: ${order.orderNumber}, Status: ${order.status}');
+                                                                  if (Hive.isBoxOpen('orders')) {
+                                                                    var ordersBox = Hive.box('orders');
+                                                                    ordersBox.put('orders', widget.orders);
+
+                                                                    // Print the latest orders
+                                                                    var latestOrders = ordersBox.get('orders') as Orders;
+                                                                    for (var order in latestOrders.data) {
+                                                                      log('Order Number from Payments: ${order.orderNumber}, Status: ${order.status}');
+                                                                    }
                                                                   }
+                                                                } catch (e) {
+                                                                  log('An error occurred at MakePaymentPage: $e');
                                                                 }
                                                                 CherryToast(
                                                                   icon: Icons.verified_rounded,

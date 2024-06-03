@@ -306,6 +306,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         // Create a copy of the selectedOrder
                                                         var orderCopy = widget.selectedOrder.copyWith(categories);
                                                         orderCopy.status = "Cancelled";
+                                                        orderCopy.paymentTime = "None";
+                                                        orderCopy.paymentMethod = "None";
                                                         String addCancelDateTime() {
                                                           DateTime now = DateTime.now();
                                                           return DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024

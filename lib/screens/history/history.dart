@@ -23,24 +23,28 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
-     printOrders();
+    printOrders();
   }
 
   void printOrders() async {
-    var ordersBox = await Hive.openBox('orders');
-    var orders = ordersBox.get('orders') as Orders;
-
-    // Print out all orders
-    for (var order in orders.data) {
-      log('Order Number: ${order.orderNumber}, Status: ${order.status}');
+    try {
+      if (Hive.isBoxOpen('orders')) {
+        var ordersBox = await Hive.openBox('orders');
+        var orders = ordersBox.get('orders') as Orders;
+        // Print out all orders
+        for (var order in orders.data) {
+          log('Order Number: ${order.orderNumber}, Status: ${order.status}');
+        }
+        // Print out only 'Paid' orders
+        var paidOrders = orders.data.where((order) => order.status == 'Paid');
+        for (var order in paidOrders) {
+          log('Paid Order Number: ${order.orderNumber}');
+        }
+      }
+      // log('Orders from History: ${widget.orders.toString()}');
+    } catch (e) {
+      log('An error occurred while printing orders: $e');
     }
-
-    // Print out only 'Paid' orders
-    var paidOrders = orders.data.where((order) => order.status == 'Paid');
-    for (var order in paidOrders) {
-      log('Paid Order Number: ${order.orderNumber}');
-    }
-    log('Orders from History: ${widget.orders.toString()}');
   }
 
   String formatDateTime(String dateTimeString) {
@@ -51,9 +55,10 @@ class _HistoryPageState extends State<HistoryPage> {
     // Format the DateTime object
     return DateFormat('hh:mm a (EEEE)').format(dateTime);
   }
-  int filteredOrderIndex = 1;
+
   @override
   Widget build(BuildContext context) {
+    int filteredOrderIndex = 1;
     return Container(
       decoration: const BoxDecoration(
         color: Colors.black,
@@ -91,21 +96,22 @@ class _HistoryPageState extends State<HistoryPage> {
             DataColumn2(
               size: ColumnSize.L,
               label: const Center(
-                  child: Text(
-                'Order Number',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
+                child: Text(
+                  'Order Number',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
                 ),
-              )),
+              ),
               onSort: (columnIndex, ascending) {
                 setState(() {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
-                    widget.orders.data.sort((a, b) => a.orderNumber.compareTo(b.orderNumber));
+                    widget.orders.data.sort((a, b) => int.parse(a.orderNumber.split('-')[1]).compareTo(int.parse(b.orderNumber.split('-')[1])));
                   } else {
-                    widget.orders.data.sort((a, b) => b.orderNumber.compareTo(a.orderNumber));
+                    widget.orders.data.sort((a, b) => int.parse(b.orderNumber.split('-')[1]).compareTo(int.parse(a.orderNumber.split('-')[1])));
                   }
                 });
               },
