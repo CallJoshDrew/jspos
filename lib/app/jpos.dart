@@ -1,3 +1,5 @@
+import 'package:bluetooth_print/bluetooth_print.dart';
+import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
 import 'package:jspos/models/orders.dart';
 // import 'package:jspos/screens/reports/reports.dart';
@@ -15,21 +17,27 @@ class JPOSApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
+    ValueNotifier<BluetoothDevice?> printerDevices = ValueNotifier<BluetoothDevice?>(null);
+     ValueNotifier<bool> printersConnected = ValueNotifier<bool>(false);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'JSPOS',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(orders: orders, categories: categories,),
+      home: MainPage(orders: orders, categories: categories, bluetoothPrint: bluetoothPrint, printerDevices: printerDevices, printersConnected: printersConnected),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-   final Orders orders;
-   final List<String> categories;
-  const MainPage({super.key, required this.orders, required this.categories});
+  final Orders orders;
+  final List<String> categories;
+  final BluetoothPrint bluetoothPrint;
+  final ValueNotifier<BluetoothDevice?> printerDevices;
+  final ValueNotifier<bool> printersConnected;
+  const MainPage({super.key, required this.orders, required this.categories, required this.bluetoothPrint, required this.printerDevices, required this.printersConnected});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -48,7 +56,7 @@ class _MainPageState extends State<MainPage> {
   _pageView() {
     switch (pageActive) {
       case 'Dine In':
-        return DineInPage(freezeSideMenu: freezeSideMenu, orders: widget.orders);
+        return DineInPage(freezeSideMenu: freezeSideMenu, orders: widget.orders, bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected);
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
@@ -56,7 +64,7 @@ class _MainPageState extends State<MainPage> {
       // case 'Reports':
       //   return const ReportsPage();
       case 'Settings':
-        return SettingsPage(categories: widget.categories);
+        return SettingsPage(categories: widget.categories, bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected);
 
       default:
         return const HomePage();
@@ -132,8 +140,7 @@ class _MainPageState extends State<MainPage> {
         SizedBox(height: 10),
         Text(
           'JSPOS',
-          style: TextStyle(
-              color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
         )
       ],
     );
@@ -147,12 +154,10 @@ class _MainPageState extends State<MainPage> {
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: AnimatedContainer(
-              padding: const EdgeInsets.fromLTRB(4, 6, 4, 6), 
+              padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: pageActive == menu
-                    ? Colors.deepOrangeAccent
-                    : Colors.transparent,
+                color: pageActive == menu ? Colors.deepOrangeAccent : Colors.transparent,
               ),
               duration: const Duration(milliseconds: 200),
               curve: Curves.slowMiddle,
@@ -167,8 +172,9 @@ class _MainPageState extends State<MainPage> {
                   Text(
                     menu,
                     style: TextStyle(
-                        color: isSideMenuEnabled == true ? Colors.white: Colors.grey[600],
-                        fontSize: 12,),
+                      color: isSideMenuEnabled == true ? Colors.white : Colors.grey[600],
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               )),

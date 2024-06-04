@@ -1,6 +1,6 @@
-  import 'package:hive/hive.dart';
+import 'package:hive/hive.dart';
 
-  class CategoryController {
+class CategoryController {
   static void setCategories(List<String> categories) async {
     var box = Hive.box('categories');
     await box.put('categories', categories.join(','));

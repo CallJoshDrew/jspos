@@ -1,3 +1,5 @@
+import 'package:bluetooth_print/bluetooth_print.dart';
+import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
@@ -12,6 +14,7 @@ import 'package:jspos/data/tables_data.dart';
 
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
+import 'package:jspos/shared/print_service.dart';
 
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 // SpinningLines, FoldingCube,  DancingSquare
@@ -24,7 +27,10 @@ import 'package:cherry_toast/resources/arrays.dart';
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
   final Orders orders;
-  const DineInPage({super.key, required this.freezeSideMenu, required this.orders});
+  final BluetoothPrint bluetoothPrint;
+  final ValueNotifier<BluetoothDevice?> printerDevices;
+  final ValueNotifier<bool> printersConnected;
+  const DineInPage({super.key, required this.freezeSideMenu, required this.orders, required this.bluetoothPrint, required this.printerDevices, required this.printersConnected});
   @override
   State<DineInPage> createState() => _DineInPageState();
 }
@@ -41,24 +47,33 @@ class _DineInPageState extends State<DineInPage> {
   }
 
   void loadTables() async {
-    var tablesBox = Hive.box('tables');
-    var data = tablesBox.get('tables');
-    if (data != null) {
-      tables = (data as List).map((item) => Map<String, dynamic>.from(item)).toList();
-    } else {
-      // Handle the case where 'tables' is not in the box
-      // For example, you might want to initialize 'tables' with default values
+    try {
+      if (Hive.isBoxOpen('tables')) {
+        var tablesBox = Hive.box('tables');
+        var data = tablesBox.get('tables');
+        if (data != null) {
+          tables = (data as List).map((item) => Map<String, dynamic>.from(item)).toList();
+        }
+        setState(() {}); // Call setState to trigger a rebuild of the widget
+      }
+    } catch (e) {
+      log('An error occurred at DineIn Page loadTables: $e');
     }
-    setState(() {}); // Call setState to trigger a rebuild of the widget
   }
 
   void loadTableOrderCount() async {
-    var counterBox = Hive.box('orderCounter');
-    var data = counterBox.get('orderCounter');
-    if (data != null) {
-      orderCounter = counterBox.get('orderCounter', defaultValue: 1);
-    } else {}
-    setState(() {});
+    try {
+      if (Hive.isBoxOpen('orderCounter')) {
+        var counterBox = Hive.box('orderCounter');
+        var data = counterBox.get('orderCounter');
+        if (data != null) {
+          orderCounter = counterBox.get('orderCounter', defaultValue: 1);
+        }
+        setState(() {});
+      }
+    } catch (e) {
+      log('An error occurred at DineIn Page loadTable Order Count: $e');
+    }
   }
 
   int orderCounter = 1;
@@ -588,7 +603,7 @@ class _DineInPageState extends State<DineInPage> {
                     fontSize: 14,
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   try {
                     setState(() {
                       selectedOrder.placeOrder();
@@ -603,6 +618,10 @@ class _DineInPageState extends State<DineInPage> {
                     }
                     updateOrderStatus();
                     handlefreezeMenu();
+
+                    // Call the printReceipt function
+                    await PrintService.printReceipt(widget.bluetoothPrint, widget.printersConnected.value);
+
                     Navigator.of(context).pop();
                   } catch (e) {
                     log('An error occurred in onPressed place order & print: $e');

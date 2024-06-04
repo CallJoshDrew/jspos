@@ -6,12 +6,13 @@ import 'package:jspos/data/tables_data.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
+import 'package:jspos/print/printer_setting.dart';
 
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
-    Hive.registerAdapter(OrdersAdapter()); // register the OrdersAdapter
+    Hive.registerAdapter(OrdersAdapter());
     Hive.registerAdapter(SelectedOrderAdapter());
     Hive.registerAdapter(ItemAdapter());
 
@@ -34,12 +35,18 @@ void main() async {
       orders = Orders(data: []);
       ordersBox.put('orders', orders);
     }
+    List<String> categories;
     String? categoriesString = categoriesBox.get('categories');
-    List<String> categories = categoriesString != null ? categoriesString.split(',') : ["Cakes", "Dishes", "Drinks"];
-    log('$categoriesString');
+    if (categoriesString != null) {
+      categories = categoriesString.split(',');
+    } else {
+      categories = ["Cakes", "Dishes", "Drinks"];
+      categoriesBox.put('categories', categories.join(','));
+    }
+    // runApp(const PrinterSetting());
     runApp(JPOSApp(orders: orders, categories: categories));
   } catch (e) {
-    log('An error occurred at Main App: $e');
+    log('An error occurred at Main App: $e'); 
   }
 }
 

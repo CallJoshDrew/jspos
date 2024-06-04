@@ -30,15 +30,21 @@ class _HistoryPageState extends State<HistoryPage> {
     try {
       if (Hive.isBoxOpen('orders')) {
         var ordersBox = await Hive.openBox('orders');
-        var orders = ordersBox.get('orders') as Orders;
-        // Print out all orders
-        for (var order in orders.data) {
-          log('Order Number: ${order.orderNumber}, Status: ${order.status}');
-        }
-        // Print out only 'Paid' orders
-        var paidOrders = orders.data.where((order) => order.status == 'Paid');
-        for (var order in paidOrders) {
-          log('Paid Order Number: ${order.orderNumber}');
+        var ordersData = ordersBox.get('orders');
+
+        if (ordersData != null) {
+          var orders = ordersData as Orders;
+          // Print out all orders
+          for (var order in orders.data) {
+            log('Order Number: ${order.orderNumber}, Status: ${order.status}');
+          }
+          // Print out only 'Paid' orders
+          var paidOrders = orders.data.where((order) => order.status == 'Paid');
+          for (var order in paidOrders) {
+            log('Paid Order Number: ${order.orderNumber}');
+          }
+        } else {
+          log('No orders found in the orders box.');
         }
       }
       // log('Orders from History: ${widget.orders.toString()}');
@@ -119,24 +125,29 @@ class _HistoryPageState extends State<HistoryPage> {
             DataColumn2(
               size: ColumnSize.L,
               label: const Center(
-                  child: Text(
-                'Transaction',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
+                child: Text(
+                  'Transaction',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
                 ),
-              )),
+              ),
               onSort: (columnIndex, ascending) {
                 setState(() {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
                     widget.orders.data.sort((a, b) {
-                      return a.paymentTime.compareTo(b.paymentTime);
+                      var aTime = a.paymentTime != "None" ? a.paymentTime : a.cancelledTime;
+                      var bTime = b.paymentTime != "None" ? b.paymentTime : b.cancelledTime;
+                      return aTime.compareTo(bTime);
                     });
                   } else {
                     widget.orders.data.sort((a, b) {
-                      return b.paymentTime.compareTo(a.paymentTime);
+                      var aTime = a.paymentTime != "None" ? a.paymentTime : a.cancelledTime;
+                      var bTime = b.paymentTime != "None" ? b.paymentTime : b.cancelledTime;
+                      return bTime.compareTo(aTime);
                     });
                   }
                 });
@@ -274,6 +285,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     fontSize: 14,
                     color: Colors.white,
                   ),
+                  textAlign: TextAlign.center,
                 ))),
                 DataCell(Center(
                     child: Text(
