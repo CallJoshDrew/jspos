@@ -30,15 +30,19 @@ class Item {
   List<Map<String, dynamic>> meatPortion;
   @HiveField(12)
   List<Map<String, dynamic>> meePortion;
-  @HiveField(13)
-  Map<String, dynamic>? selectedChoice;
   @HiveField(14)
-  Map<String, dynamic>? selectedType;
+  List<Map<String, dynamic>> addOn;
   @HiveField(15)
-  Map<String, dynamic>? selectedMeatPortion;
+  Map<String, dynamic>? selectedChoice;
   @HiveField(16)
-  Map<String, dynamic>? selectedMeePortion;
+  Map<String, dynamic>? selectedType;
   @HiveField(17)
+  Map<String, dynamic>? selectedMeatPortion;
+  @HiveField(18)
+  Map<String, dynamic>? selectedMeePortion;
+  @HiveField(19)
+  Set<Map<String, dynamic>>? selectedAddOn;
+  @HiveField(20)
   Map<String, dynamic>? itemRemarks;
 
   Item({
@@ -53,37 +57,42 @@ class Item {
     required this.types,
     required this.meatPortion,
     required this.meePortion,
+    required this.addOn,
     this.selectedChoice,
     this.selectedType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
+    this.selectedAddOn,
     this.itemRemarks,
   })  : originalPrice = price,
         originalName = name;
 
   @override
   String toString() {
-    return 'Item: {\n'
-        '\tid: $id, \n'
-        '\tname: $name, \n'
-        '\toriginalname: $originalName, \n'
-        '\tprice: $price, \n'
-        '\toriginalprice: $originalPrice, \n'
-        '\tcategory: $category,\n'
-        '\tquantity: $quantity,  \n'
-        '\timage: $image, \n'
-        '\tselection: $selection, \n'
-        '\tchoices: ${choices.toString()},\n'
-        '\ttypes: ${types.toString()},\n'
-        '\tmeatPortion: ${meatPortion.toString()},\n'
-        '\tmeePortion: ${meePortion.toString()}\n'
-        '\tselectedChoice: $selectedChoice, \n'
-        '\tselectedType: $selectedType, \n'
-        '\tselectedMeatPortion: $selectedMeatPortion, \n'
-        '\tselectedMeePortion: $selectedMeePortion,\n'
-        '\titemRemarks: ${itemRemarks.toString()}\n'
-        '}';
-  }
+  return 'Item: {\n'
+      '\tid: $id, \n'
+      '\tname: $name, \n'
+      '\toriginalname: $originalName, \n'
+      '\tprice: $price, \n'
+      '\toriginalprice: $originalPrice, \n'
+      '\tcategory: $category,\n'
+      '\tquantity: $quantity,  \n'
+      '\timage: $image, \n'
+      '\tselection: $selection, \n'
+      '\tchoices: ${choices.toString()},\n'
+      '\ttypes: ${types.toString()},\n'
+      '\tmeatPortion: ${meatPortion.toString()},\n'
+      '\tmeePortion: ${meePortion.toString()},\n'
+      '\taddOn: ${addOn.toString()},\n'
+      '\tselectedChoice: $selectedChoice, \n'
+      '\tselectedType: $selectedType, \n'
+      '\tselectedMeatPortion: $selectedMeatPortion, \n'
+      '\tselectedMeePortion: $selectedMeePortion,\n'
+      '\tselectedAddOn: ${selectedAddOn?.map((addOn) => addOn.toString()).join(', ')},\n'
+      '\titemRemarks: ${itemRemarks.toString()}\n'
+      '}';
+}
+
 
   // A method to create a copy of the Item
   Item copyWith({Map<String, dynamic>? itemRemarks}) {
@@ -99,10 +108,12 @@ class Item {
       types: types,
       meatPortion: meatPortion,
       meePortion: meePortion,
+      addOn: addOn,
       selectedChoice: selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
       selectedType: selectedType != null ? Map<String, dynamic>.from(selectedType!) : null,
       selectedMeatPortion: selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
       selectedMeePortion: selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
+      selectedAddOn: selectedAddOn != null ? Set<Map<String, dynamic>>.from(selectedAddOn!) : null,
       itemRemarks: itemRemarks,
     );
   }

@@ -36,18 +36,24 @@ class ItemAdapter extends TypeAdapter<Item> {
       meePortion: (fields[12] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      selectedChoice: (fields[13] as Map?)?.cast<String, dynamic>(),
-      selectedType: (fields[14] as Map?)?.cast<String, dynamic>(),
-      selectedMeatPortion: (fields[15] as Map?)?.cast<String, dynamic>(),
-      selectedMeePortion: (fields[16] as Map?)?.cast<String, dynamic>(),
-      itemRemarks: (fields[17] as Map?)?.cast<String, dynamic>(),
+      addOn: (fields[14] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
+      selectedChoice: (fields[15] as Map?)?.cast<String, dynamic>(),
+      selectedType: (fields[16] as Map?)?.cast<String, dynamic>(),
+      selectedMeatPortion: (fields[17] as Map?)?.cast<String, dynamic>(),
+      selectedMeePortion: (fields[18] as Map?)?.cast<String, dynamic>(),
+      selectedAddOn: (fields[19] as List?)
+          ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toSet(),
+      itemRemarks: (fields[20] as Map?)?.cast<String, dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Item obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -74,15 +80,19 @@ class ItemAdapter extends TypeAdapter<Item> {
       ..write(obj.meatPortion)
       ..writeByte(12)
       ..write(obj.meePortion)
-      ..writeByte(13)
-      ..write(obj.selectedChoice)
       ..writeByte(14)
-      ..write(obj.selectedType)
+      ..write(obj.addOn)
       ..writeByte(15)
-      ..write(obj.selectedMeatPortion)
+      ..write(obj.selectedChoice)
       ..writeByte(16)
-      ..write(obj.selectedMeePortion)
+      ..write(obj.selectedType)
       ..writeByte(17)
+      ..write(obj.selectedMeatPortion)
+      ..writeByte(18)
+      ..write(obj.selectedMeePortion)
+      ..writeByte(19)
+      ..write(obj.selectedAddOn?.toList())
+      ..writeByte(20)
       ..write(obj.itemRemarks);
   }
 

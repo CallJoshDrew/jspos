@@ -255,7 +255,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   ? Row(
                                                                       children: [
                                                                         Text(
-                                                                          "${index + 1}.${item.selectedChoice!['name']} ",
+                                                                          "${index + 1}.${item.originalName} ${item.selectedChoice!['name']} ",
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
                                                                             fontWeight: FontWeight.bold,
@@ -279,15 +279,15 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                         color: Colors.white,
                                                                       ),
                                                                     ),
-                                                              const SizedBox(width: 6),
-                                                              Text(
-                                                                'x ${item.quantity}',
-                                                                style: const TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
+                                                              // const SizedBox(width: 6),
+                                                              // Text(
+                                                              //   'x ${item.quantity}',
+                                                              //   style: const TextStyle(
+                                                              //     fontSize: 14,
+                                                              //     fontWeight: FontWeight.bold,
+                                                              //     color: Colors.white,
+                                                              //   ),
+                                                              // ),
                                                             ],
                                                           ),
                                                           Padding(
@@ -385,6 +385,15 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                       ),
                                                     ),
                                                   ),
+                                                  Text(
+                                                    'x ${item.quantity}',
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 50),
                                                   Text(
                                                     (item.price * item.quantity).toStringAsFixed(2),
                                                     style: const TextStyle(

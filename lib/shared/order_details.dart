@@ -309,6 +309,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           DateTime now = DateTime.now();
                                                           return DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
                                                         }
+
                                                         orderCopy.status = "Cancelled";
                                                         // Set orderCopy.cancelTime using the addCancelDateTime method
                                                         orderCopy.cancelledTime = addCancelDateTime();
@@ -458,25 +459,49 @@ class _OrderDetailsState extends State<OrderDetails> {
       child: GestureDetector(
         onTap: () {
           itemRemarks = Map<String, dynamic>.from(item.itemRemarks ?? {});
-          // print('item.itemRemarks is: ${item.itemRemarks}');
           Map<String, dynamic>? selectedChoice = item.selectedChoice;
           Map<String, dynamic>? selectedType = item.selectedType;
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
           Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
+          Set<Map<String, dynamic>> selectedAddOn = Set<Map<String, dynamic>>.from(item.selectedAddOn ?? {});
+          // The Map elements in selectedAddOn and item.selectedAddOn are the same Map objects.
+          // even though selectedAddOn and item.selectedAddOn are separate Set objects.
 
           // these are ui display only, not yet saved into item.price
           double choicePrice = item.selectedChoice?['price'] ?? 0;
           double typePrice = item.selectedType?['price'] ?? 0;
           double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
+          double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
 
-          double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
+          double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
+          double calculateAddOnPrice() {
+            double addOnPrice = 0.0;
+            for (var addOn in selectedAddOn) {
+              addOnPrice += addOn['price'];
+            }
+            return addOnPrice;
+          }
 
-          void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice) {
+          void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice, double addOnPrice) {
             setState(() {
-              subTotalPrice = choicePrice + typePrice + meatPrice + meePrice;
+              subTotalPrice = choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
               item.price = subTotalPrice;
             });
+          }
+
+          TextSpan generateAddOnTextSpan(Map<String, dynamic> addOn, bool isLast) {
+            return TextSpan(
+              text: "${addOn['name']} ",
+              children: <TextSpan>[
+                TextSpan(
+                  text: "( + ${addOn['price'].toStringAsFixed(2)} )${isLast ? '' : ' + '}", // No comma if it's the last add-on
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 114, 226, 118), // Change this to your desired color
+                  ),
+                ),
+              ],
+            );
           }
 
           String? comment = item.itemRemarks != null ? item.itemRemarks!['100'] : null;
@@ -617,17 +642,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              //Item Heading Title
-                                              // Text(
-                                              //   '${item.category}:  ${item.originalName}',
-                                              //   textAlign: TextAlign.center,
-                                              //   style: const TextStyle(fontSize: 14, color: Colors.white),
-                                              // ),
                                               item.selection && selectedChoice != null
                                                   ? Row(
                                                       children: [
                                                         Text(
-                                                          selectedChoice != null ? '${selectedChoice!['name']}' : 'Select Flavor and Type',
+                                                          item.originalName == selectedChoice!['name']
+                                                              ? item.originalName
+                                                              : '${item.originalName} ${selectedChoice!['name']}',
                                                           style: const TextStyle(
                                                             fontSize: 14,
                                                             fontWeight: FontWeight.bold,
@@ -657,7 +678,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               style: const TextStyle(fontSize: 14, color: Colors.white),
                                                             ),
                                                             Text(
-                                                              "( + ${selectedType!['price'].toStringAsFixed(2)} )",
+                                                              "( + ${typePrice.toStringAsFixed(2)} )",
                                                               style: const TextStyle(
                                                                 fontSize: 14,
                                                                 color: Color.fromARGB(255, 114, 226, 118),
@@ -706,6 +727,33 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
+                                                  item.selection && selectedAddOn.isNotEmpty
+                                                      ? Row(
+                                                          children: [
+                                                            const Text(
+                                                              "Add On: ",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ),
+                                                            RichText(
+                                                              text: TextSpan(
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors.white,
+                                                                ),
+                                                                children: selectedAddOn.toList().asMap().entries.map((entry) {
+                                                                  int idx = entry.key;
+                                                                  Map<String, dynamic> addOn = entry.value;
+                                                                  bool isLast = idx == selectedAddOn.length - 1;
+                                                                  return generateAddOnTextSpan(addOn, isLast);
+                                                                }).toList(),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
                                                 ],
                                               ),
                                             ],
@@ -740,7 +788,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               children: [
                                                 if (item.choices.isNotEmpty) ...[
                                                   const Text(
-                                                    '1.Select Your Flavor',
+                                                    '1.Select Base',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
@@ -755,7 +803,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           setState(() {
                                                             selectedChoice = choice;
                                                             choicePrice = choice['price'];
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                            if (selectedType!['name'] == "Cold" &&
+                                                                (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
+                                                              typePrice = selectedType!['price'] - 0.50;
+                                                            } else {
+                                                              typePrice = selectedType!['price'];
+                                                            }
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -802,7 +856,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    "2.Select Your Preference",
+                                                    "2.Select Noodles",
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
@@ -816,8 +870,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         onPressed: () {
                                                           setState(() {
                                                             selectedType = type;
-                                                            typePrice = type['price'];
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                            if (selectedType!['name'] == "Cold" &&
+                                                                (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
+                                                              typePrice = selectedType!['price'] - 0.50;
+                                                            } else {
+                                                              typePrice = selectedType!['price'];
+                                                            }
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -864,51 +923,103 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 color: const Color(0xff1f2029),
                                                 borderRadius: BorderRadius.circular(5), // Set the border radius here.
                                               ),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                              child: Row(
                                                 children: [
-                                                  const Text(
-                                                    '3.Select Your Desired Serving Size',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                  Wrap(
-                                                    spacing: 6, // space between buttons horizontally
-                                                    runSpacing: 0, // space between buttons vertically
-                                                    children: item.meePortion.map((meePortion) {
-                                                      return ElevatedButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            selectedMeePortion = meePortion;
-                                                            meePrice = meePortion['price'];
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedMeePortion == meePortion ? Colors.orange : Colors.white,
-                                                          ),
-                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(5),
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      const Text(
+                                                        '3.Select Mee Portion',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                      Wrap(
+                                                        spacing: 6, // space between buttons horizontally
+                                                        runSpacing: 0, // space between buttons vertically
+                                                        children: item.meePortion.map((meePortion) {
+                                                          return ElevatedButton(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                selectedMeePortion = meePortion;
+                                                                meePrice = meePortion['price'];
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                              });
+                                                            },
+                                                            style: ButtonStyle(
+                                                              backgroundColor: WidgetStateProperty.all<Color>(
+                                                                selectedMeePortion == meePortion ? Colors.orange : Colors.white,
+                                                              ),
+                                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(5),
+                                                                ),
+                                                              ),
+                                                              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                             ),
-                                                          ),
-                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                            child: Text(
+                                                              '${meePortion['name']}',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: selectedMeePortion == meePortion
+                                                                    ? Colors.white
+                                                                    : Colors.black, // Change the text color based on the selected button
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(width: 50),
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      const Text(
+                                                        '4.Select Meat Portion',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 14,
                                                         ),
-                                                        child: Text(
-                                                          '${meePortion['name']}',
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: selectedMeePortion == meePortion
-                                                                ? Colors.white
-                                                                : Colors.black, // Change the text color based on the selected button
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
+                                                      ),
+                                                      Wrap(
+                                                        spacing: 6, // space between buttons horizontally
+                                                        runSpacing: 0, // space between buttons vertically
+                                                        children: item.meatPortion.map((meatPortion) {
+                                                          return ElevatedButton(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                selectedMeatPortion = meatPortion;
+                                                                meatPrice = meatPortion['price'];
+                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                              });
+                                                            },
+                                                            style: ButtonStyle(
+                                                              backgroundColor: WidgetStateProperty.all<Color>(
+                                                                selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
+                                                              ),
+                                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(5),
+                                                                ),
+                                                              ),
+                                                              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                            ),
+                                                            child: Text(
+                                                              '${meatPortion['name']}',
+                                                              style: TextStyle(
+                                                                color: selectedMeatPortion == meatPortion
+                                                                    ? Colors.white
+                                                                    : Colors.black, // Change the text color based on the selected button
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),
@@ -917,41 +1028,47 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         ] else ...[
                                           const SizedBox.shrink(),
                                         ],
-                                        if (item.meatPortion.isNotEmpty) const SizedBox(width: 10),
-                                        if (item.meatPortion.isNotEmpty) ...[
+                                        if (item.addOn.isNotEmpty) const SizedBox(width: 10),
+                                        if (item.addOn.isNotEmpty) ...[
                                           Expanded(
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
                                               margin: const EdgeInsets.only(top: 10),
                                               decoration: BoxDecoration(
                                                 color: const Color(0xff1f2029),
-                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                borderRadius: BorderRadius.circular(5),
                                               ),
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    '4.Select Your Meat Portion Level',
+                                                    '5.Add-Ons',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
                                                     ),
                                                   ),
                                                   Wrap(
-                                                    spacing: 6, // space between buttons horizontally
-                                                    runSpacing: 0, // space between buttons vertically
-                                                    children: item.meatPortion.map((meatPortion) {
+                                                    spacing: 6,
+                                                    runSpacing: 0,
+                                                    children: item.addOn.map((addOn) {
                                                       return ElevatedButton(
                                                         onPressed: () {
+                                                          print('selectedAddOn before: $selectedAddOn');
+                                                          print('addOn: $addOn');
                                                           setState(() {
-                                                            selectedMeatPortion = meatPortion;
-                                                            meatPrice = meatPortion['price'];
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                            if (selectedAddOn.contains(addOn)) {
+                                                              selectedAddOn.remove(addOn);
+                                                            } else {
+                                                              selectedAddOn.add(addOn);
+                                                            }
+                                                            print('selectedAddOn after: $selectedAddOn');
+                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
+                                                            selectedAddOn.contains(addOn) ? Colors.orange : Colors.white,
                                                           ),
                                                           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -961,11 +1078,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                         ),
                                                         child: Text(
-                                                          '${meatPortion['name']}',
+                                                          '${addOn['name']}',
                                                           style: TextStyle(
-                                                            color: selectedMeatPortion == meatPortion
-                                                                ? Colors.white
-                                                                : Colors.black, // Change the text color based on the selected button
+                                                            color: selectedAddOn.contains(addOn) ? Colors.white : Colors.black,
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -1100,10 +1215,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 item.selectedType = selectedType;
                                                 item.selectedMeatPortion = selectedMeatPortion;
                                                 item.selectedMeePortion = selectedMeePortion;
+                                                item.selectedAddOn = selectedAddOn;
 
                                                 updateItemRemarks();
 
-                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice);
+                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                 item.price = subTotalPrice;
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.updateOrderStatus!();
@@ -1132,8 +1248,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               ),
                                             ),
                                             onPressed: () {
-                                              itemRemarks = {};
-                                              _controller.text = '';
+                                              setState(() {
+                                                itemRemarks = {};
+                                                _controller.text = '';
+                                                selectedAddOn = item.selectedAddOn != null ? Set<Map<String, dynamic>>.from(item.selectedAddOn!) : {};
+                                              });
                                               Navigator.of(context).pop();
                                             },
                                           ),
@@ -1179,7 +1298,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       children: [
                         // Item Name and Price
                         Text(
-                          '${index + 1}. $name',
+                          item.selection ? '${index + 1}. ${item.originalName} $name' : '${index + 1}. $name',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.white,

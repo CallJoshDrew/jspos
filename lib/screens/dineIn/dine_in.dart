@@ -27,10 +27,17 @@ import 'package:jspos/shared/print_service.dart';
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
   final Orders orders;
-  final BluetoothPrint bluetoothPrint;
-  final ValueNotifier<BluetoothDevice?> printerDevices;
-  final ValueNotifier<bool> printersConnected;
-  const DineInPage({super.key, required this.freezeSideMenu, required this.orders, required this.bluetoothPrint, required this.printerDevices, required this.printersConnected});
+  // final BluetoothPrint bluetoothPrint;
+  // final ValueNotifier<BluetoothDevice?> printerDevices;
+  // final ValueNotifier<bool> printersConnected;
+  const DineInPage(
+      {super.key,
+      required this.freezeSideMenu,
+      required this.orders,
+      });
+      // required this.bluetoothPrint,
+      // required this.printerDevices,
+      // required this.printersConnected
   @override
   State<DineInPage> createState() => _DineInPageState();
 }
@@ -604,6 +611,7 @@ class _DineInPageState extends State<DineInPage> {
                   ),
                 ),
                 onPressed: () async {
+                  Navigator.of(context).pop();
                   try {
                     setState(() {
                       selectedOrder.placeOrder();
@@ -620,9 +628,7 @@ class _DineInPageState extends State<DineInPage> {
                     handlefreezeMenu();
 
                     // Call the printReceipt function
-                    await PrintService.printReceipt(widget.bluetoothPrint, widget.printersConnected.value);
-
-                    Navigator.of(context).pop();
+                    // await PrintService.printReceipt(widget.bluetoothPrint, widget.printersConnected.value);
                   } catch (e) {
                     log('An error occurred in onPressed place order & print: $e');
                   }

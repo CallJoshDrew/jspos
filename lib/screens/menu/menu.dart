@@ -123,6 +123,7 @@ class _MenuPageState extends State<MenuPage> {
                     types: item['types'] ?? [],
                     meatPortion: item['meat portion'] ?? [],
                     meePortion: item['mee portion'] ?? [],
+                    addOn: item['add on'] ?? [],
                     selectedChoice: null,
                     selectedType: null,
                   );

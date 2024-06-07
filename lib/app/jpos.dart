@@ -17,16 +17,17 @@ class JPOSApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-    ValueNotifier<BluetoothDevice?> printerDevices = ValueNotifier<BluetoothDevice?>(null);
-     ValueNotifier<bool> printersConnected = ValueNotifier<bool>(false);
+    // BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
+    // ValueNotifier<BluetoothDevice?> printerDevices = ValueNotifier<BluetoothDevice?>(null);
+    //  ValueNotifier<bool> printersConnected = ValueNotifier<bool>(false);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'JSPOS',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(orders: orders, categories: categories, bluetoothPrint: bluetoothPrint, printerDevices: printerDevices, printersConnected: printersConnected),
+      home: MainPage(orders: orders, categories: categories, ),
+      // bluetoothPrint: bluetoothPrint, printerDevices: printerDevices, printersConnected: printersConnected
     );
   }
 }
@@ -34,11 +35,11 @@ class JPOSApp extends StatelessWidget {
 class MainPage extends StatefulWidget {
   final Orders orders;
   final List<String> categories;
-  final BluetoothPrint bluetoothPrint;
-  final ValueNotifier<BluetoothDevice?> printerDevices;
-  final ValueNotifier<bool> printersConnected;
-  const MainPage({super.key, required this.orders, required this.categories, required this.bluetoothPrint, required this.printerDevices, required this.printersConnected});
-
+  // final BluetoothPrint bluetoothPrint;
+  // final ValueNotifier<BluetoothDevice?> printerDevices;
+  // final ValueNotifier<bool> printersConnected;
+  const MainPage({super.key, required this.orders, required this.categories, });
+// required this.bluetoothPrint, required this.printerDevices, required this.printersConnected
   @override
   State<MainPage> createState() => _MainPageState();
 }
@@ -56,7 +57,8 @@ class _MainPageState extends State<MainPage> {
   _pageView() {
     switch (pageActive) {
       case 'Dine In':
-        return DineInPage(freezeSideMenu: freezeSideMenu, orders: widget.orders, bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected);
+        return DineInPage(freezeSideMenu: freezeSideMenu, orders: widget.orders, );
+        // bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
@@ -64,7 +66,8 @@ class _MainPageState extends State<MainPage> {
       // case 'Reports':
       //   return const ReportsPage();
       case 'Settings':
-        return SettingsPage(categories: widget.categories, bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected);
+        return SettingsPage(categories: widget.categories, );
+        // bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected
 
       default:
         return const HomePage();
