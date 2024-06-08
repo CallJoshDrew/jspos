@@ -148,39 +148,27 @@ class SelectedOrder with ChangeNotifier {
   void addItem(Item item) {
     // If the item.selection is true, change the name and price of the item
     if (item.selection) {
-      if (item.selectedChoice != null) {
-        item.name = item.selectedChoice!['name'];
-        item.price = item.selectedChoice!['price'];
-      }
-      if (item.selectedType != null) {
-        double typePrice = item.selectedType!['price'] ?? 0.00;
-        if (typePrice > 0.00) {
-          item.price += typePrice;
-        }
-      }
-      if (item.selectedMeatPortion != null) {
-        double meatPrice = item.selectedMeatPortion!['price'] ?? 0.00;
-        if (meatPrice > 0.00) {
-          item.price += meatPrice;
-        }
-      }
-      if (item.selectedMeePortion != null) {
-        double meePrice = item.selectedMeePortion!['price'] ?? 0.00;
-        if (meePrice > 0.00) {
-          item.price += meePrice;
-        }
-      }
+      // if (item.selectedChoice != null) {
+      //   item.name = item.selectedChoice!['name'];
+      //   item.price = item.selectedChoice!['price'];
+      // }
       // Try to find an item in items with the same properties as the new item
       var existingItem = items.firstWhereOrNull((i) {
         // Use MapEquality().equals for deep equality check
         bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
+
+        // Create a SetEquality with a MapEquality to compare sets of maps
+        bool areAddOnsEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedAddOn, item.selectedAddOn);
+
         return i.name == item.name &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
             i.selectedType?['name'] == item.selectedType?['name'] &&
             i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
             i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
-            areRemarksEqual; // Use the result of the deep equality check
+            areRemarksEqual && // Use the result of the deep equality check
+            areAddOnsEqual; // Check if the selectedAddOn sets are equal
       });
+
       if (existingItem != null) {
         // If an item with the same properties is found, increase its quantity
         existingItem.quantity += 1;
@@ -200,19 +188,36 @@ class SelectedOrder with ChangeNotifier {
       }
     }
     calculateItemsAndQuantities();
+    notifyListeners();
   }
 
   // solely for item in the orderDetails which has selection is true
   void updateItem(Item item) {
-    // Find the index of the item with the same id
-    int index = items.indexWhere((i) => i.id == item.id);
-    // If the item is found, update it
-    if (index != -1) {
-      items[index] = item;
+    // Try to find an item in items with the same properties as the new item
+    var existingItem = items.firstWhereOrNull((i) {
+      // Use MapEquality().equals for deep equality check
+      bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
+
+      // Create a SetEquality with a MapEquality to compare sets of maps
+      bool areAddOnsEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedAddOn, item.selectedAddOn);
+      return i.id == item.id &&
+          i.name == item.name &&
+          i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
+          i.selectedType?['name'] == item.selectedType?['name'] &&
+          i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
+          i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
+          areRemarksEqual && // Use the result of the deep equality check
+          areAddOnsEqual; // Check if the selectedAddOn sets are equal
+    });
+
+    if (existingItem != null) {
+      // If an item with the same properties is found, update it
+      existingItem = item;
     } else {
       // If the item is not found, add it to the list
       items.add(item);
     }
+
     calculateItemsAndQuantities();
     notifyListeners();
   }
@@ -316,6 +321,36 @@ class SelectedOrder with ChangeNotifier {
     // log('Total Quantity: $totalQuantity');
   }
 }
+
+
+
+// if (item.selectedType != null) {
+//   double typePrice = item.selectedType!['price'] ?? 0.00;
+//   if (typePrice > 0.00) {
+//     item.price += typePrice;
+//   }
+// }
+// if (item.selectedMeatPortion != null) {
+//   double meatPrice = item.selectedMeatPortion!['price'] ?? 0.00;
+//   if (meatPrice > 0.00) {
+//     item.price += meatPrice;
+//   }
+// }
+// if (item.selectedMeePortion != null) {
+//   double meePrice = item.selectedMeePortion!['price'] ?? 0.00;
+//   if (meePrice > 0.00) {
+//     item.price += meePrice;
+//   }
+// }
+// if (item.selectedAddOn != null) {
+//   for (var addOn in item.selectedAddOn!) {
+//     double addOnPrice = addOn['price'] ?? 0.00;
+//     if (addOnPrice > 0.00) {
+// item.price += addOnPrice;
+//     }
+//   }
+// }
+
 // quantity: 0,
 // remarks: "No Remarks",
 // itemCounts: {},

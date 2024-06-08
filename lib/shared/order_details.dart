@@ -21,6 +21,7 @@ class OrderDetails extends StatefulWidget {
   final VoidCallback? updateOrderStatus;
   final VoidCallback? resetSelectedTable;
   final Function(Item item) onItemAdded;
+  final List<Item> tempCartItems;
 
   const OrderDetails({
     super.key,
@@ -33,6 +34,7 @@ class OrderDetails extends StatefulWidget {
     this.updateOrderStatus,
     required this.onItemAdded,
     this.resetSelectedTable,
+    required this.tempCartItems,
   });
 
   @override
@@ -396,6 +398,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                       onPressed: () {
                         setState(() {
                           widget.selectedOrder.updateShowEditBtn(false);
+                          // log('Order Details Start Page: --------------------------');
+                          // log('selectedOrder.status: ${widget.selectedOrder.status}');
+                          // log('selectedChoice from Order Details: ${widget.selectedOrder.items}');
+                          // log('tempCartItems after: ${widget.tempCartItems}');
+                          // log('Order Details End Page: --------------------------');
                         });
                         if (handlefreezeMenu != null) {
                           handlefreezeMenu();
@@ -460,6 +467,8 @@ class _OrderDetailsState extends State<OrderDetails> {
         onTap: () {
           itemRemarks = Map<String, dynamic>.from(item.itemRemarks ?? {});
           Map<String, dynamic>? selectedChoice = item.selectedChoice;
+          // log('selectedChoice is $selectedChoice');
+          // log('itemRemarks is $itemRemarks');
           Map<String, dynamic>? selectedType = item.selectedType;
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
           Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
@@ -467,6 +476,11 @@ class _OrderDetailsState extends State<OrderDetails> {
           // The Map elements in selectedAddOn and item.selectedAddOn are the same Map objects.
           // even though selectedAddOn and item.selectedAddOn are separate Set objects.
 
+          // log('Order Details onTap item Start Page: --------------------------');
+          // log('selectedOrder.status: ${widget.selectedOrder.status}');
+          // log('selectedChoice from Order Details: ${widget.selectedOrder.items}');
+          // log('tempCartItems after: ${widget.tempCartItems}');
+          // log('Order Details onTap item End Page: --------------------------');
           // these are ui display only, not yet saved into item.price
           double choicePrice = item.selectedChoice?['price'] ?? 0;
           double typePrice = item.selectedType?['price'] ?? 0;
@@ -1222,10 +1236,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                 item.price = subTotalPrice;
                                                 widget.selectedOrder.updateTotalCost(0);
-                                                widget.updateOrderStatus!();
-                                                widget.selectedOrder.addItem(item);
-                                                Navigator.of(context).pop();
+                                                widget.selectedOrder.updateItem(item);
+                                                // // Update tempCartItems with the modified item
+                                                // int itemIndex = widget.tempCartItems.indexWhere((tempItem) => tempItem.id == item.id);
+                                                // if (itemIndex != -1) {
+                                                //   widget.tempCartItems[itemIndex] = item;
+                                                // }
                                               });
+                                                widget.updateOrderStatus!();
+                                                Navigator.of(context).pop();
                                             },
                                           ),
                                           const SizedBox(width: 10),
@@ -1298,7 +1317,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       children: [
                         // Item Name and Price
                         Text(
-                          item.selection ? '${index + 1}. ${item.originalName} $name' : '${index + 1}. $name',
+                          item.selection ? '${index + 1}. ${item.originalName} ${item.selectedChoice!['name']}': '${index + 1}. $name',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.white,
