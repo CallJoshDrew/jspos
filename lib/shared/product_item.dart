@@ -59,6 +59,7 @@ class ProductItemState extends State<ProductItem> {
         Item item = Item(
           id: widget.id,
           name: widget.name,
+          originalName: widget.name,
           price: widget.price,
           category: widget.category,
           image: widget.image,

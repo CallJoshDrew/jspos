@@ -63,9 +63,9 @@ class Item {
     this.selectedMeatPortion,
     this.selectedMeePortion,
     this.selectedAddOn,
-    this.itemRemarks,
-  })  : originalPrice = price,
-        originalName = name;
+    this.itemRemarks, 
+    required this.originalName,
+  })  : originalPrice = price;
 
   @override
   String toString() {
@@ -99,6 +99,7 @@ class Item {
     return Item(
       id: id,
       name: name,
+      originalName: originalName,
       category: category,
       quantity: quantity,
       price: price,
