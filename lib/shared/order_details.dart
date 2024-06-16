@@ -812,6 +812,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     spacing: 6, // space between buttons horizontally
                                                     runSpacing: 0, // space between buttons vertically
                                                     children: item.choices.map((choice) {
+                                                      log('Seleceted Choice from Dine in is: $selectedChoice');
+                                                      log('choice from Dine in is: $choice');
                                                       return ElevatedButton(
                                                         onPressed: () {
                                                           setState(() {
@@ -828,7 +830,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedChoice == choice ? Colors.orange : Colors.white,
+                                                            selectedChoice?['name'] == choice['name'] ? Colors.orange : Colors.white,
                                                           ),
                                                           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -840,7 +842,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         child: Text(
                                                           '${choice['name']}',
                                                           style: TextStyle(
-                                                            color: selectedChoice == choice
+                                                            color: selectedChoice?['name'] == choice['name']
                                                                 ? Colors.white
                                                                 : Colors.black, // Change the text color based on the selected button
                                                             fontSize: 12,
@@ -895,7 +897,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedType == type ? Colors.orange : Colors.white,
+                                                            selectedType?['name'] == type['name'] ? Colors.orange : Colors.white,
                                                           ),
                                                           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -907,7 +909,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         child: Text(
                                                           '${type['name']}',
                                                           style: TextStyle(
-                                                            color: selectedType == type
+                                                            color: selectedType?['name'] == type['name']
                                                                 ? Colors.white
                                                                 : Colors.black, // Change the text color based on the selected button
                                                             fontSize: 12,
@@ -963,7 +965,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             },
                                                             style: ButtonStyle(
                                                               backgroundColor: WidgetStateProperty.all<Color>(
-                                                                selectedMeePortion == meePortion ? Colors.orange : Colors.white,
+                                                                selectedMeePortion?['name'] == meePortion['name'] ? Colors.orange : Colors.white,
                                                               ),
                                                               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                                 RoundedRectangleBorder(
@@ -976,7 +978,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               '${meePortion['name']}',
                                                               style: TextStyle(
                                                                 fontWeight: FontWeight.bold,
-                                                                color: selectedMeePortion == meePortion
+                                                                color: selectedMeePortion?['name'] == meePortion['name']
                                                                     ? Colors.white
                                                                     : Colors.black, // Change the text color based on the selected button
                                                                 fontSize: 12,
@@ -1012,7 +1014,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             },
                                                             style: ButtonStyle(
                                                               backgroundColor: WidgetStateProperty.all<Color>(
-                                                                selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
+                                                                selectedMeatPortion ?['name'] == meatPortion['name'] ? Colors.orange : Colors.white,
                                                               ),
                                                               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                                 RoundedRectangleBorder(
@@ -1024,7 +1026,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             child: Text(
                                                               '${meatPortion['name']}',
                                                               style: TextStyle(
-                                                                color: selectedMeatPortion == meatPortion
+                                                                color: selectedMeatPortion ?['name'] == meatPortion['name']
                                                                     ? Colors.white
                                                                     : Colors.black, // Change the text color based on the selected button
                                                                 fontSize: 12,
@@ -1243,8 +1245,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 //   widget.tempCartItems[itemIndex] = item;
                                                 // }
                                               });
-                                                widget.updateOrderStatus!();
-                                                Navigator.of(context).pop();
+                                              widget.updateOrderStatus!();
+                                              Navigator.of(context).pop();
                                             },
                                           ),
                                           const SizedBox(width: 10),
@@ -1317,7 +1319,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       children: [
                         // Item Name and Price
                         Text(
-                          item.selection ? '${index + 1}. ${item.originalName} ${item.selectedChoice!['name']}': '${index + 1}. $name',
+                          item.selection ? '${index + 1}. ${item.originalName} ${item.selectedChoice!['name']}' : '${index + 1}. $name',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.white,

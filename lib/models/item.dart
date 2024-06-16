@@ -1,9 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 
 part 'item.g.dart';  // Name of the generated TypeAdapter file
 
 @HiveType(typeId: 2)
-class Item {
+class Item with ChangeNotifier {
   @HiveField(0)
   String id;
   @HiveField(1)
@@ -33,7 +34,7 @@ class Item {
   @HiveField(14)
   List<Map<String, dynamic>> addOn;
   @HiveField(15)
-  Map<String, dynamic>? selectedChoice;
+  Map<String, dynamic>? _selectedChoice;
   @HiveField(16)
   Map<String, dynamic>? selectedType;
   @HiveField(17)
@@ -58,14 +59,14 @@ class Item {
     required this.meatPortion,
     required this.meePortion,
     required this.addOn,
-    this.selectedChoice,
+    Map<String, dynamic>? selectedChoice,
     this.selectedType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
     this.selectedAddOn,
     this.itemRemarks, 
     required this.originalName,
-  })  : originalPrice = price;
+  })  : originalPrice = price, _selectedChoice = selectedChoice, super();
 
   @override
   String toString() {
@@ -92,6 +93,14 @@ class Item {
       '\titemRemarks: ${itemRemarks.toString()}\n'
       '}';
 }
+// Public getters and setters for all properties that should notify listeners
+  Map<String, dynamic>? get selectedChoice => _selectedChoice;
+  set selectedChoice(Map<String, dynamic>? value) {
+    if (_selectedChoice != value) {
+      _selectedChoice = value;
+      notifyListeners();
+    }
+  }
 
 
   // A method to create a copy of the Item

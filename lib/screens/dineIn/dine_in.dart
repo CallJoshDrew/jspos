@@ -324,33 +324,32 @@ class _DineInPageState extends State<DineInPage> {
 // }
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
-  // If the lengths of the lists are not equal, the lists are not equal
-  if (list1.length != list2.length) {
-    log('Lists are not equal: Different lengths');
-    return false;
-  }
-  // Create new lists that are sorted copies of the original lists
-  List<Item> sortedList1 = List.from(list1)..sort((a, b) => a.name.compareTo(b.name));
-  List<Item> sortedList2 = List.from(list2)..sort((a, b) => a.name.compareTo(b.name));
-  // Compare the items in the sorted lists
-  for (int i = 0; i < sortedList1.length; i++) {
-    if (sortedList1[i].name != sortedList2[i].name ||
-        sortedList1[i].quantity != sortedList2[i].quantity ||
-        !const MapEquality().equals(sortedList1[i].itemRemarks, sortedList2[i].itemRemarks) ||
-        !const MapEquality().equals(sortedList1[i].selectedType, sortedList2[i].selectedType) ||
-        !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
-        !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
-        !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
-        !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedAddOn, sortedList2[i].selectedAddOn)) {
-      log('Lists are not equal: Item difference found');
+    // If the lengths of the lists are not equal, the lists are not equal
+    if (list1.length != list2.length) {
+      log('Lists are not equal: Different lengths');
       return false;
     }
+    // Create new lists that are sorted copies of the original lists
+    List<Item> sortedList1 = List.from(list1)..sort((a, b) => a.name.compareTo(b.name));
+    List<Item> sortedList2 = List.from(list2)..sort((a, b) => a.name.compareTo(b.name));
+    // Compare the items in the sorted lists
+    for (int i = 0; i < sortedList1.length; i++) {
+      if (sortedList1[i].name != sortedList2[i].name ||
+          sortedList1[i].quantity != sortedList2[i].quantity ||
+          !const MapEquality().equals(sortedList1[i].itemRemarks, sortedList2[i].itemRemarks) ||
+          !const MapEquality().equals(sortedList1[i].selectedType, sortedList2[i].selectedType) ||
+          !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
+          !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
+          !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
+          !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedAddOn, sortedList2[i].selectedAddOn)) {
+        log('Lists are not equal: Item difference found');
+        return false;
+      }
+    }
+    // If no differences were found, the lists are equal
+    log('Lists are equal');
+    return true;
   }
-  // If no differences were found, the lists are equal
-  log('Lists are equal');
-  return true;
-}
-
 
   void _handleCloseMenu() {
     // log('_handleCloseMenu called');
@@ -402,10 +401,14 @@ class _DineInPageState extends State<DineInPage> {
       });
       // log('Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
-      selectedOrder.updateShowEditBtn(true);
-      selectedOrder.items = tempCartItems.map((item) => item.copyWith()).toList();
+      setState(() {
+        selectedOrder.updateShowEditBtn(true);
+        selectedOrder.items = tempCartItems.map((item) => item.copyWith()).toList();
+      });
     } else if (selectedOrder.status == "Placed Order") {
-      selectedOrder.updateShowEditBtn(true);
+      setState(() {
+        selectedOrder.updateShowEditBtn(true);
+      });
       // log('Menu closed. Current selectedOrder status: ${selectedOrder.status}');
     }
     log('selectedOrder.items after copyWith: ${selectedOrder.items}');

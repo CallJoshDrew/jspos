@@ -39,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     //     child: PrinterSetting(bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected),
                     //   ),
                     // ),
-                    const Expanded(child: CategorySettings()),
+                    Expanded(child: CategorySettings()),
                   ],
                 ),
               ),
