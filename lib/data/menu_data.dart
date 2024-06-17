@@ -32,16 +32,16 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/teh.png",
     "selection": true,
     "choices": [
-      {"name": "C", "price": 2.50},
-      {"name": "C Kosong", "price": 2.50},
-      {"name": "Nai", "price": 2.50},
-      {"name": "Kahwin", "price": 2.50},
-      {"name": "O", "price": 2.00},
-      {"name": "O Kosong", "price": 2.00},
+      {"name": "C", "Hot": 2.50, "Cold": 3.50},
+      {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
+      {"name": "O", "Hot": 2.00, "Cold": 2.50},
+      {"name": "O Kosong", "Hot": 2.00, "Cold": 2.50},
     ],
-    "types": [
-      {"name": "Hot", "price": 0.00},
-      {"name": "Cold", "price": 1.00}
+    "temp": [
+      {"name": "Hot" },
+      {"name": "Cold" },
     ]
   },
   {

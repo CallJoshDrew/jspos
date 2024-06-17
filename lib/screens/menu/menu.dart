@@ -97,7 +97,7 @@ class _MenuPageState extends State<MenuPage> {
           ),
           Expanded(
             child: Container(
-              margin: const EdgeInsets.only(bottom:10),
+              margin: const EdgeInsets.only(bottom: 10),
               // decoration: const BoxDecoration(
               //     color: Colors.white,
               //     ),
@@ -119,13 +119,13 @@ class _MenuPageState extends State<MenuPage> {
                     category: item['category'],
                     price: item['price'],
                     selection: item['selection'] ?? false,
+                    drinks: item['drinks'] ?? [],
+                    temp: item['temp'] ?? [],
                     choices: item['choices'] ?? [],
                     types: item['types'] ?? [],
                     meatPortion: item['meat portion'] ?? [],
                     meePortion: item['mee portion'] ?? [],
                     addOn: item['add on'] ?? [],
-                    selectedChoice: null,
-                    selectedType: null,
                   );
                 }).toList(),
               ),

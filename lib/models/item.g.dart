@@ -24,36 +24,45 @@ class ItemAdapter extends TypeAdapter<Item> {
       quantity: fields[4] as int,
       image: fields[7] as String,
       selection: fields[8] as bool,
-      choices: (fields[9] as List)
+      drinks: (fields[9] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      types: (fields[10] as List)
+      choices: (fields[10] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      meatPortion: (fields[11] as List)
+      types: (fields[11] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      meePortion: (fields[12] as List)
+      meatPortion: (fields[12] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
+      meePortion: (fields[13] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
       addOn: (fields[14] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      selectedType: (fields[16] as Map?)?.cast<String, dynamic>(),
-      selectedMeatPortion: (fields[17] as Map?)?.cast<String, dynamic>(),
-      selectedMeePortion: (fields[18] as Map?)?.cast<String, dynamic>(),
-      selectedAddOn: (fields[19] as List?)
+      temp: (fields[16] as List)
+          .map((dynamic e) => (e as Map).cast<String, String>())
+          .toList(),
+      selectedTemp: (fields[17] as Map?)?.cast<String, String>(),
+      selectedType: (fields[19] as Map?)?.cast<String, dynamic>(),
+      selectedMeatPortion: (fields[20] as Map?)?.cast<String, dynamic>(),
+      selectedMeePortion: (fields[21] as Map?)?.cast<String, dynamic>(),
+      selectedAddOn: (fields[22] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toSet(),
-      itemRemarks: (fields[20] as Map?)?.cast<String, dynamic>(),
+      itemRemarks: (fields[23] as Map?)?.cast<String, dynamic>(),
       originalName: fields[2] as String,
-    ).._selectedChoice = (fields[15] as Map?)?.cast<String, dynamic>();
+    )
+      .._selectedDrink = (fields[15] as Map?)?.cast<String, dynamic>()
+      .._selectedChoice = (fields[18] as Map?)?.cast<String, dynamic>();
   }
 
   @override
   void write(BinaryWriter writer, Item obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -73,26 +82,34 @@ class ItemAdapter extends TypeAdapter<Item> {
       ..writeByte(8)
       ..write(obj.selection)
       ..writeByte(9)
-      ..write(obj.choices)
+      ..write(obj.drinks)
       ..writeByte(10)
-      ..write(obj.types)
+      ..write(obj.choices)
       ..writeByte(11)
-      ..write(obj.meatPortion)
+      ..write(obj.types)
       ..writeByte(12)
+      ..write(obj.meatPortion)
+      ..writeByte(13)
       ..write(obj.meePortion)
       ..writeByte(14)
       ..write(obj.addOn)
       ..writeByte(15)
-      ..write(obj._selectedChoice)
+      ..write(obj._selectedDrink)
       ..writeByte(16)
-      ..write(obj.selectedType)
+      ..write(obj.temp)
       ..writeByte(17)
-      ..write(obj.selectedMeatPortion)
+      ..write(obj.selectedTemp)
       ..writeByte(18)
-      ..write(obj.selectedMeePortion)
+      ..write(obj._selectedChoice)
       ..writeByte(19)
-      ..write(obj.selectedAddOn?.toList())
+      ..write(obj.selectedType)
       ..writeByte(20)
+      ..write(obj.selectedMeatPortion)
+      ..writeByte(21)
+      ..write(obj.selectedMeePortion)
+      ..writeByte(22)
+      ..write(obj.selectedAddOn?.toList())
+      ..writeByte(23)
       ..write(obj.itemRemarks);
   }
 
