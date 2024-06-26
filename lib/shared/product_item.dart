@@ -96,11 +96,14 @@ class ProductItemState extends State<ProductItem> {
         Map<String, dynamic>? selectedMeePortion = widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
         Set<Map<String, dynamic>> selectedAddOn = {};
         double drinkPrice() {
-          var drink = widget.choices.firstWhere(
+          var drink = widget.drinks.firstWhere(
             (drink) => drink['name'] == selectedDrink?['name'],
-            orElse: () => throw Exception('Drink not found'),
+            orElse: () => {'Hot': 0.00, 'Cold': 0.00} as Map<String, Object>, // Set default values
           );
-          return selectedTemp?['name'] == 'Hot' ? drink['Hot'] : drink['Cold'];
+
+          final selectedTempName = selectedTemp?['name'] ?? ''; // Convert to non-nullable String
+
+          return (drink[selectedTempName] as double?) ?? 0.00; // Get the price based on the selected temperature
         }
 
         double choicePrice = widget.choices.isNotEmpty && widget.choices[0]['price'] != null ? widget.choices[0]['price']! : 0.00;
@@ -288,7 +291,7 @@ class ProductItemState extends State<ProductItem> {
                                                     ),
                                                     const SizedBox(width: 6),
                                                     Text(
-                                                      "( ${selectedChoice!['price'].toStringAsFixed(2)} )",
+                                                      "( ${selectedChoice?['price'].toStringAsFixed(2)} )",
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -303,7 +306,7 @@ class ProductItemState extends State<ProductItem> {
                                                     Text(
                                                       item.originalName == selectedDrink!['name']
                                                           ? item.originalName
-                                                          : '${item.originalName} ${selectedDrink?['name']} - $selectedTemp',
+                                                          : '${item.originalName} ${selectedDrink?['name']} - ${selectedTemp?["name"]}',
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -430,195 +433,207 @@ class ProductItemState extends State<ProductItem> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // 1.selectedDrink
-                                    Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xff1f2029),
-                                          borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            if (widget.drinks.isNotEmpty) ...[
-                                              const Text(
-                                                '1.Select Drink',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
+                                    item.selection && selectedDrink != null
+                                        ?
+                                        // 1.selectedDrink
+                                        Expanded(
+                                            child: Container(
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
                                               ),
-                                              Wrap(
-                                                spacing: 6, // space between buttons horizontally
-                                                runSpacing: 0, // space between buttons vertically
-                                                children: widget.drinks.map((drink) {
-                                                  return ElevatedButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        selectedDrink = drink;
-                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
-                                                      });
-                                                    },
-                                                    style: ButtonStyle(
-                                                      backgroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedDrink == drink ? Colors.orange : Colors.white,
-                                                      ),
-                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                      ),
-                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                    ),
-                                                    child: Text(
-                                                      '${drink['name']}',
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  if (widget.drinks.isNotEmpty) ...[
+                                                    const Text(
+                                                      '1.Select Drink',
                                                       style: TextStyle(
-                                                        color: selectedDrink == drink
-                                                            ? Colors.white
-                                                            : Colors.black, // Change the text color based on the selected button
-                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontSize: 14,
                                                       ),
                                                     ),
-                                                  );
-                                                }).toList(),
+                                                    Wrap(
+                                                      spacing: 6, // space between buttons horizontally
+                                                      runSpacing: 0, // space between buttons vertically
+                                                      children: widget.drinks.map((drink) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedDrink = drink;
+                                                              calculateTotalPrice(
+                                                                  drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedDrink == drink ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          ),
+                                                          child: Text(
+                                                            '${drink['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedDrink == drink
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ] else ...[
+                                                    const SizedBox.shrink(),
+                                                  ],
+                                                ],
                                               ),
-                                            ] else ...[
-                                              const SizedBox.shrink(),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
                                     if (widget.temp.isNotEmpty) const SizedBox(width: 10),
-                                    // 1.selectedTemp
-                                    Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xff1f2029),
-                                          borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            if (widget.temp.isNotEmpty) ...[
-                                              const Text(
-                                                '2.How do you prefer your refreshment',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
+                                    item.selection && selectedTemp != null
+                                        ?
+                                        // 1.selectedTemp
+                                        Expanded(
+                                            child: Container(
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
                                               ),
-                                              Wrap(
-                                                spacing: 6, // space between buttons horizontally
-                                                runSpacing: 0, // space between buttons vertically
-                                                children: widget.temp.map((item) {
-                                                  return ElevatedButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        selectedTemp = item;
-                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
-                                                      });
-                                                    },
-                                                    style: ButtonStyle(
-                                                      backgroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedTemp == item['name'] ? Colors.orange : Colors.white,
-                                                      ),
-                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                      ),
-                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                    ),
-                                                    child: Text(
-                                                      '${item['name']}',
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  if (widget.temp.isNotEmpty) ...[
+                                                    const Text(
+                                                      '2.Select Temperature',
                                                       style: TextStyle(
-                                                        color: selectedTemp == item['name']
-                                                            ? Colors.white
-                                                            : Colors.black, // Change the text color based on the selected button
-                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontSize: 14,
                                                       ),
                                                     ),
-                                                  );
-                                                }).toList(),
-                                              ),
-                                            ] else ...[
-                                              const SizedBox.shrink(),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    if (widget.drinks.isNotEmpty) const SizedBox(width: 10),
-                                    // 1.selectedChoice
-                                    Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xff1f2029),
-                                          borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            if (widget.choices.isNotEmpty) ...[
-                                              const Text(
-                                                '1.Select Base',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              Wrap(
-                                                spacing: 6, // space between buttons horizontally
-                                                runSpacing: 0, // space between buttons vertically
-                                                children: widget.choices.map((choice) {
-                                                  return ElevatedButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        selectedChoice = choice;
-                                                        choicePrice = choice['price'];
-                                                        if (selectedType!['name'] == "Cold" &&
-                                                            (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
-                                                          typePrice = selectedType!['price'] - 0.50;
-                                                        } else {
-                                                          typePrice = selectedType!['price'];
-                                                        }
-                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
-                                                      });
-                                                    },
-                                                    style: ButtonStyle(
-                                                      backgroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedChoice == choice ? Colors.orange : Colors.white,
-                                                      ),
-                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                      ),
-                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                    Wrap(
+                                                      spacing: 6, // space between buttons horizontally
+                                                      runSpacing: 0, // space between buttons vertically
+                                                      children: widget.temp.map((item) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedTemp = item;
+                                                              calculateTotalPrice(
+                                                                  drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedTemp?['name'] == item['name'] ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          ),
+                                                          child: Text(
+                                                            '${item['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedTemp?['name'] == item['name']
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
                                                     ),
-                                                    child: Text(
-                                                      '${choice['name']}',
+                                                  ] else ...[
+                                                    const SizedBox.shrink(),
+                                                  ],
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                    // if (widget.choices.isNotEmpty) const SizedBox(width: 10),
+                                    item.selection && selectedChoice != null
+                                        ?
+                                        // 1.selectedChoice
+                                        Expanded(
+                                            child: Container(
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  if (widget.choices.isNotEmpty) ...[
+                                                    const Text(
+                                                      '1.Select Base',
                                                       style: TextStyle(
-                                                        color: selectedChoice == choice
-                                                            ? Colors.white
-                                                            : Colors.black, // Change the text color based on the selected button
-                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontSize: 14,
                                                       ),
                                                     ),
-                                                  );
-                                                }).toList(),
+                                                    Wrap(
+                                                      spacing: 6, // space between buttons horizontally
+                                                      runSpacing: 0, // space between buttons vertically
+                                                      children: widget.choices.map((choice) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedChoice = choice;
+                                                              choicePrice = choice['price'];
+                                                              if (selectedType!['name'] == "Cold" &&
+                                                                  (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
+                                                                typePrice = selectedType!['price'] - 0.50;
+                                                              } else {
+                                                                typePrice = selectedType!['price'];
+                                                              }
+                                                              calculateTotalPrice(
+                                                                  drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedChoice == choice ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          ),
+                                                          child: Text(
+                                                            '${choice['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedChoice == choice
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ] else ...[
+                                                    const SizedBox.shrink(),
+                                                  ],
+                                                ],
                                               ),
-                                            ] else ...[
-                                              const SizedBox.shrink(),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
                                     if (widget.types.isNotEmpty) const SizedBox(width: 10),
                                     // 2.selectedType
                                     if (widget.types.isNotEmpty) ...[

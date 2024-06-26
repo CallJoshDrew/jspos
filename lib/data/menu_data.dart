@@ -31,7 +31,7 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/teh.png",
     "selection": true,
-    "choices": [
+    "drinks": [
       {"name": "C", "Hot": 2.50, "Cold": 3.50},
       {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
       {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
@@ -51,18 +51,18 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/kopi.png",
     "selection": true,
-    "choices": [
-      {"name": "C", "price": 2.50},
-      {"name": "C Kosong", "price": 2.50},
-      {"name": "Nai", "price": 2.50},
-      {"name": "Kahwin", "price": 2.50},
-      {"name": "Cham C", "price": 2.50},
-      {"name": "O", "price": 2.00},
-      {"name": "O Kosong", "price": 2.00},
+    "drinks": [
+      {"name": "C", "Hot": 2.50, "Cold": 3.50},
+      {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Cham C", "Hot": 2.50, "Cold": 3.50},
+      {"name": "O", "Hot": 2.00, "Cold": 2.50},
+      {"name": "O Kosong", "Hot": 2.00, "Cold": 2.50},
     ],
-    "types": [
-      {"name": "Hot", "price": 0.00},
-      {"name": "Cold", "price": 1.00},
+    "temp": [
+      {"name": "Hot"},
+      {"name": "Cold"},
     ]
   },
   {
@@ -72,16 +72,16 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/milo.png",
     "selection": true,
-    "choices": [
-      {"name": "C", "price": 2.50},
-      {"name": "C Kosong", "price": 2.50},
-      {"name": "Nai", "price": 2.50},
-      {"name": "Kahwin", "price": 2.50},
-      {"name": "Kosong", "price": 2.50},
+    "drinks": [
+      {"name": "C", "Hot": 2.50, "Cold": 3.50},
+      {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Kosong", "Hot": 2.50, "Cold": 3.50},
     ],
-    "types": [
-      {"name": "Hot", "price": 0.00},
-      {"name": "Cold", "price": 1.00}
+    "temp": [
+      {"name": "Hot"},
+      {"name": "Cold"}
     ]
   },
   {
@@ -91,14 +91,14 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/lemon.png",
     "selection": true,
-    "choices": [
-      {"name": "Sui", "price": 2.50},
-      {"name": "Teh", "price": 2.50},
-      {"name": "Sui Asam", "price": 2.50}
+    "drinks": [
+      {"name": "Sui", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Teh", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Sui Asam", "Hot": 2.50, "Cold": 3.50}
     ],
-    "types": [
-      {"name": "Hot", "price": 0.00},
-      {"name": "Cold", "price": 1.00}
+    "temp": [
+      {"name": "Hot"},
+      {"name": "Cold"}
     ]
   },
   {
@@ -109,12 +109,12 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/nescafe.png",
     "selection": true,
     "choices": [
-      {"name": "C", "price": 2.50},
-      {"name": "Nai", "price": 2.50},
-      {"name": "C Kosong", "price": 2.50},
+      {"name": "C", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
+      {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
     ],
     "types": [
-      {"name": "Hot", "price": 0.00},
+      {"name": "Hot"},
       {"name": "Cold", "price": 1.00}
     ]
   },
@@ -126,13 +126,13 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/example.png",
     "selection": true,
     "choices": [
-      {"name": "C", "price": 2.50},
-      {"name": "Nai", "price": 2.50},
-      {"name": "Kahwin", "price": 2.50},
-      {"name": "C Kosong", "price": 2.50},
+      {"name": "C", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
+      {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
     ],
     "types": [
-      {"name": "Hot", "price": 0.00},
+      {"name": "Hot"},
       {"name": "Cold", "price": 1.00}
     ]
   },
@@ -144,11 +144,11 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/example.png",
     "selection": true,
     "choices": [
-      {"name": "Sui", "price": 2.50},
-      {"name": "Lemon Asam", "price": 2.50}
+      {"name": "Sui", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Lemon Asam", "Hot": 2.50, "Cold": 3.50}
     ],
     "types": [
-      {"name": "Hot", "price": 0.00},
+      {"name": "Hot"},
       {"name": "Cold", "price": 1.00}
     ]
   },
@@ -160,10 +160,10 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/example.png",
     "selection": true,
     "choices": [
-      {"name": "Sang Nai Sui", "price": 2.50}
+      {"name": "Sang Nai Sui", "Hot": 2.50, "Cold": 3.50}
     ],
     "types": [
-      {"name": "Hot", "price": 0.00},
+      {"name": "Hot"},
       {"name": "Cold", "price": 1.00}
     ]
   },
@@ -175,10 +175,10 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/sangSukLai.png",
     "selection": true,
     "choices": [
-      {"name": "Sang Suk Nai", "price": 2.50}
+      {"name": "Sang Suk Nai", "Hot": 2.50, "Cold": 3.50}
     ],
     "types": [
-      {"name": "Hot", "price": 0.00},
+      {"name": "Hot"},
       {"name": "Cold", "price": 1.00}
     ]
   },
@@ -192,11 +192,11 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/liongFun.png",
     "selection": true,
     "choices": [
-      {"name": "Liong Fun", "price": 2.50},
-      {"name": "Nai", "price": 2.50}
+      {"name": "Liong Fun", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.50, "Cold": 3.50}
     ],
     "types": [
-      {"name": "Hot", "price": 0.00},
+      {"name": "Hot"},
       {"name": "Cold", "price": 1.00}
     ]
   },
@@ -209,10 +209,13 @@ final List<Map<String, dynamic>> menu = [
     "price": 3.00,
     "image": "assets/drinks/pandanSoya.png",
     "selection": true,
-    "choices": [
-      {"name": "Pandan Soy Milk (with Sugar)", "price": 3.00},
-      {"name": "Pandan Soy Milk (No Sugar)", "price": 3.50}
+    "drinks": [
+      {"name": "Pandan Soy Milk", "Sugar": 3.50, "No Sugar" : 3.00}
     ],
+    "temp": [
+      {"name": "Sugar"},
+      {"name": "No Sugar"}
+    ]
   },
   {
     "id": "69",
@@ -221,12 +224,12 @@ final List<Map<String, dynamic>> menu = [
     "price": 0.50,
     "image": "assets/drinks/chineseTeh.png",
     "selection": true,
-    "choices": [
-      {"name": "Chinese Teh", "price": 0.50}
+    "drinks": [
+      {"name": "Chinese Teh", "Hot": 0.50, "Cold": 0.50}
     ],
-    "types": [
-      {"name": "Hot", "price": 0.00},
-      {"name": "Cold", "price": 0.00}
+    "temp": [
+      {"name": "Hot"},
+      {"name": "Cold"}
     ]
   },
   {"id": "71", "name": "Lai Lo Fa", "category": "Drinks", "price": 4.00, "image": "assets/drinks/laiLoFa.png"},
