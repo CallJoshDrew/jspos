@@ -1330,14 +1330,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  item.selectedTemp != null ?
-                                  Text(
-                                    '${item.selectedTemp?["name"]}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: item.selectedTemp?['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[400],
-                                    ),
-                                  ) : const SizedBox.shrink()
+                                  item.selectedTemp != null
+                                      ? Text(
+                                          '${item.selectedTemp?["name"]}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: item.selectedTemp?['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[400],
+                                          ),
+                                        )
+                                      : const SizedBox.shrink()
                                 ],
                               )
                             : Text(
@@ -1347,12 +1348,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   color: Colors.white,
                                 ),
                               ),
-
                         Wrap(
                           children: [
                             item.selection == true && item.selectedType != null
                                 ? Padding(
-                                    padding: const EdgeInsets.only(right: 10.0),
+                                    padding: const EdgeInsets.only(right: 5.0),
                                     child: Text(
                                       "( ${item.selectedType!['name']} )",
                                       style: const TextStyle(
@@ -1374,6 +1374,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 : const SizedBox.shrink(),
                           ],
                         ),
+                        item.selectedAddOn != null && item.selectedAddOn?.isNotEmpty == true
+                            ? Text(
+                                item.selectedAddOn!.map((addOn) => addOn['name']).join(', '),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
 
                         // Showing the Item Price UI
                         // Text(
