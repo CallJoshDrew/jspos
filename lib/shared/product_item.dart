@@ -593,12 +593,6 @@ class ProductItemState extends State<ProductItem> {
                                                             setState(() {
                                                               selectedChoice = choice;
                                                               choicePrice = choice['price'];
-                                                              if (selectedType!['name'] == "Cold" &&
-                                                                  (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
-                                                                typePrice = selectedType!['price'] - 0.50;
-                                                              } else {
-                                                                typePrice = selectedType!['price'];
-                                                              }
                                                               calculateTotalPrice(
                                                                   drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                             });
@@ -1002,6 +996,8 @@ class ProductItemState extends State<ProductItem> {
                                           item.selectedMeatPortion = selectedMeatPortion;
                                           item.selectedMeePortion = selectedMeePortion;
                                           item.selectedAddOn = selectedAddOn;
+                                          item.selectedDrink = selectedDrink;
+                                          item.selectedTemp = selectedTemp;
 
                                           updateItemRemarks();
 

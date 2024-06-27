@@ -1014,7 +1014,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             },
                                                             style: ButtonStyle(
                                                               backgroundColor: WidgetStateProperty.all<Color>(
-                                                                selectedMeatPortion ?['name'] == meatPortion['name'] ? Colors.orange : Colors.white,
+                                                                selectedMeatPortion?['name'] == meatPortion['name'] ? Colors.orange : Colors.white,
                                                               ),
                                                               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                                 RoundedRectangleBorder(
@@ -1026,7 +1026,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             child: Text(
                                                               '${meatPortion['name']}',
                                                               style: TextStyle(
-                                                                color: selectedMeatPortion ?['name'] == meatPortion['name']
+                                                                color: selectedMeatPortion?['name'] == meatPortion['name']
                                                                     ? Colors.white
                                                                     : Colors.black, // Change the text color based on the selected button
                                                                 fontSize: 12,
@@ -1318,13 +1318,36 @@ class _OrderDetailsState extends State<OrderDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Item Name and Price
-                        Text(
-                          item.selection ? '${index + 1}. ${item.originalName} ${item.selectedChoice!['name']}' : '${index + 1}. $name',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
+                        item.selection
+                            ? Row(
+                                children: [
+                                  Text(
+                                    item.selectedChoice != null
+                                        ? '${index + 1}. ${item.originalName} ${item.selectedChoice?['name']}'
+                                        : '${index + 1}. ${item.originalName} ${item.selectedDrink?['name']} - ',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  item.selectedTemp != null ?
+                                  Text(
+                                    '${item.selectedTemp?["name"]}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: item.selectedTemp?['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[400],
+                                    ),
+                                  ) : const SizedBox.shrink()
+                                ],
+                              )
+                            : Text(
+                                '${index + 1}. $name',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+
                         Wrap(
                           children: [
                             item.selection == true && item.selectedType != null
@@ -1332,9 +1355,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     padding: const EdgeInsets.only(right: 10.0),
                                     child: Text(
                                       "( ${item.selectedType!['name']} )",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 12,
-                                        color: item.selectedType!['name'] == 'Cold' ? Colors.green[500] : Colors.orangeAccent,
+                                        color: Colors.yellow,
                                       ),
                                     ),
                                   )
