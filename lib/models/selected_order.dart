@@ -161,6 +161,8 @@ class SelectedOrder with ChangeNotifier {
         bool areAddOnsEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedAddOn, item.selectedAddOn);
 
         return i.name == item.name &&
+            i.selectedDrink?['name'] == item.selectedDrink?['name'] &&
+            i.selectedTemp?['name'] == item.selectedTemp?['name'] &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
             i.selectedType?['name'] == item.selectedType?['name'] &&
             i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&

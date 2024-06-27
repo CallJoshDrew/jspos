@@ -337,6 +337,8 @@ class _DineInPageState extends State<DineInPage> {
       if (sortedList1[i].name != sortedList2[i].name ||
           sortedList1[i].quantity != sortedList2[i].quantity ||
           !const MapEquality().equals(sortedList1[i].itemRemarks, sortedList2[i].itemRemarks) ||
+          !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
+          !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||
           !const MapEquality().equals(sortedList1[i].selectedType, sortedList2[i].selectedType) ||
           !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
           !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
