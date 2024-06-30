@@ -111,7 +111,7 @@ class ProductItemState extends State<ProductItem> {
         double meatPrice = widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null ? widget.meatPortion[0]['price']! : 0.00;
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
         double addOnPrice = widget.addOn.isNotEmpty && widget.addOn[0]['price'] != null ? widget.addOn[0]['price']! : 0.00;
-        double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
+        double subTotalPrice = drinkPrice() + choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
 
         double calculateAddOnPrice() {
           double addOnPrice = 0.0;
@@ -119,7 +119,7 @@ class ProductItemState extends State<ProductItem> {
             addOnPrice += addOn['price'];
           }
           return addOnPrice;
-        }
+        } 
 
         void calculateTotalPrice(double drinkPrice, double choicePrice, double typePrice, double meatPrice, double meePrice, double addOnPrice) {
           setState(() {
@@ -656,12 +656,6 @@ class ProductItemState extends State<ProductItem> {
                                                     onPressed: () {
                                                       setState(() {
                                                         selectedType = type;
-                                                        if (selectedType!['name'] == "Cold" &&
-                                                            (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
-                                                          typePrice = selectedType!['price'] - 0.50;
-                                                        } else {
-                                                          typePrice = selectedType!['price'];
-                                                        }
                                                         calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                       });
                                                     },

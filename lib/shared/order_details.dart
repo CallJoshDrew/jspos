@@ -466,9 +466,11 @@ class _OrderDetailsState extends State<OrderDetails> {
       child: GestureDetector(
         onTap: () {
           itemRemarks = Map<String, dynamic>.from(item.itemRemarks ?? {});
+          Map<String, dynamic>? selectedDrink = item.selectedDrink;
+          Map<String, String>? selectedTemp = item.selectedTemp;
+          log('selected Drink is :$selectedDrink');
+          log('selected temp is :${item.selectedTemp}');
           Map<String, dynamic>? selectedChoice = item.selectedChoice;
-          // log('selectedChoice is $selectedChoice');
-          // log('itemRemarks is $itemRemarks');
           Map<String, dynamic>? selectedType = item.selectedType;
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
           Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
@@ -476,11 +478,14 @@ class _OrderDetailsState extends State<OrderDetails> {
           // The Map elements in selectedAddOn and item.selectedAddOn are the same Map objects.
           // even though selectedAddOn and item.selectedAddOn are separate Set objects.
 
-          // log('Order Details onTap item Start Page: --------------------------');
-          // log('selectedOrder.status: ${widget.selectedOrder.status}');
-          // log('selectedChoice from Order Details: ${widget.selectedOrder.items}');
-          // log('tempCartItems after: ${widget.tempCartItems}');
-          // log('Order Details onTap item End Page: --------------------------');
+          double drinkPrice() {
+            final selectedTempName = selectedTemp?['name'] ?? ''; // Convert to non-nullable String
+            final price = (selectedDrink?[selectedTempName] as double?) ?? 0.00;
+            return price; // Get the price based on the selected temperature
+          }
+          // final priceResult = drinkPrice();
+          // log('Drink Price is :${priceResult.toStringAsFixed(2)}');
+
           // these are ui display only, not yet saved into item.price
           double choicePrice = item.selectedChoice?['price'] ?? 0;
           double typePrice = item.selectedType?['price'] ?? 0;
@@ -488,7 +493,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
           double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
 
-          double subTotalPrice = choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
+          double subTotalPrice = drinkPrice() + choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
           double calculateAddOnPrice() {
             double addOnPrice = 0.0;
             for (var addOn in selectedAddOn) {
@@ -497,9 +502,9 @@ class _OrderDetailsState extends State<OrderDetails> {
             return addOnPrice;
           }
 
-          void calculateTotalPrice(double choicePrice, double typePrice, double meatPrice, double meePrice, double addOnPrice) {
+          void calculateTotalPrice(double drinkPrice, double choicePrice, double typePrice, double meatPrice, double meePrice, double addOnPrice) {
             setState(() {
-              subTotalPrice = choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
+              subTotalPrice = drinkPrice + choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
               item.price = subTotalPrice;
             });
           }
@@ -657,30 +662,54 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               item.selection && selectedChoice != null
-                                                  ? Row(
-                                                      children: [
-                                                        Text(
-                                                          item.originalName == selectedChoice!['name']
-                                                              ? item.originalName
-                                                              : '${item.originalName} ${selectedChoice!['name']}',
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(width: 10),
-                                                        Text(
-                                                          "( ${selectedChoice!['price'].toStringAsFixed(2)} )",
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Color.fromARGB(255, 114, 226, 118),
-                                                          ),
-                                                        )
-                                                      ],
+                                              ? Row(
+                                                  children: [
+                                                    Text(
+                                                      item.originalName == selectedChoice!['name']
+                                                          ? item.originalName
+                                                          : '${item.originalName} ${selectedChoice!['name']}',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      "( ${selectedChoice?['price'].toStringAsFixed(2)} )",
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                        // color: Color.fromARGB(255, 114, 226, 118),
+                                                      ),
                                                     )
-                                                  : const SizedBox.shrink(),
+                                                  ],
+                                                )
+                                              : Row(
+                                                  children: [
+                                                    Text(
+                                                      item.originalName == selectedDrink!['name']
+                                                          ? item.originalName
+                                                          : '${item.originalName} ${selectedDrink?['name']} - ${selectedTemp?["name"]}',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      "( ${drinkPrice().toStringAsFixed(2)} )",
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                        // color: Color.fromARGB(255, 114, 226, 118),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
@@ -789,75 +818,200 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // 1.selectedChoice
-                                        Expanded(
-                                          child: Container(
-                                            padding: const EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xff1f2029),
-                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                if (item.choices.isNotEmpty) ...[
-                                                  const Text(
-                                                    '1.Select Base',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                    ),
+                                        item.selection && selectedDrink != null
+                                            ?
+                                            // 1.selectedDrink
+                                            Expanded(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xff1f2029),
+                                                    borderRadius: BorderRadius.circular(5), // Set the border radius here.
                                                   ),
-                                                  Wrap(
-                                                    spacing: 6, // space between buttons horizontally
-                                                    runSpacing: 0, // space between buttons vertically
-                                                    children: item.choices.map((choice) {
-                                                      log('Seleceted Choice from Dine in is: $selectedChoice');
-                                                      log('choice from Dine in is: $choice');
-                                                      return ElevatedButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            selectedChoice = choice;
-                                                            choicePrice = choice['price'];
-                                                            if (selectedType!['name'] == "Cold" &&
-                                                                (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
-                                                              typePrice = selectedType!['price'] - 0.50;
-                                                            } else {
-                                                              typePrice = selectedType!['price'];
-                                                            }
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedChoice?['name'] == choice['name'] ? Colors.orange : Colors.white,
-                                                          ),
-                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                          ),
-                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                        ),
-                                                        child: Text(
-                                                          '${choice['name']}',
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      if (item.drinks.isNotEmpty) ...[
+                                                        const Text(
+                                                          '1.Select Drink',
                                                           style: TextStyle(
-                                                            color: selectedChoice?['name'] == choice['name']
-                                                                ? Colors.white
-                                                                : Colors.black, // Change the text color based on the selected button
-                                                            fontSize: 12,
+                                                            color: Colors.white,
+                                                            fontSize: 14,
                                                           ),
                                                         ),
-                                                      );
-                                                    }).toList(),
+                                                        Wrap(
+                                                          spacing: 6, // space between buttons horizontally
+                                                          runSpacing: 0, // space between buttons vertically
+                                                          children: item.drinks.map((drink) {
+                                                            return ElevatedButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedDrink = drink;
+                                                                  calculateTotalPrice(
+                                                                      drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                });
+                                                              },
+                                                              style: ButtonStyle(
+                                                                backgroundColor: WidgetStateProperty.all<Color>(
+                                                                  selectedDrink?['name'] == drink['name'] ? Colors.orange : Colors.white,
+                                                                ),
+                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(5),
+                                                                  ),
+                                                                ),
+                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                              ),
+                                                              child: Text(
+                                                                '${drink['name']}',
+                                                                style: TextStyle(
+                                                                  color: selectedDrink?['name'] == drink['name']
+                                                                      ? Colors.white
+                                                                      : Colors.black, // Change the text color based on the selected button
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      ] else ...[
+                                                        const SizedBox.shrink(),
+                                                      ],
+                                                    ],
                                                   ),
-                                                ] else ...[
-                                                  const SizedBox.shrink(),
-                                                ],
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                                                ),
+                                              )
+                                            : const SizedBox.shrink(),
+                                        if (item.temp.isNotEmpty) const SizedBox(width: 10),
+                                        item.selection && selectedTemp != null
+                                            ?
+                                            // 1.selectedTemp
+                                            Expanded(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xff1f2029),
+                                                    borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      if (item.temp.isNotEmpty) ...[
+                                                        const Text(
+                                                          '2.Select Temperature',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Wrap(
+                                                          spacing: 6, // space between buttons horizontally
+                                                          runSpacing: 0, // space between buttons vertically
+                                                          children: item.temp.map((item) {
+                                                            return ElevatedButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedTemp = item;
+                                                                  calculateTotalPrice(
+                                                                      drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                });
+                                                              },
+                                                              style: ButtonStyle(
+                                                                backgroundColor: WidgetStateProperty.all<Color>(
+                                                                  selectedTemp?['name'] == item['name'] ? Colors.orange : Colors.white,
+                                                                ),
+                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(5),
+                                                                  ),
+                                                                ),
+                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                              ),
+                                                              child: Text(
+                                                                '${item['name']}',
+                                                                style: TextStyle(
+                                                                  color: selectedTemp?['name'] == item['name']
+                                                                      ? Colors.white
+                                                                      : Colors.black, // Change the text color based on the selected button
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      ] else ...[
+                                                        const SizedBox.shrink(),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            : const SizedBox.shrink(),
+                                        item.selection && selectedChoice != null
+                                            ?
+                                            // 1.selectedChoice
+                                            Expanded(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xff1f2029),
+                                                    borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      if (item.choices.isNotEmpty) ...[
+                                                        const Text(
+                                                          '1.Select Base',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Wrap(
+                                                          spacing: 6, // space between buttons horizontally
+                                                          runSpacing: 0, // space between buttons vertically
+                                                          children: item.choices.map((choice) {
+                                                            return ElevatedButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedChoice = choice;
+                                                                  choicePrice = choice['price'];
+                                                                  calculateTotalPrice(
+                                                                      drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                });
+                                                              },
+                                                              style: ButtonStyle(
+                                                                backgroundColor: WidgetStateProperty.all<Color>(
+                                                                  selectedChoice?['name'] == choice['name'] ? Colors.orange : Colors.white,
+                                                                ),
+                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(5),
+                                                                  ),
+                                                                ),
+                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                              ),
+                                                              child: Text(
+                                                                '${choice['name']}',
+                                                                style: TextStyle(
+                                                                  color: selectedChoice?['name'] == choice['name']
+                                                                      ? Colors.white
+                                                                      : Colors.black, // Change the text color based on the selected button
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      ] else ...[
+                                                        const SizedBox.shrink(),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            : const SizedBox.shrink(),
                                         if (item.types.isNotEmpty) const SizedBox(width: 10),
                                         // 2.selectedType
                                         if (item.types.isNotEmpty) ...[
@@ -886,13 +1040,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         onPressed: () {
                                                           setState(() {
                                                             selectedType = type;
-                                                            if (selectedType!['name'] == "Cold" &&
-                                                                (selectedChoice!['name'] == 'O' || selectedChoice!['name'] == 'O Kosong')) {
-                                                              typePrice = selectedType!['price'] - 0.50;
-                                                            } else {
-                                                              typePrice = selectedType!['price'];
-                                                            }
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                            calculateTotalPrice(
+                                                                drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -960,7 +1109,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               setState(() {
                                                                 selectedMeePortion = meePortion;
                                                                 meePrice = meePortion['price'];
-                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                calculateTotalPrice(
+                                                                    drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -1009,7 +1159,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               setState(() {
                                                                 selectedMeatPortion = meatPortion;
                                                                 meatPrice = meatPortion['price'];
-                                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                calculateTotalPrice(
+                                                                    drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -1070,16 +1221,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     children: item.addOn.map((addOn) {
                                                       return ElevatedButton(
                                                         onPressed: () {
-                                                          print('selectedAddOn before: $selectedAddOn');
-                                                          print('addOn: $addOn');
+                                                          // print('selectedAddOn before: $selectedAddOn');
+                                                          // print('addOn: $addOn');
                                                           setState(() {
                                                             if (selectedAddOn.contains(addOn)) {
                                                               selectedAddOn.remove(addOn);
                                                             } else {
                                                               selectedAddOn.add(addOn);
                                                             }
-                                                            print('selectedAddOn after: $selectedAddOn');
-                                                            calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                            // print('selectedAddOn after: $selectedAddOn');
+                                                            calculateTotalPrice(
+                                                                drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -1227,15 +1379,21 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             onPressed: () {
                                               setState(() {
                                                 item.selectedChoice = selectedChoice;
-                                                item.name = selectedChoice!['name'];
+                                                // log('before changes: item name is ${item.name}');
+                                                // if (selectedChoice != null) {
+                                                //   item.name = selectedChoice!['name'];
+                                                // }
+                                                // log('Ater changes: item name is ${item.name}');
                                                 item.selectedType = selectedType;
                                                 item.selectedMeatPortion = selectedMeatPortion;
                                                 item.selectedMeePortion = selectedMeePortion;
                                                 item.selectedAddOn = selectedAddOn;
+                                                item.selectedDrink = selectedDrink;
+                                                item.selectedTemp = selectedTemp;
 
                                                 updateItemRemarks();
 
-                                                calculateTotalPrice(choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                 item.price = subTotalPrice;
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.selectedOrder.updateItem(item);
