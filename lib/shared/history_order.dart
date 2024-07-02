@@ -230,7 +230,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                                                   ? Row(
                                                                       children: [
                                                                         Text(
-                                                                          "${index + 1}.${item.selectedChoice!['name']} ",
+                                                                          "${index + 1}.${item.originalName} ${item.selectedChoice!['name']} ",
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
                                                                             fontWeight: FontWeight.bold,
@@ -248,21 +248,15 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                                                       ],
                                                                     )
                                                                   : Text(
-                                                                      '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
+                                                                      item.selectedTemp != null
+                                                                          ? '${index + 1}. ${item.name} - ${item.selectedTemp?['name']} ( ${item.price.toStringAsFixed(2)} )'
+                                                                          : '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
                                                                       style: const TextStyle(
                                                                         fontSize: 14,
+                                                                        fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
                                                                       ),
                                                                     ),
-                                                              const SizedBox(width: 6),
-                                                              Text(
-                                                                'x ${item.quantity}',
-                                                                style: const TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
                                                             ],
                                                           ),
                                                           Padding(
@@ -327,11 +321,51 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
+                                                                item.selection && item.selectedAddOn != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          item.selectedAddOn != null
+                                                                              ? const Text(
+                                                                                  "AddOn: ",
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                )
+                                                                              : const SizedBox.shrink(),
+                                                                          for (var addOn in item.selectedAddOn!.toList())
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "${addOn['name']} ",
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                ),
+                                                                                if (addOn['price'] != null)
+                                                                                  Text(
+                                                                                    "( + ${addOn['price'].toStringAsFixed(2)} )",
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 14,
+                                                                                      color: Color.fromARGB(255, 114, 226, 118),
+                                                                                    ),
+                                                                                  ),
+                                                                                Text(
+                                                                                  "${addOn != item.selectedAddOn!.last ? ', ' : ''} ",
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
                                                                 Wrap(
                                                                   children: [
-                                                                    item.selection &&
-                                                                            item.selectedMeatPortion != null &&
-                                                                            filterRemarks(item.itemRemarks).isNotEmpty == true
+                                                                    item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
                                                                         ? Row(
                                                                             children: [
                                                                               const Text(
@@ -360,6 +394,15 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                                       ),
                                                     ),
                                                   ),
+                                                  Text(
+                                                    'x ${item.quantity}',
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 50),
                                                   Text(
                                                     (item.price * item.quantity).toStringAsFixed(2),
                                                     style: const TextStyle(
