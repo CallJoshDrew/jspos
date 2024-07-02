@@ -119,7 +119,7 @@ class ProductItemState extends State<ProductItem> {
             addOnPrice += addOn['price'];
           }
           return addOnPrice;
-        } 
+        }
 
         void calculateTotalPrice(double drinkPrice, double choicePrice, double typePrice, double meatPrice, double meePrice, double addOnPrice) {
           setState(() {
@@ -188,16 +188,23 @@ class ProductItemState extends State<ProductItem> {
                 (Set<WidgetState> states) {
                   // Check if the remark has been added to itemRemarks
                   if (itemRemarks.containsKey(data['id'].toString())) {
-                    // If the button is pressed or the remark has been added, make the background green
+                    // If the button is pressed or the remark has been added, make the background orange
                     return states.contains(WidgetState.pressed) ? Colors.white : Colors.orange;
                   } else {
                     // If the button is pressed or the remark has not been added, make the background black
-                    return states.contains(WidgetState.pressed) ? Colors.orange : Colors.black;
+                    return states.contains(WidgetState.pressed) ? Colors.orange : Colors.white;
                   }
                 },
               ),
-              foregroundColor: WidgetStateProperty.all(Colors.white),
-              side: WidgetStateProperty.all(const BorderSide(color: Colors.white)),
+              foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                (Set<WidgetState> states) {
+                  if (itemRemarks.containsKey(data['id'].toString())) {
+                    return states.contains(WidgetState.pressed) ? Colors.black : Colors.white;
+                  } else {
+                    return states.contains(WidgetState.pressed) ? Colors.white : Colors.black;
+                  }
+                },
+              ),
               shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -222,7 +229,6 @@ class ProductItemState extends State<ProductItem> {
               data['remarks'],
               style: const TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
               ),
             ),
           );
@@ -694,7 +700,7 @@ class ProductItemState extends State<ProductItem> {
                                 // Second Row for selection of Mee & Meat Portions
                                 Row(
                                   children: [
-                                    if ((widget.meePortion.isNotEmpty) && (widget.meatPortion.isNotEmpty)) ...[
+                                    if (widget.meePortion.isNotEmpty) ...[
                                       Expanded(
                                         child: Container(
                                           padding: const EdgeInsets.all(10),
@@ -752,55 +758,68 @@ class ProductItemState extends State<ProductItem> {
                                                     }).toList(),
                                                   ),
                                                 ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ] else ...[
+                                      const SizedBox.shrink(),
+                                    ],
+                                    if (widget.meatPortion.isNotEmpty) const SizedBox(width: 10),
+                                    if (widget.meatPortion.isNotEmpty) ...[
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          margin: const EdgeInsets.only(top: 10),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xff1f2029),
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                '4.Select Meat Portion',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                ),
                                               ),
-                                              const SizedBox(width: 50),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    '4.Select Meat Portion',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
+                                              Wrap(
+                                                spacing: 6,
+                                                runSpacing: 0,
+                                                children: widget.meatPortion.map((meatPortion) {
+                                                  return ElevatedButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        selectedMeatPortion = meatPortion;
+                                                        meatPrice = meatPortion['price'];
+                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                      });
+                                                    },
+                                                    style: ButtonStyle(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
+                                                        selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
+                                                      ),
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(5),
+                                                        ),
+                                                      ),
+                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                     ),
-                                                  ),
-                                                  Wrap(
-                                                    spacing: 6, // space between buttons horizontally
-                                                    runSpacing: 0, // space between buttons vertically
-                                                    children: widget.meatPortion.map((meatPortion) {
-                                                      return ElevatedButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            selectedMeatPortion = meatPortion;
-                                                            meatPrice = meatPortion['price'];
-                                                            calculateTotalPrice(
-                                                                drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
-                                                          ),
-                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                          ),
-                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                        ),
-                                                        child: Text(
-                                                          '${meatPortion['name']}',
-                                                          style: TextStyle(
-                                                            color: selectedMeatPortion == meatPortion
-                                                                ? Colors.white
-                                                                : Colors.black, // Change the text color based on the selected button
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                  ),
-                                                ],
+                                                    child: Text(
+                                                      '${meatPortion['name']}',
+                                                      style: TextStyle(
+                                                        color: selectedMeatPortion == meatPortion
+                                                            ? Colors.white
+                                                            : Colors.black, // Change the text color based on the selected button
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
                                               ),
                                             ],
                                           ),
@@ -809,9 +828,15 @@ class ProductItemState extends State<ProductItem> {
                                     ] else ...[
                                       const SizedBox.shrink(),
                                     ],
-                                    if (widget.addOn.isNotEmpty) const SizedBox(width: 10),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                     if (widget.addOn.isNotEmpty) ...[
                                       Expanded(
+                                        flex: 2,
                                         child: Container(
                                           padding: const EdgeInsets.all(10),
                                           margin: const EdgeInsets.only(top: 10),
@@ -872,41 +897,6 @@ class ProductItemState extends State<ProductItem> {
                                     ] else ...[
                                       const SizedBox.shrink(),
                                     ],
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        margin: const EdgeInsets.only(top: 10),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xff1f2029),
-                                          borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            // First row
-                                            const Text(
-                                              'Press Buttons to add Remarks',
-                                              style: TextStyle(color: Colors.white, fontSize: 14),
-                                            ),
-                                            // remarks buttons
-                                            Wrap(
-                                              spacing: 6.0, // gap between adjacent chips
-                                              runSpacing: 0, // gap between lines
-                                              children: remarksData
-                                                  .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
-                                                  .map((data) => remarkButton(data))
-                                                  .toList(),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Container(
@@ -916,11 +906,46 @@ class ProductItemState extends State<ProductItem> {
                                           color: const Color(0xff1f2029),
                                           borderRadius: BorderRadius.circular(5), // Set the border radius here.
                                         ),
+                                        child: Row(
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // First row
+                                                const Text(
+                                                  'Add Remarks',
+                                                  style: TextStyle(color: Colors.white, fontSize: 14),
+                                                ),
+                                                // remarks buttons
+                                                Wrap(
+                                                  spacing: 6.0, // gap between adjacent chips
+                                                  runSpacing: 0, // gap between lines
+                                                  children: remarksData
+                                                      .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
+                                                      .map((data) => remarkButton(data))
+                                                      .toList(),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(10),
+                                        margin: const EdgeInsets.only(top: 10),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xff1f2029),
+                                          borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                        ),
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             const Text(
-                                              'Please write additional remarks here',
+                                              'write Remarks',
                                               style: TextStyle(color: Colors.white, fontSize: 14),
                                             ),
                                             const SizedBox(height: 3),
