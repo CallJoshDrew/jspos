@@ -493,7 +493,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
           double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
 
-          double subTotalPrice = drinkPrice() + choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
+          
+       
           double calculateAddOnPrice() {
             double addOnPrice = 0.0;
             for (var addOn in selectedAddOn) {
@@ -502,12 +503,15 @@ class _OrderDetailsState extends State<OrderDetails> {
             return addOnPrice;
           }
 
+          double subTotalPrice = drinkPrice() + choicePrice + typePrice + meatPrice + meePrice + calculateAddOnPrice();
+
           void calculateTotalPrice(double drinkPrice, double choicePrice, double typePrice, double meatPrice, double meePrice, double addOnPrice) {
             setState(() {
               subTotalPrice = drinkPrice + choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
               item.price = subTotalPrice;
             });
           }
+          
 
           TextSpan generateAddOnTextSpan(Map<String, dynamic> addOn, bool isLast) {
             return TextSpan(

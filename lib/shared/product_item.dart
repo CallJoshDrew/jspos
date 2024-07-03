@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/item.dart';
@@ -1028,6 +1029,8 @@ class ProductItemState extends State<ProductItem> {
 
                                           calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                           item.price = subTotalPrice;
+                                          // log('item Price: ${item.price}');
+                                          // log('subTotal Price: $subTotalPrice');
                                           widget.onItemAdded(item);
                                           Navigator.of(context).pop();
                                         },
