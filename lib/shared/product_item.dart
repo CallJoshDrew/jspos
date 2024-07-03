@@ -260,7 +260,7 @@ class ProductItemState extends State<ProductItem> {
                               children: [
                                 // Item Image, Name, Price
                                 Container(
-                                  padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+                                  padding: const EdgeInsets.fromLTRB(10, 10, 40, 10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     color: const Color(0xff1f2029),
@@ -392,7 +392,7 @@ class ProductItemState extends State<ProductItem> {
                                                     )
                                                   : const SizedBox.shrink(),
                                               item.selection && selectedAddOn.isNotEmpty
-                                                  ? Row(
+                                                  ? Wrap(
                                                       children: [
                                                         const Text(
                                                           "Add On: ",
@@ -401,18 +401,21 @@ class ProductItemState extends State<ProductItem> {
                                                             color: Colors.white,
                                                           ),
                                                         ),
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            style: const TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors.white,
+                                                        SizedBox(
+                                                          width: 500, // Adjust the width as needed
+                                                          child: RichText(
+                                                            text: TextSpan(
+                                                              style: const TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors.white,
+                                                              ),
+                                                              children: selectedAddOn.toList().asMap().entries.map((entry) {
+                                                                int idx = entry.key;
+                                                                Map<String, dynamic> addOn = entry.value;
+                                                                bool isLast = idx == selectedAddOn.length - 1;
+                                                                return generateAddOnTextSpan(addOn, isLast);
+                                                              }).toList(),
                                                             ),
-                                                            children: selectedAddOn.toList().asMap().entries.map((entry) {
-                                                              int idx = entry.key;
-                                                              Map<String, dynamic> addOn = entry.value;
-                                                              bool isLast = idx == selectedAddOn.length - 1;
-                                                              return generateAddOnTextSpan(addOn, isLast);
-                                                            }).toList(),
                                                           ),
                                                         ),
                                                       ],
@@ -700,8 +703,141 @@ class ProductItemState extends State<ProductItem> {
                                 // Second Row for selection of Mee & Meat Portions
                                 Row(
                                   children: [
+                                    if (widget.meatPortion.isNotEmpty) ...[
+                                      Expanded(
+                                        flex: 3,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          margin: const EdgeInsets.only(top: 10),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xff1f2029),
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                '3.Select Meat Portion',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              Wrap(
+                                                spacing: 6,
+                                                runSpacing: 0,
+                                                children: widget.meatPortion.map((meatPortion) {
+                                                  return ElevatedButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        selectedMeatPortion = meatPortion;
+                                                        meatPrice = meatPortion['price'];
+                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                      });
+                                                    },
+                                                    style: ButtonStyle(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
+                                                        selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
+                                                      ),
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(5),
+                                                        ),
+                                                      ),
+                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                    ),
+                                                    child: Text(
+                                                      '${meatPortion['name']}',
+                                                      style: TextStyle(
+                                                        color: selectedMeatPortion == meatPortion
+                                                            ? Colors.white
+                                                            : Colors.black, // Change the text color based on the selected button
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ] else ...[
+                                      const SizedBox.shrink(),
+                                    ],
+                                    if (widget.addOn.isNotEmpty) const SizedBox(width: 10),
+                                    if (widget.addOn.isNotEmpty) ...[
+                                      Expanded(
+                                        flex: 9,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          margin: const EdgeInsets.only(top: 10),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xff1f2029),
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                '4.Add-Ons',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              Wrap(
+                                                spacing: 6,
+                                                runSpacing: 0,
+                                                children: widget.addOn.map((addOn) {
+                                                  return ElevatedButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        if (selectedAddOn.contains(addOn)) {
+                                                          selectedAddOn.remove(addOn);
+                                                        } else {
+                                                          selectedAddOn.add(addOn);
+                                                        }
+                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                      });
+                                                    },
+                                                    style: ButtonStyle(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
+                                                        selectedAddOn.contains(addOn) ? Colors.orange : Colors.white,
+                                                      ),
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(5),
+                                                        ),
+                                                      ),
+                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                    ),
+                                                    child: Text(
+                                                      '${addOn['name']}',
+                                                      style: TextStyle(
+                                                        color: selectedAddOn.contains(addOn) ? Colors.white : Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ] else ...[
+                                      const SizedBox.shrink(),
+                                    ],
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                     if (widget.meePortion.isNotEmpty) ...[
                                       Expanded(
+                                        flex: 4,
                                         child: Container(
                                           padding: const EdgeInsets.all(10),
                                           margin: const EdgeInsets.only(top: 10),
@@ -715,7 +851,7 @@ class ProductItemState extends State<ProductItem> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    '3.Select Mee Portion',
+                                                    '5.Select Mee Portion',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
@@ -766,139 +902,9 @@ class ProductItemState extends State<ProductItem> {
                                     ] else ...[
                                       const SizedBox.shrink(),
                                     ],
-                                    if (widget.meatPortion.isNotEmpty) const SizedBox(width: 10),
-                                    if (widget.meatPortion.isNotEmpty) ...[
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(10),
-                                          margin: const EdgeInsets.only(top: 10),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xff1f2029),
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                '4.Select Meat Portion',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              Wrap(
-                                                spacing: 6,
-                                                runSpacing: 0,
-                                                children: widget.meatPortion.map((meatPortion) {
-                                                  return ElevatedButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        selectedMeatPortion = meatPortion;
-                                                        meatPrice = meatPortion['price'];
-                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
-                                                      });
-                                                    },
-                                                    style: ButtonStyle(
-                                                      backgroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
-                                                      ),
-                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                      ),
-                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                    ),
-                                                    child: Text(
-                                                      '${meatPortion['name']}',
-                                                      style: TextStyle(
-                                                        color: selectedMeatPortion == meatPortion
-                                                            ? Colors.white
-                                                            : Colors.black, // Change the text color based on the selected button
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ] else ...[
-                                      const SizedBox.shrink(),
-                                    ],
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (widget.addOn.isNotEmpty) ...[
-                                      Expanded(
-                                        flex: 2,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(10),
-                                          margin: const EdgeInsets.only(top: 10),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xff1f2029),
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                '5.Add-Ons',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              Wrap(
-                                                spacing: 6,
-                                                runSpacing: 0,
-                                                children: widget.addOn.map((addOn) {
-                                                  return ElevatedButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        if (selectedAddOn.contains(addOn)) {
-                                                          selectedAddOn.remove(addOn);
-                                                        } else {
-                                                          selectedAddOn.add(addOn);
-                                                        }
-                                                        calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
-                                                      });
-                                                    },
-                                                    style: ButtonStyle(
-                                                      backgroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedAddOn.contains(addOn) ? Colors.orange : Colors.white,
-                                                      ),
-                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                      ),
-                                                      padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                    ),
-                                                    child: Text(
-                                                      '${addOn['name']}',
-                                                      style: TextStyle(
-                                                        color: selectedAddOn.contains(addOn) ? Colors.white : Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ] else ...[
-                                      const SizedBox.shrink(),
-                                    ],
-                                    const SizedBox(width: 10),
+                                    if (item.meePortion.isNotEmpty) const SizedBox(width: 10),
                                     Expanded(
+                                      flex: 3,
                                       child: Container(
                                         padding: const EdgeInsets.all(10),
                                         margin: const EdgeInsets.only(top: 10),
@@ -933,7 +939,7 @@ class ProductItemState extends State<ProductItem> {
                                     ),
                                     const SizedBox(width: 10),
                                     Expanded(
-                                      flex: 2,
+                                      flex: 3,
                                       child: Container(
                                         padding: const EdgeInsets.all(10),
                                         margin: const EdgeInsets.only(top: 10),
@@ -945,7 +951,7 @@ class ProductItemState extends State<ProductItem> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             const Text(
-                                              'write Remarks',
+                                              'Write Remarks',
                                               style: TextStyle(color: Colors.white, fontSize: 14),
                                             ),
                                             const SizedBox(height: 3),

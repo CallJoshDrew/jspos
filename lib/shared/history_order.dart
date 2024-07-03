@@ -322,14 +322,14 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                                                       )
                                                                     : const SizedBox.shrink(),
                                                                 item.selection && item.selectedAddOn != null
-                                                                    ? Row(
+                                                                    ? Wrap(
                                                                         children: [
-                                                                          item.selectedAddOn != null
+                                                                           item.selectedAddOn!.isNotEmpty
                                                                               ? const Text(
                                                                                   "AddOn: ",
                                                                                   style: TextStyle(
                                                                                     fontSize: 14,
-                                                                                    color: Colors.white,
+                                                                                    color: Colors.yellow,
                                                                                   ),
                                                                                 )
                                                                               : const SizedBox.shrink(),

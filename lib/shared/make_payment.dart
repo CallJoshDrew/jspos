@@ -136,6 +136,11 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
     double fractionAmount = widget.selectedOrder.totalPrice - widget.selectedOrder.totalPrice.floor();
+    // Assuming 'items' is a List<Item>
+    for (Item item in widget.selectedOrder.items) {
+      log('addOn: ${item.selectedAddOn}');
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
       body: Dialog(
@@ -347,15 +352,17 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                       )
                                                                     : const SizedBox.shrink(),
                                                                 item.selection && item.selectedAddOn != null
-                                                                    ? Row(
+                                                                    ? Wrap(
                                                                         children: [
-                                                                          const Text(
-                                                                            "AddOn: ",
-                                                                            style: TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Colors.white,
-                                                                            ),
-                                                                          ),
+                                                                          item.selectedAddOn!.isNotEmpty
+                                                                              ? const Text(
+                                                                                  "AddOn: ",
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Colors.yellow,
+                                                                                  ),
+                                                                                )
+                                                                              : const SizedBox.shrink(),
                                                                           for (var addOn in item.selectedAddOn!.toList())
                                                                             Row(
                                                                               children: [
@@ -374,13 +381,13 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                                       color: Color.fromARGB(255, 114, 226, 118),
                                                                                     ),
                                                                                   ),
-                                                                                  Text(
-                                                                                    "${addOn != item.selectedAddOn!.last ? ', ' : ''} ",
-                                                                                    style: const TextStyle(
-                                                                                      fontSize: 14,
-                                                                                      color: Colors.white,
-                                                                                    ),
+                                                                                Text(
+                                                                                  "${addOn != item.selectedAddOn!.last ? ', ' : ''} ",
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Colors.white,
                                                                                   ),
+                                                                                ),
                                                                               ],
                                                                             ),
                                                                         ],

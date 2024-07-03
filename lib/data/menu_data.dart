@@ -274,6 +274,13 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Cha Siu", "price": 3.00},
+      {"name": "Hot Dog", "price": 2.00},
+      {"name": "Ai Gua", "price": 2.00},
+      {"name": "Ku Gua", "price": 2.00},
+      {"name": "Fried Chicken", "price": 5.00},
+      {"name": "Chuang Sao", "price": 2.50},
     ],
   },
   {
