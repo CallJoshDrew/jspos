@@ -40,8 +40,8 @@ final List<Map<String, dynamic>> menu = [
       {"name": "O Kosong", "Hot": 2.00, "Cold": 2.50},
     ],
     "temp": [
-      {"name": "Hot" },
-      {"name": "Cold" },
+      {"name": "Hot"},
+      {"name": "Cold"},
     ]
   },
   {
@@ -210,7 +210,7 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/pandanSoya.png",
     "selection": true,
     "drinks": [
-      {"name": "Pandan Soy Milk", "Sugar": 3.50, "No Sugar" : 3.00}
+      {"name": "Pandan Soy Milk", "Sugar": 3.50, "No Sugar": 3.00}
     ],
     "temp": [
       {"name": "Sugar"},
@@ -258,6 +258,7 @@ final List<Map<String, dynamic>> menu = [
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
     ],
     "meat portion": [
@@ -271,16 +272,17 @@ final List<Map<String, dynamic>> menu = [
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
-      {"name": "Fish Ball", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
       {"name": "Egg", "price": 1.50},
-      {"name": "Cha Siu", "price": 3.00},
-      {"name": "Hot Dog", "price": 2.00},
-      {"name": "Ai Gua", "price": 2.00},
-      {"name": "Ku Gua", "price": 2.00},
-      {"name": "Fried Chicken", "price": 5.00},
-      {"name": "Chuang Sao", "price": 2.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
     ],
   },
   {
@@ -302,6 +304,7 @@ final List<Map<String, dynamic>> menu = [
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
     ],
     "meat portion": [
@@ -315,9 +318,17 @@ final List<Map<String, dynamic>> menu = [
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
-      {"name": "Fish Ball", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
     ],
   },
   {
@@ -339,6 +350,7 @@ final List<Map<String, dynamic>> menu = [
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
     ],
     "meat portion": [
@@ -352,9 +364,17 @@ final List<Map<String, dynamic>> menu = [
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
-      {"name": "Fish Ball", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
     ],
   },
   {
@@ -378,27 +398,73 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Mihun Halus", "price": 0.00},
       {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
-      {"name": "Mee Telur", "price": 0.00},
-      {"name": "Yee Mee", "price": 0.00},
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
       {"name": "Extra Meat", "price": 2.00}
     ],
     "mee portion": [
-      {"name": "Normal", "price": 0.00},
-      {"name": "Less", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00},
-      {"name": "Extra Mee Telur", "price": 2.50},
+      {"name": "Normal Mee", "price": 0.00},
+      {"name": "Less Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
-      {"name": "Prawn Ball", "price": 1.50},
-      {"name": "Soto", "price": 1.50},
-      {"name": "Laksa", "price": 2.00},
-      {"name": "Curry Laksa", "price": 2.00},
-      // {"name": "Goreng Set", "price": 2.50},
+      {"name": "Yu Fu", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
+      {"name": "Yu Wat", "price": 0.00},
+      {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
     ]
   },
+  // {
+  //   "id": "104",
+  //   "name": "Goreng Basah",
+  //   "category": "Dishes",
+  //   "price": 8.00,
+  //   "image": "assets/dishes/gorengBasah.png",
+  //   "selection": true,
+  //   "choices": [
+  //     {"name": "Campur", "price": 8.00},
+  //     {"name": "Ayam", "price": 8.00},
+  //     {"name": "Ayam Goreng", "price": 9.00},
+  //     {"name": "Seafood", "price": 11.00},
+  //     {"name": "Udang", "price": 13.00},
+  //     {"name": "Ikan", "price": 13.00},
+  //     {"name": "Udang & Ikan", "price": 13.00},
+  //   ],
+  //   "types": [
+  //     {"name": "Kuey Teow", "price": 0.00},
+  //     {"name": "Mihun Halus", "price": 0.00},
+  //     {"name": "Mihun Kasar", "price": 0.00},
+  //     {"name": "Mee Kuning", "price": 0.00},
+  //     {"name": "Mee Telur", "price": 0.00},
+  //     {"name": "Yee Mee", "price": 0.00},
+  //   ],
+  //   "meat portion": [
+  //     {"name": "Normal Meat", "price": 0.00},
+  //     {"name": "Extra Meat", "price": 2.00}
+  //   ],
+  //   "mee portion": [
+  //     {"name": "Normal", "price": 0.00},
+  //     {"name": "Less", "price": 0.00},
+  //     {"name": "Extra Mee", "price": 2.00},
+  //     {"name": "Extra Mee Telur", "price": 2.50},
+  //   ],
+  //   "add on": [
+  //     {"name": "Prawn Ball", "price": 1.50},
+  //     {"name": "Soto", "price": 1.50},
+  //     {"name": "Laksa", "price": 2.00},
+  //     {"name": "Curry Laksa", "price": 2.00},
+  //     // {"name": "Goreng Set", "price": 2.50},
+  //   ]
+  // },
   {
     "id": "105",
     "name": "Laksa",
@@ -418,6 +484,7 @@ final List<Map<String, dynamic>> menu = [
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
     ],
     "meat portion": [
@@ -431,9 +498,17 @@ final List<Map<String, dynamic>> menu = [
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
-      {"name": "Fish Ball", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
     ],
   },
   {
@@ -455,6 +530,7 @@ final List<Map<String, dynamic>> menu = [
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
     ],
     "meat portion": [
@@ -468,9 +544,17 @@ final List<Map<String, dynamic>> menu = [
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
-      {"name": "Fish Ball", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
     ],
   },
   {
@@ -492,6 +576,7 @@ final List<Map<String, dynamic>> menu = [
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
     ],
     "meat portion": [
@@ -505,13 +590,107 @@ final List<Map<String, dynamic>> menu = [
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
-      {"name": "Fish Ball", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50}, 
     ],
   },
-  {"id": "108", "name": "Nasi Ayam", "category": "Dishes", "price": 7.00, "image": "assets/dishes/nasiAyam.png"},
-  {"id": "109", "name": "Nasi Goreng Ayam", "category": "Dishes", "price": 7.00, "image": "assets/dishes/nasiGorengAyam.png"},
+  // {
+  //   "id": "108",
+  //   "name": "Nasi Ayam",
+  //   "category": "Dishes",
+  //   "price": 7.00,
+  //   "image": "assets/dishes/nasiAyam.png",
+  //   "selection": true,
+  //   "choices": [
+  //     {"name": "Campur", "price": 10.00},
+  //     {"name": "Ayam", "price": 10.00},
+  //     {"name": "Sui Kau", "price": 10.00},
+  //     {"name": "Seafood", "price": 12.00},
+  //     {"name": "Udang", "price": 14.00},
+  //     {"name": "Ikan", "price": 14.00},
+  //     {"name": "Udang & Ikan", "price": 14.00},
+  //   ],
+  //   "types": [
+  //     {"name": "Kuey Teow", "price": 0.00},
+  //     {"name": "Mihun Halus", "price": 0.00},
+  //     {"name": "Mihun Kasar", "price": 0.00},
+  //     {"name": "Mee Kuning", "price": 0.00},
+  //   ],
+  //   "meat portion": [
+  //     {"name": "Normal Meat", "price": 0.00},
+  //     {"name": "Extra Meat", "price": 2.00}
+  //   ],
+  //   "mee portion": [
+  //     {"name": "Normal Mee", "price": 0.00},
+  //     {"name": "Less Mee", "price": 0.00},
+  //     {"name": "Extra Mee", "price": 2.00}
+  //   ],
+  //   "add on": [
+  //     {"name": "Yu Fu", "price": 0.00},
+  //     {"name": "Yu Dan", "price": 0.00},
+  //     {"name": "Yu Wat", "price": 0.00},
+  //     {"name": "Yu Peng", "price": 0.00},
+  //     {"name": "Egg", "price": 1.50},
+  //     {"name": "Ayam Goreng", "price": 2.00},
+  //     {"name": "Hot Dog", "price": 1.50},
+  //     {"name": "Ai Gua", "price": 1.50},
+  //     {"name": "Ku Gua", "price": 1.50},
+  //     {"name": "Fried Chicken", "price": 6.00},
+  //     {"name": "Curry Toufo", "price": 1.50},
+  //     {"name": "Fried Wan Tan", "price": 1.50},
+  //   ]
+  // },
+  {
+    "id": "109",
+    "name": "经济面",
+    "category": "Dishes",
+    "price": 7.00,
+    "image": "assets/dishes/konoMee.png",
+    "selection": true,
+    "choices": [
+      {"name": "Normal", "price": 0.00},
+      {"name": "Ayam", "price": 6.00},
+      {"name": "Goreng Ayam", "price": 6.00},
+    ],
+    "types": [
+      {"name": "Nasi", "price": 1.00},
+      {"name": "Mihun", "price": 1.00},
+      {"name": "Mee", "price": 1.00},
+      {"name": "Kuey Teow", "price": 1.00},
+      {"name": "Kosong", "price": 0.00},
+    ],
+    "meat portion": [
+      {"name": "Normal Meat", "price": 0.00},
+      {"name": "Extra Meat", "price": 2.00}
+    ],
+    "mee portion": [
+      {"name": "Normal Mee", "price": 0.00},
+      {"name": "Less Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00}
+    ],
+    "add on": [
+      {"name": "Yu Fu", "price": 1.50},
+      {"name": "Yu Dan", "price": 1.50},
+      {"name": "Yu Wat", "price": 1.50},
+      {"name": "Yu Peng", "price": 1.50},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
+    ]
+  },
   {
     "id": "110",
     "name": "Sui Kau", //multi selection for your flavor
@@ -532,6 +711,7 @@ final List<Map<String, dynamic>> menu = [
     "types": [
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mihun Halus", "price": 0.00},
+      {"name": "Mihun Kasar", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
     ],
     "meat portion": [
@@ -545,9 +725,17 @@ final List<Map<String, dynamic>> menu = [
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
-      {"name": "Fish Ball", "price": 0.00},
+      {"name": "Yu Dan", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Yu Peng", "price": 0.00},
+      {"name": "Egg", "price": 1.50},
+      {"name": "Ayam Goreng", "price": 2.00},
+      {"name": "Hot Dog", "price": 1.50},
+      {"name": "Ai Gua", "price": 1.50},
+      {"name": "Ku Gua", "price": 1.50},
+      {"name": "Fried Chicken", "price": 6.00},
+      {"name": "Curry Toufo", "price": 1.50},
+      {"name": "Fried Wan Tan", "price": 1.50},
     ],
   },
 ];

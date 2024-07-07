@@ -343,7 +343,7 @@ class ProductItemState extends State<ProductItem> {
                                                           style: const TextStyle(fontSize: 14, color: Colors.white),
                                                         ),
                                                         Text(
-                                                          "( + ${typePrice.toStringAsFixed(2)} )",
+                                                          "( + ${selectedType!['price'].toStringAsFixed(2)} )",
                                                           style: const TextStyle(
                                                             fontSize: 14,
                                                             color: Color.fromARGB(255, 114, 226, 118),
@@ -666,6 +666,7 @@ class ProductItemState extends State<ProductItem> {
                                                     onPressed: () {
                                                       setState(() {
                                                         selectedType = type;
+                                                        typePrice = type['price'];
                                                         calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                       });
                                                     },
