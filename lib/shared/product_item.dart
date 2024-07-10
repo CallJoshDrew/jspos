@@ -445,7 +445,7 @@ class ProductItemState extends State<ProductItem> {
                                   children: [
                                     item.selection && selectedDrink != null
                                         ?
-                                        // 1.selectedDrink
+                                        // selectedDrink
                                         Expanded(
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
@@ -458,7 +458,7 @@ class ProductItemState extends State<ProductItem> {
                                                 children: [
                                                   if (widget.drinks.isNotEmpty) ...[
                                                     const Text(
-                                                      '1.Select Drink',
+                                                      'Select Drink',
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14,
@@ -510,7 +510,7 @@ class ProductItemState extends State<ProductItem> {
                                     if (widget.temp.isNotEmpty) const SizedBox(width: 10),
                                     item.selection && selectedTemp != null
                                         ?
-                                        // 1.selectedTemp
+                                        // selectedTemp
                                         Expanded(
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
@@ -523,7 +523,7 @@ class ProductItemState extends State<ProductItem> {
                                                 children: [
                                                   if (widget.temp.isNotEmpty) ...[
                                                     const Text(
-                                                      '2.Select Temperature',
+                                                      'Select Temperature',
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14,
@@ -575,7 +575,7 @@ class ProductItemState extends State<ProductItem> {
                                     // if (widget.choices.isNotEmpty) const SizedBox(width: 10),
                                     item.selection && selectedChoice != null
                                         ?
-                                        // 1.selectedChoice
+                                        // selectedChoice
                                         Expanded(
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
@@ -588,7 +588,7 @@ class ProductItemState extends State<ProductItem> {
                                                 children: [
                                                   if (widget.choices.isNotEmpty) ...[
                                                     const Text(
-                                                      '1.Select Base',
+                                                      'Select Base',
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14,
@@ -639,7 +639,7 @@ class ProductItemState extends State<ProductItem> {
                                           )
                                         : const SizedBox.shrink(),
                                     if (widget.types.isNotEmpty) const SizedBox(width: 10),
-                                    // 2.selectedType
+                                    //selectedType
                                     if (widget.types.isNotEmpty) ...[
                                       Expanded(
                                         child: Container(
@@ -652,7 +652,7 @@ class ProductItemState extends State<ProductItem> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                "2.Select Noodles",
+                                                "Select Noodles",
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 14,
@@ -719,7 +719,7 @@ class ProductItemState extends State<ProductItem> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                '3.Select Meat Portion',
+                                                'Select Meat Portion',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 14,
@@ -767,7 +767,7 @@ class ProductItemState extends State<ProductItem> {
                                     ] else ...[
                                       const SizedBox.shrink(),
                                     ],
-                                    if (widget.addOn.isNotEmpty) const SizedBox(width: 10),
+                                    if (widget.meatPortion.isNotEmpty) const SizedBox(width: 10),
                                     if (widget.addOn.isNotEmpty) ...[
                                       Expanded(
                                         flex: 9,
@@ -782,7 +782,7 @@ class ProductItemState extends State<ProductItem> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                '4.Add-Ons',
+                                                'Add-Ons',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 14,
@@ -853,7 +853,7 @@ class ProductItemState extends State<ProductItem> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    '5.Select Mee Portion',
+                                                    'Select Mee Portion',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,

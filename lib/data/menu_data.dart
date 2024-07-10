@@ -108,14 +108,14 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/nescafe.png",
     "selection": true,
-    "choices": [
+    "drinks": [
       {"name": "C", "Hot": 2.50, "Cold": 3.50},
       {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
       {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
     ],
-    "types": [
+    "temp": [
       {"name": "Hot"},
-      {"name": "Cold", "price": 1.00}
+      {"name": "Cold"}
     ]
   },
   {
@@ -125,15 +125,15 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/example.png",
     "selection": true,
-    "choices": [
+    "drinks": [
       {"name": "C", "Hot": 2.50, "Cold": 3.50},
       {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
       {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
       {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
     ],
-    "types": [
+    "temp": [
       {"name": "Hot"},
-      {"name": "Cold", "price": 1.00}
+      {"name": "Cold"}
     ]
   },
   {
@@ -143,13 +143,13 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/example.png",
     "selection": true,
-    "choices": [
+    "drinks": [
       {"name": "Sui", "Hot": 2.50, "Cold": 3.50},
       {"name": "Lemon Asam", "Hot": 2.50, "Cold": 3.50}
     ],
-    "types": [
+    "temp": [
       {"name": "Hot"},
-      {"name": "Cold", "price": 1.00}
+      {"name": "Cold"}
     ]
   },
   {
@@ -159,12 +159,12 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/example.png",
     "selection": true,
-    "choices": [
+    "drinks": [
       {"name": "Sang Nai Sui", "Hot": 2.50, "Cold": 3.50}
     ],
-    "types": [
+    "temp": [
       {"name": "Hot"},
-      {"name": "Cold", "price": 1.00}
+      {"name": "Cold"}
     ]
   },
   {
@@ -174,12 +174,12 @@ final List<Map<String, dynamic>> menu = [
     "price": 2.50,
     "image": "assets/drinks/sangSukLai.png",
     "selection": true,
-    "choices": [
+    "drinks": [
       {"name": "Sang Suk Nai", "Hot": 2.50, "Cold": 3.50}
     ],
-    "types": [
+    "temp": [
       {"name": "Hot"},
-      {"name": "Cold", "price": 1.00}
+      {"name": "Cold"}
     ]
   },
   {"id": "59", "name": "Teh C Special", "category": "Drinks", "price": 4.50, "image": "assets/drinks/tehCSpecial.png"},
@@ -191,13 +191,13 @@ final List<Map<String, dynamic>> menu = [
     "price": 3.80,
     "image": "assets/drinks/liongFun.png",
     "selection": true,
-    "choices": [
+    "drinks": [
       {"name": "Liong Fun", "Hot": 2.50, "Cold": 3.50},
       {"name": "Nai", "Hot": 2.50, "Cold": 3.50}
     ],
-    "types": [
+    "temp": [
       {"name": "Hot"},
-      {"name": "Cold", "price": 1.00}
+      {"name": "Cold"}
     ]
   },
   {"id": "64", "name": "Lo Han Kuo", "category": "Drinks", "price": 3.00, "image": "assets/drinks/loHanKuo.png"},
@@ -275,14 +275,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Fried Egg", "price": 1.50},
-      {"name": "Ayam Goreng", "price": 2.00},
-      {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
-      {"name": "Fried Chicken", "price": 6.00},
-      {"name": "Ayam Kicap", "price": 6.00},
-      {"name": "Curry Tofo", "price": 1.50},
+      
     ],
   },
   {
@@ -321,14 +314,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Fried Egg", "price": 1.50},
-      {"name": "Ayam Goreng", "price": 2.00},
-      {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
-      {"name": "Fried Chicken", "price": 6.00},
-      {"name": "Ayam Kicap", "price": 6.00},
-      {"name": "Curry Tofo", "price": 1.50},
+      
     ],
   },
   {
@@ -339,10 +325,10 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/dishes/gorengKering.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 9.00},
-      {"name": "Ayam", "price": 9.00},
+      {"name": "Campur", "price": 10.00},
+      {"name": "Ayam", "price": 10.00},
       {"name": "Ayam Goreng", "price": 10.00},
-      {"name": "Seafood", "price": 11.00},
+      {"name": "Seafood", "price": 12.00},
       {"name": "Udang", "price": 13.00},
       {"name": "Ikan", "price": 13.00},
       {"name": "Udang & Ikan", "price": 13.00},
@@ -367,14 +353,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Fried Egg", "price": 1.50},
-      {"name": "Ayam Goreng", "price": 2.00},
-      {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
-      {"name": "Fried Chicken", "price": 6.00},
-      {"name": "Ayam Kicap", "price": 6.00},
-      {"name": "Curry Tofo", "price": 1.50},
+      
     ],
   },
   {
@@ -413,14 +392,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Fried Egg", "price": 1.50},
-      {"name": "Ayam Goreng", "price": 2.00},
-      {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
-      {"name": "Fried Chicken", "price": 6.00},
-      {"name": "Ayam Kicap", "price": 6.00},
-      {"name": "Curry Tofo", "price": 1.50},
+      
     ]
   },
   // {
@@ -476,7 +448,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Campur", "price": 10.00},
       {"name": "Ayam Goreng", "price": 10.00},
       {"name": "Sui Kau", "price": 10.00},
-      {"name": "Seafood", "price": 12.00},
+      {"name": "Seafood", "price": 13.00},
       {"name": "Udang", "price": 14.00},
       {"name": "Ikan", "price": 14.00},
       {"name": "Udang & Ikan", "price": 14.00},
@@ -501,14 +473,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Fried Egg", "price": 1.50},
-      {"name": "Ayam Goreng", "price": 2.00},
-      {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
-      {"name": "Fried Chicken", "price": 6.00},
-      {"name": "Ayam Kicap", "price": 6.00},
-      {"name": "Curry Tofo", "price": 1.50},
+      
     ],
   },
   {
@@ -547,14 +512,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Fried Egg", "price": 1.50},
-      {"name": "Ayam Goreng", "price": 2.00},
-      {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
-      {"name": "Fried Chicken", "price": 6.00},
-      {"name": "Ayam Kicap", "price": 6.00},
-      {"name": "Curry Tofo", "price": 1.50},
+      
     ],
   },
   {
@@ -593,14 +551,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Fried Egg", "price": 1.50},
-      {"name": "Ayam Goreng", "price": 2.00},
-      {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
-      {"name": "Fried Chicken", "price": 6.00},
-      {"name": "Ayam Kicap", "price": 6.00},
-      {"name": "Curry Tofo", "price": 1.50},
+      
     ],
   },
   {
@@ -625,46 +576,37 @@ final List<Map<String, dynamic>> menu = [
     "id": "109",
     "name": "Eco Noodles",
     "category": "Dishes",
-    "price": 7.00,
+    "price": 2.00,
     "image": "assets/dishes/ecoNoodles.png",
     "selection": true,
     "choices": [
-      {"name": "Base", "price": 0.00},
+      {"name": "Normal", "price": 2.00},
+      {"name": "Extra Mee", "price": 2.50},
     ],
     "types": [
-      {"name": "Mihun", "price": 1.00},
-      {"name": "Mee", "price": 1.00},
-      {"name": "Kuey Teow", "price": 1.00},
-      {"name": "Nasi", "price": 1.00},
+      {"name": "Mihun", "price": 0.00},
+      {"name": "Mee", "price": 0.00},
+      {"name": "Kuey Teow", "price": 0.00},
+      {"name": "Nasi", "price": 0.00},
       {"name": "Kosong", "price": 0.00},
     ],
-    "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
-    ],
-    "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
-    ],
     "add on": [
-      {"name": "Yu Fu", "price": 1.50},
+      {"name": "Egg", "price": 1.50},
       {"name": "Fish Ball", "price": 1.50},
-      {"name": "Yu Wat", "price": 1.50},
       {"name": "Fish Cake", "price": 1.50},
-      {"name": "Fried Egg", "price": 1.50},
       {"name": "Ayam Goreng", "price": 2.00},
       {"name": "Sausage", "price": 1.50},
-      {"name": "Fried Eggplant", "price": 1.50},
-      {"name": "Fried Wonton", "price": 1.50},
+      {"name": "Eggplant", "price": 1.50},
+      {"name": "Wonton", "price": 1.50},
       {"name": "Fried Chicken", "price": 6.00},
       {"name": "Ayam Kicap", "price": 6.00},
+      {"name": "Beancurd Skin", "price": 1.50},
       {"name": "Curry Tofo", "price": 1.50},
     ]
   },
   {
     "id": "110",
-    "name": "Sui Kau", //multi selection for your flavor
+    "name": "Sui Kau",
     "category": "Dishes",
     "price": 9.00,
     "image": "assets/dishes/suiKau.png",
@@ -672,27 +614,17 @@ final List<Map<String, dynamic>> menu = [
     "choices": [
       {"name": "Sui Kau", "price": 9.00},
       {"name": "Campur", "price": 10.00},
-      // {"name": "Fu", "price": 10.00},
-      // {"name": "Wat", "price": 10.00},
-      // {"name": "Peng", "price": 10.00},
       {"name": "Udang", "price": 12.00},
       {"name": "Ikan", "price": 12.00},
       {"name": "Udang & Ikan", "price": 12.00},
     ],
     "types": [
-      {"name": "Kuey Teow", "price": 0.00},
-      {"name": "Mihun Halus", "price": 0.00},
-      {"name": "Mihun Kasar", "price": 0.00},
-      {"name": "Mee Kuning", "price": 0.00},
+      {"name": "Soup", "price": 0.00},
+      {"name": "Kono", "price": 0.00},
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
       {"name": "Extra Meat", "price": 2.00}
-    ],
-    "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -706,10 +638,12 @@ final List<Map<String, dynamic>> menu = [
   {"id": "152", "name": "Sausage", "category": "Add On", "price": 1.50, "image": "assets/addOn/sausage.png"},
   {"id": "153", "name": "Fried Eggplant", "category": "Add On", "price": 1.50, "image": "assets/addOn/friedEggplant.png"},
   {"id": "154", "name": "Fried Wonton", "category": "Add On", "price": 1.50, "image": "assets/addOn/friedWonton.png"},
-  {"id": "155", "name": "Fried Chicken", "category": "Add On", "price": 6.00, "image": "assets/addOn/friedChicken.png"},
-  {"id": "156", "name": "Curry Tofu", "category": "Add On", "price": 1.50, "image": "assets/addOn/curryTofu.png"},
-  {"id": "157", "name": "Fish Ball", "category": "Add On", "price": 1.50, "image": "assets/addOn/fishBall.png"},
-  {"id": "158", "name": "Fish Cake", "category": "Add On", "price": 1.50, "image": "assets/addOn/fishCake.png"},
-  {"id": "159", "name": "Dessert", "category": "Add On", "price": 2.50, "image": "assets/addOn/dessert.png"},
-  {"id": "159", "name": "Rice", "category": "Add On", "price": 1.50, "image": "assets/addOn/rice.png"},
+  {"id": "155", "name": "Fried Chicken", "category": "Add On", "price": 6.00, "image": "assets/dishes/nasiGorengAyam.png"},
+  {"id": "156", "name": "Ayam Kicap", "category": "Add On", "price": 6.00, "image": "assets/dishes/nasiAyam.png"},
+  {"id": "157", "name": "Curry Tofu", "category": "Add On", "price": 1.50, "image": "assets/addOn/curryTofu.png"},
+  {"id": "158", "name": "Fish Ball", "category": "Add On", "price": 1.50, "image": "assets/addOn/fishBall.png"},
+  {"id": "159", "name": "Fish Cake", "category": "Add On", "price": 1.50, "image": "assets/addOn/fishCake.png"},
+  {"id": "160", "name": "Dessert", "category": "Add On", "price": 4.00, "image": "assets/addOn/dessert.png"},
+  {"id": "161", "name": "Beancurd Skin", "category": "Add On", "price": 1.50, "image": "assets/addOn/friedBeancurdSkin.png"},
+  {"id": "162", "name": "Rice", "category": "Add On", "price": 2.00, "image": "assets/addOn/rice.png"},
 ];

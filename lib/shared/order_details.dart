@@ -833,7 +833,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       children: [
                                         item.selection && selectedDrink != null
                                             ?
-                                            // 1.selectedDrink
+                                            // selectedDrink
                                             Expanded(
                                                 child: Container(
                                                   padding: const EdgeInsets.all(10),
@@ -846,7 +846,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     children: [
                                                       if (item.drinks.isNotEmpty) ...[
                                                         const Text(
-                                                          '1.Select Drink',
+                                                          'Select Drink',
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 14,
@@ -898,7 +898,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         if (item.temp.isNotEmpty) const SizedBox(width: 10),
                                         item.selection && selectedTemp != null
                                             ?
-                                            // 1.selectedTemp
+                                            // selectedTemp
                                             Expanded(
                                                 child: Container(
                                                   padding: const EdgeInsets.all(10),
@@ -911,7 +911,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     children: [
                                                       if (item.temp.isNotEmpty) ...[
                                                         const Text(
-                                                          '2.Select Temperature',
+                                                          'Select Temperature',
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 14,
@@ -962,7 +962,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             : const SizedBox.shrink(),
                                         item.selection && selectedChoice != null
                                             ?
-                                            // 1.selectedChoice
+                                            // selectedChoice
                                             Expanded(
                                                 child: Container(
                                                   padding: const EdgeInsets.all(10),
@@ -975,7 +975,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     children: [
                                                       if (item.choices.isNotEmpty) ...[
                                                         const Text(
-                                                          '1.Select Base',
+                                                          'Select Base',
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 14,
@@ -1026,7 +1026,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               )
                                             : const SizedBox.shrink(),
                                         if (item.types.isNotEmpty) const SizedBox(width: 10),
-                                        // 2.selectedType
+                                        // selectedType
                                         if (item.types.isNotEmpty) ...[
                                           Expanded(
                                             child: Container(
@@ -1039,7 +1039,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    "2.Select Noodles",
+                                                    "Select Noodles",
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
@@ -1107,7 +1107,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    '3.Select Meat Portion',
+                                                    'Select Meat Portion',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
@@ -1171,7 +1171,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    '4.Add-Ons',
+                                                    'Add-Ons',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
@@ -1246,7 +1246,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       const Text(
-                                                        '5.Select Mee Portion',
+                                                        'Select Mee Portion',
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 14,
@@ -1881,7 +1881,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 //             top: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0,
 //             right: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
 //             bottom: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0),
-//         margin: EdgeInsets.only(top: item.selection && item.selectedMeatPortion != null ? 12.0 : 0.0),
+//         margin: EdgeInsets.only(top: item.selection && item.selectedMeatPortion != null ? 10 : 0.0),
 //         decoration: BoxDecoration(
 //           borderRadius: BorderRadius.circular(5),
 //           // color: Colors.white,
@@ -1904,7 +1904,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 //               top: item.selection && item.selectedMeePortion != null ? 10.0 : 0.0,
 //               right: item.selection && item.selectedMeatPortion != null ? 16.0 : 0.0,
 //               bottom: item.selection && item.selectedMeatPortion != null ? 8.0 : 0.0),
-//           margin: EdgeInsets.only(top: item.selection && item.selectedMeePortion != null ? 12.0 : 0.0),
+//           margin: EdgeInsets.only(top: item.selection && item.selectedMeePortion != null ? 10 : 0.0),
 //           decoration: BoxDecoration(
 //             borderRadius: BorderRadius.circular(5),
 //             // color: Colors.white,
