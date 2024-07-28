@@ -1,10 +1,9 @@
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
+import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
@@ -28,6 +27,7 @@ import 'package:jspos/shared/print_service.dart';
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
   final Orders orders;
+ 
   // final BluetoothPrint bluetoothPrint;
   // final ValueNotifier<BluetoothDevice?> printerDevices;
   // final ValueNotifier<bool> printersConnected;
@@ -35,6 +35,7 @@ class DineInPage extends StatefulWidget {
     super.key,
     required this.freezeSideMenu,
     required this.orders,
+    
   });
   // required this.bluetoothPrint,
   // required this.printerDevices,
@@ -45,7 +46,6 @@ class DineInPage extends StatefulWidget {
 
 class _DineInPageState extends State<DineInPage> {
   List<Map<String, dynamic>> tables = [];
-
   @override
   void initState() {
     super.initState();
@@ -477,7 +477,8 @@ class _DineInPageState extends State<DineInPage> {
     );
   }
 
-  //
+  
+
   VoidCallback? handleMethod;
   void defaultMethod() {
     // did nothing But explained here
@@ -643,7 +644,6 @@ class _DineInPageState extends State<DineInPage> {
                     }
                     updateOrderStatus();
                     handlefreezeMenu();
-
                     // Call the printReceipt function
                     // await PrintService.printReceipt(widget.bluetoothPrint, widget.printersConnected.value);
                   } catch (e) {
@@ -819,6 +819,8 @@ class _DineInPageState extends State<DineInPage> {
                           await tablesBox.clear();
                           await categoriesBox.clear();
                           await orderCounterBox.clear();
+                          var box = await Hive.openBox<Printer>('printersBox');
+                          await box.clear();
                           log('Categories has been reset.');
                           log('orderCounter has been reset.');
                           log('categoriesBox ${categoriesBox.values}');

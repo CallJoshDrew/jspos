@@ -1,5 +1,3 @@
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
 import 'package:jspos/print/printer_setting.dart';
 import 'package:jspos/screens/settings/config/category_settings.dart';
@@ -17,7 +15,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  
+ 
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,24 +31,15 @@ class _SettingsPageState extends State<SettingsPage> {
               Expanded(
                 child: Row(
                   children: [
-                    // Expanded(
-                    //   child: SizedBox(
-                    //     height: double.infinity, // or specify a certain height
-                    //     child: PrinterSetting(bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected),
-                    //   ),
-                    // ),
-                    Expanded(child: CategorySettings()),
+                    Expanded(
+                      child: SizedBox(
+                        height: double.infinity, // or specify a certain height
+                        child: PrinterSetting(),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              // Expanded(
-              //   child: Row(
-              //     children: [
-              //       Expanded(child: CategorySettings()),
-              //       Expanded(child: CategorySettings()),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ));
