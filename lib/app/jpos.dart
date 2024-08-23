@@ -134,7 +134,7 @@ class _MainPageState extends State<MainPage> {
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
             // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
-            _itemMenu(menu: 'Settings', icon: Icons.tune),
+            // _itemMenu(menu: 'Settings', icon: Icons.tune),
           ]),
         )
       ]),
@@ -154,8 +154,12 @@ class _MainPageState extends State<MainPage> {
         // ),
         SizedBox(height: 10),
         Text(
-          'JSPOS',
+          'SMART',
           style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          'POS SYSTEM',
+          style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center,
         )
       ],
     );
