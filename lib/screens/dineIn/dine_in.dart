@@ -27,7 +27,7 @@ import 'package:jspos/shared/print_service.dart';
 class DineInPage extends StatefulWidget {
   final void Function() freezeSideMenu;
   final Orders orders;
- 
+
   // final BluetoothPrint bluetoothPrint;
   // final ValueNotifier<BluetoothDevice?> printerDevices;
   // final ValueNotifier<bool> printersConnected;
@@ -35,7 +35,6 @@ class DineInPage extends StatefulWidget {
     super.key,
     required this.freezeSideMenu,
     required this.orders,
-    
   });
   // required this.bluetoothPrint,
   // required this.printerDevices,
@@ -477,8 +476,6 @@ class _DineInPageState extends State<DineInPage> {
     );
   }
 
-  
-
   VoidCallback? handleMethod;
   void defaultMethod() {
     // did nothing But explained here
@@ -811,29 +808,40 @@ class _DineInPageState extends State<DineInPage> {
                           ),
                         ),
                         onPressed: () async {
+                          // Clearing data from different Hive boxes
                           var ordersBox = Hive.box('orders');
                           var tablesBox = Hive.box('tables');
                           var categoriesBox = Hive.box('categories');
                           var orderCounterBox = Hive.box('orderCounter');
+
                           await ordersBox.clear();
                           await tablesBox.clear();
                           await categoriesBox.clear();
                           await orderCounterBox.clear();
-                          var box = await Hive.openBox<Printer>('printersBox');
-                          await box.clear();
-                          log('Categories has been reset.');
+
+                          // Clearing the printersBox
+                          var printersBox = Hive.box<Printer>('printersBox');
+                          await printersBox.clear();
+
+                          log('Categories have been reset.');
                           log('orderCounter has been reset.');
                           log('categoriesBox ${categoriesBox.values}');
                           log('All data in orders box has been cleared.');
+                          log('All data in printers box has been cleared.');
 
+                          // Perform UI-related updates
                           setState(() {
                             widget.orders.clearOrders();
                             resetTables();
                             selectedOrder.resetDefault();
                           });
 
+                          // Reset tables data if the box is empty
                           if (tablesBox.isEmpty) {
-                            tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
+                            tablesBox.put(
+                              'tables',
+                              defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
+                            );
                           }
 
                           log('Tables data has been reset.');
@@ -846,7 +854,11 @@ class _DineInPageState extends State<DineInPage> {
                             SizedBox(width: 10),
                             Text(
                               'Clear Local Storage Data',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),

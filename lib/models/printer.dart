@@ -18,4 +18,9 @@ class Printer extends HiveObject {
     required this.macAddress,
     required this.isConnected,
   });
+
+  @override
+  String toString() {
+    return 'Printer(name: $name, macAddress: $macAddress, isConnected: $isConnected)';
+  }
 }

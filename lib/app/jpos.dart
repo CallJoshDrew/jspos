@@ -134,7 +134,7 @@ class _MainPageState extends State<MainPage> {
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
             // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
-            // _itemMenu(menu: 'Settings', icon: Icons.tune),
+            _itemMenu(menu: 'Settings', icon: Icons.tune),
           ]),
         )
       ]),
