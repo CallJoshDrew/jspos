@@ -13,14 +13,26 @@ class Printer extends HiveObject {
   @HiveField(2)
   bool isConnected;
 
+  @HiveField(3)
+  String assignedArea;
+
+  @HiveField(4)
+  String paperWidth;
+
+  @HiveField(5)
+  String interface;
+
   Printer({
     required this.name,
     required this.macAddress,
     required this.isConnected,
+    required this.assignedArea,
+    required this.paperWidth,
+    required this.interface,
   });
 
   @override
   String toString() {
-    return 'Printer(name: $name, macAddress: $macAddress, isConnected: $isConnected)';
+    return 'Printer(name: $name, macAddress: $macAddress, isConnected: $isConnected, assignedArea: $assignedArea, paperWidth: $paperWidth, interface: $interface)';
   }
 }

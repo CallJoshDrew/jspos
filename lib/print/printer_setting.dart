@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,19 +11,29 @@ class PrinterSetting extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final connectedPrinter = ref.watch(printerListProvider).firstWhereOrNull((printer) => printer.isConnected);
+    final printerList = ref.watch(printerListProvider);
+
+    // Debug print to check if the widget rebuilds and the state
+    log('Rebuilding PrinterSetting');
+    log('Connected Printer: $printerList');
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bluetooth Printers'),
       ),
-      body: connectedPrinter != null
-          ? ListTile(
-              title: Text(connectedPrinter.name),
-              subtitle: Text(connectedPrinter.macAddress),
-              trailing: const Icon(Icons.check, color: Colors.green),
+      body: printerList.isNotEmpty
+          ? ListView.builder(
+              itemCount: printerList.length,
+              itemBuilder: (context, index) {
+                final printer = printerList[index];
+                return ListTile(
+                  title: Text(printer.name),
+                  subtitle: Text(printer.macAddress),
+                  trailing: printer.isConnected ? const Icon(Icons.check, color: Colors.green) : null,
+                );
+              },
             )
-          : const Center(child: Text('No connected printers')),
+          : const Center(child: Text('No printers available')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
