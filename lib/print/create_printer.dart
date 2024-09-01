@@ -1,13 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:jspos/models/printer.dart';
-import 'package:jspos/print/receipt.dart';
 import 'package:hive/hive.dart';
 import 'package:jspos/providers/printer_provider.dart';
 
@@ -22,10 +18,9 @@ class CreatePrint extends ConsumerStatefulWidget {
 
 class CreatePrintState extends ConsumerState<CreatePrint> {
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-
-  // bool _connected = false;
   BluetoothDevice? _device;
   Printer? _printer;
+  // bool _connected = false;
 
   List<BluetoothDevice> devices = [];
   List<BluetoothDevice> uniqueDevices = [];
@@ -37,6 +32,8 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
   String selectedPaperWidth = '';
   String selectedInterface = '';
 
+  StreamSubscription? _subscription;
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +43,8 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
 
   @override
   void dispose() {
-    bluetoothPrint.stopScan();
+    _subscription?.cancel(); // Cancel the subscription when disposing the widget
+    bluetoothPrint.stopScan(); // Stop the Bluetooth scan
     super.dispose();
   }
 
@@ -88,19 +86,17 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
     return Printer(
       name: device.name ?? 'Unknown',
       macAddress: device.address!,
-      isConnected: false,
+      isConnected: true,
       assignedArea: assignedArea,
       paperWidth: selectedPaperWidth,
       interface: selectedInterface,
+      bluetoothInstance: bluetoothPrint,
     );
   }
-
-  int findPrinterIndex(List<Printer> printers, Printer printer) {
-    return printers.indexWhere((p) => p.macAddress == printer.macAddress);
-  }
-
+  
   Future<void> initializeDevices() async {
-    bluetoothPrint.scanResults.listen((results) {
+    _subscription = bluetoothPrint.scanResults.listen((results) {
+      if (!mounted) return;
       setState(() {
         devices = results.toSet().toList();
         uniqueDevices = devices.toSet().toList();
@@ -108,11 +104,15 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
     });
   }
 
+  int findPrinterIndex(List<Printer> printers, Printer printer) {
+    return printers.indexWhere((p) => p.macAddress == printer.macAddress);
+  }
+
   void addNewPrinter(WidgetRef ref) {
     if (_device != null && _device!.address != null) {
       setState(() {
         if (_printer != null) {
-          final printers = ref.read(printerListProvider); // Get the list of printers
+          final printers = ref.read(printerListProvider);
           final index = findPrinterIndex(printers, _printer!);
           if (index != -1) {
             // If the printer is already in the list, update it
@@ -141,7 +141,9 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
             title: const Text('Add New Bluetooth Printer'),
           ),
           body: RefreshIndicator(
-            onRefresh: () => bluetoothPrint.startScan(timeout: const Duration(seconds: 5)),
+            onRefresh: () async {
+              await bluetoothPrint?.startScan(timeout: const Duration(seconds: 5));
+            },
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[

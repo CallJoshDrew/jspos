@@ -1,3 +1,4 @@
+import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:hive/hive.dart';
 
 part 'printer.g.dart';
@@ -22,6 +23,9 @@ class Printer extends HiveObject {
   @HiveField(5)
   String interface;
 
+  // Non-persistent field
+  BluetoothPrint? bluetoothInstance;
+
   Printer({
     required this.name,
     required this.macAddress,
@@ -29,6 +33,7 @@ class Printer extends HiveObject {
     required this.assignedArea,
     required this.paperWidth,
     required this.interface,
+    this.bluetoothInstance,
   });
 
   @override
