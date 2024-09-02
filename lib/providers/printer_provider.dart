@@ -39,6 +39,9 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
     final printer = state[index];
     final bluetoothInstance = BluetoothPrint.instance;
 
+    // Explicitly disconnect any existing connections
+    await bluetoothInstance.disconnect();
+
     // Start scanning for Bluetooth devices
     bluetoothInstance.startScan(timeout: const Duration(seconds: 10));
     log('Scanning for devices...');
@@ -53,37 +56,59 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
       targetDevice = devices.firstWhere(
         (d) => d.address == printer.macAddress,
       );
-      log('Device found: $targetDevice');
+      log('Device found: ${targetDevice.name}, MAC: ${targetDevice.address}');
     } catch (e) {
-      targetDevice = null;
       log('Device not found: ${printer.macAddress}');
+      targetDevice = null;
     }
 
     if (targetDevice != null) {
       try {
         // Attempt to connect to the printer
-        final isConnected = await bluetoothInstance.connect(targetDevice);
-        log('Connection status: $isConnected');
+        final connectionResult = await bluetoothInstance.connect(targetDevice);
+        log('Connection result: $connectionResult');
+
+        // Directly use connectionResult since it's already a boolean
+        final isConnected = connectionResult;
+
+        log('Printer isConnected status: $isConnected');
 
         // Update printer with the Bluetooth instance and connection status
         final updatedPrinter = Printer(
           name: printer.name,
           macAddress: printer.macAddress,
-          isConnected: isConnected == BluetoothPrint.CONNECTED,
+          isConnected: isConnected,
           assignedArea: printer.assignedArea,
           paperWidth: printer.paperWidth,
           interface: printer.interface,
-          bluetoothInstance: bluetoothInstance, // Add this line
+          bluetoothInstance: isConnected ? bluetoothInstance : null,
         );
 
         // Update the printer in the provider
         updatePrinter(index, updatedPrinter);
 
         // Log the printer's connection status
-        log('Printer isConnected status: ${updatedPrinter.isConnected}');
+        log('Updated printer ${printer.name} with connection status: ${updatedPrinter.isConnected}');
       } catch (e) {
         log('Error connecting to device: $e');
-        // Handle connection error
+        _handleConnectionError(index, printer);
+      }
+    } else {
+      log('Printer not found or unable to connect.');
+      _handleConnectionError(index, printer);
+    }
+  }
+
+  Future<void> disconnectPrinter(int index) async {
+    final printer = state[index];
+
+    if (printer.isConnected && printer.bluetoothInstance != null) {
+      try {
+        // Attempt to disconnect the printer
+        await printer.bluetoothInstance?.disconnect();
+        log('Disconnected from ${printer.name}');
+
+        // Update the printer's state
         final updatedPrinter = Printer(
           name: printer.name,
           macAddress: printer.macAddress,
@@ -91,31 +116,36 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
           assignedArea: printer.assignedArea,
           paperWidth: printer.paperWidth,
           interface: printer.interface,
-          bluetoothInstance: null, // Add this line
+          bluetoothInstance : null,
         );
 
+        // Update the state and Hive storage
         updatePrinter(index, updatedPrinter);
-
-        // Log the printer's connection status
-        log('Printer isConnected status: ${updatedPrinter.isConnected}');
+      } catch (e) {
+        log('Error disconnecting from printer: $e');
+        // Optionally, handle errors by showing a user-friendly message
       }
     } else {
-      // Handle the case where the printer was not found
-      final updatedPrinter = Printer(
-        name: printer.name,
-        macAddress: printer.macAddress,
-        isConnected: false,
-        assignedArea: printer.assignedArea,
-        paperWidth: printer.paperWidth,
-        interface: printer.interface,
-        bluetoothInstance: null, // Add this line
-      );
-
-      updatePrinter(index, updatedPrinter);
-
-      // Log the printer's connection status
-      log('Printer isConnected status: ${updatedPrinter.isConnected}');
+      log('Printer is not connected or has no active Bluetooth instance.');
     }
+  }
+
+  void _handleConnectionError(int index, Printer printer) {
+    // Handle connection error
+    final updatedPrinter = Printer(
+      name: printer.name,
+      macAddress: printer.macAddress,
+      isConnected: false,
+      assignedArea: printer.assignedArea,
+      paperWidth: printer.paperWidth,
+      interface: printer.interface,
+      bluetoothInstance: null,
+    );
+
+    updatePrinter(index, updatedPrinter);
+
+    // Log the printer's connection status
+    log('Printer isConnected status: ${updatedPrinter.isConnected}');
   }
 
   BluetoothPrint? getBluetoothInstance(String macAddress) {

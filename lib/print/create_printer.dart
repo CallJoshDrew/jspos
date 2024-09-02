@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:jspos/models/printer.dart';
-import 'package:hive/hive.dart';
 import 'package:jspos/providers/printer_provider.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +20,6 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
   BluetoothDevice? _device;
   Printer? _printer;
-  // bool _connected = false;
 
   List<BluetoothDevice> devices = [];
   List<BluetoothDevice> uniqueDevices = [];
@@ -50,56 +49,39 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
 
   Future<void> initBluetooth() async {
     bluetoothPrint.startScan(timeout: const Duration(seconds: 4));
-
-    // bool isConnected = await bluetoothPrint.isConnected ?? false;
-
-    // bluetoothPrint.state.listen((state) {
-    //   if (!mounted) return;
-    //   log('******************* current device status: $state');
-
-    //   switch (state) {
-    //     case BluetoothPrint.CONNECTED:
-    //       setState(() {
-    //         _connected = true;
-    //       });
-    //       break;
-    //     case BluetoothPrint.DISCONNECTED:
-    //       setState(() {
-    //         _connected = false;
-    //       });
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    // });
-
     if (!mounted) return;
-
-    // if (isConnected) {
-    //   setState(() {
-    //     _connected = true;
-    //   });
-    // }
   }
 
   Printer _convertToPrinter(BluetoothDevice device) {
     return Printer(
       name: device.name ?? 'Unknown',
       macAddress: device.address!,
-      isConnected: true,
+      isConnected: false,
       assignedArea: assignedArea,
       paperWidth: selectedPaperWidth,
       interface: selectedInterface,
-      bluetoothInstance: bluetoothPrint,
+      bluetoothInstance: _printer?.bluetoothInstance ?? bluetoothPrint, // Keep existing instance
     );
   }
-  
+
   Future<void> initializeDevices() async {
     _subscription = bluetoothPrint.scanResults.listen((results) {
       if (!mounted) return;
       setState(() {
-        devices = results.toSet().toList();
-        uniqueDevices = devices.toSet().toList();
+        devices = results.toSet().toList(); // Remove duplicates and convert to list
+        uniqueDevices = devices.toSet().toList(); // Ensure the devices list is unique
+
+        // Log the scanned devices for verification
+        log('Scanned Devices:');
+        for (var device in devices) {
+          log('Device Name: ${device.name}, MAC Address: ${device.address}');
+        }
+
+        // Check for any duplicates in MAC Addresses
+        var macAddresses = devices.map((device) => device.address).toList();
+        if (macAddresses.length != macAddresses.toSet().length) {
+          log('Warning: Duplicate MAC Addresses found!');
+        }
       });
     });
   }
@@ -192,7 +174,20 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
                                   setState(() {
                                     _device = newValue;
                                     if (newValue != null) {
+                                      // Add additional checks to ensure uniqueness
+                                      log('Selected Device: Name: ${newValue.name}, MAC Address: ${newValue.address}');
+
+                                      // Create or update the printer object
                                       _printer = _convertToPrinter(newValue);
+
+                                      // Check if a device with the same MAC address is already in the list
+                                      final existingDevice = uniqueDevices.firstWhereOrNull(
+                                        (device) => device.address == newValue.address,
+                                      );
+
+                                      if (existingDevice != null) {
+                                        log('Device already exists with MAC: ${existingDevice.address}');
+                                      }
                                     }
                                   });
                                 },
@@ -218,33 +213,6 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
                             ),
                           ),
                           const SizedBox(width: 50),
-                          // Visibility(
-                          //   visible: _printer?.isConnected ?? false,
-                          //   replacement: const Row(
-                          //     children: <Widget>[
-                          //       Text(
-                          //         'Connected:',
-                          //         style: TextStyle(
-                          //           fontSize: 16,
-                          //           color: Colors.black,
-                          //         ),
-                          //       ),
-                          //       Icon(Icons.cancel_rounded, color: Colors.red), // Show cancel icon if not connected
-                          //     ],
-                          //   ),
-                          //   child: const Row(
-                          //     children: <Widget>[
-                          //       Text(
-                          //         'Connected:',
-                          //         style: TextStyle(
-                          //           fontSize: 16,
-                          //           color: Colors.black,
-                          //         ),
-                          //       ),
-                          //       Icon(Icons.check_circle, color: Colors.green), // Show checkmark icon if connected
-                          //     ],
-                          //   ),
-                          // ),
                         ],
                       ),
                     ],
@@ -375,70 +343,6 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
                     padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
                     child: Column(
                       children: <Widget>[
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: <Widget>[
-                        //     OutlinedButton(
-                        //       onPressed: _connected
-                        //           ? null
-                        //           : () async {
-                        //               if (_device != null && _device!.address != null) {
-                        //                 await bluetoothPrint.connect(_device!);
-                        //                 setState(() {
-                        //                   _connected = true;
-                        //                   if (_printer != null) {
-                        //                     _printer!.isConnected = true;
-                        //                     final printers = ref.read(printerListProvider); // Get the list of printers
-                        //                     final index = findPrinterIndex(printers, _printer!);
-
-                        //                     if (index != -1) {
-                        //                       // If the printer is already in the list, update it
-                        //                       ref.read(printerListProvider.notifier).updatePrinter(index, _printer!);
-                        //                     } else {
-                        //                       // If the printer is not in the list, add it
-                        //                       ref.read(printerListProvider.notifier).addPrinter(_printer!);
-                        //                     }
-                        //                   }
-                        //                 });
-                        //               } else {
-                        //                 log('please select device');
-                        //               }
-                        //             },
-                        //       child: const Text('connect'),
-                        //     ),
-                        //     const SizedBox(width: 10.0),
-                        //     OutlinedButton(
-                        //       onPressed: _connected
-                        //           ? () async {
-                        //               try {
-                        //                 await bluetoothPrint.disconnect();
-                        //                 setState(() {
-                        //                   _connected = false;
-                        //                   if (_printer != null) {
-                        //                     final printers = ref.read(printerListProvider); // Get the list of printers
-                        //                     final index = findPrinterIndex(printers, _printer!);
-
-                        //                     if (index != -1) {
-                        //                       // If the printer is in the list, delete it
-                        //                       ref.read(printerListProvider.notifier).deletePrinter(index);
-                        //                     }
-                        //                     // Update _printer's isConnected status after successful disconnection
-                        //                     _printer!.isConnected = false;
-                        //                   }
-                        //                 });
-                        //               } catch (e) {
-                        //                 log('Failed to disconnect');
-                        //               }
-
-                        //               // Log the connected printer
-                        //               final connectedPrinter = ref.watch(printerListProvider).firstWhereOrNull((printer) => printer.isConnected);
-                        //               log(connectedPrinter?.toString() ?? 'No connected printer');
-                        //             }
-                        //           : null,
-                        //       child: const Text('disconnect'),
-                        //     ),
-                        //   ],
-                        // ),
                         const Divider(),
                         OutlinedButton(
                           onPressed: () => addNewPrinter(ref),

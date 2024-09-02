@@ -33,7 +33,6 @@ class PrinterSettingState extends ConsumerState<PrinterSetting> {
     ];
   }
 
-
   @override
   Widget build(BuildContext context) {
     final printerList = ref.watch(printerListProvider);
@@ -88,28 +87,51 @@ class PrinterSettingState extends ConsumerState<PrinterSetting> {
                           child: const Text('Connect'),
                         ),
                       const SizedBox(width: 10),
+                      if (printer.isConnected)
+                        ElevatedButton(
+                          onPressed: () async {
+                            await ref.read(printerListProvider.notifier).disconnectPrinter(index);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            textStyle: const TextStyle(fontSize: 14),
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Disconnect'),
+                        ),
+                      const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: printer.isConnected
                             ? () async {
                                 try {
-                                  // Log before printing
-                                  log('Attempting to print receipt...');
-                                  log('Printer connected: ${printer.isConnected}');
+                                  final bluetoothInstance = ref.read(printerListProvider.notifier).getBluetoothInstance(printer.macAddress);
 
-                                  List<LineText> list = getReceiptLines();
-                                  Map<String, dynamic> config = {}; // Ensure this is properly configured
+                                  if (bluetoothInstance != null) {
+                                    // Log before printing
+                                    log('Attempting to print receipt with ${printer.name}...');
 
-                                  // Log the content to be printed
-                                  log('Receipt content: $list');
-                                  log('Print configuration: $config');
+                                    List<LineText> list = getReceiptLines();
+                                    Map<String, dynamic> config = {}; // Ensure this is properly configured
 
-                                  // Attempt to print
-                                  await printer.bluetoothInstance?.printReceipt(config, list);
+                                    // Log the current Bluetooth instance details
+                                    log('BluetoothPrint instance: $bluetoothInstance, Printer: $printer');
+                                    log('Receipt content: $list');
+                                    log('Print configuration: $config');
 
-                                  log('Print command sent successfully.');
+                                    // Attempt to print using the correct Bluetooth instance
+                                    await bluetoothInstance.printReceipt(config, list);
+
+                                    log('Print command sent successfully to ${printer.name} (${printer.macAddress}).');
+                                  } else {
+                                    log('Bluetooth instance not found for ${printer.name} (${printer.macAddress}).');
+                                  }
                                 } catch (e) {
                                   // Log the error
-                                  log('Error while printing: $e');
+                                  log('Error while printing with ${printer.name}: $e');
 
                                   // Optionally, show a user-friendly error message
                                   ScaffoldMessenger.of(context).showSnackBar(
