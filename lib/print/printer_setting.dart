@@ -19,19 +19,6 @@ class PrinterSetting extends ConsumerStatefulWidget {
 
 class PrinterSettingState extends ConsumerState<PrinterSetting> {
   BluetoothPrint? bluetoothPrint;
-  List<LineText> getReceiptLines() {
-    // Your logic to create the receipt lines
-    return [
-      LineText(
-        type: LineText.TYPE_TEXT,
-        content: 'Hello, world!',
-        weight: 1,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1,
-      ),
-      // Add more lines as needed
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +39,9 @@ class PrinterSettingState extends ConsumerState<PrinterSetting> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(printer.macAddress),
+                      Text('Area: ${printer.assignedArea}', style: const TextStyle(
+                              color: Colors.green, fontSize: 16
+                            ),),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
