@@ -39,9 +39,18 @@ class PrinterSettingState extends ConsumerState<PrinterSetting> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(printer.macAddress),
-                      Text('Area: ${printer.assignedArea}', style: const TextStyle(
-                              color: Colors.green, fontSize: 16
-                            ),),
+                      Text(
+                        'Area: ${printer.assignedArea}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        'Paper: ${printer.paperWidth}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        'Interface: ${printer.interface}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -83,10 +92,9 @@ class PrinterSettingState extends ConsumerState<PrinterSetting> {
                             await ref.read(printerListProvider.notifier).disconnectPrinter(index);
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                             textStyle: const TextStyle(fontSize: 14),
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
