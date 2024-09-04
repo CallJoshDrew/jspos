@@ -1,6 +1,6 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 
-List<LineText> getReceiptLines() {
+List<LineText> getBeverageReceiptLines() {
   List<LineText> list = [];
 
   list.add(LineText(

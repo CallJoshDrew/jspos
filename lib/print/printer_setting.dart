@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/print/create_printer.dart';
 import 'package:jspos/print/edit_printer.dart';
-import 'package:jspos/print/receipt.dart';
+import 'package:jspos/print/kitchen_receipt.dart';
+import 'package:jspos/print/beverage_receipt.dart';
 import 'package:jspos/providers/printer_provider.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
@@ -32,24 +33,28 @@ class PrinterSettingState extends ConsumerState<PrinterSetting> {
           ? ListView.builder(
               itemCount: printerList.length,
               itemBuilder: (context, index) {
+                // Sort the printerList based on the assignedArea
+                printerList.sort((a, b) {
+                  const areaOrder = {'Cashier': 1, 'Kitchen': 2, 'Beverage': 3};
+                  return areaOrder[a.assignedArea]!.compareTo(areaOrder[b.assignedArea]!);
+                });
                 final printer = printerList[index];
                 return ListTile(
-                  title: Text(printer.name),
+                  title: Text(
+                        '${printer.assignedArea} Area',
+                        style: const TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold),
+                      ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(printer.name),
                       Text(printer.macAddress),
                       Text(
-                        'Area: ${printer.assignedArea}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      Text(
                         'Paper: ${printer.paperWidth}',
-                        style: const TextStyle(fontSize: 16),
+                        
                       ),
                       Text(
                         'Interface: ${printer.interface}',
-                        style: const TextStyle(fontSize: 16),
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,7 +117,7 @@ class PrinterSettingState extends ConsumerState<PrinterSetting> {
                                     // Log before printing
                                     log('Attempting to print receipt with ${printer.name}...');
 
-                                    List<LineText> list = getReceiptLines();
+                                    List<LineText> list = getBeverageReceiptLines();
                                     Map<String, dynamic> config = {}; // Ensure this is properly configured
 
                                     // Log the current Bluetooth instance details

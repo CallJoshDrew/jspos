@@ -7,7 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jspos/models/printer.dart';
-import 'package:jspos/print/receipt.dart';
+import 'package:jspos/print/beverage_receipt.dart';
 import 'package:hive/hive.dart';
 import 'package:jspos/providers/printer_provider.dart';
 
