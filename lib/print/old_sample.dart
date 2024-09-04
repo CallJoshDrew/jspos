@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/print/beverage_receipt.dart';
 import 'package:hive/hive.dart';
+import 'package:jspos/print/kitchen_receipt.dart';
 import 'package:jspos/providers/printer_provider.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -321,7 +322,7 @@ class EditPrintState extends State<EditPrint> {
                         OutlinedButton(
                           onPressed: _connected
                               ? () async {
-                                  List<LineText> list = getReceiptLines();
+                                  List<LineText> list = getKitchenReceiptLines();
                                   Map<String, dynamic> config = {};
                                   await bluetoothPrint.printReceipt(config, list);
                                 }

@@ -22,7 +22,7 @@ class JPOSApp extends StatelessWidget {
     //  ValueNotifier<bool> printersConnected = ValueNotifier<bool>(false);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'JSPOS',
+      title: 'SMART POS SYSTEM',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

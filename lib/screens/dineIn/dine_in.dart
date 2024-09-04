@@ -5,6 +5,7 @@ import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
@@ -798,70 +799,240 @@ class _DineInPageState extends State<DineInPage> {
                           },
                         ),
                       ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.redAccent,
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        onPressed: () async {
-                          // Clearing data from different Hive boxes
-                          var ordersBox = Hive.box('orders');
-                          var tablesBox = Hive.box('tables');
-                          var categoriesBox = Hive.box('categories');
-                          var orderCounterBox = Hive.box('orderCounter');
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.redAccent,
+                                padding: const EdgeInsets.symmetric(vertical: 0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: () async {
+                                // Clearing data from different Hive boxes
+                                var ordersBox = Hive.box('orders');
+                                var tablesBox = Hive.box('tables');
+                                var categoriesBox = Hive.box('categories');
+                                var orderCounterBox = Hive.box('orderCounter');
 
-                          await ordersBox.clear();
-                          await tablesBox.clear();
-                          await categoriesBox.clear();
-                          await orderCounterBox.clear();
+                                await ordersBox.clear();
+                                await tablesBox.clear();
+                                await categoriesBox.clear();
+                                await orderCounterBox.clear();
 
-                          // Clearing the printersBox
-                          var printersBox = Hive.box<Printer>('printersBox');
-                          await printersBox.clear();
+                                // Clearing the printersBox
+                                var printersBox = Hive.box<Printer>('printersBox');
+                                await printersBox.clear();
 
-                          log('Categories have been reset.');
-                          log('orderCounter has been reset.');
-                          log('categoriesBox ${categoriesBox.values}');
-                          log('All data in orders box has been cleared.');
-                          log('All data in printers box has been cleared.');
+                                log('Categories have been reset.');
+                                log('orderCounter has been reset.');
+                                log('categoriesBox ${categoriesBox.values}');
+                                log('All data in orders box has been cleared.');
+                                log('All data in printers box has been cleared.');
 
-                          // Perform UI-related updates
-                          setState(() {
-                            widget.orders.clearOrders();
-                            resetTables();
-                            selectedOrder.resetDefault();
-                          });
+                                // Perform UI-related updates
+                                setState(() {
+                                  widget.orders.clearOrders();
+                                  resetTables();
+                                  selectedOrder.resetDefault();
+                                });
 
-                          // Reset tables data if the box is empty
-                          if (tablesBox.isEmpty) {
-                            tablesBox.put(
-                              'tables',
-                              defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
-                            );
-                          }
+                                // Reset tables data if the box is empty
+                                if (tablesBox.isEmpty) {
+                                  tablesBox.put(
+                                    'tables',
+                                    defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
+                                  );
+                                }
 
-                          log('Tables data has been reset.');
-                          log('tables $tables');
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.cancel, size: 20),
-                            SizedBox(width: 10),
-                            Text(
-                              'Clear Local Storage Data',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                log('Tables data has been reset.');
+                                log('tables $tables');
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.cancel, size: 20),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Clear Local Storage Data',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.grey[900],
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      side: const BorderSide(color: Colors.green, width: 1),
+                                    ),
+                                    content: ConstrainedBox(
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 300,
+                                        maxHeight: 70,
+                                      ),
+                                      child: const Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Wrap(
+                                            alignment: WrapAlignment.center,
+                                            children: [
+                                              Text(
+                                                'To print, please choose',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 20, color: Colors.white,),
+                                              ),
+                                              Text(
+                                                'designated printer of the area',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 20, color: Colors.white,),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
+                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                        ),
+                                        child: const Text(
+                                          'Cashier',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          // handlePrintingJobs(context, ref);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      const SizedBox(width: 2),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
+                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                        ),
+                                        child: const Text(
+                                          'Kitchen',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      const SizedBox(width: 2),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
+                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                        ),
+                                        child: const Text(
+                                          'Beverage',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      const SizedBox(width: 2),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
+                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                        ),
+                                        child: const Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: const Color.fromRGBO(46, 125, 50, 1),
+                              padding: const EdgeInsets.symmetric(vertical: 0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.print_rounded, size: 20),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Print',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
