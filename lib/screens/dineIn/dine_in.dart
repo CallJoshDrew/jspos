@@ -930,7 +930,8 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          handlePrintingJobs(context, ref);
+                                          handlePrintingJobForArea(context, ref, 'Cashier');
+                                          // handleAllPrintingJobs(context, ref);
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -953,6 +954,7 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                                           ),
                                         ),
                                         onPressed: () {
+                                          handlePrintingJobForArea(context, ref, 'Kitchen');
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -975,6 +977,7 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                                           ),
                                         ),
                                         onPressed: () {
+                                          handlePrintingJobForArea(context, ref, 'Beverage');
                                           Navigator.of(context).pop();
                                         },
                                       ),
