@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
@@ -24,8 +25,7 @@ import 'package:jspos/shared/print_service.dart';
 //   color: Colors.white,
 //   size: 100.0,
 // );
-
-class DineInPage extends StatefulWidget {
+class DineInPage extends ConsumerStatefulWidget {
   final void Function() freezeSideMenu;
   final Orders orders;
 
@@ -40,11 +40,11 @@ class DineInPage extends StatefulWidget {
   // required this.bluetoothPrint,
   // required this.printerDevices,
   // required this.printersConnected
-  @override
-  State<DineInPage> createState() => _DineInPageState();
+ @override
+  _DineInPageState createState() => _DineInPageState();
 }
 
-class _DineInPageState extends State<DineInPage> {
+class _DineInPageState extends ConsumerState<DineInPage> {
   List<Map<String, dynamic>> tables = [];
   @override
   void initState() {
@@ -930,7 +930,7 @@ class _DineInPageState extends State<DineInPage> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          // handlePrintingJobs(context, ref);
+                                          handlePrintingJobs(context, ref);
                                           Navigator.of(context).pop();
                                         },
                                       ),
