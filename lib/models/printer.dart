@@ -36,6 +36,26 @@ class Printer extends HiveObject {
     this.bluetoothInstance,
   });
 
+  Printer copyWith({
+    String? name,
+    String? macAddress,
+    bool? isConnected,
+    String? assignedArea,
+    String? paperWidth,
+    String? interface,
+    BluetoothPrint? bluetoothInstance,
+  }) {
+    return Printer(
+      name: name ?? this.name,
+      macAddress: macAddress ?? this.macAddress,
+      isConnected: isConnected ?? this.isConnected,
+      assignedArea: assignedArea ?? this.assignedArea,
+      paperWidth: paperWidth ?? this.paperWidth,
+      interface: interface ?? this.interface,
+      bluetoothInstance: bluetoothInstance ?? this.bluetoothInstance,
+    );
+  }
+
   @override
   String toString() {
     return 'Printer(name: $name, macAddress: $macAddress, isConnected: $isConnected, assignedArea: $assignedArea, paperWidth: $paperWidth, interface: $interface)';

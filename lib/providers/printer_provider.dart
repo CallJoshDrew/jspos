@@ -18,16 +18,66 @@ final printerListProvider = StateNotifierProvider<PrinterListNotifier, List<Prin
 class PrinterListNotifier extends StateNotifier<List<Printer>> {
   final Box<Printer> box;
 
-  PrinterListNotifier(this.box) : super(box.values.toList());
-
-  void addPrinter(Printer printer) {
-    box.add(printer);
-    state = box.values.toList();
+  PrinterListNotifier(this.box) : super([]) {
+    // Load initial state from Hive when the notifier is created
+    loadPrintersFromHive();
   }
 
-  void updatePrinter(int index, Printer printer) {
-    box.putAt(index, printer);
-    state = box.values.toList();
+  void loadPrintersFromHive() {
+    // Load printers from Hive and ensure no duplicates
+    state = box.values.toSet().toList(); // Avoid duplicates in Hive
+    log('Loaded printers from Hive: ${state.map((printer) => printer.toString()).toList()}');
+  }
+
+  void addPrinter(Printer newPrinter) {
+    final existingPrinterIndex = state.indexWhere((printer) => printer.macAddress == newPrinter.macAddress);
+
+    // Use copyWith to ensure we modify the printer with new properties
+    final updatedPrinter = newPrinter.copyWith(
+      assignedArea: newPrinter.assignedArea,
+      paperWidth: newPrinter.paperWidth,
+      interface: newPrinter.interface,
+    );
+
+    if (existingPrinterIndex != -1) {
+      // If the printer with the same MAC exists, update it
+      updatePrinter(updatedPrinter); // state update is handled inside updatePrinter
+      log('Updated existing printer with MAC: ${updatedPrinter.macAddress}');
+    } else {
+      // Otherwise, add the new printer with updated fields
+      box.add(updatedPrinter);
+      log('Added new printer with MAC: ${updatedPrinter.macAddress}');
+
+      // Only update state after adding a new printer
+      state = box.values.toList();
+    }
+  }
+
+  void updatePrinter(Printer updatedPrinter) {
+    final box = Hive.box<Printer>('printersBox'); // Hive box
+
+    // Find the existing printer in the Hive box by its MAC address
+    final existingPrinterIndex = box.values.toList().indexWhere((p) => p.macAddress == updatedPrinter.macAddress);
+
+    if (existingPrinterIndex != -1) {
+      // Log the update details
+      log('Updating printer with MAC: ${updatedPrinter.macAddress} at index: $existingPrinterIndex');
+
+      // Update the printer in Hive at the found index
+      box.putAt(existingPrinterIndex, updatedPrinter);
+
+      // Log the updated printer details
+      log('Updated printer at index: $existingPrinterIndex with new values: ${updatedPrinter.toString()}');
+
+      // Refresh the state with the latest list of printers from Hive
+      state = box.values.toList();
+
+      // Log the latest state and list of printers from Hive
+      log('Updated state after modification: ${state.toString()}');
+      log('Updated Hive list of printers: ${box.values.toList()}');
+    } else {
+      log('Error: No existing printer found with MAC address ${updatedPrinter.macAddress}');
+    }
   }
 
   void deletePrinter(int index) {
@@ -85,7 +135,7 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
         );
 
         // Update the printer in the provider
-        updatePrinter(index, updatedPrinter);
+        updatePrinter(updatedPrinter);
 
         // Log the printer's connection status
         log('Updated printer ${printer.name} with connection status: ${updatedPrinter.isConnected}');
@@ -104,10 +154,13 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
 
     if (printer.isConnected && printer.bluetoothInstance != null) {
       try {
-        // Attempt to disconnect the printer
-        await printer.bluetoothInstance?.disconnect();
-        log('Disconnected from ${printer.name}');
-
+        // Check if the Bluetooth instance is valid before attempting to disconnect
+        if (printer.bluetoothInstance != null) {
+          await printer.bluetoothInstance?.disconnect();
+          log('Disconnected from ${printer.name}');
+        } else {
+          log('Bluetooth instance is null, cannot disconnect.');
+        }
         // Update the printer's state
         final updatedPrinter = Printer(
           name: printer.name,
@@ -116,11 +169,11 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
           assignedArea: printer.assignedArea,
           paperWidth: printer.paperWidth,
           interface: printer.interface,
-          bluetoothInstance : null,
+          bluetoothInstance: null,
         );
 
         // Update the state and Hive storage
-        updatePrinter(index, updatedPrinter);
+        updatePrinter(updatedPrinter);
       } catch (e) {
         log('Error disconnecting from printer: $e');
         // Optionally, handle errors by showing a user-friendly message
@@ -142,7 +195,7 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
       bluetoothInstance: null,
     );
 
-    updatePrinter(index, updatedPrinter);
+    updatePrinter(updatedPrinter);
 
     // Log the printer's connection status
     log('Printer isConnected status: ${updatedPrinter.isConnected}');

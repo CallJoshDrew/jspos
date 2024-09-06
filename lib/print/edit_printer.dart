@@ -21,7 +21,7 @@ class EditPrintState extends ConsumerState<EditPrint> {
   Printer? _printer;
 
   List<String> areas = ['Cashier', 'Kitchen', 'Beverage'];
-  List<String> paperWidth = ['80 mm', '72 mm','58 mm'];
+  List<String> paperWidth = ['80 mm', '72 mm', '58 mm'];
   List<String> interface = ['Bluetooth', 'USB', 'Ethernet', 'Wifi'];
   String assignedArea = '';
   String selectedPaperWidth = '';
@@ -45,50 +45,46 @@ class EditPrintState extends ConsumerState<EditPrint> {
     return printers.indexWhere((p) => p.macAddress == printer.macAddress);
   }
 
-  void savePrinterEdits(WidgetRef ref) {
-    log('Save button pressed');
+  void savePrinterEdits(WidgetRef ref, BuildContext context) {
+  log('Save button pressed');
 
-    if (_printer != null) {
-      log('Device selected: ${_printer!.name}, ${_printer!.macAddress}');
+  if (_printer != null) {
+    // Fetch the current list of printers
+    final printers = ref.read(printerListProvider);
 
-      setState(() {
-        if (_printer != null) {
-          log('Printer object exists: ${_printer!.toString()}');
+    // Find if the printer with the same MAC address already exists
+    final existingPrinterIndex = printers.indexWhere((p) => p.macAddress == _printer!.macAddress);
 
-          final printers = ref.read(printerListProvider);
-          final index = findPrinterIndex(printers, _printer!);
-          log('Index of the printer in the list: $index');
-
-          if (index != -1) {
-            ref.read(printerListProvider.notifier).updatePrinter(index, _printer!);
-            log('Updated printer: ${_printer!.toString()}');
-          } else {
-            ref.read(printerListProvider.notifier).addPrinter(_printer!);
-            log('Added new printer: ${_printer!.toString()}');
-          }
-          log('Current list of printers: ${ref.read(printerListProvider).toString()}');
-        } else {
-          log('Printer object is null');
-        }
-      });
-
-      Navigator.pop(context);
+    if (existingPrinterIndex != -1) {
+      // Make all updates in one go at the save action
+      final updatedPrinter = _printer!.copyWith(
+        assignedArea: assignedArea,
+        paperWidth: selectedPaperWidth,
+        interface: selectedInterface,
+      );
+      // Update the existing printer by its MAC address
+      ref.read(printerListProvider.notifier).updatePrinter(updatedPrinter);
+      log('Updated printer at index: $existingPrinterIndex with new values: ${updatedPrinter.toString()}');
     } else {
-      log('No device selected or device address is null');
+      // Add a new printer if no printer with the same MAC address exists
+      ref.read(printerListProvider.notifier).addPrinter(_printer!);
+      log('Added new printer: ${_printer!.toString()}');
     }
-  }
 
-  Printer _convertToPrinter(String value) {
-    return Printer(
-      name: widget.printer.name,
-      macAddress: widget.printer.macAddress,
-      isConnected: widget.printer.isConnected,
-      assignedArea: assignedArea,
-      paperWidth: selectedPaperWidth,
-      interface: selectedInterface,
-      bluetoothInstance: widget.printer.bluetoothInstance,
-    );
+    Navigator.pop(context); // Close the dialog
+  } else {
+    log('No printer selected');
   }
+}
+
+  // Printer _convertToPrinter(String value) {
+  //   // Use copyWith to update only the changed fields
+  //   return _printer!.copyWith(
+  //     assignedArea: value != assignedArea ? assignedArea : null,
+  //     paperWidth: value != selectedPaperWidth ? selectedPaperWidth : null,
+  //     interface: value != selectedInterface ? selectedInterface : null,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -177,9 +173,6 @@ class EditPrintState extends ConsumerState<EditPrint> {
                             setState(() {
                               assignedArea = area;
                               log('Area selected: $area');
-                              if (_printer != null) {
-                                _printer = _convertToPrinter(area);
-                              }
                             });
                           },
                           child: Container(
@@ -218,9 +211,6 @@ class EditPrintState extends ConsumerState<EditPrint> {
                             setState(() {
                               selectedPaperWidth = paper;
                               log('Area selected: $paper');
-                              if (_printer != null) {
-                                _printer = _convertToPrinter(paper);
-                              }
                             });
                           },
                           child: Container(
@@ -259,9 +249,6 @@ class EditPrintState extends ConsumerState<EditPrint> {
                             setState(() {
                               selectedInterface = iface;
                               log('Area selected: $iface');
-                              if (_printer != null) {
-                                _printer = _convertToPrinter(iface);
-                              }
                             });
                           },
                           child: Container(
@@ -285,7 +272,7 @@ class EditPrintState extends ConsumerState<EditPrint> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => savePrinterEdits(ref),
+                  onPressed: () => savePrinterEdits(ref, context), // Pass both ref and context
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                     backgroundColor: Colors.green[800],

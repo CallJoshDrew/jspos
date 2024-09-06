@@ -94,23 +94,35 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
     if (_device != null && _device!.address != null) {
       setState(() {
         if (_printer != null) {
-          final printers = ref.read(printerListProvider);
-          final index = findPrinterIndex(printers, _printer!);
-          if (index != -1) {
-            // If the printer is already in the list, update it
-            ref.read(printerListProvider.notifier).updatePrinter(index, _printer!);
-            log('Updated printer: ${_printer!.toString()}');
+          // Ensure the selected values for area, paper width, and interface are not empty
+          if (assignedArea.isNotEmpty && selectedPaperWidth.isNotEmpty && selectedInterface.isNotEmpty) {
+            // Create or update the printer object
+            _printer = _convertToPrinter(_device!);
+
+            final printers = ref.read(printerListProvider);
+            final index = findPrinterIndex(printers, _printer!);
+
+            if (index != -1) {
+              // If the printer is already in the list, update it
+              ref.read(printerListProvider.notifier).updatePrinter(_printer!);
+              log('Updated printer: ${_printer!.toString()}');
+            } else {
+              // If the printer is not in the list, add it
+              ref.read(printerListProvider.notifier).addPrinter(_printer!);
+              log('Added new printer: ${_printer!.toString()}');
+            }
+
+            // Log the current list of printers
+            log('Current list of printers: ${ref.read(printerListProvider).toString()}');
           } else {
-            // If the printer is not in the list, add it
-            ref.read(printerListProvider.notifier).addPrinter(_printer!);
-            log('Added new printer: ${_printer!.toString()}');
+            log('Error: All fields (area, paper width, and interface) must be selected.');
           }
-          // Log the current list of printers
-          log('Current list of printers: ${ref.read(printerListProvider).toString()}');
         }
       });
       // Navigate back to the previous page
       Navigator.pop(context);
+    } else {
+      log('Error: No Bluetooth device selected.');
     }
   }
 

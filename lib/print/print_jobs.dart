@@ -19,7 +19,7 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref) async {
   List<BluetoothDevice> availableDevices = [];
 
   // Start scanning for devices
-  bluetoothPrint.startScan(timeout: const Duration(seconds: 4));
+  bluetoothPrint.startScan(timeout: const Duration(seconds: 10));
   bluetoothPrint.scanResults.listen((devices) {
     availableDevices = devices;
     log('Available Bluetooth devices: ${devices.map((d) => '${d.name} (${d.address})').toList()}');
@@ -127,14 +127,14 @@ Future<void> handlePrintingJobForArea(
   List<BluetoothDevice> availableDevices = [];
 
   // Start scanning for devices
-  bluetoothPrint.startScan(timeout: const Duration(seconds: 4));
+  bluetoothPrint.startScan(timeout: const Duration(seconds: 5));
   bluetoothPrint.scanResults.listen((devices) {
     availableDevices = devices;
     log('Available Bluetooth devices: ${devices.map((d) => '${d.name} (${d.address})').toList()}');
   });
 
   // Wait for scanning to finish
-  await Future.delayed(const Duration(seconds: 5));
+  await Future.delayed(const Duration(seconds: 10));
 
   try {
     // Get the printer assigned to the specified area
