@@ -491,7 +491,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           double typePrice = item.selectedType?['price'] ?? 0;
           double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
-          double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
+          // double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
 
           
        

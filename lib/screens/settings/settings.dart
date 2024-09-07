@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/print/printer_setting.dart';
-import 'package:jspos/screens/settings/config/category_settings.dart';
+import 'package:jspos/print/printers_list.dart';
 
 class SettingsPage extends StatefulWidget {
   final List<String> categories;
@@ -29,7 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Expanded(
                       child: SizedBox(
                         height: double.infinity, // or specify a certain height
-                        child: PrinterSetting(),
+                        child: ListOfPrinters(),
                       ),
                     ),
                   ],

@@ -136,7 +136,7 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
           ),
           body: RefreshIndicator(
             onRefresh: () async {
-              await bluetoothPrint?.startScan(timeout: const Duration(seconds: 5));
+              await bluetoothPrint.startScan(timeout: const Duration(seconds: 5));
             },
             child: SingleChildScrollView(
               child: Column(

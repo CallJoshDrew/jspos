@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:developer';
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
-import 'package:collection/collection.dart';
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/providers/printer_provider.dart';
@@ -46,36 +44,36 @@ class EditPrintState extends ConsumerState<EditPrint> {
   }
 
   void savePrinterEdits(WidgetRef ref, BuildContext context) {
-  log('Save button pressed');
+    log('Save button pressed');
 
-  if (_printer != null) {
-    // Fetch the current list of printers
-    final printers = ref.read(printerListProvider);
+    if (_printer != null) {
+      // Fetch the current list of printers
+      final printers = ref.read(printerListProvider);
 
-    // Find if the printer with the same MAC address already exists
-    final existingPrinterIndex = printers.indexWhere((p) => p.macAddress == _printer!.macAddress);
+      // Find if the printer with the same MAC address already exists
+      final existingPrinterIndex = printers.indexWhere((p) => p.macAddress == _printer!.macAddress);
 
-    if (existingPrinterIndex != -1) {
-      // Make all updates in one go at the save action
-      final updatedPrinter = _printer!.copyWith(
-        assignedArea: assignedArea,
-        paperWidth: selectedPaperWidth,
-        interface: selectedInterface,
-      );
-      // Update the existing printer by its MAC address
-      ref.read(printerListProvider.notifier).updatePrinter(updatedPrinter);
-      log('Updated printer at index: $existingPrinterIndex with new values: ${updatedPrinter.toString()}');
+      if (existingPrinterIndex != -1) {
+        // Make all updates in one go at the save action
+        final updatedPrinter = _printer!.copyWith(
+          assignedArea: assignedArea,
+          paperWidth: selectedPaperWidth,
+          interface: selectedInterface,
+        );
+        // Update the existing printer by its MAC address
+        ref.read(printerListProvider.notifier).updatePrinter(updatedPrinter);
+        log('Updated printer at index: $existingPrinterIndex with new values: ${updatedPrinter.toString()}');
+      } else {
+        // Add a new printer if no printer with the same MAC address exists
+        ref.read(printerListProvider.notifier).addPrinter(_printer!);
+        log('Added new printer: ${_printer!.toString()}');
+      }
+
+      Navigator.pop(context); // Close the dialog
     } else {
-      // Add a new printer if no printer with the same MAC address exists
-      ref.read(printerListProvider.notifier).addPrinter(_printer!);
-      log('Added new printer: ${_printer!.toString()}');
+      log('No printer selected');
     }
-
-    Navigator.pop(context); // Close the dialog
-  } else {
-    log('No printer selected');
   }
-}
 
   // Printer _convertToPrinter(String value) {
   //   // Use copyWith to update only the changed fields
@@ -272,7 +270,29 @@ class EditPrintState extends ConsumerState<EditPrint> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => savePrinterEdits(ref, context), // Pass both ref and context
+                  onPressed: () {
+                    savePrinterEdits(ref, context);
+                    CherryToast(
+                      icon: Icons.info,
+                      iconColor: Colors.green,
+                      themeColor: Colors.green,
+                      backgroundColor: Colors.white,
+                      title: const Text(
+                        'You haved saved the details',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      toastPosition: Position.top,
+                      toastDuration: const Duration(milliseconds: 3000),
+                      animationType: AnimationType.fromTop,
+                      animationDuration: const Duration(milliseconds: 200),
+                      autoDismiss: true,
+                      displayCloseButton: false,
+                    ).show(context);
+                  }, // Pass both ref and context
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                     backgroundColor: Colors.green[800],

@@ -7,7 +7,6 @@ import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
-import 'package:jspos/print/printer_setting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {

@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/item.dart';

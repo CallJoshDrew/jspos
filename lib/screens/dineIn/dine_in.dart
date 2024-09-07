@@ -16,7 +16,6 @@ import 'package:jspos/data/tables_data.dart';
 
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
-import 'package:jspos/shared/print_service.dart';
 
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 // SpinningLines, FoldingCube,  DancingSquare
