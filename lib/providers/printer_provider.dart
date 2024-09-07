@@ -80,9 +80,30 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
     }
   }
 
-  void deletePrinter(int index) {
-    box.deleteAt(index);
-    state = box.values.toList();
+  void deletePrinterByMacAddress(String macAddress) {
+    final box = Hive.box<Printer>('printersBox'); // Hive box
+
+    // Find the existing printer in the Hive box by its MAC address
+    final existingPrinterIndex = box.values.toList().indexWhere((p) => p.macAddress == macAddress);
+
+    if (existingPrinterIndex != -1) {
+      // Log the deletion details
+      log('Deleting printer with MAC: $macAddress at index: $existingPrinterIndex');
+
+      // Delete the printer in Hive at the found index
+      box.deleteAt(existingPrinterIndex);
+
+      // Log successful deletion
+      log('Successfully deleted printer with MAC: $macAddress');
+
+      // Refresh the state with the latest list of printers from Hive
+      state = box.values.toList();
+
+      // Log the latest state after deletion
+      log('Updated state after deletion: ${state.toString()}');
+    } else {
+      log('Error: No printer found with MAC address $macAddress');
+    }
   }
 
   Future<void> connectPrinter(int index) async {

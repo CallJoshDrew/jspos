@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
@@ -215,28 +217,39 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      ref.read(printerListProvider.notifier).deletePrinter(index);
-                                      Navigator.of(context).pop(); // Close the dialog after deleting
-                                      CherryToast(
-                                        icon: Icons.print_rounded,
-                                        iconColor: Colors.green,
-                                        themeColor: Colors.green,
-                                        backgroundColor: Colors.white,
-                                        title: Text(
-                                          'Printer ${printer.name} is removed',
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
+                                      // Get the current printer name before deletion
+                                      final currentPrinterName = ref.read(printerListProvider)[index].name;
+                                      log(currentPrinterName);
+
+                                      // Delete the printer
+                                      ref.read(printerListProvider.notifier).deletePrinterByMacAddress(printer.macAddress);
+
+                                      // Close the dialog after deleting
+                                      if (context.mounted) {
+                                        Navigator.of(context).pop();
+
+                                        // Show CherryToast with the correct printer name after deletion
+                                        CherryToast(
+                                          icon: Icons.print_rounded,
+                                          iconColor: Colors.green,
+                                          themeColor: Colors.green,
+                                          backgroundColor: Colors.white,
+                                          title: Text(
+                                            'Printer $currentPrinterName is removed', // Ensure correct printer name here
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        toastPosition: Position.top,
-                                        toastDuration: const Duration(milliseconds: 3000),
-                                        animationType: AnimationType.fromTop,
-                                        animationDuration: const Duration(milliseconds: 200),
-                                        autoDismiss: true,
-                                        displayCloseButton: false,
-                                      ).show(context);
+                                          toastPosition: Position.top,
+                                          toastDuration: const Duration(milliseconds: 3000),
+                                          animationType: AnimationType.fromTop,
+                                          animationDuration: const Duration(milliseconds: 200),
+                                          autoDismiss: true,
+                                          displayCloseButton: false,
+                                        ).show(context);
+                                      }
                                     },
                                   ),
                                   const SizedBox(width: 2),
