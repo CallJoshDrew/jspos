@@ -39,7 +39,7 @@ class DineInPage extends ConsumerStatefulWidget {
   // required this.bluetoothPrint,
   // required this.printerDevices,
   // required this.printersConnected
- @override
+  @override
   _DineInPageState createState() => _DineInPageState();
 }
 
@@ -642,7 +642,8 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                     updateOrderStatus();
                     handlefreezeMenu();
                     // Call the printReceipt function
-                    // await PrintService.printReceipt(widget.bluetoothPrint, widget.printersConnected.value);
+                    // Call the print receipt function (pass context and ref properly)
+                    await handleAllPrintingJobs(context, ref, selectedOrder); // Ensure ref is available in the widget context
                   } catch (e) {
                     log('An error occurred in onPressed place order & print: $e');
                   }
@@ -713,6 +714,55 @@ class _DineInPageState extends ConsumerState<DineInPage> {
         handleMethod = defaultMethod; // Disabled
       }
     });
+  }
+
+  Widget buildPrintButton(String label, String area, BuildContext context, WidgetRef ref) {
+    return TextButton(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      ),
+      onPressed: () {
+        handlePrintingJobForArea(context, ref, area);
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget buildCancelButton(BuildContext context) {
+    return TextButton(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+      ),
+      child: const Text(
+        'Cancel',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      ),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
   }
 
   @override
@@ -898,12 +948,18 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                                               Text(
                                                 'To print, please choose',
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 20, color: Colors.white,),
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                               Text(
                                                 'designated printer of the area',
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 20, color: Colors.white,),
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -911,97 +967,13 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                                       ),
                                     ),
                                     actions: <Widget>[
-                                      TextButton(
-                                        style: ButtonStyle(
-                                          backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
-                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                          ),
-                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                        ),
-                                        child: const Text(
-                                          'Cashier',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          handlePrintingJobForArea(context, ref, 'Cashier');
-                                          // handleAllPrintingJobs(context, ref);
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
+                                      buildPrintButton('Cashier', 'Cashier', context, ref),
                                       const SizedBox(width: 2),
-                                      TextButton(
-                                        style: ButtonStyle(
-                                          backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
-                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                          ),
-                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                        ),
-                                        child: const Text(
-                                          'Kitchen',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          handlePrintingJobForArea(context, ref, 'Kitchen');
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
+                                      buildPrintButton('Kitchen', 'Kitchen', context, ref),
                                       const SizedBox(width: 2),
-                                      TextButton(
-                                        style: ButtonStyle(
-                                          backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
-                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                          ),
-                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                        ),
-                                        child: const Text(
-                                          'Beverage',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          handlePrintingJobForArea(context, ref, 'Beverage');
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
+                                      buildPrintButton('Beverage', 'Beverage', context, ref),
                                       const SizedBox(width: 2),
-                                      TextButton(
-                                        style: ButtonStyle(
-                                          backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
-                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                          ),
-                                          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                        ),
-                                        child: const Text(
-                                          'Cancel',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
+                                      buildCancelButton(context),
                                     ],
                                   );
                                 },
@@ -1016,23 +988,23 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                               ),
                             ),
                             child: const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.print_rounded, size: 20),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Print',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
+                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.print_rounded, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Print',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
+                            ),
                           ),
                         ],
                       ),

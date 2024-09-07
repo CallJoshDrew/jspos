@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:jspos/models/printer.dart';
@@ -226,3 +227,18 @@ class PrinterListNotifier extends StateNotifier<List<Printer>> {
     return state.firstWhere((printer) => printer.macAddress == macAddress).bluetoothInstance;
   }
 }
+// Function to get the Bluetooth instance for the specified MAC address
+  BluetoothPrint? getBluetoothInstance(WidgetRef ref, String macAddress) {
+    // Access the current printer list using the ref and the provider
+    final printerList = ref.read(printerListProvider);
+
+    // Find the printer with the matching macAddress
+    final printer = printerList.firstWhereOrNull((p) => p.macAddress == macAddress);
+
+    // Return the BluetoothPrint instance if the printer is found
+    if (printer != null) {
+      return BluetoothPrint.instance; // Return the BluetoothPrint instance
+    }
+
+    return null; // Return null if no printer found
+  }

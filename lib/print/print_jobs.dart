@@ -7,13 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/printer.dart';
+import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/providers/printer_provider.dart';
 import 'package:jspos/print/kitchen_receipt.dart';
 import 'package:jspos/print/beverage_receipt.dart';
 import 'package:jspos/print/cashier_receipt.dart';
 
-Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref) async {
+Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref, SelectedOrder selectedOrder) async {
   final List<Printer> printerList = ref.read(printerListProvider);
+  log('Printer List: $printerList');
   final List<String> areas = ['Cashier', 'Kitchen', 'Beverage'];
 
   // Scan for available Bluetooth devices first
@@ -21,25 +23,33 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref) async {
   List<BluetoothDevice> availableDevices = [];
 
   // Start scanning for devices
-  bluetoothPrint.startScan(timeout: const Duration(seconds: 10));
+  bluetoothPrint.startScan(timeout: const Duration(seconds: 3));
   bluetoothPrint.scanResults.listen((devices) {
     availableDevices = devices;
     log('Available Bluetooth devices: ${devices.map((d) => '${d.name} (${d.address})').toList()}');
   });
 
   // Wait for scanning to finish
-  await Future.delayed(const Duration(seconds: 10));
+  await Future.delayed(const Duration(seconds: 3));
 
   for (String area in areas) {
     try {
+      log('Printer list assigned area is: $area');
+
+      // Log all printers in the list
+      for (Printer printer in printerList) {
+        log('Printer: ${printer.name}, Assigned Area: ${printer.assignedArea}');
+      }
+
+      // Find printer by assigned area
       Printer? printer = printerList.firstWhereOrNull((p) => p.assignedArea == area);
       if (printer != null) {
+        log('Printer macAddress: ${printer.macAddress}');
         // Find the BluetoothDevice with the matching MAC address
         BluetoothDevice? device = availableDevices.firstWhereOrNull((d) => d.address == printer.macAddress);
-
         if (device != null) {
           // Bluetooth instance should work with the BluetoothDevice now
-          final bluetoothInstance = ref.read(printerListProvider.notifier).getBluetoothInstance(printer.macAddress);
+          final bluetoothInstance = getBluetoothInstance(ref, printer.macAddress);
 
           if (bluetoothInstance != null) {
             log('Attempting to connect to device: ${device.name} (${device.address})');
@@ -47,8 +57,8 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref) async {
             log('Connected status for ${printer.name}: $isConnected');
 
             if (isConnected) {
-              log('Waiting 5 seconds before printing...');
-              await Future.delayed(const Duration(seconds: 5));
+              log('Waiting 3 seconds before printing...');
+              await Future.delayed(const Duration(seconds: 3));
 
               // Define the receipt content based on the area
               List<LineText> receiptContent;
@@ -61,7 +71,7 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref) async {
                   break;
                 case 'Cashier':
                 default:
-                  receiptContent = getCashierReceiptLines();
+                  receiptContent = getCashierReceiptLines(selectedOrder);
                   break;
               }
 
@@ -73,7 +83,7 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref) async {
               log('Successfully printed receipt for $area area.');
 
               // Add a small delay to ensure the printer has processed the print job
-              await Future.delayed(const Duration(seconds: 10));
+              await Future.delayed(const Duration(seconds: 3));
 
               await bluetoothInstance.disconnect();
               log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
@@ -129,14 +139,14 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
   List<BluetoothDevice> availableDevices = [];
 
   // Start scanning for devices
-  bluetoothPrint.startScan(timeout: const Duration(seconds: 5));
+  bluetoothPrint.startScan(timeout: const Duration(seconds: 3));
   bluetoothPrint.scanResults.listen((devices) {
     availableDevices = devices;
     log('Available Bluetooth devices: ${devices.map((d) => '${d.name} (${d.address})').toList()}');
   });
 
   // Wait for scanning to finish
-  await Future.delayed(const Duration(seconds: 6));
+  await Future.delayed(const Duration(seconds: 3));
 
   try {
     // Get the printer assigned to the specified area
@@ -147,7 +157,7 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
 
       if (device != null) {
         // Bluetooth instance should work with the BluetoothDevice now
-        final bluetoothInstance = ref.read(printerListProvider.notifier).getBluetoothInstance(printer.macAddress);
+        final bluetoothInstance = getBluetoothInstance(ref, printer.macAddress);
 
         if (bluetoothInstance != null) {
           log('Attempting to connect to device: ${device.name} (${device.address})');
@@ -155,8 +165,8 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
           log('Connected status for ${printer.name}: $isConnected');
 
           if (isConnected) {
-            log('Waiting 5 seconds before printing...');
-            await Future.delayed(const Duration(seconds: 5));
+            log('Waiting 3 seconds before printing...');
+            await Future.delayed(const Duration(seconds: 3));
 
             // Define the receipt content based on the area
             List<LineText> receiptContent;
@@ -169,7 +179,7 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
                 break;
               case 'Cashier':
               default:
-                receiptContent = getCashierReceiptLines();
+                receiptContent = getBeverageReceiptLines();
                 break;
             }
 
@@ -181,7 +191,7 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
             log('Successfully printed receipt for $area area.');
 
             // Add a small delay to ensure the printer has processed the print job
-            await Future.delayed(const Duration(seconds: 6));
+            await Future.delayed(const Duration(seconds: 3));
 
             await bluetoothInstance.disconnect();
             log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
@@ -230,14 +240,14 @@ Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) a
   List<BluetoothDevice> availableDevices = [];
 
   // Start scanning for devices
-  bluetoothPrint.startScan(timeout: const Duration(seconds: 5));
+  bluetoothPrint.startScan(timeout: const Duration(seconds: 3));
   bluetoothPrint.scanResults.listen((devices) {
     availableDevices = devices;
     log('Available Bluetooth devices: ${devices.map((d) => '${d.name} (${d.address})').toList()}');
   });
 
   // Wait for scanning to finish
-  await Future.delayed(const Duration(seconds: 5));
+  await Future.delayed(const Duration(seconds: 3));
 
   try {
     // Get the printer assigned to the specified area
@@ -256,8 +266,8 @@ Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) a
           log('Connected status for ${printer.name}: $isConnected');
 
           if (isConnected) {
-            log('Waiting 5 seconds before printing...');
-            await Future.delayed(const Duration(seconds: 5));
+            log('Waiting 3 seconds before printing...');
+            await Future.delayed(const Duration(seconds: 3));
 
             // Define the receipt content based on the area
             List<LineText> receiptContent;
@@ -270,7 +280,7 @@ Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) a
                 break;
               case 'Cashier':
               default:
-                receiptContent = getCashierReceiptLines();
+                receiptContent = getBeverageReceiptLines();
                 break;
             }
 
@@ -282,7 +292,7 @@ Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) a
             log('Successfully printed receipt for $area area.');
 
             // Add a small delay to ensure the printer has processed the print job
-            await Future.delayed(const Duration(seconds: 5));
+            await Future.delayed(const Duration(seconds: 3));
 
             await bluetoothInstance.disconnect();
             log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
@@ -312,22 +322,6 @@ Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) a
       showCherryToast(context, 'Error in printing for $area area: $e', iconColor: Colors.red, icon: Icons.error);
     }
   }
-}
-
-// Function to get the Bluetooth instance for the specified MAC address
-BluetoothPrint? getBluetoothInstance(WidgetRef ref, String macAddress) {
-  // Access the current printer list using the ref and the provider
-  final printerList = ref.read(printerListProvider);
-
-  // Find the printer with the matching macAddress
-  final printer = printerList.firstWhereOrNull((p) => p.macAddress == macAddress);
-
-  // Return the BluetoothPrint instance if the printer is found
-  if (printer != null) {
-    return BluetoothPrint.instance; // Return the BluetoothPrint instance
-  }
-
-  return null; // Return null if no printer found
 }
 
 void showCherryToast(BuildContext context, String message, {Color? iconColor, IconData? icon}) {
