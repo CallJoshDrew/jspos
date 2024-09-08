@@ -8,6 +8,7 @@ import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/print/sample_receipt.dart';
 import 'package:jspos/providers/printer_provider.dart';
 import 'package:jspos/print/kitchen_receipt.dart';
 import 'package:jspos/print/beverage_receipt.dart';
@@ -64,10 +65,10 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref, Selected
               List<LineText> receiptContent;
               switch (area) {
                 case 'Kitchen':
-                  receiptContent = getKitchenReceiptLines();
+                  receiptContent = getKitchenReceiptLines(selectedOrder);
                   break;
                 case 'Beverage':
-                  receiptContent = getBeverageReceiptLines();
+                  receiptContent = getBeverageReceiptLines(selectedOrder);
                   break;
                 case 'Cashier':
                 default:
@@ -131,7 +132,7 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref, Selected
   }
 }
 
-Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, String area) async {
+Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, String area, SelectedOrder selectedOrder) async {
   final List<Printer> printerList = ref.read(printerListProvider);
 
   // Scan for available Bluetooth devices first
@@ -172,14 +173,14 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
             List<LineText> receiptContent;
             switch (area) {
               case 'Kitchen':
-                receiptContent = getKitchenReceiptLines();
+                receiptContent = getKitchenReceiptLines(selectedOrder);
                 break;
               case 'Beverage':
-                receiptContent = getBeverageReceiptLines();
+                receiptContent = getBeverageReceiptLines(selectedOrder);
                 break;
               case 'Cashier':
               default:
-                receiptContent = getBeverageReceiptLines();
+                receiptContent = getCashierReceiptLines(selectedOrder);
                 break;
             }
 
@@ -273,14 +274,14 @@ Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) a
             List<LineText> receiptContent;
             switch (area) {
               case 'Kitchen':
-                receiptContent = getKitchenReceiptLines();
+                receiptContent = getSampleReceiptLines();
                 break;
               case 'Beverage':
-                receiptContent = getBeverageReceiptLines();
+                receiptContent = getSampleReceiptLines();
                 break;
               case 'Cashier':
               default:
-                receiptContent = getBeverageReceiptLines();
+                receiptContent = getSampleReceiptLines();
                 break;
             }
 

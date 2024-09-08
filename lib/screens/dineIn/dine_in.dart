@@ -735,7 +735,7 @@ class _DineInPageState extends ConsumerState<DineInPage> {
         ),
       ),
       onPressed: () {
-        handlePrintingJobForArea(context, ref, area);
+        handlePrintingJobForArea(context, ref, area, selectedOrder);
         Navigator.of(context).pop();
       },
     );

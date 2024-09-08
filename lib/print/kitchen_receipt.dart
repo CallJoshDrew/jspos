@@ -1,63 +1,178 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:jspos/models/selected_order.dart';
 
-List<LineText> getKitchenReceiptLines() {
+// printer width is 58mm for Kitchen
+List<LineText> getKitchenReceiptLines(SelectedOrder selectedOrder) {
   List<LineText> list = [];
 
-  list.add(LineText(type: LineText.TYPE_TEXT, content: 'Restaurant Sing Ming Hing', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
-  list.add(LineText(linefeed: 1));
   list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Lot 16, Block B, Utara Place 1, Jalan Utara,',
+      type: LineText.TYPE_TEXT, 
+      content: 'Restaurant Sing Ming Hing', 
       weight: 1,
       align: LineText.ALIGN_CENTER,
-      fontZoom: 2,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'IJM Batu 6, Sandakan, Sandakan, Malaysia',
+      content: 'Lot 16, Block B, Utara Place 1, Jalan Utara, IJM Batu 6,',
       weight: 1,
       align: LineText.ALIGN_CENTER,
-      fontZoom: 2,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Sandakan, Malaysia',
+      weight: 1,
+      align: LineText.ALIGN_CENTER,
       linefeed: 1));
   list.add(LineText(linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Invoice 100001',
+      content: 'Invoice ${selectedOrder.orderNumber}', // Dynamic invoice number
+      align: LineText.ALIGN_LEFT,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Date: ${selectedOrder.orderDate} ${selectedOrder.orderTime}', // Dynamic invoice number
+      align: LineText.ALIGN_LEFT,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Order Type: ${selectedOrder.orderType}', // Dynamic invoice number
+      align: LineText.ALIGN_LEFT,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: '--------------------------------',
       weight: 1,
       align: LineText.ALIGN_CENTER,
-      fontZoom: 2,
+      linefeed: 1));
+
+  list.add(LineText(
+    type: LineText.TYPE_TEXT,
+    content: "Item",
+    align: LineText.ALIGN_LEFT,
+    x: 0,
+    relativeX: 0,
+    linefeed: 0));
+  list.add(LineText(
+    type: LineText.TYPE_TEXT,
+    content: 'Qyt',
+    align: LineText.ALIGN_LEFT,
+    x: 240, 
+    relativeX: 0,
+    linefeed: 0));
+
+  list.add(LineText(
+    type: LineText.TYPE_TEXT,
+    content: 'Amt(RM)',
+    align: LineText.ALIGN_LEFT,
+    x: 300,
+    relativeX: 0,
+    linefeed: 1));
+  list.add(LineText(
+    type: LineText.TYPE_TEXT,
+    content: '--------------------------------',
+    weight: 1,
+    align: LineText.ALIGN_CENTER,
+    linefeed: 1));
+
+  // Loop through selectedOrder items to print each item
+  for (var item in selectedOrder.items) {
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: item.name,  // Dynamic item name
+        align: LineText.ALIGN_LEFT,
+        x: 0,
+        relativeX: 0,
+        linefeed: 0));  // Adds a linefeed after the item name to move to next line
+    
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: '${item.quantity}',  // Dynamic quantity
+        align: LineText.ALIGN_LEFT,
+        x: 250,  // Adjust x based on your printer width for quantity
+        relativeX: 0,
+        linefeed: 0));  // No linefeed needed here yet
+    
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: item.price.toStringAsFixed(2),  // Dynamic price
+        align: LineText.ALIGN_LEFT,
+        x: 310,  // Adjust x based on your printer width for price
+        relativeX: 0,
+        linefeed: 1));  // Add linefeed after price to move to the next row
+  }
+
+
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: '--------------------------------',
+      weight: 1,
+      align: LineText.ALIGN_CENTER,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Subtotal',
+      x: 180,
+      relativeX: 0,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.subTotal.toStringAsFixed(2),
+      x: 310,
+      relativeX: 0,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Total',
+      // fontZoom: 2,
+      weight: 1,
+      x: 216,
+      relativeX: 0,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.totalPrice.toStringAsFixed(2),
+      // fontZoom: 2,
+      weight: 1,
+      x: 310,
+      relativeX: 0,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: '--------------------------------',
+      weight: 1,
+      align: LineText.ALIGN_CENTER,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Amount Received (${selectedOrder.paymentMethod})',
+      align: LineText.ALIGN_LEFT,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.amountReceived.toStringAsFixed(2),
+      align: LineText.ALIGN_LEFT,
+      x: 310,
+      relativeX: 0,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Amount Change',
+      align: LineText.ALIGN_LEFT,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.amountChanged.toStringAsFixed(2),
+      align: LineText.ALIGN_LEFT,
+      x: 310,
+      relativeX: 0,
       linefeed: 1));
   list.add(LineText(linefeed: 1));
-  list.add(
-      LineText(type: LineText.TYPE_TEXT, content: '--------------------Details---------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
-
-  // Headers for Items, Quantity, and Amount
-  list.add(LineText(type: LineText.TYPE_TEXT, content: 'Items', weight: 0, align: LineText.ALIGN_LEFT, x: 0, relativeX: 0,linefeed: 0));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: 'Qty', weight: 0, align: LineText.ALIGN_CENTER, x: 350, relativeX: 0, linefeed: 0));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: 'Amount(RM)', weight: 0, align: LineText.ALIGN_RIGHT, x: 450, relativeX: 0,  linefeed: 0));
-
-  list.add(LineText(linefeed: 1));
-
-  // Adding "Nasi Goreng" with Quantity and Amount
-  list.add(LineText(type: LineText.TYPE_TEXT, content: 'Nasi Goreng Ayam Campur', weight: 0, align: LineText.ALIGN_LEFT, x: 0, relativeX: 0,  linefeed: 0));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: '1', weight: 0, align: LineText.ALIGN_LEFT, x: 350, relativeX: 0, linefeed: 0));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: '10.00', weight: 0, align: LineText.ALIGN_LEFT, x: 450, relativeX: 0,linefeed: 0));
-
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: 'Nasi Kuey Tiaw', weight: 0, align: LineText.ALIGN_LEFT, x: 0, relativeX: 0, linefeed: 0));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: '2', weight: 0, align: LineText.ALIGN_LEFT, x: 350, relativeX: 0, linefeed: 0));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: '20.00', weight: 0, align: LineText.ALIGN_LEFT, x: 450, relativeX: 0, linefeed: 0));
-
-  
-  list.add(LineText(linefeed: 1));
-  list.add(
-      LineText(type: LineText.TYPE_TEXT, content: '----------------------End-----------------------', weight: 1, align: LineText.ALIGN_CENTER, linefeed: 1));
-  // list.add(LineText(linefeed: 1));
-  // list.add(LineText(type: LineText.TYPE_BARCODE, content: 'A12312112', size: 10, align: LineText.ALIGN_CENTER, linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(type: LineText.TYPE_QRCODE, content: 'qrcode i', size: 10, align: LineText.ALIGN_CENTER, x: 0, relativeX: 0,  linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: '*********** Thank You **********',
+      align: LineText.ALIGN_CENTER,
+      linefeed: 1));
   list.add(LineText(linefeed: 1));
   list.add(LineText(linefeed: 1));
   return list;
