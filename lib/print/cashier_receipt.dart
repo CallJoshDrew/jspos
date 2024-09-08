@@ -13,35 +13,40 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Lot 16, Block B, Utara Place 1, Jalan Utara, IJM Batu 6,',
+      content: 'Lot 16, Block B, Utara Place 1, Jalan Utara,',
       weight: 1,
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Sandakan, Malaysia',
+      content: 'IJM Batu 6, Sandakan, Malaysia',
       weight: 1,
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
   list.add(LineText(linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Invoice ${selectedOrder.orderNumber}', // Dynamic invoice number
+      content: 'Date: ${selectedOrder.orderDate} ${selectedOrder.orderTime}',
+      align: LineText.ALIGN_LEFT,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Time: ${selectedOrder.orderTime}',
+      align: LineText.ALIGN_RIGHT,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Invoice: ${selectedOrder.orderNumber} (${selectedOrder.orderType})', // Dynamic invoice number
       align: LineText.ALIGN_LEFT,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Date: ${selectedOrder.orderDate} ${selectedOrder.orderTime}', // Dynamic invoice number
+      content: 'Type: (${selectedOrder.orderType})', // Dynamic invoice number
       align: LineText.ALIGN_LEFT,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Order Type: ${selectedOrder.orderType}', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
+      content: '-----------------------------------------------',
       weight: 1,
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
@@ -57,7 +62,7 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
     type: LineText.TYPE_TEXT,
     content: 'Qyt',
     align: LineText.ALIGN_LEFT,
-    x: 240, 
+    x: 390, 
     relativeX: 0,
     linefeed: 0));
 
@@ -65,12 +70,12 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
     type: LineText.TYPE_TEXT,
     content: 'Amt(RM)',
     align: LineText.ALIGN_LEFT,
-    x: 300,
+    x: 470,
     relativeX: 0,
     linefeed: 1));
   list.add(LineText(
     type: LineText.TYPE_TEXT,
-    content: '--------------------------------',
+    content: '-----------------------------------------------',
     weight: 1,
     align: LineText.ALIGN_CENTER,
     linefeed: 1));
@@ -89,7 +94,7 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
         type: LineText.TYPE_TEXT,
         content: '${item.quantity}',  // Dynamic quantity
         align: LineText.ALIGN_LEFT,
-        x: 250,  // Adjust x based on your printer width for quantity
+        x: 400,  // Adjust x based on your printer width for quantity
         relativeX: 0,
         linefeed: 0));  // No linefeed needed here yet
     
@@ -97,7 +102,7 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
         type: LineText.TYPE_TEXT,
         content: item.price.toStringAsFixed(2),  // Dynamic price
         align: LineText.ALIGN_LEFT,
-        x: 310,  // Adjust x based on your printer width for price
+        x: 480,  // Adjust x based on your printer width for price
         relativeX: 0,
         linefeed: 1));  // Add linefeed after price to move to the next row
   }
@@ -105,20 +110,20 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
 
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
+      content: '-----------------------------------------------',
       weight: 1,
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: 'Subtotal',
-      x: 180,
+      x: 350,
       relativeX: 0,
       linefeed: 0));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: selectedOrder.subTotal.toStringAsFixed(2),
-      x: 310,
+      x: 480,
       relativeX: 0,
       linefeed: 1));
   list.add(LineText(
@@ -126,7 +131,7 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
       content: 'Total',
       // fontZoom: 2,
       weight: 1,
-      x: 216,
+      x: 386,
       relativeX: 0,
       linefeed: 0));
   list.add(LineText(
@@ -134,12 +139,12 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
       content: selectedOrder.totalPrice.toStringAsFixed(2),
       // fontZoom: 2,
       weight: 1,
-      x: 310,
+      x: 480,
       relativeX: 0,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
+      content: '-----------------------------------------------',
       weight: 1,
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
@@ -152,7 +157,7 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
       type: LineText.TYPE_TEXT,
       content: selectedOrder.amountReceived.toStringAsFixed(2),
       align: LineText.ALIGN_LEFT,
-      x: 310,
+      x: 480,
       relativeX: 0,
       linefeed: 1));
   list.add(LineText(
@@ -164,7 +169,7 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
       type: LineText.TYPE_TEXT,
       content: selectedOrder.amountChanged.toStringAsFixed(2),
       align: LineText.ALIGN_LEFT,
-      x: 310,
+      x: 480,
       relativeX: 0,
       linefeed: 1));
   list.add(LineText(linefeed: 1));
@@ -173,6 +178,8 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
       content: '*********** Thank You **********',
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
+  list.add(LineText(linefeed: 1));
+  list.add(LineText(linefeed: 1));
   list.add(LineText(linefeed: 1));
   list.add(LineText(linefeed: 1));
 

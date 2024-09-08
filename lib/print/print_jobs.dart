@@ -134,7 +134,7 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref, Selected
 
 Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, String area, SelectedOrder selectedOrder) async {
   final List<Printer> printerList = ref.read(printerListProvider);
-
+  log('${selectedOrder.items}');
   // Scan for available Bluetooth devices first
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
   List<BluetoothDevice> availableDevices = [];

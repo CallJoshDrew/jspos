@@ -19,7 +19,7 @@ class EditPrintState extends ConsumerState<EditPrint> {
   Printer? _printer;
 
   List<String> areas = ['Cashier', 'Kitchen', 'Beverage'];
-  List<String> paperWidth = ['80 mm', '72 mm', '58 mm'];
+  List<String> paperWidth = ['80 mm', '58 mm'];
   List<String> interface = ['Bluetooth', 'USB', 'Ethernet', 'Wifi'];
   String assignedArea = '';
   String selectedPaperWidth = '';
