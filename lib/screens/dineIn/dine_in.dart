@@ -53,6 +53,8 @@ class _DineInPageState extends ConsumerState<DineInPage> {
     handleMethod = defaultMethod;
   }
 
+  bool isTableSelected = false;
+
   void loadTables() async {
     try {
       if (Hive.isBoxOpen('tables')) {
@@ -170,6 +172,7 @@ class _DineInPageState extends ConsumerState<DineInPage> {
         // If the table is not occupied, generate a new orderNumber
         if (!tables[index]['occupied']) {
           var isOccupied = true;
+          isTableSelected = false;
           handlefreezeMenu();
           orderNumber = generateID(tableName);
           tables[index]['orderNumber'] = orderNumber;
@@ -196,13 +199,14 @@ class _DineInPageState extends ConsumerState<DineInPage> {
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             selectedOrder.calculateItemsAndQuantities();
+            isTableSelected = true;
             CherryToast(
               icon: Icons.info,
               iconColor: Colors.green,
               themeColor: Colors.green,
               backgroundColor: Colors.white,
               title: Text(
-                'Table ${tables[index]['name']} is seated',
+                'You have selected TABLE ${tables[index]['name']}.',
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.black,
@@ -922,90 +926,92 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    backgroundColor: Colors.grey[900],
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      side: const BorderSide(color: Colors.green, width: 1),
-                                    ),
-                                    content: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxWidth: 300,
-                                        maxHeight: 70,
-                                      ),
-                                      child: const Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Wrap(
-                                            alignment: WrapAlignment.center,
-                                            children: [
-                                              Text(
-                                                'To print, please choose',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              Text(
-                                                'designated printer of the area',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
+                          isTableSelected
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          backgroundColor: Colors.grey[900],
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                            side: const BorderSide(color: Colors.green, width: 1),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      buildPrintButton('Cashier', 'Cashier', context, ref),
-                                      const SizedBox(width: 2),
-                                      buildPrintButton('Kitchen', 'Kitchen', context, ref),
-                                      const SizedBox(width: 2),
-                                      buildPrintButton('Beverage', 'Beverage', context, ref),
-                                      const SizedBox(width: 2),
-                                      buildCancelButton(context),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: const Color.fromRGBO(46, 125, 50, 1),
-                              padding: const EdgeInsets.symmetric(vertical: 0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.print_rounded, size: 20),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Print',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                          content: ConstrainedBox(
+                                            constraints: const BoxConstraints(
+                                              maxWidth: 300,
+                                              maxHeight: 70,
+                                            ),
+                                            child: const Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Wrap(
+                                                  alignment: WrapAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'To print, please choose',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'designated printer of the area',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            buildPrintButton('Cashier', 'Cashier', context, ref),
+                                            const SizedBox(width: 2),
+                                            buildPrintButton('Kitchen', 'Kitchen', context, ref),
+                                            const SizedBox(width: 2),
+                                            buildPrintButton('Beverage', 'Beverage', context, ref),
+                                            const SizedBox(width: 2),
+                                            buildCancelButton(context),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: const Color.fromRGBO(46, 125, 50, 1),
+                                    padding: const EdgeInsets.symmetric(vertical: 0),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.print_rounded, size: 20),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Print',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
                         ],
                       ),
                     ],

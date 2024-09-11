@@ -68,7 +68,7 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref, Selected
                   receiptContent = getKitchenReceiptLines(selectedOrder);
                   break;
                 case 'Beverage':
-                  receiptContent = getBeverageReceiptLines(selectedOrder);
+                  receiptContent = getBeverageReceiptLines(selectedOrder, printer.paperWidth);
                   break;
                 case 'Cashier':
                 default:
@@ -132,6 +132,14 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref, Selected
   }
 }
 
+bool hasDrinksItems(SelectedOrder selectedOrder) {
+  return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => item.category == 'Drinks');
+}
+
+bool hasDishesItems(SelectedOrder selectedOrder) {
+  return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => item.category == 'Dishes');
+}
+
 Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, String area, SelectedOrder selectedOrder) async {
   final List<Printer> printerList = ref.read(printerListProvider);
   log('${selectedOrder.items}');
@@ -158,25 +166,41 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
 
       if (device != null) {
         // Bluetooth instance should work with the BluetoothDevice now
-        final bluetoothInstance = getBluetoothInstance(ref, printer.macAddress);
+        final bluetoothInstance = getBluetoothInstance(ref, device.address.toString());
 
         if (bluetoothInstance != null) {
           log('Attempting to connect to device: ${device.name} (${device.address})');
           bool isConnected = await bluetoothInstance.connect(device); // Use the BluetoothDevice object here
-          log('Connected status for ${printer.name}: $isConnected');
+          log('Connected status for ${device.name}: $isConnected');
 
           if (isConnected) {
             log('Waiting 3 seconds before printing...');
             await Future.delayed(const Duration(seconds: 3));
 
             // Define the receipt content based on the area
-            List<LineText> receiptContent;
+            List<LineText>? receiptContent;
+
             switch (area) {
+
               case 'Kitchen':
-                receiptContent = getKitchenReceiptLines(selectedOrder);
+                // Ensure there are "Dishes" items before printing for the Beverage area
+                if (hasDishesItems(selectedOrder)) {
+                  receiptContent = getKitchenReceiptLines(selectedOrder);
+                } else {
+                  log('No "Dishes" items in the order for the Kitchen area.');
+                  await bluetoothInstance.disconnect();
+                  return; // Exit the function if there are no "Drinks" items
+                }
                 break;
               case 'Beverage':
-                receiptContent = getBeverageReceiptLines(selectedOrder);
+                // Ensure there are "Drinks" items before printing for the Beverage area
+                if (hasDrinksItems(selectedOrder)) {
+                  receiptContent = getBeverageReceiptLines(selectedOrder, printer.paperWidth);
+                } else {
+                  log('No "Drinks" items in the order for the Beverage area.');
+                  await bluetoothInstance.disconnect();
+                  return; // Exit the function if there are no "Drinks" items
+                }
                 break;
               case 'Cashier':
               default:
@@ -204,7 +228,7 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
                 SnackBar(content: Text('Successfully printed for $area area.')),
               );
             }
-          } else {
+                    } else {
             log('Failed to connect to printer: ${printer.name} (${printer.macAddress})');
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -227,10 +251,10 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error in printing for $area area: $e')),
       );
-      // showCherryToast(context, 'Error in printing for $area area: $e', iconColor: Colors.red, icon: Icons.error);
     }
   }
 }
+
 
 // Function to handle the printing process
 Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) async {
