@@ -24,26 +24,35 @@ List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
   list.add(LineText(linefeed: 1));
+
   list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Date: ${selectedOrder.orderDate} ${selectedOrder.orderTime}',
-      align: LineText.ALIGN_LEFT,
-      linefeed: 0));
+    type: LineText.TYPE_TEXT,
+    content: 'Date: ${selectedOrder.orderDate}',
+    align: LineText.ALIGN_LEFT,
+    x: 0,
+    relativeX: 0,
+    linefeed: 0));
   list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Time: ${selectedOrder.orderTime}',
-      align: LineText.ALIGN_RIGHT,
-      linefeed: 1));
+    type: LineText.TYPE_TEXT,
+    content: 'Time: ${selectedOrder.orderTime}',
+    align: LineText.ALIGN_LEFT,
+    x: 380,
+    relativeX: 0,
+    linefeed: 1));
   list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Invoice: ${selectedOrder.orderNumber} (${selectedOrder.orderType})', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
+    type: LineText.TYPE_TEXT,
+    content: 'Invoice: ${selectedOrder.orderNumber}',
+    align: LineText.ALIGN_LEFT,
+    x: 0,
+    relativeX: 0,
+    linefeed: 0));
   list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Type: (${selectedOrder.orderType})', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
+    type: LineText.TYPE_TEXT,
+    content: 'Type: ${selectedOrder.orderType}',
+    align: LineText.ALIGN_LEFT,
+    x: 380,
+    relativeX: 0,
+    linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: '-----------------------------------------------',

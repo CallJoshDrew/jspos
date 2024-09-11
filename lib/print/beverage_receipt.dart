@@ -6,38 +6,24 @@ List<LineText> getBeverageReceiptLines(SelectedOrder selectedOrder) {
   List<LineText> list = [];
 
   list.add(LineText(
-      type: LineText.TYPE_TEXT, 
-      content: 'Restaurant Sing Ming Hing', 
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.orderNumber,
+      x: 0,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.orderType,
+      relativeX: 300,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Lot 16, Block B, Utara Place 1, Jalan Utara, IJM Batu 6,',
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
-      linefeed: 1));
+      content: selectedOrder.orderDate,
+      x: 0,
+      linefeed: 0));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Sandakan, Malaysia',
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
-      linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Invoice ${selectedOrder.orderNumber}', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Date: ${selectedOrder.orderDate} ${selectedOrder.orderTime}', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Order Type: ${selectedOrder.orderType}', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
+      content: selectedOrder.orderTime,
+      relativeX: 300,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
@@ -49,24 +35,12 @@ List<LineText> getBeverageReceiptLines(SelectedOrder selectedOrder) {
   list.add(LineText(
     type: LineText.TYPE_TEXT,
     content: "Item",
-    align: LineText.ALIGN_LEFT,
     x: 0,
-    relativeX: 0,
     linefeed: 0));
   list.add(LineText(
     type: LineText.TYPE_TEXT,
     content: 'Qyt',
-    align: LineText.ALIGN_LEFT,
-    x: 240, 
-    relativeX: 0,
-    linefeed: 0));
-
-  list.add(LineText(
-    type: LineText.TYPE_TEXT,
-    content: 'Amt(RM)',
-    align: LineText.ALIGN_LEFT,
-    x: 300,
-    relativeX: 0,
+    relativeX: 330,
     linefeed: 1));
   list.add(LineText(
     type: LineText.TYPE_TEXT,
@@ -79,99 +53,57 @@ List<LineText> getBeverageReceiptLines(SelectedOrder selectedOrder) {
   for (var item in selectedOrder.items) {
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: item.name,  // Dynamic item name
-        align: LineText.ALIGN_LEFT,
+        content: item.name,
         x: 0,
-        relativeX: 0,
-        linefeed: 0));  // Adds a linefeed after the item name to move to next line
-    
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: '${item.quantity}',  // Dynamic quantity
-        align: LineText.ALIGN_LEFT,
-        x: 250,  // Adjust x based on your printer width for quantity
-        relativeX: 0,
-        linefeed: 0));  // No linefeed needed here yet
-    
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: item.price.toStringAsFixed(2),  // Dynamic price
-        align: LineText.ALIGN_LEFT,
-        x: 310,  // Adjust x based on your printer width for price
-        relativeX: 0,
-        linefeed: 1));  // Add linefeed after price to move to the next row
+        linefeed: 0));
+
+  // Check the length of the quantity
+  int quantityXPosition = 340;  // Default for 2 digits
+    if (item.quantity.toString().length == 1) {
+      quantityXPosition = 350;  // Adjust for 1 digit
+    } else if (item.quantity.toString().length == 3) {
+      quantityXPosition = 330;  // Adjust for 3 digits
+    }
+
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: '${item.quantity}',
+      relativeX: quantityXPosition,
+      linefeed: 1));
+}
+
+
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: '--------------------------------',
+      weight: 1,
+      align: LineText.ALIGN_CENTER,
+      linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Total:',
+      x: 0,
+      relativeX: 240,
+      linefeed: 0));
+  // Determine the relativeX position based on the totalQuantity's number of digits
+  int totalQuantityXPosition = 340;  // Default for 2 digits
+  if (selectedOrder.totalQuantity.toString().length == 1) {
+    totalQuantityXPosition = 350;  // Adjust for 1 digit
+  } else if (selectedOrder.totalQuantity.toString().length == 3) {
+    totalQuantityXPosition = 330;  // Adjust for 3 digits
   }
 
-
+  list.add(LineText(
+    type: LineText.TYPE_TEXT,
+    content: selectedOrder.totalQuantity.toString(),
+    relativeX: totalQuantityXPosition,  // Use the calculated relativeX value
+    linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
+      content: '-------------',
       weight: 1,
       align: LineText.ALIGN_CENTER,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Subtotal',
-      x: 180,
-      relativeX: 0,
-      linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.subTotal.toStringAsFixed(2),
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Total',
-      // fontZoom: 2,
-      weight: 1,
-      x: 216,
-      relativeX: 0,
-      linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.totalPrice.toStringAsFixed(2),
-      // fontZoom: 2,
-      weight: 1,
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Amount Received (${selectedOrder.paymentMethod})',
-      align: LineText.ALIGN_LEFT,
-      linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.amountReceived.toStringAsFixed(2),
-      align: LineText.ALIGN_LEFT,
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Amount Change',
-      align: LineText.ALIGN_LEFT,
-      linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.amountChanged.toStringAsFixed(2),
-      align: LineText.ALIGN_LEFT,
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: '*********** Thank You **********',
-      align: LineText.ALIGN_CENTER,
+      x: 220,
       linefeed: 1));
   list.add(LineText(linefeed: 1));
   list.add(LineText(linefeed: 1));
