@@ -166,19 +166,16 @@ class DineInPageState extends ConsumerState<DineInPage> {
     setState(() {
       // Set the selected table and its index
       selectedTableIndex = index;
-
       // Check if a table with the given index exists
       if (index != -1 && index < tables.length) {
         // If the table is not occupied, generate a new orderNumber
         if (!tables[index]['occupied']) {
           var isOccupied = true;
-          isTableSelected = false;
           handlefreezeMenu();
           orderNumber = generateID(tableName);
           tables[index]['orderNumber'] = orderNumber;
           tables[index]['occupied'] = isOccupied;
           updateTables(index, orderNumber, isOccupied);
-
           // Generate a new instance of selectedOrder first, and then only assign it's fields and details to the selectedOrder
           selectedOrder = selectedOrder.newInstance(categories);
           selectedOrder.orderNumber = orderNumber;
@@ -189,7 +186,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
           orderStatus = "Empty Cart";
           orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
           orderStatusIcon = Icons.shopping_cart;
+          isTableSelected = false;
         } else {
+          isTableSelected = true;
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
           var order = widget.orders.getOrder(orderNumber);
@@ -199,7 +198,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             selectedOrder.calculateItemsAndQuantities();
-            isTableSelected = true;
             CherryToast(
               icon: Icons.info,
               iconColor: Colors.green,

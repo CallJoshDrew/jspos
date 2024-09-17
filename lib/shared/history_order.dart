@@ -1,9 +1,11 @@
 import 'dart:developer'; // for log function
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/print/print_jobs.dart';
 
-class HistoryOrderPage extends StatefulWidget {
+class HistoryOrderPage extends ConsumerStatefulWidget {
   final SelectedOrder historyOrder;
 
   const HistoryOrderPage({super.key, required this.historyOrder});
@@ -12,7 +14,7 @@ class HistoryOrderPage extends StatefulWidget {
   HistoryOrderPageState createState() => HistoryOrderPageState();
 }
 
-class HistoryOrderPageState extends State<HistoryOrderPage> {
+class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
   String selectedPaymentMethod = "Cash";
 
   late double originalBill; // Declare originalBill
@@ -324,7 +326,7 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                                                 item.selection && item.selectedAddOn != null
                                                                     ? Wrap(
                                                                         children: [
-                                                                           item.selectedAddOn!.isNotEmpty
+                                                                          item.selectedAddOn!.isNotEmpty
                                                                               ? const Text(
                                                                                   "AddOn: ",
                                                                                   style: TextStyle(
@@ -590,18 +592,37 @@ class HistoryOrderPageState extends State<HistoryOrderPage> {
                                   ],
                                 ),
                               ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.redAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: const Color.fromRGBO(46, 125, 50, 1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      handlePrintingJobs(context, ref, widget.historyOrder);
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Print'),
                                   ),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Close'),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Colors.redAccent,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Close'),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

@@ -14,6 +14,7 @@ import 'package:jspos/providers/printer_provider.dart';
 import 'package:jspos/print/cashier_receipt.dart';
 
 Future<void> handlePrintingJobs(BuildContext context, WidgetRef ref, SelectedOrder selectedOrder, {String? specificArea}) async {
+  // Fetch printer list once at the beginning, avoid using ref after this point
   final List<Printer> printerList = ref.read(printerListProvider);
   log('Printer List: $printerList');
 
@@ -49,19 +50,17 @@ Future<void> handlePrintingJobs(BuildContext context, WidgetRef ref, SelectedOrd
         // Find the BluetoothDevice with the matching MAC address
         BluetoothDevice? device = availableDevices.firstWhereOrNull((d) => d.address == printer.macAddress);
         if (device != null) {
-          // Bluetooth instance should work with the BluetoothDevice now
           final bluetoothInstance = getBluetoothInstance(ref, printer.macAddress);
 
           if (bluetoothInstance != null) {
             log('Attempting to connect to device: ${device.name} (${device.address})');
-            bool isConnected = await bluetoothInstance.connect(device); // Use the BluetoothDevice object here
+            bool isConnected = await bluetoothInstance.connect(device);
             log('Connected status for ${printer.name}: $isConnected');
 
             if (isConnected) {
               log('Waiting 3 seconds before printing...');
               await Future.delayed(const Duration(seconds: 4));
 
-              // Define the receipt content based on the area
               List<LineText> receiptContent;
               OrderReceiptGenerator orderReceiptGenerator = OrderReceiptGenerator();
               CashierReceiptGenerator cashierReceiptGenerator = CashierReceiptGenerator();
@@ -90,20 +89,17 @@ Future<void> handlePrintingJobs(BuildContext context, WidgetRef ref, SelectedOrd
                   break;
               }
 
-              Map<String, dynamic> config = {}; // Adjust as needed for your printer configuration
+              Map<String, dynamic> config = {};
               log('Printing receipt for $area area...');
 
-              // Attempt to print the receipt
               await bluetoothInstance.printReceipt(config, receiptContent);
               log('Successfully printed receipt for $area area.');
 
-              // Add a small delay to ensure the printer has processed the print job
               await Future.delayed(const Duration(seconds: 3));
 
               await bluetoothInstance.disconnect();
               log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
 
-              // Show a success message after printing, if mounted
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Successfully printed for $area area.')),
@@ -136,13 +132,11 @@ Future<void> handlePrintingJobs(BuildContext context, WidgetRef ref, SelectedOrd
     }
   }
 
-  // Log completion and show message
   log('All printing jobs are done.');
   if (context.mounted) {
     showCherryToast(context, 'All printing jobs are done.');
   }
 }
-
 
 bool hasDrinksItems(SelectedOrder selectedOrder) {
   return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => item.category == 'Drinks');
@@ -151,7 +145,6 @@ bool hasDrinksItems(SelectedOrder selectedOrder) {
 bool hasDishesItems(SelectedOrder selectedOrder) {
   return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => item.category == 'Dishes');
 }
-
 
 // Function to handle the printing process
 Future<void> handleTestPrint(BuildContext context, WidgetRef ref, String area) async {
