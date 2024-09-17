@@ -40,10 +40,10 @@ class DineInPage extends ConsumerStatefulWidget {
   // required this.printerDevices,
   // required this.printersConnected
   @override
-  _DineInPageState createState() => _DineInPageState();
+  DineInPageState createState() => DineInPageState();
 }
 
-class _DineInPageState extends ConsumerState<DineInPage> {
+class DineInPageState extends ConsumerState<DineInPage> {
   List<Map<String, dynamic>> tables = [];
   @override
   void initState() {
@@ -647,7 +647,7 @@ class _DineInPageState extends ConsumerState<DineInPage> {
                     handlefreezeMenu();
                     // Call the printReceipt function
                     // Call the print receipt function (pass context and ref properly)
-                    await handleAllPrintingJobs(context, ref, selectedOrder); // Ensure ref is available in the widget context
+                    await handlePrintingJobs(context, ref, selectedOrder); // Ensure ref is available in the widget context
                   } catch (e) {
                     log('An error occurred in onPressed place order & print: $e');
                   }
@@ -739,7 +739,7 @@ class _DineInPageState extends ConsumerState<DineInPage> {
         ),
       ),
       onPressed: () {
-        handlePrintingJobForArea(context, ref, area, selectedOrder);
+        handlePrintingJobs(context, ref, selectedOrder, specificArea: area);
         Navigator.of(context).pop();
       },
     );

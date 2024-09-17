@@ -3,7 +3,7 @@ import 'package:jspos/models/paper_size_config.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/total_quantity_calculator.dart';
 
-class BeverageReceiptGenerator with TotalQuantityCalculator {
+class OrderReceiptGenerator with TotalQuantityCalculator {
     // use enum for fixed value of either 58mm or 80mm
     PaperSizeConfig getPaperSizeConfig(String paperWidth) {
     switch (paperWidth) {
@@ -16,7 +16,7 @@ class BeverageReceiptGenerator with TotalQuantityCalculator {
     }
   }
 
-List<LineText> getBeverageReceiptLines(SelectedOrder selectedOrder, String paperWidth, String category) {
+List<LineText> getOrderReceiptLines(SelectedOrder selectedOrder, String paperWidth, String category) {
   List<LineText> list = [];
   
   // Use the helper function to get the configuration based on paperWidth

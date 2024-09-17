@@ -5,7 +5,6 @@ List<LineText> getSampleReceiptLines() {
   List<LineText> list = [];
 
   list.add(LineText(type: LineText.TYPE_TEXT, content: 'Restaurant Sing Ming Hing', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
-  list.add(LineText(linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: 'Lot 16, Block B, Utara Place 1, Jalan Utara,',
@@ -20,7 +19,6 @@ List<LineText> getSampleReceiptLines() {
       align: LineText.ALIGN_CENTER,
       fontZoom: 2,
       linefeed: 1));
-  list.add(LineText(linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: 'Invoice 100001',

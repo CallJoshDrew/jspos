@@ -1,47 +1,64 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:jspos/models/paper_size_config.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/print/total_quantity_calculator.dart';
 
-// printer width is 58mm for Kitchen
-List<LineText> getKitchenReceiptLines(SelectedOrder selectedOrder) {
+class KitchenReceiptGenerator with TotalQuantityCalculator {
+    // use enum for fixed value of either 58mm or 80mm
+    PaperSizeConfig getPaperSizeConfig(String paperWidth) {
+    switch (paperWidth) {
+      case '58 mm':
+        return PaperSizeConfig.mm58;
+      case '80 mm':
+        return PaperSizeConfig.mm80;
+      default:
+        throw Exception('Unsupported paper width: $paperWidth');
+    }
+  }
+
+List<LineText> getKitchenReceiptLines(SelectedOrder selectedOrder, String paperWidth, String category) {
   List<LineText> list = [];
+  
+  // Use the helper function to get the configuration based on paperWidth
+  PaperSizeConfig paperSizeConfig = getPaperSizeConfig(paperWidth);
+
+  // Access the configuration values from the enum
+  int orderTypeWidth = paperSizeConfig.orderTypeWidth;
+  int orderTimeWidth = paperSizeConfig.orderTimeWidth;
+  int qtyWidth = paperSizeConfig.qtyWidth;
+  String dottedLineWidth = paperSizeConfig.dottedLineWidth;
+  int itemQtyWidth = paperSizeConfig.itemQtyWidth;
+  int totalWidth = paperSizeConfig.totalWidth;
+  int totalDottedLineWidth = paperSizeConfig.totalDottedLineWidth;
+  int totalQtyWidth = paperSizeConfig.totalQtyWidth;
+  String lastDottedLineWidth = paperSizeConfig.lastDottedLineWidth; 
+
+   // Calculate the total quantity of drinks
+  int totalQuantityByCategory = calculateTotalQuantityByCategory(selectedOrder, category);
 
   list.add(LineText(
-      type: LineText.TYPE_TEXT, 
-      content: 'Restaurant Sing Ming Hing', 
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.orderNumber,
+      x: 0,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content:selectedOrder.orderType,
+      relativeX: orderTypeWidth,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Lot 16, Block B, Utara Place 1, Jalan Utara, IJM Batu 6,',
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
+      content: selectedOrder.orderDate,
+      x: 0,
+      linefeed: 0));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: selectedOrder.orderTime,
+      relativeX: orderTimeWidth,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Sandakan, Malaysia',
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
-      linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Invoice ${selectedOrder.orderNumber}', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Date: ${selectedOrder.orderDate} ${selectedOrder.orderTime}', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Order Type: ${selectedOrder.orderType}', // Dynamic invoice number
-      align: LineText.ALIGN_LEFT,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
+      content: dottedLineWidth,
       weight: 1,
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
@@ -49,135 +66,88 @@ List<LineText> getKitchenReceiptLines(SelectedOrder selectedOrder) {
   list.add(LineText(
     type: LineText.TYPE_TEXT,
     content: "Item",
-    align: LineText.ALIGN_LEFT,
     x: 0,
-    relativeX: 0,
     linefeed: 0));
   list.add(LineText(
     type: LineText.TYPE_TEXT,
     content: 'Qyt',
-    align: LineText.ALIGN_LEFT,
-    x: 240, 
-    relativeX: 0,
-    linefeed: 0));
-
-  list.add(LineText(
-    type: LineText.TYPE_TEXT,
-    content: 'Amt(RM)',
-    align: LineText.ALIGN_LEFT,
-    x: 300,
-    relativeX: 0,
+    relativeX: qtyWidth,
     linefeed: 1));
   list.add(LineText(
     type: LineText.TYPE_TEXT,
-    content: '--------------------------------',
+    content: dottedLineWidth,
     weight: 1,
     align: LineText.ALIGN_CENTER,
     linefeed: 1));
 
   // Loop through selectedOrder items to print each item
   for (var item in selectedOrder.items) {
+    // Only print the item if its category is "Drinks"
+    if (item.category == category) {
+      list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: item.name,
+          x: 0,
+          linefeed: 0));
+
+      // Adjust X position based on the paper width
+    int quantityXPosition = itemQtyWidth + 40; // Default
+
+    // Further adjustments based on quantity length
+    if (item.quantity.toString().length == 1) {
+      quantityXPosition = itemQtyWidth + 50;  // Adjust for 1 digit
+    } else if (item.quantity.toString().length == 3) {
+      quantityXPosition = itemQtyWidth + 30;  // Adjust for 3 digits
+    }
+
+    // Add the quantity line
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: item.name,  // Dynamic item name
-        align: LineText.ALIGN_LEFT,
-        x: 0,
-        relativeX: 0,
-        linefeed: 0));  // Adds a linefeed after the item name to move to next line
-    
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: '${item.quantity}',  // Dynamic quantity
-        align: LineText.ALIGN_LEFT,
-        x: 250,  // Adjust x based on your printer width for quantity
-        relativeX: 0,
-        linefeed: 0));  // No linefeed needed here yet
-    
-    list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: item.price.toStringAsFixed(2),  // Dynamic price
-        align: LineText.ALIGN_LEFT,
-        x: 310,  // Adjust x based on your printer width for price
-        relativeX: 0,
-        linefeed: 1));  // Add linefeed after price to move to the next row
+        content: '${item.quantity}',
+        x: quantityXPosition,
+        linefeed: 1));
+        }
   }
 
 
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
+      content: dottedLineWidth,
       weight: 1,
       align: LineText.ALIGN_CENTER,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Subtotal',
-      x: 180,
+      content: 'Total:',
+      x: totalWidth,
       relativeX: 0,
       linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.subTotal.toStringAsFixed(2),
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Total',
-      // fontZoom: 2,
-      weight: 1,
-      x: 216,
-      relativeX: 0,
-      linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.totalPrice.toStringAsFixed(2),
-      // fontZoom: 2,
-      weight: 1,
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: '--------------------------------',
-      weight: 1,
-      align: LineText.ALIGN_CENTER,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Amount Received (${selectedOrder.paymentMethod})',
-      align: LineText.ALIGN_LEFT,
-      linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.amountReceived.toStringAsFixed(2),
-      align: LineText.ALIGN_LEFT,
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: 'Amount Change',
-      align: LineText.ALIGN_LEFT,
-      linefeed: 0));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: selectedOrder.amountChanged.toStringAsFixed(2),
-      align: LineText.ALIGN_LEFT,
-      x: 310,
-      relativeX: 0,
-      linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(
-      type: LineText.TYPE_TEXT,
-      content: '*********** Thank You **********',
-      align: LineText.ALIGN_CENTER,
-      linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  list.add(LineText(linefeed: 1));
-  return list;
-}
+  // Determine the relativeX position based on the totalQuantity's number of digits
+  int totalQuantityXPosition = totalQtyWidth+40;  // Default for 2 digits
+  if (selectedOrder.totalQuantity.toString().length == 1) {
+    totalQuantityXPosition = totalQtyWidth+50;  // Adjust for 1 digit
+  } else if (selectedOrder.totalQuantity.toString().length == 3) {
+    totalQuantityXPosition = totalQtyWidth+30;  // Adjust for 3 digits
+  }
 
-	// linefeed: 1: Moves the print head down by one line after printing the current line. This will result in the standard spacing between lines.
-	// linefeed: 0: No line feed; the print head stays on the same line after printing the current content. This is useful if you want to print multiple items on the same line without moving to the next line.
-	// linefeed: 2 or more: Moves the print head down by two or more lines. This increases the space between the current line and the next line, creating more vertical separation.
+  list.add(LineText(
+    type: LineText.TYPE_TEXT,
+    content: totalQuantityByCategory.toString(),
+    x: totalQuantityXPosition,  // Use the calculated relativeX value
+    linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: lastDottedLineWidth,
+      weight: 1,
+      align: LineText.ALIGN_CENTER,
+      x: totalDottedLineWidth,
+      linefeed: 1));
+  list.add(LineText(linefeed: 1));
+  list.add(LineText(linefeed: 1));
+  if (paperWidth == '80 mm') {
+    list.add(LineText(linefeed: 1));
+    list.add(LineText(linefeed: 1));
+  }
+
+  return list;
+}}
