@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:jspos/models/paper_size_config.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/sample_receipt.dart';
@@ -63,12 +64,13 @@ Future<void> handleAllPrintingJobs(BuildContext context, WidgetRef ref, Selected
 
               // Define the receipt content based on the area
               List<LineText> receiptContent;
+              BeverageReceiptGenerator beverageReceiptGenerator = BeverageReceiptGenerator();
               switch (area) {
                 case 'Kitchen':
                   receiptContent = getKitchenReceiptLines(selectedOrder);
                   break;
                 case 'Beverage':
-                  receiptContent = getBeverageReceiptLines(selectedOrder, printer.paperWidth);
+                  receiptContent = beverageReceiptGenerator.getBeverageReceiptLines(selectedOrder, printer.paperWidth);
                   break;
                 case 'Cashier':
                 default:
@@ -179,7 +181,7 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
 
             // Define the receipt content based on the area
             List<LineText>? receiptContent;
-
+            BeverageReceiptGenerator beverageReceiptGenerator = BeverageReceiptGenerator();
             switch (area) {
 
               case 'Kitchen':
@@ -195,7 +197,7 @@ Future<void> handlePrintingJobForArea(BuildContext context, WidgetRef ref, Strin
               case 'Beverage':
                 // Ensure there are "Drinks" items before printing for the Beverage area
                 if (hasDrinksItems(selectedOrder)) {
-                  receiptContent = getBeverageReceiptLines(selectedOrder, printer.paperWidth);
+                  receiptContent = beverageReceiptGenerator.getBeverageReceiptLines(selectedOrder, printer.paperWidth);
                 } else {
                   log('No "Drinks" items in the order for the Beverage area.');
                   await bluetoothInstance.disconnect();

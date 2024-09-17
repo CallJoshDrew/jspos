@@ -1,60 +1,42 @@
 import 'dart:developer';
 
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:jspos/models/paper_size_config.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/print/total_quantity_calculator.dart';
 
-// printer width is 58mm for Beverage
+class BeverageReceiptGenerator with TotalQuantityCalculator {
+    // use enum for fixed value of either 58mm or 80mm
+    PaperSizeConfig getPaperSizeConfig(String paperWidth) {
+    switch (paperWidth) {
+      case '58 mm':
+        return PaperSizeConfig.mm58;
+      case '80 mm':
+        return PaperSizeConfig.mm80;
+      default:
+        throw Exception('Unsupported paper width: $paperWidth');
+    }
+  }
+
 List<LineText> getBeverageReceiptLines(SelectedOrder selectedOrder, String paperWidth) {
   List<LineText> list = [];
+  
+  // Use the helper function to get the configuration based on paperWidth
+  PaperSizeConfig paperSizeConfig = getPaperSizeConfig(paperWidth);
 
-  int orderTypeWidth = 300;
-  int orderTimeWidth = 300;
-  int qtyWidth = 330;
-  String dottedLineWidth = '--------------------------------';
-  int itemQtyWidth = 300;
-  int totalWidth = 300;
-  int totalDottedLineWidth = 220;
-  int totalQtyWidth = 300;
-
-  String lastDottedLineWidth = '-------------';
-  log('Paper Width is: ${paperWidth.toString()}');
-  if (paperWidth == '58 mm') {
-    orderTypeWidth = 280;
-    orderTimeWidth = 280;
-    qtyWidth = 330;
-    dottedLineWidth = '--------------------------------';
-    itemQtyWidth = 300;
-    totalWidth = 240;
-    totalDottedLineWidth = 220;
-    totalQtyWidth = 300;
-    lastDottedLineWidth = '-------------';
-  } else if (paperWidth == '80 mm') {
-    orderTypeWidth = 320;
-    orderTimeWidth = 260;
-    qtyWidth = 450;
-    dottedLineWidth = '------------------------------------------------';
-    itemQtyWidth = 470;
-    totalWidth = 400;
-    totalDottedLineWidth = 390;
-    totalQtyWidth = 470;
-    lastDottedLineWidth = '---------------';
-  }
-
-  int calculateTotalDrinksQuantity(SelectedOrder selectedOrder) {
-    int totalDrinksQuantity = 0;
-
-    // Loop through selectedOrder items and sum quantities for "Drinks"
-    for (var item in selectedOrder.items) {
-      if (item.category == "Drinks") {
-        totalDrinksQuantity += item.quantity;
-      }
-    }
-
-    return totalDrinksQuantity;
-  }
+  // Access the configuration values from the enum
+  int orderTypeWidth = paperSizeConfig.orderTypeWidth;
+  int orderTimeWidth = paperSizeConfig.orderTimeWidth;
+  int qtyWidth = paperSizeConfig.qtyWidth;
+  String dottedLineWidth = paperSizeConfig.dottedLineWidth;
+  int itemQtyWidth = paperSizeConfig.itemQtyWidth;
+  int totalWidth = paperSizeConfig.totalWidth;
+  int totalDottedLineWidth = paperSizeConfig.totalDottedLineWidth;
+  int totalQtyWidth = paperSizeConfig.totalQtyWidth;
+  String lastDottedLineWidth = paperSizeConfig.lastDottedLineWidth; 
 
    // Calculate the total quantity of drinks
-  int totalDrinksQuantity = calculateTotalDrinksQuantity(selectedOrder);
+  int totalDrinksQuantity = calculateTotalQuantityByCategory(selectedOrder, "Drinks");
 
   list.add(LineText(
       type: LineText.TYPE_TEXT,
@@ -170,4 +152,4 @@ List<LineText> getBeverageReceiptLines(SelectedOrder selectedOrder, String paper
   }
 
   return list;
-}
+}}
