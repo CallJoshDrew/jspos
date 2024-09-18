@@ -1,4 +1,6 @@
 import 'dart:developer'; // for log function
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/models/item.dart';
@@ -16,6 +18,7 @@ class HistoryOrderPage extends ConsumerStatefulWidget {
 
 class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
   String selectedPaymentMethod = "Cash";
+  bool isPrinting = false;
 
   late double originalBill; // Declare originalBill
   late double adjustedBill;
@@ -603,10 +606,44 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                     ),
-                                    onPressed: () {
-                                      handlePrintingJobs(context, ref, widget.historyOrder);
-                                      Navigator.pop(context);
-                                    },
+                                    onPressed: isPrinting
+                                        ? null
+                                        : () async {
+                                            // Set isPrinting to true when printing starts
+                                            setState(() {
+                                              isPrinting = true;
+                                            });
+
+                                            CherryToast(
+                                              icon: Icons.info,
+                                              iconColor: Colors.green,
+                                              themeColor: Colors.green,
+                                              backgroundColor: Colors.white,
+                                              title: const Text(
+                                                'Please wait while printing is in process, do not move away from this page.',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              toastPosition: Position.top,
+                                              toastDuration: const Duration(milliseconds: 3000),
+                                              animationType: AnimationType.fromTop,
+                                              animationDuration: const Duration(milliseconds: 1000),
+                                              autoDismiss: true,
+                                              displayCloseButton: false,
+                                            ).show(context);
+                                            // Perform printing process
+                                            await handlePrintingJobs(context, ref, selectedOrder: widget.historyOrder, specificArea: 'Cashier');
+
+                                            if (!context.mounted) return;
+                                            // Set isPrinting back to false when done
+                                            setState(() {
+                                              isPrinting = false;
+                                            });
+                                            Navigator.pop(context); // Close the screen when done
+                                          },
                                     child: const Text('Print'),
                                   ),
                                   ElevatedButton(
@@ -617,9 +654,12 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                     ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
+                                    // Disable "Close" button if printing is in progress
+                                    onPressed: isPrinting
+                                        ? null
+                                        : () {
+                                            Navigator.pop(context);
+                                          },
                                     child: const Text('Close'),
                                   ),
                                 ],

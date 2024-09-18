@@ -107,7 +107,7 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                       // const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () {
-                          handleTestPrint(context, ref, printer.assignedArea);
+                          handlePrintingJobs(context, ref, specificArea: printer.assignedArea, testPrint:'Test Print');
                           CherryToast(
                             icon: Icons.print,
                             iconColor: Colors.green,

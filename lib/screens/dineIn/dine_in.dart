@@ -628,24 +628,53 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   ),
                 ),
                 onPressed: () async {
+                  
+                  // Show CherryToast before any navigation or other tasks
+                  CherryToast(
+                    icon: Icons.info,
+                    iconColor: Colors.green,
+                    themeColor: Colors.green,
+                    backgroundColor: Colors.white,
+                    title: Text(
+                      'Printing ${selectedOrder.orderNumber} is in the process',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    toastPosition: Position.top,
+                    toastDuration: const Duration(milliseconds: 3000),
+                    animationType: AnimationType.fromTop,
+                    animationDuration: const Duration(milliseconds: 1000),
+                    autoDismiss: true,
+                    displayCloseButton: false,
+                  ).show(context);
                   Navigator.of(context).pop();
                   try {
+                    // Place order and update UI state
                     setState(() {
                       selectedOrder.placeOrder();
                       tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
                       // Add a new SelectedOrder object to the orders list
                       widget.orders.addOrder(selectedOrder.copyWith(categories));
                     });
+
                     // Save the updated orders object to Hive
                     if (Hive.isBoxOpen('orders')) {
                       var ordersBox = Hive.box('orders');
                       ordersBox.put('orders', widget.orders);
                     }
+
+                    // Update order status and other logic
                     updateOrderStatus();
                     handlefreezeMenu();
+
                     // Call the printReceipt function
-                    // Call the print receipt function (pass context and ref properly)
-                    await handlePrintingJobs(context, ref, selectedOrder); // Ensure ref is available in the widget context
+                    await handlePrintingJobs(context, ref, selectedOrder: selectedOrder);
+
+                    // Ensure the toast has enough time to show before popping the dialog
+                    await Future.delayed(const Duration(seconds: 10));
                   } catch (e) {
                     log('An error occurred in onPressed place order & print: $e');
                   }
@@ -737,7 +766,27 @@ class DineInPageState extends ConsumerState<DineInPage> {
         ),
       ),
       onPressed: () {
-        handlePrintingJobs(context, ref, selectedOrder, specificArea: area);
+        handlePrintingJobs(context, ref, selectedOrder: selectedOrder, specificArea: area);
+        CherryToast(
+          icon: Icons.info,
+          iconColor: Colors.green,
+          themeColor: Colors.green,
+          backgroundColor: Colors.white,
+          title: Text(
+            'Printing ${selectedOrder.orderNumber} is in the process',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          toastPosition: Position.top,
+          toastDuration: const Duration(milliseconds: 3000),
+          animationType: AnimationType.fromTop,
+          animationDuration: const Duration(milliseconds: 1000),
+          autoDismiss: true,
+          displayCloseButton: false,
+        ).show(context);
         Navigator.of(context).pop();
       },
     );
