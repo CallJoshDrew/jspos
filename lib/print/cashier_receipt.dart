@@ -93,9 +93,25 @@ class CashierReceiptGenerator {
 
     // Loop through selectedOrder items to print each item
     for (var item in selectedOrder.items) {
+        // Determine the item name based on your condition
+      String itemName;
+      if (item.selection && item.selectedChoice != null) {
+        // Check if originalName matches selectedChoice['name']
+        itemName = item.originalName == item.selectedChoice!['name']
+            ? item.originalName
+            : '${item.originalName} ${item.selectedChoice!['name']}';
+      } else if (item.selectedDrink != null && item.selectedTemp != null) {
+        // Check for selectedDrink and selectedTemp and display them
+        itemName = item.originalName == item.selectedDrink!['name']
+            ? item.originalName
+            : '${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?['name']}';
+      } else {
+        // Default case: only display item name
+        itemName = item.name;
+      }
       list.add(LineText(
           type: LineText.TYPE_TEXT,
-          content: item.name,  // Dynamic item name
+          content: itemName,  // Dynamic item name
           align: LineText.ALIGN_LEFT,
           x: 0,
           relativeX: 0,

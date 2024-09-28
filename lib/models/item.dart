@@ -28,7 +28,7 @@ class Item with ChangeNotifier {
   @HiveField(10)
   List<Map<String, dynamic>> choices;
   @HiveField(11)
-  List<Map<String, dynamic>> types;
+  List<Map<String, dynamic>> noodlesTypes;
   @HiveField(12)
   List<Map<String, dynamic>> meatPortion;
   @HiveField(13)
@@ -44,7 +44,7 @@ class Item with ChangeNotifier {
   @HiveField(18)
   Map<String, dynamic>? _selectedChoice;
   @HiveField(19)
-  Map<String, dynamic>? selectedType;
+  Map<String, dynamic>? selectedNoodlesType;
   @HiveField(20)
   Map<String, dynamic>? selectedMeatPortion;
   @HiveField(21)
@@ -64,7 +64,7 @@ class Item with ChangeNotifier {
     this.selection = false,
     required this.drinks,
     required this.choices,
-    required this.types,
+    required this.noodlesTypes,
     required this.meatPortion,
     required this.meePortion,
     required this.addOn,
@@ -72,7 +72,7 @@ class Item with ChangeNotifier {
     required this.temp,
     this.selectedTemp,
     Map<String, dynamic>? selectedChoice,
-    this.selectedType,
+    this.selectedNoodlesType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
     this.selectedAddOn,
@@ -97,7 +97,7 @@ class Item with ChangeNotifier {
         '\tselection: $selection, \n'
         '\tdrinks: ${drinks.toString()},\n'
         '\tchoices: ${choices.toString()},\n'
-        '\ttypes: ${types.toString()},\n'
+        '\ttypes: ${noodlesTypes.toString()},\n'
         '\tmeatPortion: ${meatPortion.toString()},\n'
         '\tmeePortion: ${meePortion.toString()},\n'
         '\taddOn: ${addOn.toString()},\n'
@@ -105,7 +105,7 @@ class Item with ChangeNotifier {
         '\ttemp: $temp, \n'
         '\tselectedTemp: $selectedTemp, \n'
         '\tselectedChoice: $selectedChoice, \n'
-        '\tselectedType: $selectedType, \n'
+        '\tselectedType: $selectedNoodlesType, \n'
         '\tselectedMeatPortion: $selectedMeatPortion, \n'
         '\tselectedMeePortion: $selectedMeePortion,\n'
         '\tselectedAddOn: ${selectedAddOn?.map((addOn) => addOn.toString()).join(', ')},\n'
@@ -143,7 +143,7 @@ class Item with ChangeNotifier {
       selection: selection,
       drinks: drinks,
       choices: choices,
-      types: types,
+      noodlesTypes: noodlesTypes,
       meatPortion: meatPortion,
       meePortion: meePortion,
       addOn: addOn,
@@ -151,7 +151,7 @@ class Item with ChangeNotifier {
       temp: temp,
       selectedTemp: selectedTemp,
       selectedChoice: selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
-      selectedType: selectedType != null ? Map<String, dynamic>.from(selectedType!) : null,
+      selectedNoodlesType: selectedNoodlesType != null ? Map<String, dynamic>.from(selectedNoodlesType!) : null,
       selectedMeatPortion: selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
       selectedMeePortion: selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
       selectedAddOn: selectedAddOn != null ? Set<Map<String, dynamic>>.from(selectedAddOn!) : null,

@@ -122,7 +122,7 @@ class _MenuPageState extends State<MenuPage> {
                     drinks: item['drinks'] ?? [],
                     temp: item['temp'] ?? [],
                     choices: item['choices'] ?? [],
-                    types: item['types'] ?? [],
+                    noodlesTypes: item['noodlesTypes'] ?? [],
                     meatPortion: item['meat portion'] ?? [],
                     meePortion: item['mee portion'] ?? [],
                     addOn: item['add on'] ?? [],

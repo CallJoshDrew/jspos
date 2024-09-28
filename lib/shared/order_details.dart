@@ -471,7 +471,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           log('selected Drink is :$selectedDrink');
           log('selected temp is :${item.selectedTemp}');
           Map<String, dynamic>? selectedChoice = item.selectedChoice;
-          Map<String, dynamic>? selectedType = item.selectedType;
+          Map<String, dynamic>? selectedNoodlesType = item.selectedNoodlesType;
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
           Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
           Set<Map<String, dynamic>> selectedAddOn = Set<Map<String, dynamic>>.from(item.selectedAddOn ?? {});
@@ -488,7 +488,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
           // these are ui display only, not yet saved into item.price
           double choicePrice = item.selectedChoice?['price'] ?? 0;
-          double typePrice = item.selectedType?['price'] ?? 0;
+          double noodlesTypePrice = item.selectedNoodlesType?['price'] ?? 0;
           double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
           // double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
@@ -503,11 +503,11 @@ class _OrderDetailsState extends State<OrderDetails> {
             return addOnPrice;
           }
 
-          double subTotalPrice = drinkPrice() + choicePrice + typePrice + meatPrice + meePrice + calculateAddOnPrice();
+          double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + calculateAddOnPrice();
 
-          void calculateTotalPrice(double drinkPrice, double choicePrice, double typePrice, double meatPrice, double meePrice, double addOnPrice) {
+          void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double addOnPrice) {
             setState(() {
-              subTotalPrice = drinkPrice + choicePrice + typePrice + meatPrice + meePrice + addOnPrice;
+              subTotalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + addOnPrice;
               item.price = subTotalPrice;
             });
           }
@@ -723,15 +723,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  item.selection && selectedType != null
+                                                  item.selection && selectedNoodlesType != null
                                                       ? Row(
                                                           children: [
                                                             Text(
-                                                              "${selectedType!['name']} ",
+                                                              "${selectedNoodlesType!['name']} ",
                                                               style: const TextStyle(fontSize: 14, color: Colors.white),
                                                             ),
                                                             Text(
-                                                              "( + ${selectedType!['price'].toStringAsFixed(2)} )",
+                                                              "( + ${selectedNoodlesType!['price'].toStringAsFixed(2)} )",
                                                               style: const TextStyle(
                                                                 fontSize: 14,
                                                                 color: Color.fromARGB(255, 114, 226, 118),
@@ -861,7 +861,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 setState(() {
                                                                   selectedDrink = drink;
                                                                   calculateTotalPrice(
-                                                                      drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                                 });
                                                               },
                                                               style: ButtonStyle(
@@ -926,7 +926,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 setState(() {
                                                                   selectedTemp = item;
                                                                   calculateTotalPrice(
-                                                                      drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                                 });
                                                               },
                                                               style: ButtonStyle(
@@ -991,7 +991,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                   selectedChoice = choice;
                                                                   choicePrice = choice['price'];
                                                                   calculateTotalPrice(
-                                                                      drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                                 });
                                                               },
                                                               style: ButtonStyle(
@@ -1025,9 +1025,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 ),
                                               )
                                             : const SizedBox.shrink(),
-                                        if (item.types.isNotEmpty) const SizedBox(width: 10),
-                                        // selectedType
-                                        if (item.types.isNotEmpty) ...[
+                                        if (item.noodlesTypes.isNotEmpty) const SizedBox(width: 10),
+                                        // selectedNoodlesType
+                                        if (item.noodlesTypes.isNotEmpty) ...[
                                           Expanded(
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
@@ -1048,19 +1048,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   Wrap(
                                                     spacing: 6, // space between buttons horizontally
                                                     runSpacing: 0, // space between buttons vertically
-                                                    children: item.types.map((type) {
+                                                    children: item.noodlesTypes.map((type) {
                                                       return ElevatedButton(
                                                         onPressed: () {
                                                           setState(() {
-                                                            selectedType = type;
-                                                             typePrice = type['price'];
+                                                            selectedNoodlesType = type;
+                                                             noodlesTypePrice = type['price'];
                                                             calculateTotalPrice(
-                                                                drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedType?['name'] == type['name'] ? Colors.orange : Colors.white,
+                                                            selectedNoodlesType?['name'] == type['name'] ? Colors.orange : Colors.white,
                                                           ),
                                                           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -1072,7 +1072,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         child: Text(
                                                           '${type['name']}',
                                                           style: TextStyle(
-                                                            color: selectedType?['name'] == type['name']
+                                                            color: selectedNoodlesType?['name'] == type['name']
                                                                 ? Colors.white
                                                                 : Colors.black, // Change the text color based on the selected button
                                                             fontSize: 12,
@@ -1123,7 +1123,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             selectedMeatPortion = meatPortion;
                                                             meatPrice = meatPortion['price'];
                                                             calculateTotalPrice(
-                                                                drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -1193,7 +1193,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             }
                                                             // print('selectedAddOn after: $selectedAddOn');
                                                             calculateTotalPrice(
-                                                                drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -1262,7 +1262,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 selectedMeePortion = meePortion;
                                                                 meePrice = meePortion['price'];
                                                                 calculateTotalPrice(
-                                                                    drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                    drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -1417,7 +1417,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 //   item.name = selectedChoice!['name'];
                                                 // }
                                                 // log('Ater changes: item name is ${item.name}');
-                                                item.selectedType = selectedType;
+                                                item.selectedNoodlesType = selectedNoodlesType;
                                                 item.selectedMeatPortion = selectedMeatPortion;
                                                 item.selectedMeePortion = selectedMeePortion;
                                                 item.selectedAddOn = selectedAddOn;
@@ -1426,7 +1426,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
                                                 updateItemRemarks();
 
-                                                calculateTotalPrice(drinkPrice(), choicePrice, typePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                 item.price = subTotalPrice;
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.selectedOrder.updateItem(item);
@@ -1541,11 +1541,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                               ),
                         Wrap(
                           children: [
-                            item.selection == true && item.selectedType != null
+                            item.selection == true && item.selectedNoodlesType != null
                                 ? Padding(
                                     padding: const EdgeInsets.only(right: 5.0),
                                     child: Text(
-                                      "( ${item.selectedType!['name']} )",
+                                      "( ${item.selectedNoodlesType!['name']} )",
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.yellow,

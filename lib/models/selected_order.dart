@@ -164,7 +164,7 @@ class SelectedOrder with ChangeNotifier {
             i.selectedDrink?['name'] == item.selectedDrink?['name'] &&
             i.selectedTemp?['name'] == item.selectedTemp?['name'] &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
-            i.selectedType?['name'] == item.selectedType?['name'] &&
+            i.selectedNoodlesType?['name'] == item.selectedNoodlesType?['name'] &&
             i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
             i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
             areRemarksEqual && // Use the result of the deep equality check
@@ -205,7 +205,7 @@ class SelectedOrder with ChangeNotifier {
       return i.id == item.id &&
           i.name == item.name &&
           i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
-          i.selectedType?['name'] == item.selectedType?['name'] &&
+          i.selectedNoodlesType?['name'] == item.selectedNoodlesType?['name'] &&
           i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
           i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
           areRemarksEqual && // Use the result of the deep equality check

@@ -253,9 +253,9 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                       ],
                                                                     )
                                                                   : Text(
-                                                                      item.selectedTemp != null
-                                                                          ? '${index + 1}. ${item.name} - ${item.selectedTemp?['name']} ( ${item.price.toStringAsFixed(2)} )'
-                                                                          : '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
+                                                                       item.selectedDrink != null
+                                                                          ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
+                                                                          : '${index + 1}.${item.originalName}',
                                                                       style: const TextStyle(
                                                                         fontSize: 14,
                                                                         fontWeight: FontWeight.bold,
@@ -269,15 +269,15 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                             child: Column(
                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                item.selection && item.selectedType != null
+                                                                item.selection && item.selectedNoodlesType != null
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
-                                                                            "${item.selectedType!['name']} ",
+                                                                            "${item.selectedNoodlesType!['name']} ",
                                                                             style: const TextStyle(fontSize: 14, color: Colors.white),
                                                                           ),
                                                                           Text(
-                                                                            "( + ${item.selectedType!['price'].toStringAsFixed(2)} )",
+                                                                            "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
                                                                               fontSize: 14,
                                                                               color: Color.fromARGB(255, 114, 226, 118),

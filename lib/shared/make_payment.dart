@@ -122,6 +122,17 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     return filteredRemarks.values.join(', ');
   }
 
+  // String getItemNameWithLog(int index, dynamic item) {
+  //   // Log the item name using developer.log
+  //   log('Item Original Name: ${item.originalName}');
+  //   log('Item selectedDrink Name: ${item.selectedDrink?['name']}');
+
+  //   // Return the formatted string based on the conditions
+  //   return item.selectedDrink !=null
+  //       ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
+  //       : '${index + 1}.${item.originalName}';
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -259,7 +270,9 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                   ? Row(
                                                                       children: [
                                                                         Text(
-                                                                          "${index + 1}.${item.originalName} ${item.selectedChoice!['name']} ",
+                                                                          item.originalName == item.selectedChoice!['name']
+                                                                              ? '${index + 1}.${item.originalName}'
+                                                                              : '${index + 1}.${item.originalName} ${item.selectedChoice!['name']}',
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
                                                                             fontWeight: FontWeight.bold,
@@ -277,9 +290,10 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                       ],
                                                                     )
                                                                   : Text(
-                                                                      item.selectedTemp != null
-                                                                          ? '${index + 1}. ${item.name} - ${item.selectedTemp?['name']} ( ${item.price.toStringAsFixed(2)} )'
-                                                                          : '${index + 1}. ${item.name} ( ${item.price.toStringAsFixed(2)} )',
+                                                                      // getItemNameWithLog(index, item),
+                                                                      item.selectedDrink != null
+                                                                          ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
+                                                                          : '${index + 1}.${item.originalName}',
                                                                       style: const TextStyle(
                                                                         fontSize: 14,
                                                                         fontWeight: FontWeight.bold,
@@ -293,15 +307,15 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                             child: Column(
                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                item.selection && item.selectedType != null
+                                                                item.selection && item.selectedNoodlesType != null
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
-                                                                            "${item.selectedType!['name']} ",
+                                                                            "${item.selectedNoodlesType!['name']} ",
                                                                             style: const TextStyle(fontSize: 14, color: Colors.white),
                                                                           ),
                                                                           Text(
-                                                                            "( + ${item.selectedType!['price'].toStringAsFixed(2)} )",
+                                                                            "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
                                                                               fontSize: 14,
                                                                               color: Color.fromARGB(255, 114, 226, 118),

@@ -340,7 +340,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           !const MapEquality().equals(sortedList1[i].itemRemarks, sortedList2[i].itemRemarks) ||
           !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
           !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||
-          !const MapEquality().equals(sortedList1[i].selectedType, sortedList2[i].selectedType) ||
+          !const MapEquality().equals(sortedList1[i].selectedNoodlesType, sortedList2[i].selectedNoodlesType) ||
           !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
           !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
           !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
