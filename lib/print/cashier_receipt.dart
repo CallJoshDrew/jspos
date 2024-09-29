@@ -3,6 +3,24 @@ import 'package:jspos/models/selected_order.dart';
 
 class CashierReceiptGenerator {
 
+   Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
+    Map<String, dynamic> filteredRemarks = {};
+    if (itemRemarks != null) {
+      itemRemarks.forEach((key, value) {
+        // Add your conditions here
+        if (key != '98' && key != '99') {
+          filteredRemarks[key] = value;
+        }
+      });
+    }
+    return filteredRemarks;
+  }
+
+  String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
+    final filteredRemarks = filterRemarks(itemRemarks);
+    return filteredRemarks.values.join(', ');
+  }
+
   // printer width is 72mm for Cashier
   List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
     List<LineText> list = [];
@@ -64,7 +82,7 @@ class CashierReceiptGenerator {
 
     list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: "Item",
+      content: "No.Item",
       align: LineText.ALIGN_LEFT,
       x: 0,
       relativeX: 0,
@@ -92,47 +110,99 @@ class CashierReceiptGenerator {
       linefeed: 1));
 
     // Loop through selectedOrder items to print each item
-    for (var item in selectedOrder.items) {
-        // Determine the item name based on your condition
-      String itemName;
-      if (item.selection && item.selectedChoice != null) {
-        // Check if originalName matches selectedChoice['name']
-        itemName = item.originalName == item.selectedChoice!['name']
-            ? item.originalName
-            : '${item.originalName} ${item.selectedChoice!['name']}';
-      } else if (item.selectedDrink != null && item.selectedTemp != null) {
-        // Check for selectedDrink and selectedTemp and display them
-        itemName = item.originalName == item.selectedDrink!['name']
-            ? item.originalName
-            : '${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?['name']}';
-      } else {
-        // Default case: only display item name
-        itemName = item.name;
+    int itemIndex = 1; // Initialize the index outside of the category loop for continuous increment
+
+    for (var category in ['Cakes', 'Dishes', 'Drinks', 'Add On']) {
+      // Get items for the current category
+      var categoryItems = selectedOrder.items.where((item) => item.category == category).toList();
+      
+      // If there are items in this category, print the category header
+      if (categoryItems.isNotEmpty) {
+        list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: category,  // Category header
+          align: LineText.ALIGN_LEFT,
+          linefeed: 1
+        ));
+
+        for (var item in categoryItems) {
+          // Determine the item name based on your condition
+          String itemName;
+          if (item.selection && item.selectedChoice != null) {
+            itemName = item.originalName == item.selectedChoice!['name']
+                ? item.originalName
+                : '${item.originalName} ${item.selectedChoice!['name']}';
+          } else if (item.selectedDrink != null && item.selectedTemp != null) {
+            itemName = item.originalName == item.selectedDrink!['name']
+                ? item.originalName
+                : '${item.originalName} ${item.selectedDrink?['name']} (${item.selectedTemp?['name']})';
+          } else {
+            itemName = item.name;
+          }
+
+          // Add the item with the index number
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: '$itemIndex.$itemName',  // Add the item index before the item name
+            align: LineText.ALIGN_LEFT,
+            x: 0,
+            relativeX: 0,
+            linefeed: 0));
+
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: '${item.quantity}',  // Dynamic quantity
+            align: LineText.ALIGN_LEFT,
+            x: 400,  // Adjust x based on your printer width for quantity
+            relativeX: 0,
+            linefeed: 0));
+
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: item.price.toStringAsFixed(2),  // Dynamic price
+            align: LineText.ALIGN_LEFT,
+            x: 480,  // Adjust x based on your printer width for price
+            relativeX: 0,
+            linefeed: 1));
+
+          // Check and add remarks to the receipt
+          if (item.selection && filterRemarks(item.itemRemarks).isNotEmpty) {
+            String remarks = getFilteredRemarks(item.itemRemarks);
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: '- $remarks',  // Dynamic remarks with 'Remarks:' prefix
+              align: LineText.ALIGN_LEFT,
+              x: 0,
+              relativeX: 0,
+              linefeed: 1));
+          }
+           // Check and add selected add-ons to the receipt
+        if (item.selection && item.selectedAddOn != null && item.selectedAddOn!.isNotEmpty) {
+          for (var addOn in item.selectedAddOn!) {
+            // Print each add-on with its name and optional price
+            String addOnText = addOn['price'] != null
+                ? '${addOn['name']} (+${addOn['price'].toStringAsFixed(2)})'
+                : addOn['name'];
+
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: '- $addOnText',  // Add-on details
+              align: LineText.ALIGN_LEFT,
+              x: 0,
+              relativeX: 0,
+              linefeed: 1));
+          }
+        }
+
+          // Increment the index for the next item across all categories
+          itemIndex++;
+        }
       }
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: itemName,  // Dynamic item name
-          align: LineText.ALIGN_LEFT,
-          x: 0,
-          relativeX: 0,
-          linefeed: 0));  // Adds a linefeed after the item name to move to next line
-      
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '${item.quantity}',  // Dynamic quantity
-          align: LineText.ALIGN_LEFT,
-          x: 400,  // Adjust x based on your printer width for quantity
-          relativeX: 0,
-          linefeed: 0));  // No linefeed needed here yet
-      
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: item.price.toStringAsFixed(2),  // Dynamic price
-          align: LineText.ALIGN_LEFT,
-          x: 480,  // Adjust x based on your printer width for price
-          relativeX: 0,
-          linefeed: 1));  // Add linefeed after price to move to the next row
     }
+
+
+
+
 
 
     list.add(LineText(
