@@ -263,12 +263,13 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -302,12 +303,13 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -341,12 +343,13 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -380,12 +383,13 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -421,7 +425,8 @@ final List<Map<String, dynamic>> menu = [
   //   ],
   //   "meat portion": [
   //     {"name": "Normal Meat", "price": 0.00},
-  //     {"name": "Extra Meat", "price": 2.00}
+  //     {"name": "Extra Meat", "price": 2.00},
+      // {"name": "Less Meat", "price": 0.00}
   //   ],
   //   "mee portion": [
   //     {"name": "Normal", "price": 0.00},
@@ -461,12 +466,13 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -500,12 +506,13 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -539,12 +546,13 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "mee portion": [
       {"name": "Normal Mee", "price": 0.00},
+      {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 2.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},
@@ -624,7 +632,8 @@ final List<Map<String, dynamic>> menu = [
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00}
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
     ],
     "add on": [
       {"name": "Yu Fu", "price": 0.00},

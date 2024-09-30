@@ -314,17 +314,21 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                             "${item.selectedNoodlesType!['name']} ",
                                                                             style: const TextStyle(fontSize: 14, color: Colors.white),
                                                                           ),
-                                                                          Text(
-                                                                            "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
-                                                                            ),
-                                                                          )
+                                                                          // Display price only if it is greater than 0.00
+                                                                          if (item.selectedNoodlesType!['price'] != 0.00)
+                                                                            Text(
+                                                                              "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
+                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedMeePortion != null
+                                                                item.selection &&
+                                                                        item.selectedMeePortion != null &&
+                                                                        item.selectedMeePortion!['name'] != "Normal Mee"
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
@@ -334,17 +338,21 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
-                                                                          Text(
-                                                                            "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
-                                                                            ),
-                                                                          )
+                                                                          // Display price only if it is greater than 0.00
+                                                                          if (item.selectedMeePortion!['price'] != 0.00)
+                                                                            Text(
+                                                                              "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
+                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedMeatPortion != null
+                                                                item.selection &&
+                                                                        item.selectedMeatPortion != null &&
+                                                                        item.selectedMeatPortion!['name'] != "Normal Meat"
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
@@ -354,13 +362,14 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
-                                                                          Text(
-                                                                            "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
-                                                                            ),
-                                                                          )
+                                                                          if (item.selectedMeatPortion!['price'] != 0.00)
+                                                                            Text(
+                                                                              "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
+                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),

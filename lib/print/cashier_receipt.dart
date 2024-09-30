@@ -44,6 +44,12 @@ class CashierReceiptGenerator {
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: 'Contact: +6016 822 6188',
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1));
     list.add(LineText(linefeed: 1));
 
     list.add(LineText(
@@ -141,11 +147,15 @@ class CashierReceiptGenerator {
             itemName = item.name;
           }
 
+         
           String itemText = '$itemIndex.$itemName';
           String quantityText = item.quantity.toString();
-          String priceText = item.price.toStringAsFixed(2);
 
-          // Use the new function to print item text, quantity, and price
+          // Calculate total price (unit price * quantity)
+          double totalPrice = item.price * item.quantity;
+          String priceText = totalPrice.toStringAsFixed(2);  // Format the total price to 2 decimal places
+
+          // Use the new function to print item text, quantity, and total price
           printItemWithQuantityAndPrice(
             itemText: itemText,
             quantity: quantityText,
@@ -164,28 +174,43 @@ class CashierReceiptGenerator {
 
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: item.price.toStringAsFixed(2),  // Dynamic price
+            content: priceText,  // Dynamic price * quantity
             align: LineText.ALIGN_LEFT,
             x: 480,  // Adjust x based on your printer width for price
             relativeX: 0,
             linefeed: 1));
 
             // Check and add selectedNoodlesType to the receipt
-          if (item.selection && item.selectedNoodlesType != null) {
+          if (item.selection && item.selectedNoodlesType != null && item.selectedMeePortion != null) {
+            if (item.selectedMeePortion!["name"] != "Normal Mee") {
               list.add(LineText(
                 type: LineText.TYPE_TEXT,
-                content: '- ${item.selectedNoodlesType!["name"]}',  // Directly reference addOn['name']
+                content: '  - ${item.selectedNoodlesType!["name"]} (${item.selectedMeePortion!['name']})',  // Directly reference addOn['name']
                 align: LineText.ALIGN_LEFT,
                 x: 0,
                 relativeX: 0,
                 linefeed: 1));
+            }
+          }
+          // Check and add selectedMeatPortion to the receipt
+          if (item.selection && item.selectedMeatPortion != null) {
+            // Check if the selected meat portion is not "Normal"
+            if (item.selectedMeatPortion!["name"] != "Normal Meat") {
+              list.add(LineText(
+                type: LineText.TYPE_TEXT,
+                content: '  - ${item.selectedMeatPortion!["name"]}',  // Print meat portion if not "Normal"
+                align: LineText.ALIGN_LEFT,
+                x: 0,
+                relativeX: 0,
+                linefeed: 1));
+            }
           }
           // Check and add remarks to the receipt
           if (item.selection && filterRemarks(item.itemRemarks).isNotEmpty) {
             String remarks = getFilteredRemarks(item.itemRemarks);
             list.add(LineText(
               type: LineText.TYPE_TEXT,
-              content: '- $remarks',  // Dynamic remarks with 'Remarks:' prefix
+              content: '  - $remarks',  // Dynamic remarks with 'Remarks:' prefix
               align: LineText.ALIGN_LEFT,
               x: 0,
               relativeX: 0,
@@ -210,9 +235,9 @@ class CashierReceiptGenerator {
             addFormattedLines(
               text: addOnText,
               list: list,
-              maxLength: 30,
-              firstLinePrefix: '- ',  // Start the first line with "- "
-              subsequentLinePrefix: '  '  // Start subsequent lines with two spaces
+              maxLength: 26,
+              firstLinePrefix: '  - ',  // Start the first line with "- "
+              subsequentLinePrefix: '    '  // Start subsequent lines with two spaces
             );
           }
           // Increment the index for the next item across all categories

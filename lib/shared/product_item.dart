@@ -706,7 +706,7 @@ class ProductItemState extends State<ProductItem> {
                                   children: [
                                     if (widget.meatPortion.isNotEmpty) ...[
                                       Expanded(
-                                        flex: 3,
+                                        flex: 4,
                                         child: Container(
                                           padding: const EdgeInsets.all(10),
                                           margin: const EdgeInsets.only(top: 10),
@@ -769,7 +769,7 @@ class ProductItemState extends State<ProductItem> {
                                     if (widget.meatPortion.isNotEmpty) const SizedBox(width: 10),
                                     if (widget.addOn.isNotEmpty) ...[
                                       Expanded(
-                                        flex: 9,
+                                        flex: 8,
                                         child: Container(
                                           padding: const EdgeInsets.all(10),
                                           margin: const EdgeInsets.only(top: 10),

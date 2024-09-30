@@ -1095,7 +1095,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       children: [
                                         if (item.meatPortion.isNotEmpty) ...[
                                           Expanded(
-                                            flex: 3,
+                                            flex: 4,
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
                                               margin: const EdgeInsets.only(top: 10),
@@ -1159,7 +1159,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         if (item.addOn.isNotEmpty) const SizedBox(width: 10),
                                         if (item.addOn.isNotEmpty) ...[
                                           Expanded(
-                                            flex: 9,
+                                            flex: 8,
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
                                               margin: const EdgeInsets.only(top: 10),
