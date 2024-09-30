@@ -39,7 +39,6 @@ void addFormattedLines({
       content: (i == 0 ? firstLinePrefix : subsequentLinePrefix) + lines[i],  // Add prefix based on line position
       align: LineText.ALIGN_LEFT,
       x: 0,
-      relativeX: 0,
       linefeed: 1
     ));
   }
@@ -65,7 +64,6 @@ void printItemWithQuantityAndPrice({
       content: firstLine,
       align: LineText.ALIGN_LEFT,
       x: 0,
-      relativeX: 0,
       linefeed: 0,
     ));
   }
@@ -77,7 +75,6 @@ void printItemWithQuantityAndPrice({
       content: '  ${lines[i]}',  // Add spaces for indentation
       align: LineText.ALIGN_LEFT,
       x: 0,
-      relativeX: 0,
       linefeed: 0,
     ));
   }

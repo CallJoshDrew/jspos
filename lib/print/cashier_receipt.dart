@@ -22,6 +22,29 @@ class CashierReceiptGenerator {
     return filteredRemarks.values.join(', ');
   }
 
+  int calculatePriceXPosition(dynamic value, int baseXPosition) {
+    int valueLength = value.toString().length;
+    if (valueLength == 1) {
+      return baseXPosition + 60;  // Adjust for 1 digits
+    } else if (valueLength == 2) {
+      return baseXPosition + 40;  // Adjust for 2 digits
+    } else if (valueLength == 3) {
+      return baseXPosition + 30;  // Adjust for 3 digits
+    } else if (valueLength == 4) {
+      return baseXPosition + 20;  // Adjust for 4 digits
+    } else if (valueLength == 5) {
+      return baseXPosition + 10;  // Adjust for 5 digits
+    } else if (valueLength == 6) {
+      return baseXPosition - 10;  // Adjust for 6 digits
+    } else if (valueLength == 7) {
+      return baseXPosition - 20;  // Adjust for 7 digits
+    } else if (valueLength == 8) {
+      return baseXPosition - 30;  // Adjust for 7 digits
+    } else {
+      return baseXPosition + 50;  // Default adjustment
+    }
+  }
+  
   // printer width is 72mm for Cashier
   List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
     List<LineText> list = [];
@@ -57,28 +80,24 @@ class CashierReceiptGenerator {
       content: 'Date: ${selectedOrder.orderDate}',
       align: LineText.ALIGN_LEFT,
       x: 0,
-      relativeX: 0,
       linefeed: 0));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: 'Time: ${selectedOrder.orderTime}',
       align: LineText.ALIGN_LEFT,
       x: 380,
-      relativeX: 0,
       linefeed: 1));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: 'Invoice: ${selectedOrder.orderNumber}',
       align: LineText.ALIGN_LEFT,
       x: 0,
-      relativeX: 0,
       linefeed: 0));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: 'Type: ${selectedOrder.orderType}',
       align: LineText.ALIGN_LEFT,
       x: 380,
-      relativeX: 0,
       linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
@@ -92,14 +111,12 @@ class CashierReceiptGenerator {
       content: "No.Item",
       align: LineText.ALIGN_LEFT,
       x: 0,
-      relativeX: 0,
       linefeed: 0));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: 'Qyt',
       align: LineText.ALIGN_LEFT,
-      x: 390, 
-      relativeX: 0,
+      x: 380, 
       linefeed: 0));
 
     list.add(LineText(
@@ -107,7 +124,6 @@ class CashierReceiptGenerator {
       content: 'Amt(RM)',
       align: LineText.ALIGN_LEFT,
       x: 470,
-      relativeX: 0,
       linefeed: 1));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
@@ -163,24 +179,29 @@ class CashierReceiptGenerator {
             list: list,
             maxLength: 30  // Set your character limit here
           );
-
+          // // Determine the relativeX position based on the totalQuantity's number of digits
+          // int quantityXPosition = 340+40;  // Default for 2 digits
+          // if (item.quantity.toString().length == 1) {
+          //   quantityXPosition = 340+60;  // Adjust for 1 digit
+          // } else if (item.quantity.toString().length == 3) {
+          //   quantityXPosition = 340+30;  // Adjust for 3 digits
+          // }
+          
+          // Add the quantity line
           list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: '${item.quantity}',  // Dynamic quantity
-            align: LineText.ALIGN_LEFT,
-            x: 400,  // Adjust x based on your printer width for quantity
-            relativeX: 0,
-            linefeed: 0));
-
+              type: LineText.TYPE_TEXT,
+              content: '${item.quantity}', // Dynamic quantity
+              x: calculatePriceXPosition(item.quantity, 340), // Adjust x based on your printer width for quantity
+              linefeed: 0));
+          
           list.add(LineText(
             type: LineText.TYPE_TEXT,
             content: priceText,  // Dynamic price * quantity
             align: LineText.ALIGN_LEFT,
-            x: 480,  // Adjust x based on your printer width for price
-            relativeX: 0,
+            x: calculatePriceXPosition(totalPrice, 460),
             linefeed: 1));
 
-            // Check and add selectedNoodlesType to the receipt
+          // Check and add selectedNoodlesType to the receipt
           if (item.selection && item.selectedNoodlesType != null && item.selectedMeePortion != null) {
             if (item.selectedMeePortion!["name"] != "Normal Mee") {
               list.add(LineText(
@@ -188,7 +209,6 @@ class CashierReceiptGenerator {
                 content: '  - ${item.selectedNoodlesType!["name"]} (${item.selectedMeePortion!['name']})',  // Directly reference addOn['name']
                 align: LineText.ALIGN_LEFT,
                 x: 0,
-                relativeX: 0,
                 linefeed: 1));
             }
           }
@@ -201,7 +221,6 @@ class CashierReceiptGenerator {
                 content: '  - ${item.selectedMeatPortion!["name"]}',  // Print meat portion if not "Normal"
                 align: LineText.ALIGN_LEFT,
                 x: 0,
-                relativeX: 0,
                 linefeed: 1));
             }
           }
@@ -213,7 +232,6 @@ class CashierReceiptGenerator {
               content: '  - $remarks',  // Dynamic remarks with 'Remarks:' prefix
               align: LineText.ALIGN_LEFT,
               x: 0,
-              relativeX: 0,
               linefeed: 1));
           }
           // Check and add selected add-ons to the receipt
@@ -246,11 +264,6 @@ class CashierReceiptGenerator {
       }
     }
 
-
-
-
-
-
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: '-----------------------------------------------',
@@ -260,30 +273,26 @@ class CashierReceiptGenerator {
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: 'Subtotal',
-        x: 350,
-        relativeX: 0,
+        x: 340,
         linefeed: 0));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: selectedOrder.subTotal.toStringAsFixed(2),
-        x: 480,
-        relativeX: 0,
+        x: calculatePriceXPosition(selectedOrder.subTotal, 460),
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: 'Total',
         // fontZoom: 2,
         weight: 1,
-        x: 386,
-        relativeX: 0,
+        x: 376,
         linefeed: 0));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: selectedOrder.totalPrice.toStringAsFixed(2),
         // fontZoom: 2,
         weight: 1,
-        x: 480,
-        relativeX: 0,
+        x: calculatePriceXPosition(selectedOrder.totalPrice, 460),
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
@@ -295,25 +304,25 @@ class CashierReceiptGenerator {
         type: LineText.TYPE_TEXT,
         content: 'Amount Received (${selectedOrder.paymentMethod})',
         align: LineText.ALIGN_LEFT,
+        x:0,
         linefeed: 0));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: selectedOrder.amountReceived.toStringAsFixed(2),
         align: LineText.ALIGN_LEFT,
-        x: 480,
-        relativeX: 0,
+        x: calculatePriceXPosition(selectedOrder.amountReceived, 460),
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: 'Amount Change',
         align: LineText.ALIGN_LEFT,
+        x:0,
         linefeed: 0));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: selectedOrder.amountChanged.toStringAsFixed(2),
         align: LineText.ALIGN_LEFT,
-        x: 480,
-        relativeX: 0,
+        x: calculatePriceXPosition(selectedOrder.amountChanged, 460),
         linefeed: 1));
     list.add(LineText(linefeed: 1));
     list.add(LineText(
