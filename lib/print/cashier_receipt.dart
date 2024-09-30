@@ -1,5 +1,6 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/print/split_text_into_lines.dart';
 
 class CashierReceiptGenerator {
 
@@ -140,14 +141,18 @@ class CashierReceiptGenerator {
             itemName = item.name;
           }
 
-          // Add the item with the index number
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: '$itemIndex.$itemName',  // Add the item index before the item name
-            align: LineText.ALIGN_LEFT,
-            x: 0,
-            relativeX: 0,
-            linefeed: 0));
+          String itemText = '$itemIndex.$itemName';
+          String quantityText = item.quantity.toString();
+          String priceText = item.price.toStringAsFixed(2);
+
+          // Use the new function to print item text, quantity, and price
+          printItemWithQuantityAndPrice(
+            itemText: itemText,
+            quantity: quantityText,
+            price: priceText,
+            list: list,
+            maxLength: 30  // Set your character limit here
+          );
 
           list.add(LineText(
             type: LineText.TYPE_TEXT,
@@ -165,6 +170,16 @@ class CashierReceiptGenerator {
             relativeX: 0,
             linefeed: 1));
 
+            // Check and add selectedNoodlesType to the receipt
+          if (item.selection && item.selectedNoodlesType != null) {
+              list.add(LineText(
+                type: LineText.TYPE_TEXT,
+                content: '- ${item.selectedNoodlesType!["name"]}',  // Directly reference addOn['name']
+                align: LineText.ALIGN_LEFT,
+                x: 0,
+                relativeX: 0,
+                linefeed: 1));
+          }
           // Check and add remarks to the receipt
           if (item.selection && filterRemarks(item.itemRemarks).isNotEmpty) {
             String remarks = getFilteredRemarks(item.itemRemarks);
@@ -176,24 +191,30 @@ class CashierReceiptGenerator {
               relativeX: 0,
               linefeed: 1));
           }
-           // Check and add selected add-ons to the receipt
-        if (item.selection && item.selectedAddOn != null && item.selectedAddOn!.isNotEmpty) {
-          for (var addOn in item.selectedAddOn!) {
-            // Print each add-on with its name and optional price
-            String addOnText = addOn['price'] != null
-                ? '${addOn['name']} (+${addOn['price'].toStringAsFixed(2)})'
-                : addOn['name'];
+          // Check and add selected add-ons to the receipt
+          String addOnText = '';
 
-            list.add(LineText(
-              type: LineText.TYPE_TEXT,
-              content: '- $addOnText',  // Add-on details
-              align: LineText.ALIGN_LEFT,
-              x: 0,
-              relativeX: 0,
-              linefeed: 1));
+          if (item.selection && item.selectedAddOn != null && item.selectedAddOn!.isNotEmpty) {
+            // Build the add-on names string with commas between them
+            for (int i = 0; i < item.selectedAddOn!.length; i++) {
+              var addOn = item.selectedAddOn!.elementAt(i);
+              addOnText += addOn['name'];
+
+              // Add a comma and space except for the last add-on
+              if (i != item.selectedAddOn!.length - 1) {
+                addOnText += ', ';
+              }
+            }
+
+            // Use the addFormattedLines function for add-ons
+            addFormattedLines(
+              text: addOnText,
+              list: list,
+              maxLength: 30,
+              firstLinePrefix: '- ',  // Start the first line with "- "
+              subsequentLinePrefix: '  '  // Start subsequent lines with two spaces
+            );
           }
-        }
-
           // Increment the index for the next item across all categories
           itemIndex++;
         }
