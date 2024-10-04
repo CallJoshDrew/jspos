@@ -158,6 +158,34 @@ class Item with ChangeNotifier {
       itemRemarks: itemRemarks,
     );
   }
+
+  Map<String, dynamic> toJson() {
+  return {
+    'id': id,
+    'name': name,
+    'originalName': originalName,
+    'category': category,
+    'quantity': quantity,
+    'price': price,
+    'originalPrice': originalPrice,
+    'image': image,
+    'selection': selection,
+    'drinks': drinks.map((drink) => Map<String, dynamic>.from(drink)).toList(),
+    'choices': choices.map((choice) => Map<String, dynamic>.from(choice)).toList(),
+    'noodlesTypes': noodlesTypes.map((type) => Map<String, dynamic>.from(type)).toList(),
+    'meatPortion': meatPortion.map((portion) => Map<String, dynamic>.from(portion)).toList(),
+    'meePortion': meePortion.map((portion) => Map<String, dynamic>.from(portion)).toList(),
+    'addOn': addOn.map((addon) => Map<String, dynamic>.from(addon)).toList(),
+    'selectedDrink': selectedDrink != null ? Map<String, dynamic>.from(selectedDrink!) : null,
+    'selectedChoice': selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
+    'selectedNoodlesType': selectedNoodlesType != null ? Map<String, dynamic>.from(selectedNoodlesType!) : null,
+    'selectedMeatPortion': selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
+    'selectedMeePortion': selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
+    'selectedAddOn': selectedAddOn?.map((addon) => Map<String, dynamic>.from(addon)).toList(),
+    'itemRemarks': itemRemarks,
+  };
+}
+
 }
 
 

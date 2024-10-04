@@ -148,6 +148,28 @@ class SelectedOrder with ChangeNotifier {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'orderNumber': orderNumber,
+      'tableName': tableName,
+      'orderType': orderType,
+      'orderDate': orderDate,
+      'orderTime': orderTime,
+      'status': status,
+      'items': items.map((item) => item.toJson()).toList(), // Convert each item to JSON
+      'subTotal': subTotal,
+      'serviceCharge': serviceCharge,
+      'totalPrice': totalPrice,
+      'paymentMethod': paymentMethod,
+      'amountReceived': amountReceived,
+      'amountChanged': amountChanged,
+      'roundingAdjustment': roundingAdjustment,
+      'totalQuantity': totalQuantity,
+      'paymentTime': paymentTime,
+      'cancelledTime': cancelledTime,
+    };
+  }
+
   void addItem(Item item) {
     // If the item.selection is true, change the name and price of the item
     if (item.selection) {
