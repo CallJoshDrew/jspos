@@ -82,7 +82,7 @@ class SelectedOrder with ChangeNotifier {
         '\torderTime: $orderTime,\n'
         '\tstatus: $status,\n'
         // temporary disable the items because it is too long in the log
-        // '\titems: [\n\t\t${items.join(',\n\t\t')}\n\t],\n'
+        '\titems: [\n\t\t${items.join(',\n\t\t')}\n\t],\n'
         //In this code, you're using the .join(',\n\t\t') method directly on the items list.
         // Issue: The .join() method works on a list of strings. However, items is a list of Item objects, not strings. Without a toString() method on the Item class, this won't work as expected. You would get a runtime error if the Item class doesn’t already have a proper toString() method defined.Our class item does have a proper toString. Just for info  and explaination.
         '\tsubTotal: $subTotal,\n'

@@ -463,6 +463,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handlePaymentBtn() {
+    log('The Selected Order Details in Payment Page is:$selectedOrder');
     Navigator.push(
       context,
       MaterialPageRoute(
