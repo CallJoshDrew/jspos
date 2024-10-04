@@ -17,16 +17,7 @@ class HistoryOrderPage extends ConsumerStatefulWidget {
 }
 
 class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
-  String selectedPaymentMethod = "Cash";
   bool isPrinting = false;
-
-  late double originalBill; // Declare originalBill
-  late double adjustedBill;
-  bool isRoundingApplied = false;
-  List<bool> isSelected = [false, true];
-  double amountReceived = 0.0;
-  double amountChanged = 0.0;
-  double roundingAdjustment = 0.0;
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
@@ -61,14 +52,6 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
     return totalPrices;
   }
 
-  double roundBill(double bill) {
-    double fractionalPart = bill - bill.floor();
-    if (fractionalPart <= 0.50) {
-      return bill.floorToDouble();
-    } else {
-      return bill;
-    }
-  }
 
   Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
     Map<String, dynamic> filteredRemarks = {};
@@ -86,14 +69,6 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
   String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
     final filteredRemarks = filterRemarks(itemRemarks);
     return filteredRemarks.values.join(', ');
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    originalBill = widget.historyOrder.totalPrice; // Initialize originalBill here
-    adjustedBill = originalBill; // Initialize adjustedBill here
-    // log('initState called, adjustedBill is now $adjustedBill');
   }
 
   @override
@@ -276,6 +251,8 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                             "${item.selectedNoodlesType!['name']} ",
                                                                             style: const TextStyle(fontSize: 14, color: Colors.white),
                                                                           ),
+                                                                          // Display price only if it is greater than 0.00
+                                                                          if (item.selectedNoodlesType!['price'] != 0.00)
                                                                           Text(
                                                                             "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
@@ -296,6 +273,8 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
+                                                                          // Display price only if it is greater than 0.00
+                                                                          if (item.selectedMeePortion!['price'] != 0.00)
                                                                           Text(
                                                                             "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
@@ -316,6 +295,7 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
+                                                                          if (item.selectedMeatPortion!['price'] != 0.00)
                                                                           Text(
                                                                             "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
                                                                             style: const TextStyle(
@@ -348,7 +328,7 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                                     color: Colors.white,
                                                                                   ),
                                                                                 ),
-                                                                                if (addOn['price'] != null)
+                                                                                if (addOn['price'] != null && addOn['price'] != 0.00)
                                                                                   Text(
                                                                                     "( + ${addOn['price'].toStringAsFixed(2)} )",
                                                                                     style: const TextStyle(
@@ -504,7 +484,7 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          '- ${(roundingAdjustment).toStringAsFixed(2)}',
+                                          '- ${(widget.historyOrder.roundingAdjustment).toStringAsFixed(2)}',
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],

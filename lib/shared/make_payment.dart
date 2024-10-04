@@ -395,7 +395,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                                     color: Colors.white,
                                                                                   ),
                                                                                 ),
-                                                                                if (addOn['price'] != null)
+                                                                                if (addOn['price'] != null && addOn['price'] != 0.00)
                                                                                   Text(
                                                                                     "( + ${addOn['price'].toStringAsFixed(2)} )",
                                                                                     style: const TextStyle(
@@ -897,6 +897,12 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                     for (var order in latestOrders.data) {
                                                                       log('Order Number from Payments: ${order.orderNumber}, Status: ${order.status}');
                                                                     }
+                                                                  }
+                                                                  // Debug to check and log the orders stored in Hive
+                                                                  if (Hive.isBoxOpen('orders')) {
+                                                                    var ordersBox = Hive.box('orders');
+                                                                    var storedOrders = ordersBox.get('orders');
+                                                                    log('Stored orders from Hive: $storedOrders');
                                                                   }
                                                                 } catch (e) {
                                                                   log('An error occurred at MakePaymentPage: $e');

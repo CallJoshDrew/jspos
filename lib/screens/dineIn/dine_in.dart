@@ -628,7 +628,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   ),
                 ),
                 onPressed: () async {
-                  
                   // Show CherryToast before any navigation or other tasks
                   CherryToast(
                     icon: Icons.info,
@@ -665,6 +664,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       var ordersBox = Hive.box('orders');
                       ordersBox.put('orders', widget.orders);
                     }
+
+                    // Debug to check and log the orders stored in Hive
+                    // if (Hive.isBoxOpen('orders')) {
+                    //   var ordersBox = Hive.box('orders');
+                    //   var storedOrders = ordersBox.get('orders');
+                    //   log('Stored orders from Hive: $storedOrders');
+                    // }
 
                     // Update order status and other logic
                     updateOrderStatus();
