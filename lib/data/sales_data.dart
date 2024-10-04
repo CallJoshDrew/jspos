@@ -127,19 +127,93 @@ Map<String, dynamic> salesData = {
             "status": "Completed",
             "items": [
               {
-                "item": {"id": "3", "name": "Turkey Sandwich", "category": "Dishes", "price": 5.5, "image": "/turkeySandwich.png"},
-                "quantity": 1
+                "Item": {
+                  "id": "303c6ae8-e0fa-421c-a9e8-2d29eba0b5e6",
+                  "name": "Kono Mee",
+                  "originalname": "Kono Mee",
+                  "price": 8.0,
+                  "originalprice": 8.0,
+                  "category": "Dishes",
+                  "quantity": 1,
+                  "image": "assets/dishes/konoMee.png",
+                  "selection": true,
+                  "drinks": [],
+                  "choices": [
+                    {"name": "Campur", "price": 8.0},
+                    {"name": "Ayam Goreng", "price": 8.0},
+                    {"name": "Sui Kau", "price": 9.0},
+                    {"name": "Seafood", "price": 10.0},
+                    {"name": "Udang", "price": 12.0},
+                    {"name": "Ikan", "price": 12.0},
+                    {"name": "Udang & Ikan", "price": 12.0}
+                  ],
+                  "types": [
+                    {"name": "Kuey Teow", "price": 0.0},
+                    {"name": "Mihun Halus", "price": 0.0},
+                    {"name": "Mihun Kasar", "price": 0.0},
+                    {"name": "Mee Kuning", "price": 0.0}
+                  ],
+                  "meatPortion": [
+                    {"name": "Normal Meat", "price": 0.0},
+                    {"name": "Extra Meat", "price": 2.0},
+                    {"name": "Less Meat", "price": 0.0}
+                  ],
+                  "meePortion": [
+                    {"name": "Normal Mee", "price": 0.0},
+                    {"name": "Extra Mee", "price": 2.0},
+                    {"name": "Less Mee", "price": 0.0}
+                  ],
+                  "addOn": [
+                    {"name": "Yu Fu", "price": 0.0},
+                    {"name": "Fish Ball", "price": 0.0},
+                    {"name": "Yu Wat", "price": 0.0},
+                    {"name": "Fish Cake", "price": 0.0}
+                  ],
+                  "selectedDrink": null,
+                  "temp": [],
+                  "selectedTemp": null,
+                  "selectedChoice": {"name": "Campur", "price": 8.0},
+                  "selectedType": {"name": "Kuey Teow", "price": 0.0},
+                  "selectedMeatPortion": {"name": "Normal Meat", "price": 0.0},
+                  "selectedMeePortion": {"name": "Normal Mee", "price": 0.0},
+                  "selectedAddOn": [],
+                  "itemRemarks": {100: "ttttyy"}
+                },
               },
               {
-                "item": {"id": "4", "name": "Cappuccino", "category": "Drinks", "price": 3.0, "image": "/cappuccino.png"},
-                "quantity": 2
-              }
+                "Item": {
+                  "id": 151,
+                  "name": "Ayam Goreng",
+                  "originalname": "Ayam Goreng",
+                  "price": 2.0,
+                  "originalprice": 2.0,
+                  "category": "Add On",
+                  "quantity": 1,
+                  "image": "assets/addOn/ayamGoreng.png",
+                  "selection": false,
+                  "drinks": [],
+                  "choices": [],
+                  "types": [],
+                  "meatPortion": [],
+                  "meePortion": [],
+                  "addOn": [],
+                  "selectedDrink": null,
+                  "temp": [],
+                  "selectedTemp": null,
+                  "selectedChoice": null,
+                  "selectedType": null,
+                  "selectedMeatPortion": null,
+                  "selectedMeePortion": null,
+                  "selectedAddOn": [],
+                  "itemRemarks": null
+                },
+              },
             ],
             "subTotal": 11.5,
             "serviceCharge": 0,
             "totalPrice": 11.5,
             "quantity": 3,
-            "paymentMethod": "Credit Card",
+            "paymentMethod": "DuitNow",
             "amountChange": 0,
             "amountReceived": 11.5,
             "paymentTime": "02:15 PM, Mon, Jan 1, 2024"
@@ -158,13 +232,33 @@ Map<String, dynamic> salesData = {
             "status": "Completed",
             "items": [
               {
-                "item": {"id": "5", "name": "Blueberry Muffin", "category": "Cakes", "price": 2.2, "image": "/blueberryMuffin.png"},
-                "quantity": 3
+                "Item": {
+                  "id": "1",
+                  "name": "Egg Tart",
+                  "originalname": "Egg Tart",
+                  "price": 2.4,
+                  "originalprice": 2.4,
+                  "category": "Cakes",
+                  "quantity": 1,
+                  "image": "assets/cakes/eggTart.png",
+                  "selection": false,
+                  "drinks": [],
+                  "choices": [],
+                  "types": [],
+                  "meatPortion": [],
+                  "meePortion": [],
+                  "addOn": [],
+                  "selectedDrink": null,
+                  "temp": [],
+                  "selectedTemp": null,
+                  "selectedChoice": null,
+                  "selectedType": null,
+                  "selectedMeatPortion": null,
+                  "selectedMeePortion": null,
+                  "selectedAddOn": [],
+                  "itemRemarks": null
+                },
               },
-              {
-                "item": {"id": "6", "name": "Americano", "category": "Drinks", "price": 2.5, "image": "/americano.png"},
-                "quantity": 2
-              }
             ],
             "subTotal": 10.1,
             "serviceCharge": 0.3,
