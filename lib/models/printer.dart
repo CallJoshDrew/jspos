@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 part 'printer.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 4)
 class Printer extends HiveObject {
   @HiveField(0)
   String name;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jspos/models/orders.dart';
 // import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/history/history.dart';
+import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';
 import 'package:jspos/screens/dineIn/dine_in.dart';
@@ -71,8 +72,8 @@ class _MainPageState extends State<MainPage> {
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return HistoryPage(orders: widget.orders);
-      // case 'Reports':
-      //   return const ReportsPage();
+      case 'Reports':
+        return const ReportsPage();
       case 'Settings':
         return SettingsPage(
           categories: widget.categories,
@@ -131,7 +132,7 @@ class _MainPageState extends State<MainPage> {
             _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
-            // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
+            _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
             _itemMenu(menu: 'Settings', icon: Icons.tune),
           ]),
         )

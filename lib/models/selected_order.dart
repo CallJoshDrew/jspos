@@ -8,7 +8,7 @@ import 'package:hive/hive.dart';
 
 part 'selected_order.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 2)
 class SelectedOrder with ChangeNotifier {
   @HiveField(0)
   String orderNumber;
@@ -48,6 +48,8 @@ class SelectedOrder with ChangeNotifier {
   String paymentTime = "Today";
   @HiveField(18)
   String cancelledTime = "Today";
+  @HiveField(19) // Add this
+  List<String> categoryList;
   SelectedOrder({
     required this.orderNumber,
     required this.tableName,
@@ -61,7 +63,7 @@ class SelectedOrder with ChangeNotifier {
     required this.totalPrice,
     this.paymentMethod = "Cash",
     this.showEditBtn = false,
-    required List<String> categoryList,
+    required this.categoryList, // Modify constructor to accept categoryList
     this.amountReceived = 0,
     this.amountChanged = 0,
     this.roundingAdjustment = 0,

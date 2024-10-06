@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -463,7 +465,15 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handlePaymentBtn() {
-    log('The Selected Order Details in Payment Page is:$selectedOrder');
+// Log the selectedOrder with pretty-printed JSON
+    var encoder = const JsonEncoder.withIndent('  '); // 2 spaces for indentation
+    log('The Selected Order Details in Payment Page is:\n${encoder.convert(selectedOrder.toJson())}');
+    // Debug to check and log the orders stored in Hive
+    if (Hive.isBoxOpen('orders')) {
+      var ordersBox = Hive.box('orders');
+      var storedOrders = ordersBox.get('orders');
+      log('Stored orders from Hive: $storedOrders');
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -908,8 +918,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       ),
                       Row(
                         children: [
+                          isTableSelected ?
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
@@ -967,7 +978,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                     Icon(Icons.cancel, size: 20),
                                     SizedBox(width: 10),
                                     Text(
-                                      'Clear Local Storage Data',
+                                      'Clear Local Data',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -978,90 +989,93 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                 ),
                               ),
                             ),
-                          ),
+                          ): const SizedBox(),
                           const SizedBox(width: 10),
                           isTableSelected
-                              ? ElevatedButton(
-                                  onPressed: () {
-                                    showDialog<void>(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          backgroundColor: Colors.grey[900],
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                            side: const BorderSide(color: Colors.green, width: 1),
-                                          ),
-                                          content: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                              maxWidth: 300,
-                                              maxHeight: 70,
+                              ? Expanded(
+                                  flex: 1,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            backgroundColor: Colors.grey[900],
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                              side: const BorderSide(color: Colors.green, width: 1),
                                             ),
-                                            child: const Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Wrap(
-                                                  alignment: WrapAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'To print, please choose',
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.white,
+                                            content: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 300,
+                                                maxHeight: 70,
+                                              ),
+                                              child: const Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Wrap(
+                                                    alignment: WrapAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        'To print, please choose',
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Text(
-                                                      'designated printer of the area',
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.white,
+                                                      Text(
+                                                        'designated printer of the area',
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          actions: <Widget>[
-                                            buildPrintButton('Cashier', 'Cashier', context, ref),
-                                            const SizedBox(width: 2),
-                                            buildPrintButton('Kitchen', 'Kitchen', context, ref),
-                                            const SizedBox(width: 2),
-                                            buildPrintButton('Beverage', 'Beverage', context, ref),
-                                            const SizedBox(width: 2),
-                                            buildCancelButton(context),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: const Color.fromRGBO(46, 125, 50, 1),
-                                    padding: const EdgeInsets.symmetric(vertical: 0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
+                                            actions: <Widget>[
+                                              buildPrintButton('Cashier', 'Cashier', context, ref),
+                                              const SizedBox(width: 2),
+                                              buildPrintButton('Kitchen', 'Kitchen', context, ref),
+                                              const SizedBox(width: 2),
+                                              buildPrintButton('Beverage', 'Beverage', context, ref),
+                                              const SizedBox(width: 2),
+                                              buildCancelButton(context),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: const Color.fromRGBO(46, 125, 50, 1),
+                                      padding: const EdgeInsets.symmetric(vertical: 0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
                                     ),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.print_rounded, size: 20),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          'Print',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.print_rounded, size: 20),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Print',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 )

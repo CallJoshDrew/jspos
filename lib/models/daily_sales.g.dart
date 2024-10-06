@@ -1,32 +1,32 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'orders.dart';
+part of 'daily_sales.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class OrdersAdapter extends TypeAdapter<Orders> {
+class DailySalesAdapter extends TypeAdapter<DailySales> {
   @override
-  final int typeId = 1;
+  final int typeId = 0;
 
   @override
-  Orders read(BinaryReader reader) {
+  DailySales read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Orders(
-      data: (fields[0] as List).cast<SelectedOrder>(),
+    return DailySales(
+      orders: (fields[0] as List).cast<SelectedOrder>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, Orders obj) {
+  void write(BinaryWriter writer, DailySales obj) {
     writer
       ..writeByte(1)
       ..writeByte(0)
-      ..write(obj.data);
+      ..write(obj.orders);
   }
 
   @override
@@ -35,7 +35,7 @@ class OrdersAdapter extends TypeAdapter<Orders> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is OrdersAdapter &&
+      other is DailySalesAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

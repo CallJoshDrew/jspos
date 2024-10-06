@@ -70,7 +70,7 @@ class _HistoryPageState extends State<HistoryPage> {
         color: Colors.black,
       ),
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      margin: const EdgeInsets.only(top: 10),
+      // margin: const EdgeInsets.only(top: 10),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(5),
         child: DataTable2(

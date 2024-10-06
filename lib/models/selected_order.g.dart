@@ -8,7 +8,7 @@ part of 'selected_order.dart';
 
 class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   SelectedOrder read(BinaryReader reader) {
@@ -29,7 +29,7 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
       totalPrice: fields[9] as double,
       paymentMethod: fields[10] as String,
       showEditBtn: fields[11] as bool,
-      categoryList: [],
+      categoryList: (fields[19] as List).cast<String>(),
       amountReceived: fields[13] as double,
       amountChanged: fields[14] as double,
       roundingAdjustment: fields[15] as double,
@@ -43,7 +43,7 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
   @override
   void write(BinaryWriter writer, SelectedOrder obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.orderNumber)
       ..writeByte(1)
@@ -81,7 +81,9 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
       ..writeByte(17)
       ..write(obj.paymentTime)
       ..writeByte(18)
-      ..write(obj.cancelledTime);
+      ..write(obj.cancelledTime)
+      ..writeByte(19)
+      ..write(obj.categoryList);
   }
 
   @override

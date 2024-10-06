@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 part 'item.g.dart'; // Name of the generated TypeAdapter file
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 3)
 class Item with ChangeNotifier {
   @HiveField(0)
   String id;

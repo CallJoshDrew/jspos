@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 
 part 'orders.g.dart'; // Name of the generated TypeAdapter file
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class Orders {
   @HiveField(0)
   final List<SelectedOrder> data;
@@ -12,7 +12,7 @@ class Orders {
   Orders({required this.data});
   @override
   String toString() {
-    return 'Orders: { data: $data }';
+    return 'Orders: { $data }';
   }
 
   void addOrder(SelectedOrder order) {

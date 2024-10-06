@@ -49,6 +49,7 @@ dependencies:
   riverpod: ^2.5.1
   flutter_riverpod: ^2.5.1
   bluetooth_print: ^4.3.0
+  fl_chart: ^0.69.0
 
 dev_dependencies:
   flutter_test:
