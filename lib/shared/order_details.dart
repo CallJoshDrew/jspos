@@ -22,6 +22,7 @@ class OrderDetails extends StatefulWidget {
   final VoidCallback? resetSelectedTable;
   final Function(Item item) onItemAdded;
   final List<Item> tempCartItems;
+  final bool Function(List<Item> list1, List<Item> list2) areItemListsEqual;
 
   const OrderDetails({
     super.key,
@@ -35,6 +36,7 @@ class OrderDetails extends StatefulWidget {
     required this.onItemAdded,
     this.resetSelectedTable,
     required this.tempCartItems,
+    required this.areItemListsEqual,
   });
 
   @override
@@ -45,6 +47,81 @@ class _OrderDetailsState extends State<OrderDetails> {
   bool showEditBtn = false;
   Map<String, dynamic> itemRemarks = {};
   final TextEditingController _controller = TextEditingController();
+  String? comment;
+  void updateItemRemarks({
+    required dynamic selectedMeePortion,
+    required dynamic selectedMeatPortion,
+    required dynamic item,
+  }) {
+    Map<String, dynamic> itemRemarks = Map<String, dynamic>.from(item.itemRemarks ?? {});
+
+    if (selectedMeePortion != null && selectedMeatPortion != null) {
+      Map<String, Map<dynamic, dynamic>> portions = {
+        '98': {'portion': selectedMeePortion, 'normalName': "Normal Mee"},
+        '99': {'portion': selectedMeatPortion, 'normalName': "Normal Meat"}
+      };
+
+      portions.forEach((key, value) {
+        Map<dynamic, dynamic> portion = value['portion'];
+        String normalName = value['normalName'];
+
+        if (itemRemarks.containsKey(key)) {
+          if (portion['name'] != normalName) {
+            itemRemarks[key] = portion['name'];
+          } else {
+            itemRemarks.remove(key);
+          }
+        } else if (portion['name'] != normalName) {
+          itemRemarks[key] = portion['name'];
+        }
+      });
+    }
+
+    // Add or remove "Tapao"
+    if (itemRemarks.containsKey('101')) {
+      itemRemarks.remove('101'); // Remove Tapao
+      log("Removed Tapao from item remarks.");
+    } else {
+      itemRemarks['101'] = 'Tapao'; // Add Tapao
+      log("Added Tapao to item remarks.");
+    }
+
+    // Ensure consistent empty map handling
+    if (itemRemarks.isEmpty) {
+      itemRemarks = {};
+    }
+
+    log("Final item remarks: $itemRemarks");
+
+    // Handle comment updates
+    String? newComment = _controller.text.trim();
+    if (newComment.isNotEmpty) {
+      itemRemarks['100'] = newComment; // Add or update comment
+    }
+
+    // Sort the remarks
+    SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+      (a, b) => int.parse(a).compareTo(int.parse(b)),
+    )..addAll(itemRemarks);
+
+    // Update the item if remarks changed
+    if (item.itemRemarks.toString() != sortedItemRemarks.toString()) {
+      item.itemRemarks = sortedItemRemarks;
+    }
+
+    log("Final sorted item remarks: $sortedItemRemarks");
+
+    // Ensure `updateOrderStatus` is called after updating item remarks
+    widget.updateOrderStatus!(); // Call updateOrderStatus to refresh UI
+
+    // Trigger UI updates
+    bool areItemsEqual = widget.areItemListsEqual(widget.tempCartItems, widget.selectedOrder.items);
+    log("Are item lists equal? $areItemsEqual");
+
+    setState(() {
+      // Call setState to trigger UI update after remarks change
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -493,8 +570,6 @@ class _OrderDetailsState extends State<OrderDetails> {
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
           // double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
 
-          
-       
           double calculateAddOnPrice() {
             double addOnPrice = 0.0;
             for (var addOn in selectedAddOn) {
@@ -511,7 +586,6 @@ class _OrderDetailsState extends State<OrderDetails> {
               item.price = subTotalPrice;
             });
           }
-          
 
           TextSpan generateAddOnTextSpan(Map<String, dynamic> addOn, bool isLast) {
             return TextSpan(
@@ -527,45 +601,8 @@ class _OrderDetailsState extends State<OrderDetails> {
             );
           }
 
-          String? comment = item.itemRemarks != null ? item.itemRemarks!['100'] : null;
+          comment = item.itemRemarks != null ? item.itemRemarks!['100'] : null;
           _controller.text = comment ?? '';
-          void updateItemRemarks() {
-            if (selectedMeePortion != null && selectedMeatPortion != null) {
-              Map<String, Map<dynamic, dynamic>> portions = {
-                '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
-                '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
-              };
-
-              portions.forEach((key, value) {
-                Map<dynamic, dynamic> portion = value['portion'];
-                String normalName = value['normalName'];
-
-                if (itemRemarks.containsKey(key)) {
-                  if (portion['name'] != normalName) {
-                    itemRemarks[key] = portion['name'];
-                  } else {
-                    itemRemarks.remove(key);
-                  }
-                } else if (portion['name'] != normalName) {
-                  itemRemarks[key] = portion['name'];
-                }
-              });
-            }
-
-            String? newComment = _controller.text.trim();
-            if (item.itemRemarks != {} && comment != null && newComment != '') {
-              itemRemarks['100'] = newComment;
-            }
-
-            SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-              (a, b) => int.parse(a).compareTo(int.parse(b)),
-            )..addAll(itemRemarks);
-
-            // Check if itemRemarks has actually changed before updating item.itemRemarks
-            if (item.itemRemarks.toString() != sortedItemRemarks.toString()) {
-              item.itemRemarks = sortedItemRemarks;
-            }
-          }
 
           // remarkButton Widget
           Widget remarkButton(Map<String, dynamic> data) {
@@ -1053,7 +1090,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         onPressed: () {
                                                           setState(() {
                                                             selectedNoodlesType = type;
-                                                             noodlesTypePrice = type['price'];
+                                                            noodlesTypePrice = type['price'];
                                                             calculateTotalPrice(
                                                                 drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                           });
@@ -1424,7 +1461,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 item.selectedDrink = selectedDrink;
                                                 item.selectedTemp = selectedTemp;
 
-                                                updateItemRemarks();
+                                                updateItemRemarks(
+                                                  selectedMeePortion: selectedMeePortion,
+                                                  selectedMeatPortion: selectedMeatPortion,
+                                                  item: item,
+                                                );
 
                                                 calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
                                                 item.price = subTotalPrice;
@@ -1588,7 +1629,31 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10.0),
+                showEditBtn
+                    ? const SizedBox.shrink()
+                    : GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            updateItemRemarks(
+                              selectedMeePortion: item.selectedMeePortion,
+                              selectedMeatPortion: item.selectedMeatPortion,
+                              item: item,
+                            );
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10), // Adjust padding as needed
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey, // Background color
+                            borderRadius: BorderRadius.circular(5), // Border radius
+                          ),
+                          child: const Text(
+                            "Tapao",
+                            style: TextStyle(fontSize: 10, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                const SizedBox(width: 20.0),
                 showEditBtn
                     ? Padding(
                         padding: const EdgeInsets.only(right: 15),

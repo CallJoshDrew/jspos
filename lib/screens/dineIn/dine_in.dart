@@ -337,20 +337,23 @@ class DineInPageState extends ConsumerState<DineInPage> {
     List<Item> sortedList2 = List.from(list2)..sort((a, b) => a.name.compareTo(b.name));
     // Compare the items in the sorted lists
     for (int i = 0; i < sortedList1.length; i++) {
-      if (sortedList1[i].name != sortedList2[i].name ||
-          sortedList1[i].quantity != sortedList2[i].quantity ||
-          !const MapEquality().equals(sortedList1[i].itemRemarks, sortedList2[i].itemRemarks) ||
-          !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
-          !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||
-          !const MapEquality().equals(sortedList1[i].selectedNoodlesType, sortedList2[i].selectedNoodlesType) ||
-          !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
-          !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
-          !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
-          !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedAddOn, sortedList2[i].selectedAddOn)) {
-        log('Lists are not equal: Item difference found');
-        return false;
-      }
+    Map<String, dynamic> remarks1 = sortedList1[i].itemRemarks ?? {};
+    Map<String, dynamic> remarks2 = sortedList2[i].itemRemarks ?? {};
+
+    if (sortedList1[i].name != sortedList2[i].name ||
+        sortedList1[i].quantity != sortedList2[i].quantity ||
+        !const MapEquality().equals(remarks1, remarks2) ||
+        !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
+        !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||
+        !const MapEquality().equals(sortedList1[i].selectedNoodlesType, sortedList2[i].selectedNoodlesType) ||
+        !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
+        !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
+        !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
+        !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedAddOn, sortedList2[i].selectedAddOn)) {
+      log('Lists are not equal: Item difference found');
+      return false;
     }
+  }
     // If no differences were found, the lists are equal
     log('Lists are equal');
     return true;
@@ -1107,6 +1110,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
             onItemAdded: onItemAdded,
             resetSelectedTable: resetSelectedTable,
             tempCartItems: tempCartItems,
+            areItemListsEqual: areItemListsEqual,
           ),
         ),
       ],
