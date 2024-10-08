@@ -110,7 +110,7 @@ class ProductItemState extends State<ProductItem> {
         double noodlesTypePrice = widget.noodlesTypes.isNotEmpty && widget.noodlesTypes[0]['price'] != null ? widget.noodlesTypes[0]['price']! : 0.00;
         double meatPrice = widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null ? widget.meatPortion[0]['price']! : 0.00;
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
-        double addOnPrice = widget.addOn.isNotEmpty && widget.addOn[0]['price'] != null ? widget.addOn[0]['price']! : 0.00;
+        double addOnPrice = 0.00;
         double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + addOnPrice;
 
         double calculateAddOnPrice() {
