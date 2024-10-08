@@ -826,20 +826,93 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                         maxWidth: 600,
                                                         maxHeight: 100,
                                                       ),
-                                                      child: const Column(
+                                                      child: Column(
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
+                                                          const Text(
+                                                            'Are you sure?',
+                                                            textAlign: TextAlign.center,
+                                                            style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
+                                                          ),
                                                           Wrap(
                                                             alignment: WrapAlignment.center,
                                                             children: [
-                                                              Text(
-                                                                'Are you sure?',
+                                                              const Text(
+                                                                'Please confirm you have received ',
                                                                 textAlign: TextAlign.center,
-                                                                style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
+                                                                style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Colors.white,
+                                                                ),
                                                               ),
                                                               Text(
-                                                                'Please confirm you’ve received the payment, either in cash or via a digital transaction like DuitNow, before pressing ‘Confirm’.',
+                                                                '‘RM${_controller.text.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2) : _controller.text}‘ ',
+                                                                textAlign: TextAlign.center,
+                                                                style: const TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Colors.green,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                              const Text(
+                                                                'payment ',
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Colors.white,
+                                                                ),
+                                                              ),
+                                                              (amountChanged > 0)
+                                                                  ? Wrap(
+                                                                      children: [
+                                                                        const Text(
+                                                                          'and provide ',
+                                                                          textAlign: TextAlign.center,
+                                                                          style: TextStyle(
+                                                                            fontSize: 18,
+                                                                            color: Colors.white,
+                                                                          ),
+                                                                        ),
+                                                                        Text(
+                                                                          '‘RM${amountChanged.toStringAsFixed(2)}‘',
+                                                                          textAlign: TextAlign.center,
+                                                                          style: const TextStyle(
+                                                                            fontSize: 18,
+                                                                            color: Colors.red,
+                                                                            fontWeight: FontWeight.bold,
+                                                                          ),
+                                                                        ),
+                                                                        const Text(
+                                                                          '(change) ',
+                                                                          textAlign: TextAlign.center,
+                                                                          style: TextStyle(
+                                                                            fontSize: 18,
+                                                                            color: Colors.white,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  : const SizedBox.shrink(),
+                                                              const Text(
+                                                                'in ',
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Colors.white,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                '‘$selectedPaymentMethod‘,',
+                                                                textAlign: TextAlign.center,
+                                                                style: const TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Colors.green,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                              const Text(
+                                                                ' before pressing confirm.',
                                                                 textAlign: TextAlign.center,
                                                                 style: TextStyle(
                                                                   fontSize: 18,
