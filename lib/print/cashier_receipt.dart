@@ -212,6 +212,28 @@ class CashierReceiptGenerator {
                 linefeed: 1));
             }
           }
+          if (item.selection && item.selectedNoodlesType != null) {
+            // Always print selectedNoodlesType
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: '  - ${item.selectedNoodlesType!["name"]}',  // Print selectedNoodlesType
+              align: LineText.ALIGN_LEFT,
+              x: 0,
+              linefeed: 0,
+            ));
+
+            // Conditionally print selectedMeePortion if it's not equal to "Normal Mee"
+            if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
+                list.add(LineText(
+                  type: LineText.TYPE_TEXT,
+                  content: '  (${item.selectedMeePortion!["name"]})',  // Print selectedMeePortion if it's not "Normal Mee"
+                  align: LineText.ALIGN_LEFT,
+                  x: 0,
+                  linefeed: 1,
+                ));
+              }
+          }
+
           // Check and add selectedMeatPortion to the receipt
           if (item.selection && item.selectedMeatPortion != null) {
             // Check if the selected meat portion is not "Normal"

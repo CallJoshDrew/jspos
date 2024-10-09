@@ -85,8 +85,8 @@ final List<Map<String, dynamic>> menu = [
     "drinks": [
       {"name": "C", "Hot": 2.50, "Cold": 3.50},
       {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
-      {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
-      {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.80, "Cold": 3.80},
+      {"name": "Kahwin", "Hot": 2.80, "Cold": 3.80},
       {"name": "Kosong", "Hot": 2.50, "Cold": 3.50},
     ],
     "temp": [
@@ -120,7 +120,8 @@ final List<Map<String, dynamic>> menu = [
     "selection": true,
     "drinks": [
       {"name": "C", "Hot": 2.50, "Cold": 3.50},
-      {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Nai", "Hot": 2.80, "Cold": 3.80},
+      {"name": "Kahwin", "Hot": 2.80, "Cold": 3.80},
       {"name": "C Kosong", "Hot": 2.50, "Cold": 3.50},
     ],
     "temp": [
@@ -203,7 +204,7 @@ final List<Map<String, dynamic>> menu = [
     "selection": true,
     "drinks": [
       {"name": "Liong Fun", "Hot": 2.50, "Cold": 3.50},
-      {"name": "Nai", "Hot": 2.50, "Cold": 3.50}
+      {"name": "Nai", "Hot": 2.80, "Cold": 3.80}
     ],
     "temp": [
       {"name": "Hot"},
@@ -269,7 +270,7 @@ final List<Map<String, dynamic>> menu = [
     ]
   },
   {"id": "88", "name": "Ubi Manis", "category": "Drinks", "price": 4.00, "image": "assets/drinks/ubiManisTongShui.png"},
-
+  {"id": "89", "name": "Fu Zuk", "category": "Drinks", "price": 4.00, "image": "assets/drinks/fuZuk.png"},
   {
     "id": "121",
     "name": "Soup Mee",
@@ -568,7 +569,7 @@ final List<Map<String, dynamic>> menu = [
   {
     "id": "128",
     "name": "Nasi Ayam",
-    "category": "Dishes",
+    "category": "Add On",
     "price": 7.00,
     "image": "assets/dishes/chickenRice.png",
     "selection": true,
@@ -656,6 +657,6 @@ final List<Map<String, dynamic>> menu = [
   {"id": "178", "name": "Fish Ball", "category": "Add On", "price": 1.50, "image": "assets/addOn/fishBall.png"},
   {"id": "179", "name": "Fish Cake", "category": "Add On", "price": 1.50, "image": "assets/addOn/fishCake.png"},
   {"id": "180", "name": "Beancurd Skin", "category": "Add On", "price": 1.50, "image": "assets/addOn/friedBeancurdSkin1.png"},
-  {"id": "181", "name": "Peria", "category": "Add On", "price": 2.00, "image": "assets/addOn/peria.png"},
+  {"id": "181", "name": "Peria", "category": "Add On", "price": 1.50, "image": "assets/addOn/peria.png"},
   {"id": "182", "name": "Rice", "category": "Add On", "price": 2.00, "image": "assets/addOn/rice.png"},
 ];
