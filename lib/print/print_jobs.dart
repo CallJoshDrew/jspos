@@ -18,7 +18,8 @@ Future<void> handlePrintingJobs(BuildContext context, WidgetRef ref, {SelectedOr
   final List<Printer> printerList = ref.read(printerListProvider);
   log('Printer List: $printerList');
 
-  final List<String> areas = specificArea != null ? [specificArea] : ['Cashier', 'Kitchen', 'Beverage'];
+  final List<String> areas = specificArea != null ? [specificArea] : ['Kitchen', 'Beverage'];
+  // removed cashier from specific
 
   // Scan for available Bluetooth devices first
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
