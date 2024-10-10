@@ -9,7 +9,7 @@ import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
-import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/data/menu1_data.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedOrder selectedOrder;
@@ -551,9 +551,9 @@ class _OrderDetailsState extends State<OrderDetails> {
           Map<String, dynamic>? selectedNoodlesType = item.selectedNoodlesType;
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
           Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
-          Set<Map<String, dynamic>> selectedAddOn = Set<Map<String, dynamic>>.from(item.selectedAddOn ?? {});
-          // The Map elements in selectedAddOn and item.selectedAddOn are the same Map objects.
-          // even though selectedAddOn and item.selectedAddOn are separate Set objects.
+          Set<Map<String, dynamic>> selectedSide = Set<Map<String, dynamic>>.from(item.selectedSide ?? {});
+          // The Map elements in selectedSide and item.selectedSide are the same Map objects.
+          // even though selectedSide and item.selectedSide are separate Set objects.
 
           double drinkPrice() {
             final selectedTempName = selectedTemp?['name'] ?? ''; // Convert to non-nullable String
@@ -568,31 +568,31 @@ class _OrderDetailsState extends State<OrderDetails> {
           double noodlesTypePrice = item.selectedNoodlesType?['price'] ?? 0;
           double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
-          // double addOnPrice = item.addOn.isNotEmpty && item.addOn[0]['price'] != null ? item.addOn[0]['price']! : 0.00;
+          // double sidesPrice = item.sides.isNotEmpty && item.sides[0]['price'] != null ? item.sides[0]['price']! : 0.00;
 
-          double calculateAddOnPrice() {
-            double addOnPrice = 0.0;
-            for (var addOn in selectedAddOn) {
-              addOnPrice += addOn['price'];
+          double calculateSidesPrice() {
+            double sidesPrice = 0.0;
+            for (var side in selectedSide) {
+              sidesPrice += side['price'];
             }
-            return addOnPrice;
+            return sidesPrice;
           }
 
-          double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + calculateAddOnPrice();
+          double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + calculateSidesPrice();
 
-          void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double addOnPrice) {
+          void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice) {
             setState(() {
-              subTotalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + addOnPrice;
+              subTotalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice;
               item.price = subTotalPrice;
             });
           }
-
-          TextSpan generateAddOnTextSpan(Map<String, dynamic> addOn, bool isLast) {
+          // side is singular because it represent single item
+          TextSpan generateSidesTextSpan(Map<String, dynamic> side, bool isLast) {
             return TextSpan(
-              text: "${addOn['name']} ",
+              text: "${side['name']} ",
               children: <TextSpan>[
                 TextSpan(
-                  text: "( + ${addOn['price'].toStringAsFixed(2)} )${isLast ? '' : ' + '}", // No comma if it's the last add-on
+                  text: "( + ${side['price'].toStringAsFixed(2)} )${isLast ? '' : ' + '}", // No comma if it's the last side
                   style: const TextStyle(
                     color: Color.fromARGB(255, 114, 226, 118), // Change this to your desired color
                   ),
@@ -817,11 +817,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
-                                                  item.selection && selectedAddOn.isNotEmpty
+                                                  item.selection && selectedSide.isNotEmpty
                                                       ? Wrap(
                                                           children: [
                                                             const Text(
-                                                              "Add On: ",
+                                                              "Sides: ",
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 color: Colors.white,
@@ -835,11 +835,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                     fontSize: 14,
                                                                     color: Colors.white,
                                                                   ),
-                                                                  children: selectedAddOn.toList().asMap().entries.map((entry) {
+                                                                  children: selectedSide.toList().asMap().entries.map((entry) {
                                                                     int idx = entry.key;
-                                                                    Map<String, dynamic> addOn = entry.value;
-                                                                    bool isLast = idx == selectedAddOn.length - 1;
-                                                                    return generateAddOnTextSpan(addOn, isLast);
+                                                                    Map<String, dynamic> side = entry.value;
+                                                                    // singular because it represent one item.
+                                                                    bool isLast = idx == selectedSide.length - 1;
+                                                                    return generateSidesTextSpan(side, isLast);
                                                                   }).toList(),
                                                                 ),
                                                               ),
@@ -898,7 +899,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 setState(() {
                                                                   selectedDrink = drink;
                                                                   calculateTotalPrice(
-                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                                 });
                                                               },
                                                               style: ButtonStyle(
@@ -963,7 +964,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 setState(() {
                                                                   selectedTemp = item;
                                                                   calculateTotalPrice(
-                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                                 });
                                                               },
                                                               style: ButtonStyle(
@@ -1028,7 +1029,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                   selectedChoice = choice;
                                                                   choicePrice = choice['price'];
                                                                   calculateTotalPrice(
-                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                      drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                                 });
                                                               },
                                                               style: ButtonStyle(
@@ -1092,7 +1093,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             selectedNoodlesType = type;
                                                             noodlesTypePrice = type['price'];
                                                             calculateTotalPrice(
-                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -1160,7 +1161,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             selectedMeatPortion = meatPortion;
                                                             meatPrice = meatPortion['price'];
                                                             calculateTotalPrice(
-                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -1193,8 +1194,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         ] else ...[
                                           const SizedBox.shrink(),
                                         ],
-                                        if (item.addOn.isNotEmpty) const SizedBox(width: 10),
-                                        if (item.addOn.isNotEmpty) ...[
+                                        if (item.sides.isNotEmpty) const SizedBox(width: 10),
+                                        if (item.sides.isNotEmpty) ...[
                                           Expanded(
                                             flex: 8,
                                             child: Container(
@@ -1208,7 +1209,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    'Add-Ons',
+                                                    'Sides',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
@@ -1217,25 +1218,25 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   Wrap(
                                                     spacing: 6,
                                                     runSpacing: 0,
-                                                    children: item.addOn.map((addOn) {
+                                                    children: item.sides.map((side) {
                                                       return ElevatedButton(
                                                         onPressed: () {
-                                                          // print('selectedAddOn before: $selectedAddOn');
-                                                          // print('addOn: $addOn');
+                                                          // print('selectedSide before: $selectedSide');
+                                                          // print('side: $side');
                                                           setState(() {
-                                                            if (selectedAddOn.contains(addOn)) {
-                                                              selectedAddOn.remove(addOn);
+                                                            if (selectedSide.contains(side)) {
+                                                              selectedSide.remove(side);
                                                             } else {
-                                                              selectedAddOn.add(addOn);
+                                                              selectedSide.add(side);
                                                             }
-                                                            // print('selectedAddOn after: $selectedAddOn');
+                                                            // print('selectedSide after: $selectedSide');
                                                             calculateTotalPrice(
-                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                           });
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedAddOn.contains(addOn) ? Colors.orange : Colors.white,
+                                                            selectedSide.contains(side) ? Colors.orange : Colors.white,
                                                           ),
                                                           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -1245,9 +1246,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                         ),
                                                         child: Text(
-                                                          '${addOn['name']}',
+                                                          '${side['name']}',
                                                           style: TextStyle(
-                                                            color: selectedAddOn.contains(addOn) ? Colors.white : Colors.black,
+                                                            color: selectedSide.contains(side) ? Colors.white : Colors.black,
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -1299,7 +1300,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                 selectedMeePortion = meePortion;
                                                                 meePrice = meePortion['price'];
                                                                 calculateTotalPrice(
-                                                                    drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                                    drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -1457,7 +1458,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 item.selectedNoodlesType = selectedNoodlesType;
                                                 item.selectedMeatPortion = selectedMeatPortion;
                                                 item.selectedMeePortion = selectedMeePortion;
-                                                item.selectedAddOn = selectedAddOn;
+                                                item.selectedSide = selectedSide;
                                                 item.selectedDrink = selectedDrink;
                                                 item.selectedTemp = selectedTemp;
 
@@ -1467,7 +1468,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   item: item,
                                                 );
 
-                                                calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateAddOnPrice());
+                                                calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice());
                                                 item.price = subTotalPrice;
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.selectedOrder.updateItem(item);
@@ -1504,7 +1505,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               setState(() {
                                                 itemRemarks = {};
                                                 _controller.text = '';
-                                                selectedAddOn = item.selectedAddOn != null ? Set<Map<String, dynamic>>.from(item.selectedAddOn!) : {};
+                                                selectedSide = item.selectedSide != null ? Set<Map<String, dynamic>>.from(item.selectedSide!) : {};
                                               });
                                               Navigator.of(context).pop();
                                             },
@@ -1606,9 +1607,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 : const SizedBox.shrink(),
                           ],
                         ),
-                        item.selectedAddOn != null && item.selectedAddOn?.isNotEmpty == true
+                        item.selectedSide != null && item.selectedSide?.isNotEmpty == true
                             ? Text(
-                                item.selectedAddOn!.map((addOn) => addOn['name']).join(', '),
+                                item.selectedSide!.map((side) => side['name']).join(', '),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.white,

@@ -6,13 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
-import 'package:jspos/models/printer.dart';
+// import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
-import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/data/menu1_data.dart';
 import 'dart:developer';
 import 'package:jspos/data/tables_data.dart';
 
@@ -349,7 +349,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
         !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
         !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
         !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
-        !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedAddOn, sortedList2[i].selectedAddOn)) {
+        !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedSide, sortedList2[i].selectedSide)) {
       log('Lists are not equal: Item difference found');
       return false;
     }

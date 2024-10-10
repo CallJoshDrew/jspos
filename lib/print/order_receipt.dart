@@ -106,16 +106,27 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         list.add(LineText(type: LineText.TYPE_TEXT, content: '${item.quantity}', x: quantityXPosition, linefeed: 1));
 
         // Check and add selectedNoodlesType to the receipt
-        if (item.selection && item.selectedNoodlesType != null && item.selectedMeePortion != null) {
-          if (item.selectedMeePortion!["name"] != "Normal Mee") {
+        if (item.selection && item.selectedNoodlesType != null) {
+            // Always print selectedNoodlesType
             list.add(LineText(
-                type: LineText.TYPE_TEXT,
-                content: '  - ${item.selectedNoodlesType!["name"]} (${item.selectedMeePortion!['name']})', // Directly reference addOn['name']
-                align: LineText.ALIGN_LEFT,
-                x: 0,
-                linefeed: 1));
+              type: LineText.TYPE_TEXT,
+              content: '  - ${item.selectedNoodlesType!["name"]}',  // Print selectedNoodlesType
+              align: LineText.ALIGN_LEFT,
+              x: 0,
+              linefeed: 0,
+            ));
+
+            // Conditionally print selectedMeePortion if it's not equal to "Normal Mee"
+            if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
+                list.add(LineText(
+                  type: LineText.TYPE_TEXT,
+                  content: '  (${item.selectedMeePortion!["name"]})',  // Print selectedMeePortion if it's not "Normal Mee"
+                  align: LineText.ALIGN_LEFT,
+                  x: 0,
+                  linefeed: 1,
+                ));
+              }
           }
-        }
         // Check and add selectedMeatPortion to the receipt
         if (item.selection && item.selectedMeatPortion != null) {
           // Check if the selected meat portion is not "Normal"
@@ -139,23 +150,23 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
               linefeed: 1));
         }
         // Check and add selected add-ons to the receipt
-        String addOnText = '';
+        String sidesText = '';
 
-        if (item.selection && item.selectedAddOn != null && item.selectedAddOn!.isNotEmpty) {
+        if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
           // Build the add-on names string with commas between them
-          for (int i = 0; i < item.selectedAddOn!.length; i++) {
-            var addOn = item.selectedAddOn!.elementAt(i);
-            addOnText += addOn['name'];
+          for (int i = 0; i < item.selectedSide!.length; i++) {
+            var side = item.selectedSide!.elementAt(i);
+            sidesText += side['name'];
 
             // Add a comma and space except for the last add-on
-            if (i != item.selectedAddOn!.length - 1) {
-              addOnText += ', ';
+            if (i != item.selectedSide!.length - 1) {
+              sidesText += ', ';
             }
           }
 
           // Use the addFormattedLines function for add-ons
           addFormattedLines(
-              text: addOnText,
+              text: sidesText,
               list: list,
               maxLength: 26,
               firstLinePrefix: '  - ', // Start the first line with "- "

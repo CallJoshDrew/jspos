@@ -1,21 +1,18 @@
-final List<String> categories = ["Soup", "Dishes", "Drinks", "Add On"];
+final List<String> categories = ["Dishes", "Drinks", "Add On"];
 final List<Map<String, dynamic>> menu1 = [
   {
     "id": "1",
     "name": "Curry Laksa",
     "category": "Dishes",
-    "price": 10.00,
-    "image": "assets/dishes/watanHor.png",
+    "price": 12.00,
+    "image": "assets/dishes/curry_laksa.png",
     "selection": true,
     "choices": [
-      {"name": "Campur", "price": 10.00},
-      {"name": "Ayam", "price": 10.00},
-      {"name": "Ayam GOreng", "price": 10.00},
-      {"name": "Sui Kau", "price": 10.00},
-      {"name": "Seafood", "price": 12.00},
-      {"name": "Udang", "price": 14.00},
-      {"name": "Ikan", "price": 14.00},
-      {"name": "Udang & Ikan", "price": 14.00},
+      {"name": "Fish MIXED Chicken", "price": 12.00},
+      {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
+      {"name": "Seafood", "price": 14.00},
+      {"name": "Fish Head", "price": 15.00},
+      {"name": "Fish Belly", "price": 15.00},
     ],
     "noodlesTypes": [
       {"name": "Mihun", "price": 0.00},
@@ -34,14 +31,41 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Extra Mee", "price": 1.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
-      {"name": "Yu Fu", "price": 0.00},
+    "sides": [
       {"name": "Fish Ball", "price": 0.00},
-      {"name": "Yu Wat", "price": 0.00},
+      {"name": "Chicken Ball", "price": 0.00},
+      {"name": "Fish Curd", "price": 0.00},
+      {"name": "Chicken Curd", "price": 0.00},
+      {"name": "Fried Wantan", "price": 0.00},
+      {"name": "Fresh Chicken", "price": 0.00},
+      {"name": "Wantan", "price": 0.00},
+      {"name": "Fried Chicken Meat", "price": 0.00},
+      {"name": "Crab Nugget", "price": 0.00},
+      {"name": "Cheese Fish Tofu", "price": 0.00},
       {"name": "Fish Cake", "price": 0.00},
-      {"name": "Udang", "price": 0.00},
-      {"name": "Ikan", "price": 0.00},
+      {"name": "Bean Curd", "price": 0.00},
+      {"name": "Prawn Curd", "price": 0.00},
+      {"name": "Fried Fish Fillet", "price": 0.00},
+      {"name": "Fish Fillet", "price": 0.00},
+      {"name": "Prawn", "price": 0.00},
       {"name": "Sotong", "price": 0.00},
+      {"name": "Fish Maw", "price": 0.00},
+    ],
+    "add on": [
+      {"name": "1", "price": 2.00},
+      {"name": "2", "price": 4.00},
+      {"name": "3", "price": 5.00}, //1.67
+      {"name": "4", "price": 6.00}, //1.5
+      {"name": "5", "price": 7.00}, //1.4
+      {"name": "6", "price": 8.00}, //1.3
+      {"name": "7", "price": 9.00}, //1.29
+      {"name": "8", "price": 10.00}, //1.25
+      {"name": "9", "price": 11.00}, //1.22
+      {"name": "10", "price": 12.00}, //1.2
+      {"name": "11", "price": 13.00}, //1.18
+      {"name": "12", "price": 14.00}, //1.16
+      {"name": "13", "price": 15.00}, //1.15
+      {"name": "14", "price": 16.00}, //1.14
     ],
   },
   {

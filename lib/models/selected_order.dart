@@ -185,7 +185,7 @@ class SelectedOrder with ChangeNotifier {
         bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
 
         // Create a SetEquality with a MapEquality to compare sets of maps
-        bool areAddOnsEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedAddOn, item.selectedAddOn);
+        bool areSidesEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedSide, item.selectedSide);
 
         return i.name == item.name &&
             i.selectedDrink?['name'] == item.selectedDrink?['name'] &&
@@ -195,7 +195,7 @@ class SelectedOrder with ChangeNotifier {
             i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
             i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
             areRemarksEqual && // Use the result of the deep equality check
-            areAddOnsEqual; // Check if the selectedAddOn sets are equal
+            areSidesEqual; // Check if the selectedSide sets are equal
       });
 
       if (existingItem != null) {
@@ -228,7 +228,7 @@ class SelectedOrder with ChangeNotifier {
       bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
 
       // Create a SetEquality with a MapEquality to compare sets of maps
-      bool areAddOnsEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedAddOn, item.selectedAddOn);
+      bool areSidesEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedSide, item.selectedSide);
       return i.id == item.id &&
           i.name == item.name &&
           i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
@@ -236,7 +236,7 @@ class SelectedOrder with ChangeNotifier {
           i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
           i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
           areRemarksEqual && // Use the result of the deep equality check
-          areAddOnsEqual; // Check if the selectedAddOn sets are equal
+          areSidesEqual; // Check if the selectedSide sets are equal
     });
 
     if (existingItem != null) {
@@ -371,11 +371,11 @@ class SelectedOrder with ChangeNotifier {
 //     item.price += meePrice;
 //   }
 // }
-// if (item.selectedAddOn != null) {
-//   for (var addOn in item.selectedAddOn!) {
-//     double addOnPrice = addOn['price'] ?? 0.00;
-//     if (addOnPrice > 0.00) {
-// item.price += addOnPrice;
+// if (item.selectedSide != null) {
+//   for (var side in item.selectedSide!) {
+//     double sidesPrice = side['price'] ?? 0.00;
+//     if (sidesPrice > 0.00) {
+// item.price += sidesPrice;
 //     }
 //   }
 // }

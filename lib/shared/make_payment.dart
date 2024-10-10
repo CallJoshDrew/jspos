@@ -148,7 +148,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     double fractionAmount = widget.selectedOrder.totalPrice - widget.selectedOrder.totalPrice.floor();
     // Assuming 'items' is a List<Item>
     for (Item item in widget.selectedOrder.items) {
-      log('addOn: ${item.selectedAddOn}');
+      log('side: ${item.selectedSide}');
     }
 
     return Scaffold(
@@ -373,38 +373,38 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedAddOn != null
+                                                                item.selection && item.selectedSide != null
                                                                     ? Wrap(
                                                                         children: [
-                                                                          item.selectedAddOn!.isNotEmpty
+                                                                          item.selectedSide!.isNotEmpty
                                                                               ? const Text(
-                                                                                  "AddOn: ",
+                                                                                  "Sides: ",
                                                                                   style: TextStyle(
                                                                                     fontSize: 14,
                                                                                     color: Colors.yellow,
                                                                                   ),
                                                                                 )
                                                                               : const SizedBox.shrink(),
-                                                                          for (var addOn in item.selectedAddOn!.toList())
+                                                                          for (var side in item.selectedSide!.toList())
                                                                             Row(
                                                                               children: [
                                                                                 Text(
-                                                                                  "${addOn['name']} ",
+                                                                                  "${side['name']} ",
                                                                                   style: const TextStyle(
                                                                                     fontSize: 14,
                                                                                     color: Colors.white,
                                                                                   ),
                                                                                 ),
-                                                                                if (addOn['price'] != null && addOn['price'] != 0.00)
+                                                                                if (side['price'] != null && side['price'] != 0.00)
                                                                                   Text(
-                                                                                    "( + ${addOn['price'].toStringAsFixed(2)} )",
+                                                                                    "( + ${side['price'].toStringAsFixed(2)} )",
                                                                                     style: const TextStyle(
                                                                                       fontSize: 14,
                                                                                       color: Color.fromARGB(255, 114, 226, 118),
                                                                                     ),
                                                                                   ),
                                                                                 Text(
-                                                                                  "${addOn != item.selectedAddOn!.last ? ', ' : ''} ",
+                                                                                  "${side != item.selectedSide!.last ? ', ' : ''} ",
                                                                                   style: const TextStyle(
                                                                                     fontSize: 14,
                                                                                     color: Colors.white,

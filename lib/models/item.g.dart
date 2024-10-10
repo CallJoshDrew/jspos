@@ -39,30 +39,34 @@ class ItemAdapter extends TypeAdapter<Item> {
       meePortion: (fields[13] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      addOn: (fields[14] as List)
+      sides: (fields[14] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      temp: (fields[16] as List)
+      addOns: (fields[15] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
+      temp: (fields[17] as List)
           .map((dynamic e) => (e as Map).cast<String, String>())
           .toList(),
-      selectedTemp: (fields[17] as Map?)?.cast<String, String>(),
-      selectedNoodlesType: (fields[19] as Map?)?.cast<String, dynamic>(),
-      selectedMeatPortion: (fields[20] as Map?)?.cast<String, dynamic>(),
-      selectedMeePortion: (fields[21] as Map?)?.cast<String, dynamic>(),
-      selectedAddOn: (fields[22] as List?)
+      selectedTemp: (fields[18] as Map?)?.cast<String, String>(),
+      selectedNoodlesType: (fields[20] as Map?)?.cast<String, dynamic>(),
+      selectedMeatPortion: (fields[21] as Map?)?.cast<String, dynamic>(),
+      selectedMeePortion: (fields[22] as Map?)?.cast<String, dynamic>(),
+      selectedSide: (fields[23] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toSet(),
-      itemRemarks: (fields[23] as Map?)?.cast<String, dynamic>(),
+      selectedAddOn: (fields[24] as Map?)?.cast<String, dynamic>(),
+      itemRemarks: (fields[25] as Map?)?.cast<String, dynamic>(),
       originalName: fields[2] as String,
     )
-      .._selectedDrink = (fields[15] as Map?)?.cast<String, dynamic>()
-      .._selectedChoice = (fields[18] as Map?)?.cast<String, dynamic>();
+      .._selectedDrink = (fields[16] as Map?)?.cast<String, dynamic>()
+      .._selectedChoice = (fields[19] as Map?)?.cast<String, dynamic>();
   }
 
   @override
   void write(BinaryWriter writer, Item obj) {
     writer
-      ..writeByte(24)
+      ..writeByte(26)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -92,24 +96,28 @@ class ItemAdapter extends TypeAdapter<Item> {
       ..writeByte(13)
       ..write(obj.meePortion)
       ..writeByte(14)
-      ..write(obj.addOn)
+      ..write(obj.sides)
       ..writeByte(15)
-      ..write(obj._selectedDrink)
+      ..write(obj.addOns)
       ..writeByte(16)
-      ..write(obj.temp)
+      ..write(obj._selectedDrink)
       ..writeByte(17)
-      ..write(obj.selectedTemp)
+      ..write(obj.temp)
       ..writeByte(18)
-      ..write(obj._selectedChoice)
+      ..write(obj.selectedTemp)
       ..writeByte(19)
-      ..write(obj.selectedNoodlesType)
+      ..write(obj._selectedChoice)
       ..writeByte(20)
-      ..write(obj.selectedMeatPortion)
+      ..write(obj.selectedNoodlesType)
       ..writeByte(21)
-      ..write(obj.selectedMeePortion)
+      ..write(obj.selectedMeatPortion)
       ..writeByte(22)
-      ..write(obj.selectedAddOn?.toList())
+      ..write(obj.selectedMeePortion)
       ..writeByte(23)
+      ..write(obj.selectedSide?.toList())
+      ..writeByte(24)
+      ..write(obj.selectedAddOn)
+      ..writeByte(25)
       ..write(obj.itemRemarks);
   }
 

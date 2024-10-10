@@ -34,24 +34,28 @@ class Item with ChangeNotifier {
   @HiveField(13)
   List<Map<String, dynamic>> meePortion;
   @HiveField(14)
-  List<Map<String, dynamic>> addOn;
+  List<Map<String, dynamic>> sides;
   @HiveField(15)
-  Map<String, dynamic>? _selectedDrink;
+  List<Map<String, dynamic>> addOns;
   @HiveField(16)
-  List<Map<String, String>> temp;
+  Map<String, dynamic>? _selectedDrink;
   @HiveField(17)
-  Map<String, String>? selectedTemp;
+  List<Map<String, String>> temp;
   @HiveField(18)
-  Map<String, dynamic>? _selectedChoice;
+  Map<String, String>? selectedTemp;
   @HiveField(19)
-  Map<String, dynamic>? selectedNoodlesType;
+  Map<String, dynamic>? _selectedChoice;
   @HiveField(20)
-  Map<String, dynamic>? selectedMeatPortion;
+  Map<String, dynamic>? selectedNoodlesType;
   @HiveField(21)
-  Map<String, dynamic>? selectedMeePortion;
+  Map<String, dynamic>? selectedMeatPortion;
   @HiveField(22)
-  Set<Map<String, dynamic>>? selectedAddOn;
+  Map<String, dynamic>? selectedMeePortion;
   @HiveField(23)
+  Set<Map<String, dynamic>>? selectedSide;
+  @HiveField(24)
+  Map<String, dynamic>? selectedAddOn;
+  @HiveField(25)
   Map<String, dynamic>? itemRemarks;
 
   Item({
@@ -67,7 +71,8 @@ class Item with ChangeNotifier {
     required this.noodlesTypes,
     required this.meatPortion,
     required this.meePortion,
-    required this.addOn,
+    required this.sides,
+    required this.addOns,
     Map<String, dynamic>? selectedDrink,
     required this.temp,
     this.selectedTemp,
@@ -75,6 +80,7 @@ class Item with ChangeNotifier {
     this.selectedNoodlesType,
     this.selectedMeatPortion,
     this.selectedMeePortion,
+    this.selectedSide,
     this.selectedAddOn,
     this.itemRemarks,
     required this.originalName,
@@ -100,7 +106,8 @@ class Item with ChangeNotifier {
         '\ttypes: ${noodlesTypes.toString()},\n'
         '\tmeatPortion: ${meatPortion.toString()},\n'
         '\tmeePortion: ${meePortion.toString()},\n'
-        '\taddOn: ${addOn.toString()},\n'
+        '\taddOn: ${sides.toString()},\n'
+        '\taddOn: ${addOns.toString()},\n'
         '\tselectedDrink: $selectedDrink, \n'
         '\ttemp: $temp, \n'
         '\tselectedTemp: $selectedTemp, \n'
@@ -108,7 +115,8 @@ class Item with ChangeNotifier {
         '\tselectedType: $selectedNoodlesType, \n'
         '\tselectedMeatPortion: $selectedMeatPortion, \n'
         '\tselectedMeePortion: $selectedMeePortion,\n'
-         '\tselectedAddOn: ${selectedAddOn?.toString()},\n' // Keep as a Set
+         '\tselectedAddOn: ${selectedSide?.toString()},\n' // Keep as a Set
+         '\tselectedAddOn: $selectedAddOn,\n' // Keep as a Set
         // '\tselectedAddOn: ${selectedAddOn?.map((addOn) => addOn.toString()).join(', ')},\n'
         '\titemRemarks: ${itemRemarks.toString()}\n'
         '}';
@@ -147,7 +155,8 @@ class Item with ChangeNotifier {
       noodlesTypes: noodlesTypes,
       meatPortion: meatPortion,
       meePortion: meePortion,
-      addOn: addOn,
+      sides: sides,
+      addOns: addOns,
       selectedDrink: selectedDrink != null ? Map<String, dynamic>.from(selectedDrink!) : null,
       temp: temp,
       selectedTemp: selectedTemp,
@@ -155,7 +164,8 @@ class Item with ChangeNotifier {
       selectedNoodlesType: selectedNoodlesType != null ? Map<String, dynamic>.from(selectedNoodlesType!) : null,
       selectedMeatPortion: selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
       selectedMeePortion: selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
-      selectedAddOn: selectedAddOn != null ? Set<Map<String, dynamic>>.from(selectedAddOn!) : null,
+      selectedSide: selectedSide != null ? Set<Map<String, dynamic>>.from(selectedSide!) : null,
+      selectedAddOn: selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
       itemRemarks: itemRemarks,
     );
   }
@@ -176,13 +186,15 @@ class Item with ChangeNotifier {
       'noodlesTypes': noodlesTypes.map((type) => Map<String, dynamic>.from(type)).toList(),
       'meatPortion': meatPortion.map((portion) => Map<String, dynamic>.from(portion)).toList(),
       'meePortion': meePortion.map((portion) => Map<String, dynamic>.from(portion)).toList(),
-      'addOn': addOn.map((addon) => Map<String, dynamic>.from(addon)).toList(),
+      'sides': sides.map((sides) => Map<String, dynamic>.from(sides)).toList(),
+      'addOns': addOns.map((addon) => Map<String, dynamic>.from(addon)).toList(),
       'selectedDrink': selectedDrink != null ? Map<String, dynamic>.from(selectedDrink!) : null,
       'selectedChoice': selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
       'selectedNoodlesType': selectedNoodlesType != null ? Map<String, dynamic>.from(selectedNoodlesType!) : null,
       'selectedMeatPortion': selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
       'selectedMeePortion': selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
-      'selectedAddOn': selectedAddOn?.map((addon) => Map<String, dynamic>.from(addon)).toList(), // Convert set to list for JSON
+      'selectedSide': selectedSide?.map((sides) => Map<String, dynamic>.from(sides)).toList(), // Convert set to list for JSON
+      'selectedAddOn': selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
       // for practical purposes in JSON serialization, as JSON does not support sets. 
       'itemRemarks': itemRemarks,
     };
