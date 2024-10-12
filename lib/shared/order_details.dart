@@ -555,6 +555,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           // The Map elements in selectedSide and item.selectedSide are the same Map objects.
           // even though selectedSide and item.selectedSide are separate Set objects.
 
+          Map<String, dynamic>? selectedAddOn = item.addOns.isNotEmpty ? item.addOns[0] : null;
+
           double drinkPrice() {
             final selectedTempName = selectedTemp?['name'] ?? ''; // Convert to non-nullable String
             final price = (selectedDrink?[selectedTempName] as double?) ?? 0.00;
@@ -569,7 +571,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           double meatPrice = item.selectedMeatPortion?['price'] ?? 0;
           double meePrice = item.selectedMeePortion?['price'] ?? 0;
           // double sidesPrice = item.sides.isNotEmpty && item.sides[0]['price'] != null ? item.sides[0]['price']! : 0.00;
-
+          
           double calculateSidesPrice() {
             double sidesPrice = 0.0;
             for (var side in selectedSide) {

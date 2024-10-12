@@ -52,6 +52,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish Maw", "price": 0.00},
     ],
     "add on": [
+      {"name": "0", "price": 0.00},
       {"name": "1", "price": 2.00},
       {"name": "2", "price": 4.00},
       {"name": "3", "price": 5.00}, //1.67
