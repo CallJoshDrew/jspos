@@ -1035,7 +1035,7 @@ class ProductItemState extends State<ProductItem> {
                                     ] else ...[
                                       const SizedBox.shrink(),
                                     ],
-                                    if (item.meePortion.isNotEmpty) const SizedBox(width: 10),
+                                    if (widget.meePortion.isNotEmpty) const SizedBox(width: 10),
                                     if (widget.meatPortion.isNotEmpty) ...[
                                       Expanded(
                                         flex: 4,
