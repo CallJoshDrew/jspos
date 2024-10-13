@@ -18,7 +18,6 @@ class HistoryOrderPage extends ConsumerStatefulWidget {
 
 class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
   bool isPrinting = false;
-
   int getTotalSides(selectedSide, selectedAddOn) {
     int totalSidesCount = selectedSide?.length ?? 0;
     // Add the selectedAddOn 'name' value if available
@@ -482,15 +481,28 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                         ),
                                       ],
                                     ),
+                                    // Row(
+                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    //   children: [
+                                    //     const Text(
+                                    //       'Service Charges',
+                                    //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                    //     ),
+                                    //     Text(
+                                    //       widget.historyOrder.serviceCharge.toStringAsFixed(2),
+                                    //       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text(
-                                          'Service Charges',
-                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                        Text(
+                                          'Discount (${widget.historyOrder.discount}%)',
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.historyOrder.serviceCharge.toStringAsFixed(2),
+                                          (widget.historyOrder.subTotal * (widget.historyOrder.discount / 100)).toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],

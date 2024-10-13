@@ -48,8 +48,11 @@ class SelectedOrder with ChangeNotifier {
   String paymentTime = "Today";
   @HiveField(18)
   String cancelledTime = "Today";
-  @HiveField(19) // Add this
+  @HiveField(19)
   List<String> categoryList;
+  @HiveField(20)
+  int discount = 0; // Default to 0% discount
+
   SelectedOrder({
     required this.orderNumber,
     required this.tableName,
@@ -70,6 +73,7 @@ class SelectedOrder with ChangeNotifier {
     this.totalQuantity = 0,
     this.paymentTime = "Today",
     this.cancelledTime = "Today",
+    this.discount = 0,
   }) : categories = {
           for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
         };
@@ -98,6 +102,7 @@ class SelectedOrder with ChangeNotifier {
         '\ttotalQuantity: $totalQuantity,\n'
         '\tpaymentTime: $paymentTime,\n'
         '\tcancelledTime: $cancelledTime,\n'
+        '\tdiscount: $discount,\n'
         '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n'
         ')';
   }
@@ -123,6 +128,7 @@ class SelectedOrder with ChangeNotifier {
       totalQuantity: 0,
       paymentTime: "Payment Time",
       cancelledTime: "Cancelled Time",
+      discount: 0,
     );
   }
 
@@ -147,6 +153,7 @@ class SelectedOrder with ChangeNotifier {
       totalQuantity: totalQuantity,
       paymentTime: paymentTime,
       cancelledTime: cancelledTime,
+      discount: discount,
     );
   }
 
@@ -169,6 +176,7 @@ class SelectedOrder with ChangeNotifier {
       'totalQuantity': totalQuantity,
       'paymentTime': paymentTime,
       'cancelledTime': cancelledTime,
+      'discount': discount,
     };
   }
 

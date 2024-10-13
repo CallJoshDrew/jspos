@@ -40,6 +40,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   double amountReceived = 0.0;
   double amountChanged = 0.0;
   double roundingAdjustment = 0.0;
+  int enteredDiscount = 0;
 
   int getTotalSides(selectedSide, selectedAddOn) {
     int totalSidesCount = selectedSide?.length ?? 0;
@@ -52,25 +53,30 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     return totalSidesCount;
   }
 
+  void _calculateTotalWithDiscount() {
+    // Calculate the discount amount
+    double discountAmount = widget.selectedOrder.subTotal * (widget.selectedOrder.discount / 100);
+
+    // Calculate the original and adjusted bill
+    originalBill = widget.selectedOrder.subTotal - discountAmount;
+    adjustedBill = isRoundingApplied ? roundBill(originalBill) : originalBill;
+  }
+
   void _calculateChange() {
-    if (_controller.text.isEmpty) {
-      amountReceived = double.parse(adjustedBill.toStringAsFixed(2));
-    } else {
-      num? parsedValue = num.tryParse(_controller.text);
-      if (parsedValue != null) {
-        amountReceived = parsedValue.toDouble();
-      } else {
-        // Handle the error: _controller.text is not a valid number
-        // For example, you could set amountReceived to a default value:
-        amountReceived = 0.0;
-      }
-    }
+    // Ensure amountReceived is properly handled
+    amountReceived = double.parse(amountReceived.toStringAsFixed(2));
+
+    // If rounding is applied, adjust the bill accordingly
     if (isRoundingApplied) {
       adjustedBill = roundBill(originalBill);
     }
-    double calculatedChange = amountReceived - (isRoundingApplied ? adjustedBill : originalBill); // calculates the change
-    amountChanged = calculatedChange < 0 ? 0.0 : calculatedChange; // if the calculated change is negative, set amountChanged to 0.0
-    amountChanged = double.parse(amountChanged.toStringAsFixed(2)); // rounds amountChanged to two decimal places and converts it back to a double.
+
+    // Calculate the change
+    double calculatedChange = amountReceived - (isRoundingApplied ? adjustedBill : originalBill);
+    amountChanged = calculatedChange < 0 ? 0.0 : calculatedChange;
+
+    // Round the result to two decimal places
+    amountChanged = double.parse(amountChanged.toStringAsFixed(2));
   }
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
@@ -161,6 +167,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
     for (Item item in widget.selectedOrder.items) {
       log('side: ${item.selectedSide}');
     }
+    _calculateTotalWithDiscount();
 
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
@@ -551,15 +558,28 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                         ),
                                       ],
                                     ),
+                                    // Row(
+                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    //   children: [
+                                    //     const Text(
+                                    //       'Service Charges',
+                                    //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                    //     ),
+                                    //     Text(
+                                    //       widget.selectedOrder.serviceCharge.toStringAsFixed(2),
+                                    //       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text(
-                                          'Service Charges',
-                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                        Text(
+                                          'Discount (${widget.selectedOrder.discount}%)',
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.selectedOrder.serviceCharge.toStringAsFixed(2),
+                                          (widget.selectedOrder.subTotal * (widget.selectedOrder.discount / 100)).toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -644,7 +664,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          _controller.text.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2) : _controller.text,
+                                          amountReceived.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -772,44 +792,98 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                         );
                                       }).toList(),
                                     ),
+                                    const SizedBox(height: 10),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text(
-                                          "Please Enter the Amount Received",
-                                          style: TextStyle(fontSize: 14, color: Colors.white),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          height: 40,
-                                          child: TextField(
-                                            controller: _controller,
-                                            style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
-                                            keyboardType: TextInputType.number,
-                                            textAlign: TextAlign.center,
-                                            decoration: InputDecoration(
-                                              hintText: (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
-                                              hintStyle: const TextStyle(color: Colors.green),
-                                              contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                              fillColor: Colors.white,
-                                              filled: true,
-                                              border: const OutlineInputBorder(),
-                                              focusedBorder: const OutlineInputBorder(
-                                                borderSide: BorderSide(color: Colors.grey),
+                                        // Discount Input
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                "Enter Discount (%)",
+                                                style: TextStyle(fontSize: 14, color: Colors.white),
+                                                textAlign: TextAlign.start,
                                               ),
-                                            ),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _calculateChange();
-                                                if (value.isEmpty) {
-                                                  _controller.text = (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2);
-                                                }
-                                                _controller.selection = TextSelection.fromPosition(
-                                                  TextPosition(offset: _controller.text.length),
-                                                );
-                                              });
-                                            },
+                                              const SizedBox(height: 5), // Add spacing between label and input
+                                              TextField(
+                                                keyboardType: TextInputType.number,
+                                                textAlign: TextAlign.center,
+                                                decoration: const InputDecoration(
+                                                  hintText: "0",
+                                                  hintStyle: TextStyle(color: Colors.grey),
+                                                  contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                  fillColor: Colors.white,
+                                                  filled: true,
+                                                  border: OutlineInputBorder(),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: Colors.grey),
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    enteredDiscount = int.tryParse(value) ?? 0;
+                                                    // Ensure discount is between 1 and 100, otherwise reset to 0
+                                                    if (enteredDiscount >= 1 && enteredDiscount <= 100) {
+                                                      widget.selectedOrder.discount = enteredDiscount;
+                                                    } else {
+                                                      widget.selectedOrder.discount = 0;
+                                                    }
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 20), // Spacing between the two input fields
+                                        // Amount Received Input
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                "Enter Amount Received (RM)",
+                                                style: TextStyle(fontSize: 14, color: Colors.white),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              const SizedBox(height: 5), // Add spacing between label and input
+                                              TextField(
+                                                controller: _controller,
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                keyboardType: TextInputType.number,
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(
+                                                  hintText: (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
+                                                  hintStyle: const TextStyle(color: Colors.green),
+                                                  contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                  fillColor: Colors.white,
+                                                  filled: true,
+                                                  border: const OutlineInputBorder(),
+                                                  focusedBorder: const OutlineInputBorder(
+                                                    borderSide: BorderSide(color: Colors.grey),
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    // Parse the value entered by the user
+                                                    amountReceived = double.tryParse(value) ?? 0.0;
+
+                                                    // If the input is empty, reset to the adjusted/original bill
+                                                    if (value.isEmpty) {
+                                                      amountReceived = 0.0;
+                                                    }
+
+                                                    // Trigger the calculation of the change
+                                                    _calculateChange();
+                                                  });
+                                                },
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -980,6 +1054,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                     widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
                                                                     widget.tables[widget.selectedTableIndex]['occupied'] = false;
                                                                     widget.updateTables(widget.selectedTableIndex, emptyOrderNumber, false);
+                                                                    log(widget.selectedOrder.discount.toString());
                                                                   });
 
                                                                   if (Hive.isBoxOpen('orders')) {
