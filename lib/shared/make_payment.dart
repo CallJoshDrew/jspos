@@ -41,6 +41,17 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   double amountChanged = 0.0;
   double roundingAdjustment = 0.0;
 
+  int getTotalSides(selectedSide, selectedAddOn) {
+    int totalSidesCount = selectedSide?.length ?? 0;
+    // Add the selectedAddOn 'name' value if available
+    if (selectedAddOn != null && selectedAddOn!['name'] != null) {
+      num addOnValue = num.parse(selectedAddOn!['name']);
+
+      totalSidesCount += addOnValue.toInt();
+    }
+    return totalSidesCount;
+  }
+
   void _calculateChange() {
     if (_controller.text.isEmpty) {
       amountReceived = double.parse(adjustedBill.toStringAsFixed(2));
@@ -275,16 +286,15 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                               : '${index + 1}.${item.originalName} ${item.selectedChoice!['name']}',
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
-                                                                            fontWeight: FontWeight.bold,
                                                                             color: Colors.white,
                                                                           ),
                                                                         ),
+                                                                        const SizedBox(width: 5),
                                                                         Text(
                                                                           "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: Colors.white,
+                                                                            color: Colors.green,
                                                                           ),
                                                                         ),
                                                                       ],
@@ -296,7 +306,6 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                           : '${index + 1}.${item.originalName}',
                                                                       style: const TextStyle(
                                                                         fontSize: 14,
-                                                                        fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
                                                                       ),
                                                                     ),
@@ -386,7 +395,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                                 )
                                                                               : const SizedBox.shrink(),
                                                                           for (var side in item.selectedSide!.toList())
-                                                                            Row(
+                                                                            Wrap(
                                                                               children: [
                                                                                 Text(
                                                                                   "${side['name']} ",
@@ -412,6 +421,19 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                                 ),
                                                                               ],
                                                                             ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                item.selection && item.selectedAddOn != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "Total Sides: ${getTotalSides(item.selectedSide, item.selectedAddOn)} ",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.yellow,
+                                                                            ),
+                                                                          ),
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -450,7 +472,6 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                     'x ${item.quantity}',
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.white,
                                                     ),
                                                   ),

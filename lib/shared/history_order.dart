@@ -19,6 +19,17 @@ class HistoryOrderPage extends ConsumerStatefulWidget {
 class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
   bool isPrinting = false;
 
+  int getTotalSides(selectedSide, selectedAddOn) {
+    int totalSidesCount = selectedSide?.length ?? 0;
+    // Add the selectedAddOn 'name' value if available
+    if (selectedAddOn != null && selectedAddOn!['name'] != null) {
+      num addOnValue = num.parse(selectedAddOn!['name']);
+
+      totalSidesCount += addOnValue.toInt();
+    }
+    return totalSidesCount;
+  }
+
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
     log('History Order Page: ${widget.historyOrder}');
@@ -51,7 +62,6 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
 
     return totalPrices;
   }
-
 
   Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
     Map<String, dynamic> filteredRemarks = {};
@@ -213,7 +223,6 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                           "${index + 1}.${item.originalName} ${item.selectedChoice!['name']} ",
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
-                                                                            fontWeight: FontWeight.bold,
                                                                             color: Colors.white,
                                                                           ),
                                                                         ),
@@ -221,19 +230,17 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                           "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: Colors.white,
+                                                                            color: Colors.green,
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     )
                                                                   : Text(
-                                                                       item.selectedDrink != null
+                                                                      item.selectedDrink != null
                                                                           ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
                                                                           : '${index + 1}.${item.originalName}',
                                                                       style: const TextStyle(
                                                                         fontSize: 14,
-                                                                        fontWeight: FontWeight.bold,
                                                                         color: Colors.white,
                                                                       ),
                                                                     ),
@@ -253,13 +260,13 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                           ),
                                                                           // Display price only if it is greater than 0.00
                                                                           if (item.selectedNoodlesType!['price'] != 0.00)
-                                                                          Text(
-                                                                            "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
-                                                                            ),
-                                                                          )
+                                                                            Text(
+                                                                              "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
+                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -275,13 +282,13 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                           ),
                                                                           // Display price only if it is greater than 0.00
                                                                           if (item.selectedMeePortion!['price'] != 0.00)
-                                                                          Text(
-                                                                            "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
-                                                                            ),
-                                                                          )
+                                                                            Text(
+                                                                              "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
+                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -296,13 +303,13 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                             ),
                                                                           ),
                                                                           if (item.selectedMeatPortion!['price'] != 0.00)
-                                                                          Text(
-                                                                            "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
-                                                                            ),
-                                                                          )
+                                                                            Text(
+                                                                              "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
+                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -319,7 +326,7 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                                 )
                                                                               : const SizedBox.shrink(),
                                                                           for (var side in item.selectedSide!.toList())
-                                                                            Row(
+                                                                            Wrap(
                                                                               children: [
                                                                                 Text(
                                                                                   "${side['name']} ",
@@ -345,6 +352,19 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                                 ),
                                                                               ],
                                                                             ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                item.selection && item.selectedAddOn != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "Total Sides: ${getTotalSides(item.selectedSide, item.selectedAddOn)} ",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.yellow,
+                                                                            ),
+                                                                          ),
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -383,7 +403,6 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                     'x ${item.quantity}',
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.white,
                                                     ),
                                                   ),

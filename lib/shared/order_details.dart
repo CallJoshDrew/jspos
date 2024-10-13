@@ -123,6 +123,32 @@ class _OrderDetailsState extends State<OrderDetails> {
     });
   }
 
+  
+
+  // Function to calculate the length of the concatenated string
+  int calculateTextLength({
+    String? originalName,
+    Map<String, dynamic>? selectedChoice,
+    Map<String, dynamic>? selectedDrink,
+    required int index,
+  }) {
+    // Construct the string based on the provided optional values
+    String result = '${index + 1}. ';
+
+    if (originalName != null) {
+      result += originalName;
+    }
+
+    if (selectedChoice != null && selectedChoice.containsKey('name')) {
+      result += ' ${selectedChoice['name']}';
+    } else if (selectedDrink != null && selectedDrink.containsKey('name')) {
+      result += ' ${selectedDrink['name']} - ';
+    }
+
+    // Return the length of the constructed string
+    return result.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Create a map where each key is a category and the value is a list of items in that category
@@ -717,6 +743,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                               padding: const EdgeInsets.all(8),
                               child: SingleChildScrollView(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 20),
                                     // Item Image, Name, Price DETAILS
@@ -951,488 +979,591 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     ),
                                     const SizedBox(height: 10),
                                     // First Row for selection of Choices & Types
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        item.selection && selectedDrink != null
-                                            ?
-                                            // selectedDrink
-                                            Expanded(
-                                                child: Container(
-                                                  padding: const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color(0xff1f2029),
-                                                    borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      if (item.drinks.isNotEmpty) ...[
-                                                        const Text(
-                                                          'Select Drink',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                        Wrap(
-                                                          spacing: 6, // space between buttons horizontally
-                                                          runSpacing: 0, // space between buttons vertically
-                                                          children: item.drinks.map((drink) {
-                                                            return ElevatedButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedDrink = drink;
-                                                                  calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                      calculateSidesPrice(), addOnsPrice);
-                                                                });
-                                                              },
-                                                              style: ButtonStyle(
-                                                                backgroundColor: WidgetStateProperty.all<Color>(
-                                                                  selectedDrink?['name'] == drink['name'] ? Colors.orange : Colors.white,
-                                                                ),
-                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                              ),
-                                                              child: Text(
-                                                                '${drink['name']}',
-                                                                style: TextStyle(
-                                                                  color: selectedDrink?['name'] == drink['name']
-                                                                      ? Colors.white
-                                                                      : Colors.black, // Change the text color based on the selected button
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        ),
-                                                      ] else ...[
-                                                        const SizedBox.shrink(),
-                                                      ],
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
-                                        if (item.temp.isNotEmpty) const SizedBox(width: 10),
-                                        item.selection && selectedTemp != null
-                                            ?
-                                            // selectedTemp
-                                            Expanded(
-                                                child: Container(
-                                                  padding: const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color(0xff1f2029),
-                                                    borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      if (item.temp.isNotEmpty) ...[
-                                                        const Text(
-                                                          'Select Temperature',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                        Wrap(
-                                                          spacing: 6, // space between buttons horizontally
-                                                          runSpacing: 0, // space between buttons vertically
-                                                          children: item.temp.map((item) {
-                                                            return ElevatedButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedTemp = item;
-                                                                  calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                      calculateSidesPrice(), addOnsPrice);
-                                                                });
-                                                              },
-                                                              style: ButtonStyle(
-                                                                backgroundColor: WidgetStateProperty.all<Color>(
-                                                                  selectedTemp?['name'] == item['name'] ? Colors.orange : Colors.white,
-                                                                ),
-                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                              ),
-                                                              child: Text(
-                                                                '${item['name']}',
-                                                                style: TextStyle(
-                                                                  color: selectedTemp?['name'] == item['name']
-                                                                      ? Colors.white
-                                                                      : Colors.black, // Change the text color based on the selected button
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        ),
-                                                      ] else ...[
-                                                        const SizedBox.shrink(),
-                                                      ],
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
-                                        item.selection && selectedChoice != null
-                                            ?
-                                            // selectedChoice
-                                            Expanded(
-                                                child: Container(
-                                                  padding: const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color(0xff1f2029),
-                                                    borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      if (item.choices.isNotEmpty) ...[
-                                                        const Text(
-                                                          'Select Choice',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                        Wrap(
-                                                          spacing: 6, // space between buttons horizontally
-                                                          runSpacing: 0, // space between buttons vertically
-                                                          children: item.choices.map((choice) {
-                                                            return ElevatedButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedChoice = choice;
-                                                                  choicePrice = choice['price'];
-                                                                  calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                      calculateSidesPrice(), addOnsPrice);
-                                                                });
-                                                              },
-                                                              style: ButtonStyle(
-                                                                backgroundColor: WidgetStateProperty.all<Color>(
-                                                                  selectedChoice?['name'] == choice['name'] ? Colors.orange : Colors.white,
-                                                                ),
-                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                              ),
-                                                              child: Text(
-                                                                '${choice['name']}',
-                                                                style: TextStyle(
-                                                                  color: selectedChoice?['name'] == choice['name']
-                                                                      ? Colors.white
-                                                                      : Colors.black, // Change the text color based on the selected button
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        ),
-                                                      ] else ...[
-                                                        const SizedBox.shrink(),
-                                                      ],
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
-                                        if (item.noodlesTypes.isNotEmpty) const SizedBox(width: 10),
-                                        // selectedNoodlesType
-                                        if (item.noodlesTypes.isNotEmpty) ...[
-                                          Expanded(
-                                            child: Container(
-                                              padding: const EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xff1f2029),
-                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    "Select Noodles",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          item.selection && selectedDrink != null
+                                              ?
+                                              // selectedDrink
+                                              Expanded(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(10),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(0xff1f2029),
+                                                      borderRadius: BorderRadius.circular(5), // Set the border radius here.
                                                     ),
-                                                  ),
-                                                  Wrap(
-                                                    spacing: 6, // space between buttons horizontally
-                                                    runSpacing: 0, // space between buttons vertically
-                                                    children: item.noodlesTypes.map((type) {
-                                                      return ElevatedButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            selectedNoodlesType = type;
-                                                            noodlesTypePrice = type['price'];
-                                                            calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                calculateSidesPrice(), addOnsPrice);
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedNoodlesType?['name'] == type['name'] ? Colors.orange : Colors.white,
-                                                          ),
-                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(5),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        if (item.drinks.isNotEmpty) ...[
+                                                          const Text(
+                                                            'Select Drink',
+                                                            style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 14,
                                                             ),
                                                           ),
-                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                        ),
-                                                        child: Text(
-                                                          '${type['name']}',
-                                                          style: TextStyle(
-                                                            color: selectedNoodlesType?['name'] == type['name']
-                                                                ? Colors.white
-                                                                : Colors.black, // Change the text color based on the selected button
-                                                            fontSize: 12,
+                                                          Wrap(
+                                                            spacing: 6, // space between buttons horizontally
+                                                            runSpacing: 0, // space between buttons vertically
+                                                            children: item.drinks.map((drink) {
+                                                              return ElevatedButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    selectedDrink = drink;
+                                                                    calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                        calculateSidesPrice(), addOnsPrice);
+                                                                  });
+                                                                },
+                                                                style: ButtonStyle(
+                                                                  backgroundColor: WidgetStateProperty.all<Color>(
+                                                                    selectedDrink?['name'] == drink['name'] ? Colors.orange : Colors.white,
+                                                                  ),
+                                                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                    RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5),
+                                                                    ),
+                                                                  ),
+                                                                  padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                                ),
+                                                                child: Text(
+                                                                  '${drink['name']}',
+                                                                  style: TextStyle(
+                                                                    color: selectedDrink?['name'] == drink['name']
+                                                                        ? Colors.white
+                                                                        : Colors.black, // Change the text color based on the selected button
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList(),
                                                           ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
+                                                        ] else ...[
+                                                          const SizedBox.shrink(),
+                                                        ],
+                                                      ],
+                                                    ),
                                                   ),
-                                                ],
+                                                )
+                                              : const SizedBox.shrink(),
+                                          if (item.temp.isNotEmpty) const SizedBox(width: 10),
+                                          item.selection && selectedTemp != null
+                                              ?
+                                              // selectedTemp
+                                              Expanded(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(10),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(0xff1f2029),
+                                                      borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        if (item.temp.isNotEmpty) ...[
+                                                          const Text(
+                                                            'Select Temperature',
+                                                            style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                          Wrap(
+                                                            spacing: 6, // space between buttons horizontally
+                                                            runSpacing: 0, // space between buttons vertically
+                                                            children: item.temp.map((item) {
+                                                              return ElevatedButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    selectedTemp = item;
+                                                                    calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                        calculateSidesPrice(), addOnsPrice);
+                                                                  });
+                                                                },
+                                                                style: ButtonStyle(
+                                                                  backgroundColor: WidgetStateProperty.all<Color>(
+                                                                    selectedTemp?['name'] == item['name'] ? Colors.orange : Colors.white,
+                                                                  ),
+                                                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                    RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5),
+                                                                    ),
+                                                                  ),
+                                                                  padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                                ),
+                                                                child: Text(
+                                                                  '${item['name']}',
+                                                                  style: TextStyle(
+                                                                    color: selectedTemp?['name'] == item['name']
+                                                                        ? Colors.white
+                                                                        : Colors.black, // Change the text color based on the selected button
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                        ] else ...[
+                                                          const SizedBox.shrink(),
+                                                        ],
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink(),
+                                          item.selection && selectedChoice != null
+                                              ?
+                                              // selectedChoice
+                                              Expanded(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(10),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(0xff1f2029),
+                                                      borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        if (item.choices.isNotEmpty) ...[
+                                                          const Text(
+                                                            'Select Choice',
+                                                            style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                          Wrap(
+                                                            spacing: 6, // space between buttons horizontally
+                                                            runSpacing: 0, // space between buttons vertically
+                                                            children: item.choices.map((choice) {
+                                                              return ElevatedButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    selectedChoice = choice;
+                                                                    choicePrice = choice['price'];
+                                                                    calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                        calculateSidesPrice(), addOnsPrice);
+                                                                  });
+                                                                },
+                                                                style: ButtonStyle(
+                                                                  backgroundColor: WidgetStateProperty.all<Color>(
+                                                                    selectedChoice?['name'] == choice['name'] ? Colors.orange : Colors.white,
+                                                                  ),
+                                                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                    RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5),
+                                                                    ),
+                                                                  ),
+                                                                  padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                                ),
+                                                                child: Text(
+                                                                  '${choice['name']}',
+                                                                  style: TextStyle(
+                                                                    color: selectedChoice?['name'] == choice['name']
+                                                                        ? Colors.white
+                                                                        : Colors.black, // Change the text color based on the selected button
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                        ] else ...[
+                                                          const SizedBox.shrink(),
+                                                        ],
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink(),
+                                          if (item.noodlesTypes.isNotEmpty) const SizedBox(width: 10),
+                                          // selectedNoodlesType
+                                          if (item.noodlesTypes.isNotEmpty) ...[
+                                            Expanded(
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1f2029),
+                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      "Select Noodles",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    Wrap(
+                                                      spacing: 6, // space between buttons horizontally
+                                                      runSpacing: 0, // space between buttons vertically
+                                                      children: item.noodlesTypes.map((type) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedNoodlesType = type;
+                                                              noodlesTypePrice = type['price'];
+                                                              calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                  calculateSidesPrice(), addOnsPrice);
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedNoodlesType?['name'] == type['name'] ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          ),
+                                                          child: Text(
+                                                            '${type['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedNoodlesType?['name'] == type['name']
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ] else ...[
-                                          const SizedBox.shrink(),
+                                          ] else ...[
+                                            const SizedBox.shrink(),
+                                          ],
                                         ],
-                                      ],
+                                      ),
                                     ),
                                     // Second Row for selection of sides
-                                    Row(
-                                      children: [
-                                        if (item.sides.isNotEmpty) ...[
-                                          Expanded(
-                                            flex: 8,
-                                            child: Container(
-                                              padding: const EdgeInsets.all(10),
-                                              margin: const EdgeInsets.only(top: 10),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xff1f2029),
-                                                borderRadius: BorderRadius.circular(5),
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'Select Sides',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        children: [
+                                          // Selection for user to select sides
+                                          if (item.sides.isNotEmpty) ...[
+                                            Expanded(
+                                              flex: 8,
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                margin: const EdgeInsets.only(top: 10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1f2029),
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      'Select Sides',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Wrap(
-                                                    spacing: 6,
-                                                    runSpacing: 0,
-                                                    children: item.sides.map((side) {
-                                                      return ElevatedButton(
-                                                        onPressed: () {
-                                                          // print('selectedSide before: $selectedSide');
-                                                          // print('side: $side');
-                                                          setState(() {
-                                                            if (selectedSide.contains(side)) {
-                                                              selectedSide.remove(side);
-                                                            } else {
-                                                              selectedSide.add(side);
-                                                            }
-                                                            // print('selectedSide after: $selectedSide');
-                                                            calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                calculateSidesPrice(), addOnsPrice);
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedSide.contains(side) ? Colors.orange : Colors.white,
+                                                    Wrap(
+                                                      spacing: 6,
+                                                      runSpacing: 0,
+                                                      children: item.sides.map((side) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            // print('selectedSide before: $selectedSide');
+                                                            // print('side: $side');
+                                                            setState(() {
+                                                              if (selectedSide.contains(side)) {
+                                                                selectedSide.remove(side);
+                                                              } else {
+                                                                selectedSide.add(side);
+                                                              }
+                                                              // print('selectedSide after: $selectedSide');
+                                                              calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                  calculateSidesPrice(), addOnsPrice);
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedSide.contains(side) ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                           ),
-                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(5),
+                                                          child: Text(
+                                                            '${side['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedSide.contains(side) ? Colors.white : Colors.black,
+                                                              fontSize: 12,
                                                             ),
                                                           ),
-                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                        ),
-                                                        child: Text(
-                                                          '${side['name']}',
-                                                          style: TextStyle(
-                                                            color: selectedSide.contains(side) ? Colors.white : Colors.black,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                  ),
-                                                ],
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ] else ...[
-                                          const SizedBox.shrink(),
+                                          ] else ...[
+                                            const SizedBox.shrink(),
+                                          ],
                                         ],
-                                      ],
+                                      ),
                                     ),
                                     // Third Row for selection of add On
                                     if (item.addOns.isNotEmpty) ...[
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              padding: const EdgeInsets.all(10),
-                                              margin: const EdgeInsets.only(top: 10),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xff1f2029),
-                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      const Text(
-                                                        'Add-On Extra Sides',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 14,
+                                      IntrinsicHeight(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 9,
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                margin: const EdgeInsets.only(top: 10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1f2029),
+                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        const Text(
+                                                          'Add-On Extra Sides',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      Wrap(
-                                                        spacing: 6, // space between buttons horizontally
-                                                        runSpacing: 0, // space between buttons vertically
-                                                        children: item.addOns.map((addOn) {
-                                                          return ElevatedButton(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                selectedAddOn = addOn;
-                                                                addOnsPrice = addOn['price'];
-                                                                calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice);
-                                                              });
-                                                            },
-                                                            style: ButtonStyle(
-                                                              backgroundColor: WidgetStateProperty.all<Color>(
-                                                                selectedAddOn == addOn ? Colors.orange : Colors.white,
+                                                        Wrap(
+                                                          spacing: 6, // space between buttons horizontally
+                                                          runSpacing: 0, // space between buttons vertically
+                                                          children: item.addOns.map((addOn) {
+                                                            return ElevatedButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedAddOn = addOn;
+                                                                  addOnsPrice = addOn['price'];
+                                                                  calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                      calculateSidesPrice(), addOnsPrice);
+                                                                });
+                                                              },
+                                                              style: ButtonStyle(
+                                                                backgroundColor: WidgetStateProperty.all<Color>(
+                                                                  selectedAddOn == addOn ? Colors.orange : Colors.white,
+                                                                ),
+                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(5),
+                                                                  ),
+                                                                ),
+                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                               ),
-                                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(5),
+                                                              child: Text(
+                                                                '+ ${addOn['name']}',
+                                                                style: TextStyle(
+                                                                  color: selectedAddOn == addOn
+                                                                      ? Colors.white
+                                                                      : Colors.black, // Change the text color based on the selected button
+                                                                  fontSize: 12,
                                                                 ),
                                                               ),
-                                                              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                            ),
-                                                            child: Text(
-                                                              '+ ${addOn['name']}',
-                                                              style: TextStyle(
-                                                                color: selectedAddOn == addOn
-                                                                    ? Colors.white
-                                                                    : Colors.black, // Change the text color based on the selected button
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      ),
-                                                    ],
-                                                  )
-                                                ],
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                margin: const EdgeInsets.only(top: 10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1f2029),
+                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    // First row
+                                                    const Text(
+                                                      'Add Remarks',
+                                                      style: TextStyle(color: Colors.white, fontSize: 14),
+                                                    ),
+                                                    // remarks buttons
+                                                    Wrap(
+                                                      spacing: 6.0, // gap between adjacent chips
+                                                      runSpacing: 0, // gap between lines
+                                                      children: remarksData
+                                                          .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
+                                                          .map((data) => remarkButton(data))
+                                                          .toList(),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ] else ...[
                                       const SizedBox.shrink(),
                                     ],
-                                    // Forth Row for selection of meePortion, meatPortion, remarks,
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        if (item.meePortion.isNotEmpty) ...[
-                                          Expanded(
-                                            flex: 4,
-                                            child: Container(
-                                              padding: const EdgeInsets.all(10),
-                                              margin: const EdgeInsets.only(top: 10),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xff1f2029),
-                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      const Text(
-                                                        'Select Mee Portion',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 14,
+                                    // Forth Row for selection of meePortion, meatPortion, write remarks
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          if (item.meePortion.isNotEmpty) ...[
+                                            Expanded(
+                                              flex: 4,
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                margin: const EdgeInsets.only(top: 10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1f2029),
+                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        const Text(
+                                                          'Select Mee Portion',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      Wrap(
-                                                        spacing: 6, // space between buttons horizontally
-                                                        runSpacing: 0, // space between buttons vertically
-                                                        children: item.meePortion.map((meePortion) {
-                                                          return ElevatedButton(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                selectedMeePortion = meePortion;
-                                                                meePrice = meePortion['price'];
-                                                                calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice);
-                                                              });
-                                                            },
-                                                            style: ButtonStyle(
-                                                              backgroundColor: WidgetStateProperty.all<Color>(
-                                                                selectedMeePortion?['name'] == meePortion['name'] ? Colors.orange : Colors.white,
+                                                        Wrap(
+                                                          spacing: 6, // space between buttons horizontally
+                                                          runSpacing: 0, // space between buttons vertically
+                                                          children: item.meePortion.map((meePortion) {
+                                                            return ElevatedButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  selectedMeePortion = meePortion;
+                                                                  meePrice = meePortion['price'];
+                                                                  calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                      calculateSidesPrice(), addOnsPrice);
+                                                                });
+                                                              },
+                                                              style: ButtonStyle(
+                                                                backgroundColor: WidgetStateProperty.all<Color>(
+                                                                  selectedMeePortion?['name'] == meePortion['name'] ? Colors.orange : Colors.white,
+                                                                ),
+                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(5),
+                                                                  ),
+                                                                ),
+                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                               ),
-                                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(5),
+                                                              child: Text(
+                                                                '${meePortion['name']}',
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: selectedMeePortion?['name'] == meePortion['name']
+                                                                      ? Colors.white
+                                                                      : Colors.black, // Change the text color based on the selected button
+                                                                  fontSize: 12,
                                                                 ),
                                                               ),
-                                                              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                            ),
-                                                            child: Text(
-                                                              '${meePortion['name']}',
-                                                              style: TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: selectedMeePortion?['name'] == meePortion['name']
-                                                                    ? Colors.white
-                                                                    : Colors.black, // Change the text color based on the selected button
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      ),
-                                                    ],
-                                                  )
-                                                ],
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ] else ...[
-                                          const SizedBox.shrink(),
-                                        ],
-                                        if (item.meePortion.isNotEmpty) const SizedBox(width: 10),
-                                        if (item.meatPortion.isNotEmpty) ...[
+                                          ] else ...[
+                                            const SizedBox.shrink(),
+                                          ],
+                                          if (item.meePortion.isNotEmpty) const SizedBox(width: 10),
+                                          if (item.meatPortion.isNotEmpty) ...[
+                                            Expanded(
+                                              flex: 4,
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                margin: const EdgeInsets.only(top: 10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1f2029),
+                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      'Select Meat Portion',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    Wrap(
+                                                      spacing: 6, // space between buttons horizontally
+                                                      runSpacing: 0, // space between buttons vertically
+                                                      children: item.meatPortion.map((meatPortion) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedMeatPortion = meatPortion;
+                                                              meatPrice = meatPortion['price'];
+                                                              calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                  calculateSidesPrice(), addOnsPrice);
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedMeatPortion?['name'] == meatPortion['name'] ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                          ),
+                                                          child: Text(
+                                                            '${meatPortion['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedMeatPortion?['name'] == meatPortion['name']
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ] else ...[
+                                            const SizedBox.shrink(),
+                                          ],
+                                          if (item.meatPortion.isNotEmpty) const SizedBox(width: 10),
                                           Expanded(
-                                            flex: 4,
+                                            flex: 3,
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
                                               margin: const EdgeInsets.only(top: 10),
@@ -1444,141 +1575,48 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    'Select Meat Portion',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                    ),
+                                                    'Write Remarks',
+                                                    style: TextStyle(color: Colors.white, fontSize: 14),
                                                   ),
-                                                  Wrap(
-                                                    spacing: 6, // space between buttons horizontally
-                                                    runSpacing: 0, // space between buttons vertically
-                                                    children: item.meatPortion.map((meatPortion) {
-                                                      return ElevatedButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            selectedMeatPortion = meatPortion;
-                                                            meatPrice = meatPortion['price'];
-                                                            calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                calculateSidesPrice(), addOnsPrice);
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedMeatPortion?['name'] == meatPortion['name'] ? Colors.orange : Colors.white,
-                                                          ),
-                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                          ),
-                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                  const SizedBox(height: 3),
+                                                  SizedBox(
+                                                    height: 45,
+                                                    child: TextField(
+                                                      controller: _controller,
+                                                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                                                      decoration: const InputDecoration(
+                                                        contentPadding: EdgeInsets.all(10),
+                                                        fillColor: Colors.white,
+                                                        filled: true,
+                                                        border: OutlineInputBorder(),
+                                                        focusedBorder: OutlineInputBorder(
+                                                          borderSide: BorderSide(color: Colors.grey),
                                                         ),
-                                                        child: Text(
-                                                          '${meatPortion['name']}',
-                                                          style: TextStyle(
-                                                            color: selectedMeatPortion?['name'] == meatPortion['name']
-                                                                ? Colors.white
-                                                                : Colors.black, // Change the text color based on the selected button
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
+                                                      ),
+                                                      onChanged: (text) {
+                                                        // This callback is called each time the text changes
+                                                        setState(() {
+                                                          if (text.isEmpty) {
+                                                            // If the text is empty, remove the key '100' from itemRemarks
+                                                            itemRemarks.remove('100');
+                                                          } else {
+                                                            // Add the user's comment with a key of '100'
+                                                            itemRemarks['100'] = text;
+                                                          }
+                                                          SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+                                                            (a, b) => int.parse(a).compareTo(int.parse(b)),
+                                                          )..addAll(itemRemarks);
+                                                          itemRemarks = sortedItemRemarks;
+                                                        });
+                                                      },
+                                                    ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                          ),
-                                        ] else ...[
-                                          const SizedBox.shrink(),
+                                          )
                                         ],
-                                        if (item.meatPortion.isNotEmpty) const SizedBox(width: 10),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(10),
-                                            margin: const EdgeInsets.only(top: 10),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xff1f2029),
-                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                // First row
-                                                const Text(
-                                                  'Add Remarks',
-                                                  style: TextStyle(color: Colors.white, fontSize: 14),
-                                                ),
-                                                // remarks buttons
-                                                Wrap(
-                                                  spacing: 6.0, // gap between adjacent chips
-                                                  runSpacing: 0, // gap between lines
-                                                  children: remarksData
-                                                      .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
-                                                      .map((data) => remarkButton(data))
-                                                      .toList(),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(10),
-                                            margin: const EdgeInsets.only(top: 10),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xff1f2029),
-                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                const Text(
-                                                  'Write Remarks',
-                                                  style: TextStyle(color: Colors.white, fontSize: 14),
-                                                ),
-                                                const SizedBox(height: 3),
-                                                SizedBox(
-                                                  height: 45,
-                                                  child: TextField(
-                                                    controller: _controller,
-                                                    style: const TextStyle(color: Colors.black, fontSize: 14),
-                                                    decoration: const InputDecoration(
-                                                      contentPadding: EdgeInsets.all(10),
-                                                      fillColor: Colors.white,
-                                                      filled: true,
-                                                      border: OutlineInputBorder(),
-                                                      focusedBorder: OutlineInputBorder(
-                                                        borderSide: BorderSide(color: Colors.grey),
-                                                      ),
-                                                    ),
-                                                    onChanged: (text) {
-                                                      // This callback is called each time the text changes
-                                                      setState(() {
-                                                        if (text.isEmpty) {
-                                                          // If the text is empty, remove the key '100' from itemRemarks
-                                                          itemRemarks.remove('100');
-                                                        } else {
-                                                          // Add the user's comment with a key of '100'
-                                                          itemRemarks['100'] = text;
-                                                        }
-                                                        SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-                                                          (a, b) => int.parse(a).compareTo(int.parse(b)),
-                                                        )..addAll(itemRemarks);
-                                                        itemRemarks = sortedItemRemarks;
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      ],
+                                      ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -1683,279 +1721,331 @@ class _OrderDetailsState extends State<OrderDetails> {
                 });
           }
         },
+        // Item Name and Price
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                // Item Image and Index Number
-                Container(
-                  height: 35,
-                  width: 35,
-                  margin: const EdgeInsets.only(left: 0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    image: DecorationImage(
-                      image: AssetImage(image),
-                      fit: BoxFit.cover,
-                    ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // item image and index
+                  // if (calculateTextLength(
+                  //       originalName: item.originalName,
+                  //       selectedChoice: item.selectedChoice,
+                  //       selectedDrink: item.selectedDrink,
+                  //       index: index,
+                  //     ) <
+                  //     25)
+                  Wrap(
+                    children: [
+                      Container(
+                        height: 30,
+                        width: 30,
+                        margin: const EdgeInsets.only(left: 0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          image: DecorationImage(
+                            image: AssetImage(image),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                    ],
                   ),
-                ),
-
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Item Name and Price
-                        item.selection
-                            ? Row(
-                                children: [
-                                  Text(
-                                    item.selectedChoice != null
-                                        ? '${index + 1}. ${item.originalName} ${item.selectedChoice?['name']}'
-                                        : '${index + 1}. ${item.originalName} ${item.selectedDrink?['name']} - ',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  item.selectedTemp != null
-                                      ? Text(
-                                          '${item.selectedTemp?["name"]}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: item.selectedTemp?['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[400],
-                                          ),
-                                        )
-                                      : const SizedBox.shrink()
-                                ],
-                              )
-                            : Text(
-                                '${index + 1}. $name',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
-                              ),
-                        Wrap(
+                        Row(
                           children: [
-                            item.selection == true && item.selectedNoodlesType != null
-                                ? Padding(
-                                    padding: const EdgeInsets.only(right: 5.0),
-                                    child: Text(
-                                      "( ${item.selectedNoodlesType!['name']} )",
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.yellow,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (item.selectedChoice != null)
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${index + 1}.${item.originalName}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                            // Item Remarks & Comments UI
-                            item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true
-                                ? Text(
-                                    item.itemRemarks?.values.join(', ') ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
+                                      Text(
+                                        '${item.selectedChoice?['name']}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.yellow,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                if (item.selectedDrink != null)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${index + 1}.${item.originalName} ${item.selectedDrink?['name']}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      item.selection
+                                          ? item.selectedTemp != null
+                                              ? Text(
+                                                  '- ${item.selectedTemp?["name"]}',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: item.selectedTemp?['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[400],
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink()
+                                          : Text(
+                                              '${index + 1}. $name',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                    ],
+                                  ),
+                              ],
+                            ),
                           ],
                         ),
-                        item.selectedSide != null && item.selectedSide?.isNotEmpty == true
-                            ? Text(
-                                item.selectedSide!.map((side) => side['name']).join(', '),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-
-                        // Showing the Item Price UI
-                        // Text(
-                        //   'RM ${price.toStringAsFixed(2)}',
-                        //   style: TextStyle(
-                        //     fontSize: 14,
-                        //     fontWeight: FontWeight.bold,ß
-                        //     color: Colors.green[300],
-                        //   ),
-                        // ),
+                        Row(
+                          children: [
+                            showEditBtn
+                                ? Padding(
+                                    padding: const EdgeInsets.only(right: 15),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'x ${item.quantity}',
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: Row(
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              item.tapao = !item.tapao;
+                                              updateItemRemarks(
+                                                selectedMeePortion: item.selectedMeePortion,
+                                                selectedMeatPortion: item.selectedMeatPortion,
+                                                item: item,
+                                              );
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              color: item.tapao ?  Colors.red : const Color.fromARGB(255, 12, 120, 202), // Background color
+                                              borderRadius: BorderRadius.circular(5), // Border radius
+                                            ),
+                                            child: const Icon(
+                                              Icons.delivery_dining_sharp,
+                                              color: Colors.white,
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              item.quantity++;
+                                              widget.selectedOrder.updateTotalCost(0);
+                                              widget.selectedOrder.calculateItemsAndQuantities();
+                                              widget.updateOrderStatus!();
+                                            });
+                                            CherryToast(
+                                              icon: Icons.check_circle,
+                                              iconColor: Colors.green,
+                                              themeColor: const Color.fromRGBO(46, 125, 50, 1),
+                                              backgroundColor: Colors.white,
+                                              title: Text(
+                                                '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              toastPosition: Position.top,
+                                              toastDuration: const Duration(milliseconds: 1000),
+                                              animationType: AnimationType.fromTop,
+                                              animationDuration: const Duration(milliseconds: 200),
+                                              autoDismiss: true,
+                                              displayCloseButton: false,
+                                            ).show(context);
+                                          },
+                                          child: Container(
+                                            width: 20, // Adjust this value to change the width of the rectangle
+                                            height: 20, // Adjust this value to change the height of the rectangle
+                                            decoration: BoxDecoration(
+                                              color: Colors.green[700],
+                                              borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
+                                            ),
+                                            child: const Icon(
+                                              Icons.add,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '${item.quantity}',
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              if (item.quantity > 1) {
+                                                item.quantity--;
+                                                widget.selectedOrder.updateTotalCost(0);
+                                                widget.selectedOrder.calculateItemsAndQuantities();
+                                                widget.updateOrderStatus!();
+                                                CherryToast(
+                                                  icon: Icons.remove_circle,
+                                                  iconColor: Colors.red,
+                                                  themeColor: Colors.red,
+                                                  backgroundColor: Colors.white,
+                                                  title: Text(
+                                                    '${item.name} (RM ${price.toStringAsFixed(2)})',
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  toastPosition: Position.top,
+                                                  toastDuration: const Duration(milliseconds: 1000),
+                                                  animationType: AnimationType.fromTop,
+                                                  animationDuration: const Duration(milliseconds: 200),
+                                                  autoDismiss: true,
+                                                  displayCloseButton: false,
+                                                ).show(context);
+                                              } else if (item.quantity == 1) {
+                                                CherryToast(
+                                                  icon: Icons.info,
+                                                  iconColor: Colors.green,
+                                                  themeColor: Colors.green,
+                                                  backgroundColor: Colors.white,
+                                                  title: const Text(
+                                                    "Swipe left/right to remove the item",
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  toastPosition: Position.top,
+                                                  toastDuration: const Duration(milliseconds: 1000),
+                                                  animationType: AnimationType.fromTop,
+                                                  animationDuration: const Duration(milliseconds: 200),
+                                                  autoDismiss: true,
+                                                  displayCloseButton: false,
+                                                ).show(context);
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 20, // Adjust this value to change the width of the rectangle
+                                            height: 20, // Adjust this value to change the height of the rectangle
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromRGBO(239, 108, 0, 1),
+                                              borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
+                                            ),
+                                            child: const Icon(
+                                              Icons.remove,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                ),
-                showEditBtn
-                    ? const SizedBox.shrink()
-                    : GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            updateItemRemarks(
-                              selectedMeePortion: item.selectedMeePortion,
-                              selectedMeatPortion: item.selectedMeatPortion,
-                              item: item,
-                            );
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10), // Adjust padding as needed
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey, // Background color
-                            borderRadius: BorderRadius.circular(5), // Border radius
-                          ),
-                          child: const Text(
-                            "Tapao",
-                            style: TextStyle(fontSize: 10, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                const SizedBox(width: 20.0),
-                showEditBtn
-                    ? Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'x ${item.quantity}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  item.quantity++;
-                                  widget.selectedOrder.updateTotalCost(0);
-                                  widget.selectedOrder.calculateItemsAndQuantities();
-                                  widget.updateOrderStatus!();
-                                });
-                                CherryToast(
-                                  icon: Icons.check_circle,
-                                  iconColor: Colors.green,
-                                  themeColor: const Color.fromRGBO(46, 125, 50, 1),
-                                  backgroundColor: Colors.white,
-                                  title: Text(
-                                    '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                if (item.itemRemarks!.isNotEmpty || item.selectedSide!.isNotEmpty)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8, right: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          item.selection == true && item.selectedNoodlesType != null
+                              ? Padding(
+                                  padding: const EdgeInsets.only(right: 5.0),
+                                  child: Text(
+                                    "${item.selectedNoodlesType!['name']}",
                                     style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: Colors.yellow,
                                     ),
                                   ),
-                                  toastPosition: Position.top,
-                                  toastDuration: const Duration(milliseconds: 1000),
-                                  animationType: AnimationType.fromTop,
-                                  animationDuration: const Duration(milliseconds: 200),
-                                  autoDismiss: true,
-                                  displayCloseButton: false,
-                                ).show(context);
-                              },
-                              child: Container(
-                                width: 20, // Adjust this value to change the width of the rectangle
-                                height: 20, // Adjust this value to change the height of the rectangle
-                                decoration: BoxDecoration(
-                                  color: Colors.green[700],
-                                  borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
-                                ),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: 14,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${item.quantity}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (item.quantity > 1) {
-                                    item.quantity--;
-                                    widget.selectedOrder.updateTotalCost(0);
-                                    widget.selectedOrder.calculateItemsAndQuantities();
-                                    widget.updateOrderStatus!();
-                                    CherryToast(
-                                      icon: Icons.remove_circle,
-                                      iconColor: Colors.red,
-                                      themeColor: Colors.red,
-                                      backgroundColor: Colors.white,
-                                      title: Text(
-                                        '${item.name} (RM ${price.toStringAsFixed(2)})',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                )
+                              : const SizedBox.shrink(),
+                          Wrap(
+                            children: [
+                              // Item Remarks & Comments UI
+                              item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true
+                                  ? Text(
+                                      item.itemRemarks?.values.join(', ') ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
                                       ),
-                                      toastPosition: Position.top,
-                                      toastDuration: const Duration(milliseconds: 1000),
-                                      animationType: AnimationType.fromTop,
-                                      animationDuration: const Duration(milliseconds: 200),
-                                      autoDismiss: true,
-                                      displayCloseButton: false,
-                                    ).show(context);
-                                  } else if (item.quantity == 1) {
-                                    CherryToast(
-                                      icon: Icons.info,
-                                      iconColor: Colors.green,
-                                      themeColor: Colors.green,
-                                      backgroundColor: Colors.white,
-                                      title: const Text(
-                                        "Swipe left/right to remove the item",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      toastPosition: Position.top,
-                                      toastDuration: const Duration(milliseconds: 1000),
-                                      animationType: AnimationType.fromTop,
-                                      animationDuration: const Duration(milliseconds: 200),
-                                      autoDismiss: true,
-                                      displayCloseButton: false,
-                                    ).show(context);
-                                  }
-                                });
-                              },
-                              child: Container(
-                                width: 20, // Adjust this value to change the width of the rectangle
-                                height: 20, // Adjust this value to change the height of the rectangle
-                                decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(239, 108, 0, 1),
-                                  borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
-                                ),
-                                child: const Icon(
-                                  Icons.remove,
-                                  color: Colors.white,
-                                  size: 14,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ],
+                          ),
+                          item.selectedSide != null && item.selectedSide?.isNotEmpty == true
+                              ? Text(
+                                  item.selectedSide!.map((side) => side['name']).join(', '),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ],
                       ),
+                    ),
+                  ),
               ],
             ),
           ],

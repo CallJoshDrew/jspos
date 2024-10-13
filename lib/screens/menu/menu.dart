@@ -127,6 +127,7 @@ class _MenuPageState extends State<MenuPage> {
                     meePortion: item['mee portion'] ?? [],
                     sides: item['sides'] ?? [],
                     addOns: item['add on'] ?? [],
+                    tapao: item['tapao'] ?? false,
                   );
                 }).toList(),
               ),

@@ -57,6 +57,8 @@ class Item with ChangeNotifier {
   Map<String, dynamic>? selectedAddOn;
   @HiveField(25)
   Map<String, dynamic>? itemRemarks;
+  @HiveField(26)
+  bool tapao;
 
   Item({
     required this.id,
@@ -83,6 +85,7 @@ class Item with ChangeNotifier {
     this.selectedSide,
     this.selectedAddOn,
     this.itemRemarks,
+    this.tapao = false,
     required this.originalName,
   })  : originalPrice = price,
         _selectedDrink = selectedDrink,
@@ -119,6 +122,7 @@ class Item with ChangeNotifier {
          '\tselectedAddOn: $selectedAddOn,\n' // Keep as a Set
         // '\tselectedAddOn: ${selectedAddOn?.map((addOn) => addOn.toString()).join(', ')},\n'
         '\titemRemarks: ${itemRemarks.toString()}\n'
+        '\ttapao: $tapao, \n'
         '}';
   }
 
@@ -167,6 +171,7 @@ class Item with ChangeNotifier {
       selectedSide: selectedSide != null ? Set<Map<String, dynamic>>.from(selectedSide!) : null,
       selectedAddOn: selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
       itemRemarks: itemRemarks,
+      tapao: tapao,
     );
   }
 
@@ -197,6 +202,7 @@ class Item with ChangeNotifier {
       'selectedAddOn': selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
       // for practical purposes in JSON serialization, as JSON does not support sets. 
       'itemRemarks': itemRemarks,
+      'tapao': tapao,
     };
   }
 }

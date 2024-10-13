@@ -32,8 +32,8 @@ void main() async {
     var dailySalesBox = await Hive.openBox<DailySales>('dailySalesBox'); // Open dailySales box
 
     // Initialize orders, tables, categories, counterBox and dailySalesBox if not already present    
-    Orders? ordersData = ordersBox.get('orders');
     Orders orders;
+    Orders? ordersData = ordersBox.get('orders');
     if (ordersData != null) {
       orders = ordersData;
     } else {

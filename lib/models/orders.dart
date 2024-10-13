@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:hive/hive.dart';
@@ -16,16 +18,17 @@ class Orders {
   }
 
   void addOrder(SelectedOrder order) {
+    log('Adding order: $order');
+    log('Current orders before adding: $data');
     final existingOrderIndex = data.indexWhere((o) => o.orderNumber == order.orderNumber);
     if (existingOrderIndex != -1) {
-      // Replace the existing order
       data[existingOrderIndex] = order;
     } else {
-      // Add the new order
       data.add(order);
     }
+    log('Current orders after adding: $data');
   }
-  
+
   SelectedOrder? getOrder(String orderNumber) {
     return data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
   }
