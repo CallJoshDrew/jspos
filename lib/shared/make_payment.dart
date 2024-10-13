@@ -42,17 +42,6 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   double roundingAdjustment = 0.0;
   int enteredDiscount = 0;
 
-  int getTotalSides(selectedSide, selectedAddOn) {
-    int totalSidesCount = selectedSide?.length ?? 0;
-    // Add the selectedAddOn 'name' value if available
-    if (selectedAddOn != null && selectedAddOn!['name'] != null) {
-      num addOnValue = num.parse(selectedAddOn!['name']);
-
-      totalSidesCount += addOnValue.toInt();
-    }
-    return totalSidesCount;
-  }
-
   void _calculateTotalWithDiscount() {
     // Calculate the discount amount
     double discountAmount = widget.selectedOrder.subTotal * (widget.selectedOrder.discount / 100);
@@ -301,7 +290,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                           "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
-                                                                            color: Colors.green,
+                                                                            color: Color.fromARGB(255, 114, 226, 118),
                                                                           ),
                                                                         ),
                                                                       ],
@@ -390,17 +379,31 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                       )
                                                                     : const SizedBox.shrink(),
                                                                 item.selection && item.selectedSide != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "Total Sides: ${(item.selectedSide?.length)}",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.yellow,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                item.selection && item.selectedSide != null
                                                                     ? Wrap(
                                                                         children: [
-                                                                          item.selectedSide!.isNotEmpty
-                                                                              ? const Text(
-                                                                                  "Sides: ",
-                                                                                  style: TextStyle(
-                                                                                    fontSize: 14,
-                                                                                    color: Colors.yellow,
-                                                                                  ),
-                                                                                )
-                                                                              : const SizedBox.shrink(),
+                                                                          // item.selectedSide!.isNotEmpty
+                                                                          //     ? Text(
+                                                                          //         "Selected ${(item.selectedSide!.length - (int.tryParse(item.selectedAddOn?['name'] ?? '0') ?? 0))} Sides:",
+                                                                          //         style: const TextStyle(
+                                                                          //           fontSize: 14,
+                                                                          //           color: Colors.yellow,
+                                                                          //         ),
+                                                                          //       )
+                                                                          //     : const SizedBox.shrink(),
+                                                                          // const SizedBox(width: 5),
                                                                           for (var side in item.selectedSide!.toList())
                                                                             Wrap(
                                                                               children: [
@@ -435,15 +438,25 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
-                                                                            "Total Sides: ${getTotalSides(item.selectedSide, item.selectedAddOn)} ",
+                                                                            "Extra Sides Charges: ${item.selectedAddOn?['name']}",
                                                                             style: const TextStyle(
                                                                               fontSize: 14,
                                                                               color: Colors.yellow,
                                                                             ),
                                                                           ),
+                                                                          const SizedBox(width: 5),
+                                                                          if (item.selectedAddOn!['price'] > 0.00)
+                                                                          Text(
+                                                                            "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                                            ),
+                                                                          ),
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
+                                                                
                                                                 Wrap(
                                                                   children: [
                                                                     item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
@@ -946,7 +959,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontSize: 18,
-                                                                  color: Colors.green,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
                                                                   fontWeight: FontWeight.bold,
                                                                 ),
                                                               ),
@@ -1002,7 +1015,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontSize: 18,
-                                                                  color: Colors.green,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
                                                                   fontWeight: FontWeight.bold,
                                                                 ),
                                                               ),

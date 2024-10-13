@@ -18,16 +18,6 @@ class HistoryOrderPage extends ConsumerStatefulWidget {
 
 class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
   bool isPrinting = false;
-  int getTotalSides(selectedSide, selectedAddOn) {
-    int totalSidesCount = selectedSide?.length ?? 0;
-    // Add the selectedAddOn 'name' value if available
-    if (selectedAddOn != null && selectedAddOn!['name'] != null) {
-      num addOnValue = num.parse(selectedAddOn!['name']);
-
-      totalSidesCount += addOnValue.toInt();
-    }
-    return totalSidesCount;
-  }
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
@@ -358,7 +348,29 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
-                                                                            "Total Sides: ${getTotalSides(item.selectedSide, item.selectedAddOn)} ",
+                                                                            "Extra Sides: ${(item.selectedAddOn?['name'])}",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.yellow,
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(width: 5),
+                                                                          if (item.selectedAddOn!['price'] > 0.00)
+                                                                          Text(
+                                                                            "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.green,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                item.selection && item.selectedSide != null
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "Total Sides: ${(item.selectedSide?.length)}",
                                                                             style: const TextStyle(
                                                                               fontSize: 14,
                                                                               color: Colors.yellow,

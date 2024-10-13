@@ -137,11 +137,11 @@ class ProductItemState extends State<ProductItem> {
           int sidesCount = selectedSide.length; // Get the number of selected sides
 
           // Add the selectedAddOn 'name' value if available
-          if (selectedAddOn != null && selectedAddOn!['name'] != null) {
-            num addOnValue = num.parse(selectedAddOn!['name']); // Parse 'name' as num (handles int and double)
+          // if (selectedAddOn != null && selectedAddOn!['name'] != null) {
+          //   num addOnValue = num.parse(selectedAddOn!['name']); // Parse 'name' as num (handles int and double)
 
-            sidesCount == addOnValue.toInt(); // Convert to int if necessary
-          }
+          //   sidesCount == addOnValue.toInt(); // Convert to int if necessary
+          // }
 
           return sidesCount;
         }
@@ -150,11 +150,11 @@ class ProductItemState extends State<ProductItem> {
           int totalSidesCount = selectedSide.length; // Get the number of selected sides
 
           // Add the selectedAddOn 'name' value if available
-          if (selectedAddOn != null && selectedAddOn!['name'] != null) {
-            num addOnValue = num.parse(selectedAddOn!['name']); // Parse 'name' as num (handles int and double)
+          // if (selectedAddOn != null && selectedAddOn!['name'] != null) {
+          //   num addOnValue = num.parse(selectedAddOn!['name']); // Parse 'name' as num (handles int and double)
 
-            totalSidesCount += addOnValue.toInt(); // Convert to int if necessary
-          }
+          //   totalSidesCount += addOnValue.toInt(); // Convert to int if necessary
+          // }
 
           return totalSidesCount;
         }
@@ -465,6 +465,19 @@ class ProductItemState extends State<ProductItem> {
                                                     )
                                                   : const SizedBox.shrink(),
                                               // Product Details after select side, noodles, choices, etc
+                                              item.selection && selectedAddOn != null
+                                                  ? Row(
+                                                      children: [
+                                                        Text(
+                                                          "Total Sides: ${(selectedSide.length)}",
+                                                          style: const TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.yellow,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox.shrink(),
                                               item.selection && selectedSide.isNotEmpty
                                                   ? Wrap(
                                                       children: [
@@ -489,56 +502,37 @@ class ProductItemState extends State<ProductItem> {
                                                       ],
                                                     )
                                                   : const SizedBox.shrink(),
-                                              item.selection && selectedAddOn != null
-                                                  ? Text(
-                                                      "Selected: ${getTotalSelectedSides()}",
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.white,
-                                                      ),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              item.selection && selectedAddOn != null
-                                                  ? Row(
-                                                      children: [
-                                                        Text(
-                                                          "Extra: ${selectedAddOn!['name']} ",
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        if (selectedAddOn!['price'] != null && selectedAddOn!['price'] > 0.00)
-                                                          Text(
-                                                            "( + ${selectedAddOn!['price'].toStringAsFixed(2)} )",
-                                                            style: const TextStyle(
-                                                              fontSize: 14,
-                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                              // item.selection && selectedAddOn != null
+                                              //     ? Text(
+                                              //         "Selected: ${getTotalSelectedSides()}",
+                                              //         style: const TextStyle(
+                                              //           fontSize: 14,
+                                              //           color: Colors.white,
+                                              //         ),
+                                              //       )
+                                              //     : const SizedBox.shrink(),
+                                                  item.selection && selectedAddOn != null
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "Extra Sides Charges: ${selectedAddOn?['name']}",
+                                                              style: const TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors.yellow,
+                                                              ),
                                                             ),
-                                                          )
-                                                      ],
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              item.selection && selectedAddOn != null
-                                                  ? Row(
-                                                      children: [
-                                                        Text(
-                                                          "Total Sides: ${getTotalSides()} ",
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        // Text(
-                                                        //   "( + ${selectedAddOn!['price'].toStringAsFixed(2)} )",
-                                                        //   style: const TextStyle(
-                                                        //     fontSize: 14,
-                                                        //     color: Color.fromARGB(255, 114, 226, 118),
-                                                        //   ),
-                                                        // )
-                                                      ],
-                                                    )
-                                                  : const SizedBox.shrink(),
+                                                            const SizedBox(width: 5),
+                                                            if (selectedAddOn!['price'] > 0.00)
+                                                            Text(
+                                                              "( + ${(selectedAddOn?['price'].toStringAsFixed(2))})",
+                                                              style: const TextStyle(
+                                                                fontSize: 14,
+                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
                                             ],
                                           ),
                                         ],
@@ -912,49 +906,55 @@ class ProductItemState extends State<ProductItem> {
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                const Text(
-                                                  'Add-On Extra Sides',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                Wrap(
-                                                  spacing: 6, // space between buttons horizontally
-                                                  runSpacing: 0, // space between buttons vertically
-                                                  children: widget.addOns.map((addOn) {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          selectedAddOn = addOn;
-                                                          addOnsPrice = addOn['price'];
-                                                          calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                              calculateSidesPrice(), addOnsPrice);
-                                                        });
-                                                      },
-                                                      style: ButtonStyle(
-                                                        backgroundColor: WidgetStateProperty.all<Color>(
-                                                          selectedAddOn == addOn ? Colors.orange : Colors.white,
-                                                        ),
-                                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                          RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(5),
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      'Add-On Extra Sides',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    Wrap(
+                                                      spacing: 6, // space between buttons horizontally
+                                                      runSpacing: 0, // space between buttons vertically
+                                                      children: widget.addOns.map((addOn) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedAddOn = addOn;
+                                                              addOnsPrice = addOn['price'];
+                                                              calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                  calculateSidesPrice(), addOnsPrice);
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedAddOn == addOn ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                           ),
-                                                        ),
-                                                        padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                      ),
-                                                      child: Text(
-                                                        '+ ${addOn['name']}',
-                                                        style: TextStyle(
-                                                          color: selectedAddOn == addOn
-                                                              ? Colors.white
-                                                              : Colors.black, // Change the text color based on the selected button
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                )
+                                                          child: Text(
+                                                            '+ ${addOn['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedAddOn == addOn
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    )
+                                                  ],
+                                                ),
                                               ],
                                             ),
                                           ),
