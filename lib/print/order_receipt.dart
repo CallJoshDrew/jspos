@@ -104,36 +104,32 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
 
         // Add the quantity line
         list.add(LineText(type: LineText.TYPE_TEXT, content: '${item.quantity}', x: quantityXPosition, linefeed: 1));
-
-        // Check and add selectedNoodlesType to the receipt
         if (item.selection && item.selectedNoodlesType != null) {
-            // Always print selectedNoodlesType
-            list.add(LineText(
-              type: LineText.TYPE_TEXT,
-              content: '  - ${item.selectedNoodlesType!["name"]}',  // Print selectedNoodlesType
-              align: LineText.ALIGN_LEFT,
-              x: 0,
-              linefeed: 0,
-            ));
+          // Prepare the content for the line
+          String content = ' - ${item.selectedNoodlesType!["name"]}';
 
-            // Conditionally print selectedMeePortion if it's not equal to "Normal Mee"
-            if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
-                list.add(LineText(
-                  type: LineText.TYPE_TEXT,
-                  content: '  (${item.selectedMeePortion!["name"]})',  // Print selectedMeePortion if it's not "Normal Mee"
-                  align: LineText.ALIGN_LEFT,
-                  x: 0,
-                  linefeed: 1,
-                ));
-              }
+          // Append MeePortion if it's not "Normal Mee"
+          if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
+            content += '(${item.selectedMeePortion!["name"]})';
           }
+
+          // Add the final content to the list
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: content, // Print both in the same line
+            align: LineText.ALIGN_LEFT,
+            x: 0,
+            linefeed: 1,
+          ));
+        }
+
         // Check and add selectedMeatPortion to the receipt
         if (item.selection && item.selectedMeatPortion != null) {
           // Check if the selected meat portion is not "Normal"
           if (item.selectedMeatPortion!["name"] != "Normal Meat") {
             list.add(LineText(
                 type: LineText.TYPE_TEXT,
-                content: '  - ${item.selectedMeatPortion!["name"]}', // Print meat portion if not "Normal"
+                content: ' - ${item.selectedMeatPortion!["name"]}', // Print meat portion if not "Normal"
                 align: LineText.ALIGN_LEFT,
                 x: 0,
                 linefeed: 1));
@@ -144,12 +140,21 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           String remarks = getFilteredRemarks(item.itemRemarks);
           list.add(LineText(
               type: LineText.TYPE_TEXT,
-              content: '  - $remarks', // Dynamic remarks with 'Remarks:' prefix
+              content: ' - $remarks', // Dynamic remarks with 'Remarks:' prefix
               align: LineText.ALIGN_LEFT,
               x: 0,
               linefeed: 1));
         }
-        // Check and add selected add-ons to the receipt
+        // Check and calculate total sides to the receipt
+        if (item.selection && item.selectedSide != null) {
+            list.add(LineText(
+                type: LineText.TYPE_TEXT,
+                content: ' Total Sides: ${item.selectedSide!.length}', // Print meat portion if not "Normal"
+                align: LineText.ALIGN_LEFT,
+                x: 0,
+                linefeed: 1));
+        }
+        // Check and add selected sides to the receipt
         String sidesText = '';
 
         if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
@@ -164,17 +169,17 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
             }
           }
 
-          // Use the addFormattedLines function for add-ons
+          // Use the addFormattedLines function for sides
           addFormattedLines(
               text: sidesText,
               list: list,
               maxLength: 26,
-              firstLinePrefix: '  - ', // Start the first line with "- "
-              subsequentLinePrefix: '    ' // Start subsequent lines with two spaces
+              firstLinePrefix: ' - ', // Start the first line with " - "
+              subsequentLinePrefix: '   ' // Start subsequent lines with two spaces
               );
         }
         // Increment the index for the next item across all categories
-          itemIndex++;
+        itemIndex++;
       }
     }
     list.add(LineText(type: LineText.TYPE_TEXT, content: dottedLineWidth, weight: 1, align: LineText.ALIGN_CENTER, linefeed: 1));

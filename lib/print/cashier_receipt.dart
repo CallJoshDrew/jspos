@@ -44,7 +44,16 @@ class CashierReceiptGenerator {
       return baseXPosition + 50;  // Default adjustment
     }
   }
-  
+  // Restaurant Sing Ming Hing
+  // Lot 16, Block B, Utara Place 1, Jalan Utara,
+  // IJM Batu 6, Sandakan, Malaysia
+  // Contact: +6016 822 6188
+
+  // TryMee IJM
+  // Lot 14, Ground Floor Utama Zone 3 Commercial,
+  // Jalan Dataran BU3, Sandakan, Malaysia
+  // Contact: +6011-5873 0128
+
   // printer width is 72mm for Cashier
   List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
     List<LineText> list = [];
@@ -52,24 +61,28 @@ class CashierReceiptGenerator {
     list.add(LineText(
         type: LineText.TYPE_TEXT, 
         content: 'Restaurant Sing Ming Hing', 
+        // content: 'TryMee IJM', 
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: 'Lot 16, Block B, Utara Place 1, Jalan Utara,',
+        // content: 'Lot 14, Ground Floor Utama Zone 3 Commercial,',
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: 'IJM Batu 6, Sandakan, Malaysia',
+        // content: 'Jalan Dataran BU3, Sandakan, Malaysia',
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: 'Contact: +6016 822 6188',
+        // content: 'Contact: +6011 5873 0128',
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
@@ -151,42 +164,45 @@ class CashierReceiptGenerator {
         for (var item in categoryItems) {
           // Determine the item name based on your condition
           String itemName;
+          int linefeed;  // Define the linefeed variable
+
           if (item.selection && item.selectedChoice != null) {
-            itemName = item.originalName == item.selectedChoice!['name']
-                ? item.originalName
-                : '${item.originalName} ${item.selectedChoice!['name']}';
+            itemName = item.originalName;
+            linefeed = 1;  // Set linefeed to 1 for selectedChoice
           } else if (item.selectedDrink != null && item.selectedTemp != null) {
             itemName = item.originalName == item.selectedDrink!['name']
                 ? item.originalName
                 : '${item.originalName} ${item.selectedDrink?['name']} (${item.selectedTemp?['name']})';
+            linefeed = 0;  // Set linefeed to 0 for selectedDrink
           } else {
             itemName = item.name;
+            linefeed = 0;  // Default linefeed
           }
 
-         
           String itemText = '$itemIndex.$itemName';
-          String quantityText = item.quantity.toString();
 
           // Calculate total price (unit price * quantity)
           double totalPrice = item.price * item.quantity;
           String priceText = totalPrice.toStringAsFixed(2);  // Format the total price to 2 decimal places
 
-          // Use the new function to print item text, quantity, and total price
-          printItemWithQuantityAndPrice(
-            itemText: itemText,
-            quantity: quantityText,
-            price: priceText,
-            list: list,
-            maxLength: 30  // Set your character limit here
-          );
-          // // Determine the relativeX position based on the totalQuantity's number of digits
-          // int quantityXPosition = 340+40;  // Default for 2 digits
-          // if (item.quantity.toString().length == 1) {
-          //   quantityXPosition = 340+60;  // Adjust for 1 digit
-          // } else if (item.quantity.toString().length == 3) {
-          //   quantityXPosition = 340+30;  // Adjust for 3 digits
-          // }
-          
+          // Add the item to the print list with the correct linefeed
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: itemText,
+            align: LineText.ALIGN_LEFT,
+            x: 0,
+            linefeed: linefeed,  // Use the dynamic linefeed value
+          ));
+
+          if (item.selectedChoice != null) {
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: '  ${item.selectedChoice!['name']}',
+              align: LineText.ALIGN_LEFT,
+              x: 0,
+              linefeed: 0,  // Stay on the same line
+            ));
+          }
           // Add the quantity line
           list.add(LineText(
               type: LineText.TYPE_TEXT,

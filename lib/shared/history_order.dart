@@ -259,7 +259,9 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedMeePortion != null
+                                                                item.selection &&
+                                                                        item.selectedMeePortion != null &&
+                                                                        item.selectedMeePortion!['name'] != "Normal Mee"
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
@@ -281,7 +283,9 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedMeatPortion != null
+                                                                     item.selection &&
+                                                                        item.selectedMeatPortion != null &&
+                                                                        item.selectedMeatPortion!['name'] != "Normal Meat"
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
@@ -302,18 +306,22 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
+                                                                    item.selection && item.selectedSide!.isNotEmpty
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "Total Sides: ${(item.selectedSide?.length)}",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.yellow,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
                                                                 item.selection && item.selectedSide != null
                                                                     ? Wrap(
                                                                         children: [
-                                                                          item.selectedSide!.isNotEmpty
-                                                                              ? const Text(
-                                                                                  "Sides: ",
-                                                                                  style: TextStyle(
-                                                                                    fontSize: 14,
-                                                                                    color: Colors.yellow,
-                                                                                  ),
-                                                                                )
-                                                                              : const SizedBox.shrink(),
                                                                           for (var side in item.selectedSide!.toList())
                                                                             Wrap(
                                                                               children: [
@@ -361,19 +369,6 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                             style: const TextStyle(
                                                                               fontSize: 14,
                                                                               color: Colors.green,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    : const SizedBox.shrink(),
-                                                                item.selection && item.selectedSide != null
-                                                                    ? Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            "Total Sides: ${(item.selectedSide?.length)}",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Colors.yellow,
                                                                             ),
                                                                           ),
                                                                         ],

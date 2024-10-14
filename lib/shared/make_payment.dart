@@ -378,7 +378,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedSide != null
+                                                                item.selection && item.selectedSide!.isNotEmpty
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
@@ -394,16 +394,6 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 item.selection && item.selectedSide != null
                                                                     ? Wrap(
                                                                         children: [
-                                                                          // item.selectedSide!.isNotEmpty
-                                                                          //     ? Text(
-                                                                          //         "Selected ${(item.selectedSide!.length - (int.tryParse(item.selectedAddOn?['name'] ?? '0') ?? 0))} Sides:",
-                                                                          //         style: const TextStyle(
-                                                                          //           fontSize: 14,
-                                                                          //           color: Colors.yellow,
-                                                                          //         ),
-                                                                          //       )
-                                                                          //     : const SizedBox.shrink(),
-                                                                          // const SizedBox(width: 5),
                                                                           for (var side in item.selectedSide!.toList())
                                                                             Wrap(
                                                                               children: [
@@ -446,17 +436,16 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                           ),
                                                                           const SizedBox(width: 5),
                                                                           if (item.selectedAddOn!['price'] > 0.00)
-                                                                          Text(
-                                                                            "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                                            Text(
+                                                                              "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
                                                                             ),
-                                                                          ),
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                
                                                                 Wrap(
                                                                   children: [
                                                                     item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
@@ -811,6 +800,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                       children: [
                                         // Discount Input
                                         Expanded(
+                                          flex: 5,
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
@@ -852,6 +842,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                         const SizedBox(width: 20), // Spacing between the two input fields
                                         // Amount Received Input
                                         Expanded(
+                                          flex: 7,
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
@@ -883,16 +874,22 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                 ),
                                                 onChanged: (value) {
                                                   setState(() {
-                                                    // Parse the value entered by the user
-                                                    amountReceived = double.tryParse(value) ?? 0.0;
+                                                    // Determine the amount received based on user input or fallback to the bill amount
+                                                    amountReceived =
+                                                        value.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill) : double.tryParse(value) ?? 0.0;
 
-                                                    // If the input is empty, reset to the adjusted/original bill
-                                                    if (value.isEmpty) {
-                                                      amountReceived = 0.0;
-                                                    }
+                                                    // Update the selected order with the amount received
+                                                    widget.selectedOrder.amountReceived = amountReceived;
 
-                                                    // Trigger the calculation of the change
+                                                    // Trigger the change calculation
                                                     _calculateChange();
+
+                                                    // Ensure totalPrice defaults to the original bill if no valid input is provided
+                                                    widget.selectedOrder.totalPrice =
+                                                        value.isEmpty ? originalBill : double.parse((amountReceived - amountChanged).toStringAsFixed(2));
+
+                                                    // Update the amount changed in the selected order
+                                                    widget.selectedOrder.amountChanged = amountChanged;
                                                   });
                                                 },
                                               ),
@@ -1052,10 +1049,10 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 try {
                                                                   setState(() {
                                                                     _calculateChange();
-                                                                    widget.selectedOrder.totalPrice =
-                                                                        double.parse((amountReceived - amountChanged).toStringAsFixed(2));
-                                                                    widget.selectedOrder.amountReceived = amountReceived;
-                                                                    widget.selectedOrder.amountChanged = amountChanged;
+                                                                    // widget.selectedOrder.totalPrice =
+                                                                    //     double.parse((amountReceived - amountChanged).toStringAsFixed(2));
+                                                                    // widget.selectedOrder.amountReceived = amountReceived;
+                                                                    // widget.selectedOrder.amountChanged = amountChanged;
                                                                     widget.selectedOrder.roundingAdjustment = roundingAdjustment;
                                                                     widget.selectedOrder.paymentMethod = selectedPaymentMethod;
                                                                     widget.selectedOrder.status = 'Paid';

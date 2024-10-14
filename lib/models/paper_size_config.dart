@@ -12,7 +12,7 @@ enum PaperSizeConfig {
   ),
   mm80(
     orderTypeWidth: 320,
-    orderTimeWidth: 260,
+    orderTimeWidth: 280,
     qtyWidth: 450,
     dottedLineWidth: '------------------------------------------------',
     itemQtyWidth: 470,

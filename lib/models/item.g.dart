@@ -58,6 +58,10 @@ class ItemAdapter extends TypeAdapter<Item> {
       selectedAddOn: (fields[24] as Map?)?.cast<String, dynamic>(),
       itemRemarks: (fields[25] as Map?)?.cast<String, dynamic>(),
       tapao: fields[26] as bool,
+      soupOrKonlou: (fields[27] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
+      selectedSoupOrKonLou: (fields[28] as Map?)?.cast<String, dynamic>(),
       originalName: fields[2] as String,
     )
       .._selectedDrink = (fields[16] as Map?)?.cast<String, dynamic>()
@@ -67,7 +71,7 @@ class ItemAdapter extends TypeAdapter<Item> {
   @override
   void write(BinaryWriter writer, Item obj) {
     writer
-      ..writeByte(27)
+      ..writeByte(29)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -121,7 +125,11 @@ class ItemAdapter extends TypeAdapter<Item> {
       ..writeByte(25)
       ..write(obj.itemRemarks)
       ..writeByte(26)
-      ..write(obj.tapao);
+      ..write(obj.tapao)
+      ..writeByte(27)
+      ..write(obj.soupOrKonlou)
+      ..writeByte(28)
+      ..write(obj.selectedSoupOrKonLou);
   }
 
   @override

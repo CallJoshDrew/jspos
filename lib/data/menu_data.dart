@@ -303,7 +303,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
@@ -345,7 +345,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
@@ -387,7 +387,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
@@ -429,7 +429,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
@@ -471,7 +471,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
@@ -513,7 +513,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
@@ -556,7 +556,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Mee", "price": 2.00},
       {"name": "Less Mee", "price": 0.00},
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},
@@ -598,7 +598,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Mee", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
     ],
-    // "add on": [
+    // "sides": [
     //   {"name": "Egg", "price": 1.50},
     //   {"name": "Fish Ball", "price": 1.50},
     //   {"name": "Fish Cake", "price": 1.50},
@@ -636,7 +636,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Extra Meat", "price": 3.00},
       {"name": "Less Meat", "price": 0.00}
     ],
-    "add on": [
+    "sides": [
       {"name": "Yu Fu", "price": 0.00},
       {"name": "Fish Ball", "price": 0.00},
       {"name": "Yu Wat", "price": 0.00},

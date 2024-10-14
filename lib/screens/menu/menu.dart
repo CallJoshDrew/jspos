@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/shared/product_item.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
@@ -65,6 +66,7 @@ class _MenuPageState extends State<MenuPage> {
             padding: const EdgeInsets.only(left: 5),
             child: _topMenu(
               title: 'SMH Restaurant',
+              // title: 'TryMee IJM',
               subTitle: 'today date',
               action: _closedButtton(),
             ),
@@ -106,6 +108,7 @@ class _MenuPageState extends State<MenuPage> {
                 childAspectRatio: (1 / 1.3), // width 1 / height 1.3
                 crossAxisSpacing: 20, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
+                // children: menu
                 children: menu1
                     .where((item) =>
                         // selectedCategory == 'All' ||
@@ -128,6 +131,7 @@ class _MenuPageState extends State<MenuPage> {
                     sides: item['sides'] ?? [],
                     addOns: item['add on'] ?? [],
                     tapao: item['tapao'] ?? false,
+                    soupOrKonlou: item['soupOrKonlou'] ?? [],
                   );
                 }).toList(),
               ),

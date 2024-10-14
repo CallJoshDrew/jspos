@@ -9,6 +9,7 @@ import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
+// import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/data/menu1_data.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -75,15 +76,6 @@ class _OrderDetailsState extends State<OrderDetails> {
           itemRemarks[key] = portion['name'];
         }
       });
-    }
-
-    // Add or remove "Tapao"
-    if (itemRemarks.containsKey('101')) {
-      itemRemarks.remove('101'); // Remove Tapao
-      log("Removed Tapao from item remarks.");
-    } else {
-      itemRemarks['101'] = 'Tapao'; // Add Tapao
-      log("Added Tapao to item remarks.");
     }
 
     // Ensure consistent empty map handling
@@ -622,7 +614,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               children: <TextSpan>[
                 if (side['price'] != null && side['price'] != 0.00)
                   TextSpan(
-                    text: " (${side['price'].toStringAsFixed(2)})", // Display price if available
+                    text: " ( + ${side['price'].toStringAsFixed(2)})", // Display price if available
                     style: const TextStyle(
                       color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
                     ),
@@ -946,6 +938,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               ?
                                               // selectedDrink
                                               Expanded(
+                                                  flex: 8,
                                                   child: Container(
                                                     padding: const EdgeInsets.all(10),
                                                     decoration: BoxDecoration(
@@ -1011,6 +1004,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               ?
                                               // selectedTemp
                                               Expanded(
+                                                  flex: 4,
                                                   child: Container(
                                                     padding: const EdgeInsets.all(10),
                                                     decoration: BoxDecoration(
@@ -1274,116 +1268,111 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           ] else ...[
                                             const SizedBox.shrink(),
                                           ],
+                                          if (item.sides.isNotEmpty) const SizedBox(width: 10),
+                                          Expanded(
+                                            flex: 4,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.only(top: 10),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  // First row
+                                                  const Text(
+                                                    'Add Remarks',
+                                                    style: TextStyle(color: Colors.white, fontSize: 14),
+                                                  ),
+                                                  // remarks buttons
+                                                  Wrap(
+                                                    spacing: 6.0, // gap between adjacent chips
+                                                    runSpacing: 0, // gap between lines
+                                                    children: remarksData
+                                                        .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
+                                                        .map((data) => remarkButton(data))
+                                                        .toList(),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
                                     // Third Row for selection of add On
-                                    if (item.addOns.isNotEmpty) ...[
-                                      IntrinsicHeight(
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 9,
-                                              child: Container(
-                                                padding: const EdgeInsets.all(10),
-                                                margin: const EdgeInsets.only(top: 10),
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xff1f2029),
-                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Column(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        const Text(
-                                                          'Add-On Extra Sides',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14,
-                                                          ),
+
+                                    Row(
+                                      children: [
+                                        if (item.addOns.isNotEmpty)
+                                          Expanded(
+                                            child: Container(
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.only(top: 10),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      const Text(
+                                                        'Add-On Extra Sides',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 14,
                                                         ),
-                                                        Wrap(
-                                                          spacing: 6, // space between buttons horizontally
-                                                          runSpacing: 0, // space between buttons vertically
-                                                          children: item.addOns.map((addOn) {
-                                                            return ElevatedButton(
-                                                              onPressed: () {
-                                                                setState(() {
-                                                                  selectedAddOn = addOn;
-                                                                  addOnsPrice = addOn['price'];
-                                                                  calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                      calculateSidesPrice(), addOnsPrice);
-                                                                });
-                                                              },
-                                                              style: ButtonStyle(
-                                                                backgroundColor: WidgetStateProperty.all<Color>(
-                                                                  selectedAddOn == addOn ? Colors.orange : Colors.white,
-                                                                ),
-                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                                padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                      ),
+                                                      Wrap(
+                                                        spacing: 6, // space between buttons horizontally
+                                                        runSpacing: 0, // space between buttons vertically
+                                                        children: item.addOns.map((addOn) {
+                                                          return ElevatedButton(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                selectedAddOn = addOn;
+                                                                addOnsPrice = addOn['price'];
+                                                                calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                    calculateSidesPrice(), addOnsPrice);
+                                                              });
+                                                            },
+                                                            style: ButtonStyle(
+                                                              backgroundColor: WidgetStateProperty.all<Color>(
+                                                                selectedAddOn == addOn ? Colors.orange : Colors.white,
                                                               ),
-                                                              child: Text(
-                                                                '+ ${addOn['name']}',
-                                                                style: TextStyle(
-                                                                  color: selectedAddOn == addOn
-                                                                      ? Colors.white
-                                                                      : Colors.black, // Change the text color based on the selected button
-                                                                  fontSize: 12,
+                                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(5),
                                                                 ),
                                                               ),
-                                                            );
-                                                          }).toList(),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
+                                                              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                            ),
+                                                            child: Text(
+                                                              '+ ${addOn['name']}',
+                                                              style: TextStyle(
+                                                                color: selectedAddOn == addOn
+                                                                    ? Colors.white
+                                                                    : Colors.black, // Change the text color based on the selected button
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
                                               ),
                                             ),
-                                            const SizedBox(width: 10),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Container(
-                                                padding: const EdgeInsets.all(10),
-                                                margin: const EdgeInsets.only(top: 10),
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xff1f2029),
-                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    // First row
-                                                    const Text(
-                                                      'Add Remarks',
-                                                      style: TextStyle(color: Colors.white, fontSize: 14),
-                                                    ),
-                                                    // remarks buttons
-                                                    Wrap(
-                                                      spacing: 6.0, // gap between adjacent chips
-                                                      runSpacing: 0, // gap between lines
-                                                      children: remarksData
-                                                          .where((data) => data['category'] == item.category) // Filter remarksData based on item.category
-                                                          .map((data) => remarkButton(data))
-                                                          .toList(),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ] else ...[
-                                      const SizedBox.shrink(),
-                                    ],
+                                          ),
+                                      ],
+                                    ),
                                     // Forth Row for selection of meePortion, meatPortion, write remarks
                                     IntrinsicHeight(
                                       child: Row(
@@ -1731,17 +1720,18 @@ class _OrderDetailsState extends State<OrderDetails> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (item.selectedChoice != null)
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (item.selection == false || item.selectedChoice != null)
                                       Text(
-                                        '${index + 1}.${item.originalName}',
+                                        '${index + 1}.${item.originalName} ${item.tapao ? '( Tapao )' : ''}',
                                         style: const TextStyle(
                                           fontSize: 14,
                                           color: Colors.white,
                                         ),
                                       ),
+                                    if (item.selectedChoice != null)
                                       Text(
                                         '${item.selectedChoice?['name']}',
                                         style: const TextStyle(
@@ -1749,19 +1739,27 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           color: Colors.yellow,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                  ],
+                                ),
                                 if (item.selectedDrink != null)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        '${index + 1}.${item.originalName} ${item.selectedDrink?['name']}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                                      item.selectedDrink?['name'] != item.originalName
+                                          ? Text(
+                                              '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} ${item.tapao ? '( Tapao )' : ''}',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : Text(
+                                              '${index + 1}.${item.originalName}',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                       const SizedBox(width: 5),
                                       item.selection
                                           ? item.selectedTemp != null
@@ -1774,7 +1772,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 )
                                               : const SizedBox.shrink()
                                           : Text(
-                                              '${index + 1}. $name',
+                                              '${index + 1}. ${item.selectedTemp?["name"]}',
                                               style: const TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.white,
@@ -1813,15 +1811,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           onTap: () {
                                             setState(() {
                                               item.tapao = !item.tapao;
-                                              updateItemRemarks(
-                                                selectedMeePortion: item.selectedMeePortion,
-                                                selectedMeatPortion: item.selectedMeatPortion,
-                                                item: item,
-                                              );
                                             });
                                           },
                                           child: Container(
-                                            width: 20,
+                                            width: 30,
                                             height: 20,
                                             decoration: BoxDecoration(
                                               color: item.tapao ? Colors.red : const Color.fromARGB(255, 12, 120, 202), // Background color
@@ -1969,48 +1962,48 @@ class _OrderDetailsState extends State<OrderDetails> {
             // item is to be remained because the ui will be updated from another page. So they are directly got their values such as selectedSide, selectedNoodelsType data from item.
             Row(
               children: [
-                if (item.itemRemarks!.isNotEmpty || item.selectedSide!.isNotEmpty)
+                // Check if either itemRemarks or selectedSide are non-null and not empty
+                if ((item.itemRemarks?.isNotEmpty ?? false) || (item.selectedSide?.isNotEmpty ?? false))
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          item.selection == true && item.selectedNoodlesType != null
-                              ? Padding(
-                                  padding: const EdgeInsets.only(right: 5.0),
-                                  child: Text(
-                                    "${item.selectedNoodlesType!['name']}",
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.yellow,
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
+                          // Only display if 'selection' is true and 'selectedNoodlesType' is not null
+                          if (item.selection == true && item.selectedNoodlesType != null)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              child: Text(
+                                "${item.selectedNoodlesType?['name'] ?? ''}", // Safe access and fallback to empty string
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.yellow,
+                                ),
+                              ),
+                            ),
                           Wrap(
                             children: [
                               // Item Remarks & Comments UI
-                              item.itemRemarks != null && item.itemRemarks?.isNotEmpty == true
-                                  ? Text(
-                                      item.itemRemarks?.values.join(', ') ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ],
-                          ),
-                          item.selectedSide != null && item.selectedSide?.isNotEmpty == true
-                              ? Text(
-                                  item.selectedSide!.map((side) => side['name']).join(', '),
+                              if (item.itemRemarks != null && item.itemRemarks!.isNotEmpty)
+                                Text(
+                                  item.itemRemarks?.values.join(', ') ?? '',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.white,
                                   ),
-                                )
-                              : const SizedBox.shrink(),
+                                ),
+                            ],
+                          ),
+                          // Safely handle selectedSide and ensure it's not null or empty
+                          if (item.selectedSide != null && item.selectedSide!.isNotEmpty)
+                            Text(
+                              item.selectedSide!.map((side) => side['name']).join(', '),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
                         ],
                       ),
                     ),

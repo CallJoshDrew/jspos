@@ -7,13 +7,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
-// import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
 import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 import 'package:jspos/data/tables_data.dart';
 
