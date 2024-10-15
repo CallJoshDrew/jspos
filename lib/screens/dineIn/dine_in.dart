@@ -606,20 +606,21 @@ class DineInPageState extends ConsumerState<DineInPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  children: [
-                    Text(
-                      'We’re about to proceed with printing.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      'Could you please confirm that all items have been selected correctly according to the client’s instructions?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ],
+                Text(
+                  // 'We’re about to proceed with printing.',
+                  'Are you sure?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  'Please confirm all items are correct',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                Text(
+                  'before proceed',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ],
             ),
@@ -650,7 +651,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
                     themeColor: Colors.green,
                     backgroundColor: Colors.white,
                     title: Text(
-                      'Printing ${selectedOrder.orderNumber} is in the process',
+                      // 'Printing ${selectedOrder.orderNumber} is in the process',
+                      'Please press table ${selectedOrder.tableName} for printing.',
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black,
@@ -660,7 +662,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                     toastPosition: Position.top,
                     toastDuration: const Duration(milliseconds: 3000),
                     animationType: AnimationType.fromTop,
-                    animationDuration: const Duration(milliseconds: 1000),
+                    animationDuration: const Duration(milliseconds: 1500),
                     autoDismiss: true,
                     displayCloseButton: false,
                   ).show(context);
@@ -691,8 +693,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
                     updateOrderStatus();
                     handlefreezeMenu();
 
-                    // Call the printReceipt function
-                    await handlePrintingJobs(context, ref, selectedOrder: selectedOrder);
+                    // Call the printReceipt function Stop printing function.
+                    // await handlePrintingJobs(context, ref, selectedOrder: selectedOrder);
 
                     // Ensure the toast has enough time to show before popping the dialog
                     await Future.delayed(const Duration(seconds: 10));
