@@ -220,7 +220,7 @@ class CashierReceiptGenerator {
           //       linefeed: 1));
           //   }
           // }
-          if (item.selection && item.selectedNoodlesType != null) {
+          if (item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] !="None") {
             // Always print selectedNoodlesType
             list.add(LineText(
               type: LineText.TYPE_TEXT,
@@ -264,6 +264,15 @@ class CashierReceiptGenerator {
               x: 0,
               linefeed: 1));
           }
+          // Check and calculate total sides to the receipt
+        if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
+            list.add(LineText(
+                type: LineText.TYPE_TEXT,
+                content: ' Total Sides: ${item.selectedSide!.length}', // Print meat portion if not "Normal"
+                align: LineText.ALIGN_LEFT,
+                x: 0,
+                linefeed: 1));
+        }
           // Check and add selected add-ons to the receipt
           String sidesText = '';
 

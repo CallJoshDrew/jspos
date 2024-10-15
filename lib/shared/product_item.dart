@@ -377,7 +377,7 @@ class ProductItemState extends State<ProductItem> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  item.selection && selectedNoodlesType != null
+                                                  item.selection && selectedNoodlesType != null && selectedNoodlesType!['name'] != 'None'
                                                       ? Row(
                                                           children: [
                                                             Text(

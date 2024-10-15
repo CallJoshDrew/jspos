@@ -11,8 +11,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
-      {"name": "Fish Head", "price": 15.00},
-      {"name": "Fish Belly", "price": 15.00},
+      {"name": "Fish Head/Belly", "price": 15.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -87,8 +86,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
-      {"name": "Fish Head", "price": 15.00},
-      {"name": "Fish Belly", "price": 15.00},
+      {"name": "Fish Head/Belly", "price": 15.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -163,8 +161,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 11.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 12.00},
       {"name": "Seafood", "price": 13.00},
-      {"name": "Fish Head", "price": 14.00},
-      {"name": "Fish Belly", "price": 14.00},
+      {"name": "Fish Head/Belly", "price": 14.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -239,8 +236,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 11.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 12.00},
       {"name": "Seafood", "price": 13.00},
-      {"name": "Fish Head", "price": 14.00},
-      {"name": "Fish Belly", "price": 14.00},
+      {"name": "Fish Head/Belly", "price": 14.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -315,8 +311,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 10.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 11.00},
       {"name": "Seafood", "price": 12.00},
-      {"name": "Fish Head", "price": 13.00},
-      {"name": "Fish Belly", "price": 13.00},
+      {"name": "Fish Head/Belly", "price": 13.00},
     ],
     "noodlesTypes": [
       {"name": "Mihun", "price": 0.00},
@@ -386,8 +381,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 10.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 11.00},
       {"name": "Seafood", "price": 12.00},
-      {"name": "Fish Head", "price": 13.00},
-      {"name": "Fish Belly", "price": 13.00},
+      {"name": "Fish Head/Belly", "price": 13.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -462,8 +456,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
-      {"name": "Fish Head", "price": 15.00},
-      {"name": "Fish Belly", "price": 15.00},
+      {"name": "Fish Head/Belly", "price": 15.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -538,8 +531,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
-      {"name": "Fish Head", "price": 15.00},
-      {"name": "Fish Belly", "price": 15.00},
+      {"name": "Fish Head/Belly", "price": 15.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -614,8 +606,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
-      {"name": "Fish Head", "price": 15.00},
-      {"name": "Fish Belly", "price": 15.00},
+      {"name": "Fish Head/Belly", "price": 15.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -690,8 +681,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
-      {"name": "Fish Head", "price": 15.00},
-      {"name": "Fish Belly", "price": 15.00},
+      {"name": "Fish Head/Belly", "price": 15.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -766,8 +756,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 11.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 12.00},
       {"name": "Seafood", "price": 13.00},
-      {"name": "Fish Head", "price": 14.00},
-      {"name": "Fish Belly", "price": 14.00},
+      {"name": "Fish Head/Belly", "price": 14.00},
     ],
     "noodlesTypes": [
       {"name": "Mihun", "price": 0.00},
@@ -837,8 +826,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish MIXED Chicken", "price": 13.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 14.00},
       {"name": "Seafood", "price": 15.00},
-      {"name": "Fish Head", "price": 16.00},
-      {"name": "Fish Belly", "price": 16.00},
+      {"name": "Fish Head/Belly", "price": 16.00},
     ],
     "soupOrKonLou": [
       {"name": "Soup", "price": 0.00},
@@ -935,6 +923,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Whole Thigh with Rice/Mee", "price": 14.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Rice", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
@@ -1230,9 +1219,9 @@ final List<Map<String, dynamic>> menu1 = [
     "selection": true,
     "drinks": [
       {"name": "Wheatgrass", "Cold": 4.50},
-      {"name": "Wheatgrass with Lemon", "Cold": 5.00},
-      {"name": "Wheatgrass with Kit Zai", "Cold": 5.00},
-      {"name": "Wheatgrass with Milk", "Cold": 5.00},
+      {"name": "with Lemon", "Cold": 5.00},
+      {"name": "with Kit Zai", "Cold": 5.00},
+      {"name": "with Milk", "Cold": 5.00},
     ],
     "temp": [
       {"name": "Cold"}
@@ -1283,7 +1272,7 @@ final List<Map<String, dynamic>> menu1 = [
     "selection": true,
     "drinks": [
       {"name": "Gui Ling Gao", "Cold": 2.50},
-      {"name": "Gui Ling Gao with Milk", "Cold": 3.00},
+      {"name": "with Milk", "Cold": 3.00},
     ],
     "temp": [
       {"name": "Cold"}
@@ -1320,5 +1309,6 @@ final List<Map<String, dynamic>> menu1 = [
     ]
   },
   {"id": "150", "name": "Century Egg", "category": "Add On", "price": 1.50, "image": "assets/addOn/centuryEgg.png"},
-  {"id": "150", "name": "Fried Egg", "category": "Add On", "price": 2.00, "image": "assets/addOn/friedEgg.png"},
+  {"id": "151", "name": "Fried Egg", "category": "Add On", "price": 2.00, "image": "assets/addOn/friedEgg.png"},
+  {"id": "152", "name": "Rice", "category": "Add On", "price": 2.00, "image": "assets/addOn/rice.png"},
 ];

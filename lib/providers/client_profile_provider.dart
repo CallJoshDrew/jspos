@@ -29,6 +29,22 @@ final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async 
   // Contact: +6011-5873 0128
 
 // Hard-coded profile function
+// Future<void> addHardCodedClientProfile(Box<ClientProfile> box) async {
+//   var profile = ClientProfile(
+//     name: "Restaurant Sing Ming Hing",
+//     businessRegistrationNumber: "123456789",
+//     tinNumber: "TIN987654321",
+//     address1: "Lot 16, Block B, Utara Place 1, Jalan Utara",
+//     address2: "IJM Batu 6, Sandakan, Malaysia",
+//     postcode: "90000",
+//     state: "Sabah",
+//     contactNumber: "+6016-822 6188",
+//     // logoPath: "/path/to/logo.png",
+//   );
+
+//   await box.add(profile);
+// }
+
 Future<void> addHardCodedClientProfile(Box<ClientProfile> box) async {
   var profile = ClientProfile(
     name: "TryMee IJM",

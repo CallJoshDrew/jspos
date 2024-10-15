@@ -242,7 +242,7 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                               children: [
                                                                 Row(
                                                                   children: [
-                                                                    item.selection && item.selectedNoodlesType != null
+                                                                    item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] != 'None'
                                                                         ? Row(
                                                                             children: [
                                                                               Text(

@@ -74,23 +74,40 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         log(category);
         // Determine the item name based on the provided conditions
         String itemName;
-        if (item.selection && item.selectedChoice != null) {
-          itemName = item.originalName == item.selectedChoice!['name'] ? item.originalName : '${item.originalName} ${item.selectedChoice!['name']}';
-        } else if (item.selectedDrink != null && item.selectedTemp != null) {
-          itemName = item.originalName == item.selectedDrink!['name']
-              ? item.originalName
-              : '${item.originalName} ${item.selectedDrink?['name']} (${item.selectedTemp?['name']})';
-        } else {
-          itemName = item.name;
-        }
+        int linefeed;  // Define the linefeed variable
+
+          if (item.selection && item.selectedChoice != null) {
+            itemName = item.originalName == item.selectedChoice!['name'] ? item.originalName : '${item.originalName} ${item.selectedChoice!['name']}';
+            linefeed = 1;  // Set linefeed to 1 for selectedChoice
+          } else if (item.selectedDrink != null && item.selectedTemp != null) {
+            itemName = item.originalName == item.selectedDrink!['name']
+                ? item.originalName
+                : '${item.originalName} ${item.selectedDrink?['name']} (${item.selectedTemp?['name']})';
+            linefeed = 0;  // Set linefeed to 0 for selectedDrink
+          } else {
+            itemName = item.name;
+            linefeed = 0;  // Default linefeed
+          }
+
+          String itemText = '$itemIndex.$itemName';
 
         // Add item name to the list
         list.add(LineText(
           type: LineText.TYPE_TEXT,
-          content: '$itemIndex.$itemName',
+          content: itemText,
           x: 0,
-          linefeed: 0,
+          linefeed: linefeed,  // Use the dynamic linefeed value
         ));
+
+        if (item.selectedChoice != null) {
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: '  ${item.selectedChoice!['name']}',
+            align: LineText.ALIGN_LEFT,
+            x: 0,
+            linefeed: 0,  // Stay on the same line
+          ));
+        }
 
         // Adjust X position based on the paper width
         int quantityXPosition = itemQtyWidth + 40; // Default
@@ -104,24 +121,45 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
 
         // Add the quantity line
         list.add(LineText(type: LineText.TYPE_TEXT, content: '${item.quantity}', x: quantityXPosition, linefeed: 1));
-        if (item.selection && item.selectedNoodlesType != null) {
-          // Prepare the content for the line
-          String content = ' - ${item.selectedNoodlesType!["name"]}';
+        if (item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] !="None") {
+            // Always print selectedNoodlesType
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: '  - ${item.selectedNoodlesType!["name"]}',  // Print selectedNoodlesType
+              align: LineText.ALIGN_LEFT,
+              x: 0,
+              linefeed: item.selectedNoodlesType == null ? 0 : 1,  // Dynamic linefeed
+            ));
 
-          // Append MeePortion if it's not "Normal Mee"
-          if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
-            content += '(${item.selectedMeePortion!["name"]})';
+            // Conditionally print selectedMeePortion if it's not equal to "Normal Mee"
+            if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
+                list.add(LineText(
+                  type: LineText.TYPE_TEXT,
+                  content: '  (${item.selectedMeePortion!["name"]})',  // Print selectedMeePortion if it's not "Normal Mee"
+                  align: LineText.ALIGN_LEFT,
+                  x: 0,
+                  linefeed: 1,
+                ));
+              }
           }
+        // if (item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] != 'None') {
+        //   // Prepare the content for the line
+        //   String content = ' - ${item.selectedNoodlesType!["name"]}';
 
-          // Add the final content to the list
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: content, // Print both in the same line
-            align: LineText.ALIGN_LEFT,
-            x: 0,
-            linefeed: 1,
-          ));
-        }
+        //   // Append MeePortion if it's not "Normal Mee"
+        //   if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
+        //     content += '(${item.selectedMeePortion!["name"]})';
+        //   }
+
+        //   // Add the final content to the list
+        //   list.add(LineText(
+        //     type: LineText.TYPE_TEXT,
+        //     content: content, // Print both in the same line
+        //     align: LineText.ALIGN_LEFT,
+        //     x: 0,
+        //     linefeed: 1,
+        //   ));
+        // }
 
         // Check and add selectedMeatPortion to the receipt
         if (item.selection && item.selectedMeatPortion != null) {
@@ -146,7 +184,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
               linefeed: 1));
         }
         // Check and calculate total sides to the receipt
-        if (item.selection && item.selectedSide != null) {
+        if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
             list.add(LineText(
                 type: LineText.TYPE_TEXT,
                 content: ' Total Sides: ${item.selectedSide!.length}', // Print meat portion if not "Normal"

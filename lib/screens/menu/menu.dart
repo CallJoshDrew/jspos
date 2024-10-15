@@ -65,8 +65,8 @@ class _MenuPageState extends State<MenuPage> {
           Padding(
             padding: const EdgeInsets.only(left: 5),
             child: _topMenu(
-              title: 'SMH Restaurant',
-              // title: 'TryMee IJM',
+              // title: 'SMH Restaurant',
+              title: 'TryMee IJM',
               subTitle: 'today date',
               action: _closedButtton(),
             ),

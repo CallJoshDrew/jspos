@@ -792,7 +792,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      item.selection && selectedNoodlesType != null
+                                                      item.selection && selectedNoodlesType != null && selectedNoodlesType!['name'] != 'None'
                                                           ? Row(
                                                               children: [
                                                                 Text(
