@@ -58,7 +58,7 @@ class ItemAdapter extends TypeAdapter<Item> {
       selectedAddOn: (fields[24] as Map?)?.cast<String, dynamic>(),
       itemRemarks: (fields[25] as Map?)?.cast<String, dynamic>(),
       tapao: fields[26] as bool,
-      soupOrKonlou: (fields[27] as List)
+      soupOrKonLou: (fields[27] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
       selectedSoupOrKonLou: (fields[28] as Map?)?.cast<String, dynamic>(),
@@ -127,7 +127,7 @@ class ItemAdapter extends TypeAdapter<Item> {
       ..writeByte(26)
       ..write(obj.tapao)
       ..writeByte(27)
-      ..write(obj.soupOrKonlou)
+      ..write(obj.soupOrKonLou)
       ..writeByte(28)
       ..write(obj.selectedSoupOrKonLou);
   }

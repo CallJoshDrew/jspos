@@ -312,25 +312,51 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                             child: Column(
                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                item.selection && item.selectedNoodlesType != null
-                                                                    ? Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            "${item.selectedNoodlesType!['name']} ",
-                                                                            style: const TextStyle(fontSize: 14, color: Colors.white),
-                                                                          ),
-                                                                          // Display price only if it is greater than 0.00
-                                                                          if (item.selectedNoodlesType!['price'] != 0.00)
-                                                                            Text(
-                                                                              "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                Row(
+                                                                  children: [
+                                                                    item.selection && item.selectedNoodlesType != null
+                                                                        ? Row(
+                                                                            children: [
+                                                                              Text(
+                                                                                "${item.selectedNoodlesType!['name']} ",
+                                                                                style: const TextStyle(fontSize: 14, color: Colors.white),
                                                                               ),
-                                                                            )
-                                                                        ],
-                                                                      )
-                                                                    : const SizedBox.shrink(),
+                                                                              // Display price only if it is greater than 0.00
+                                                                              if (item.selectedNoodlesType!['price'] != 0.00)
+                                                                                Text(
+                                                                                  "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Color.fromARGB(255, 114, 226, 118),
+                                                                                  ),
+                                                                                ),
+                                                                            ],
+                                                                          )
+                                                                        : const SizedBox.shrink(),
+                                                                    item.selection && item.selectedSoupOrKonLou != null
+                                                                        ? Row(
+                                                                            children: [
+                                                                              Text(
+                                                                                "- ${item.selectedSoupOrKonLou!['name']} ",
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 14,
+                                                                                  color: Colors.white,
+                                                                                ),
+                                                                              ),
+                                                                              // Display price only if it is greater than 0.00
+                                                                              if (item.selectedSoupOrKonLou!['price'] != 0.00)
+                                                                                Text(
+                                                                                  "( + ${item.selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Color.fromARGB(255, 114, 226, 118),
+                                                                                  ),
+                                                                                )
+                                                                            ],
+                                                                          )
+                                                                        : const SizedBox.shrink(),
+                                                                  ],
+                                                                ),
                                                                 item.selection &&
                                                                         item.selectedMeePortion != null &&
                                                                         item.selectedMeePortion!['name'] != "Normal Mee"

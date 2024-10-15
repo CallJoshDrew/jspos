@@ -29,7 +29,8 @@ class ProductItem extends StatefulWidget {
   final Map<String, dynamic>? selectedSide;
   final Map<String, dynamic>? selectedAddOn;
   final bool tapao;
-  final List<Map<String, dynamic>> soupOrKonlou;
+  final List<Map<String, dynamic>> soupOrKonLou;
+  final Map<String, dynamic>? selectedSoupOrKonLou;
 
   const ProductItem({
     super.key,
@@ -57,7 +58,8 @@ class ProductItem extends StatefulWidget {
     this.selectedSide,
     this.selectedAddOn,
     this.tapao = false,
-    required this.soupOrKonlou,
+    required this.soupOrKonLou,
+    this.selectedSoupOrKonLou,
   });
 
   @override
@@ -99,7 +101,8 @@ class ProductItemState extends State<ProductItem> {
           selectedSide: {},
           selectedAddOn: widget.addOns.isNotEmpty ? widget.addOns[0] : null,
           tapao: widget.tapao,
-          soupOrKonlou: widget.soupOrKonlou,
+          soupOrKonLou: widget.soupOrKonLou,
+          selectedSoupOrKonLou: widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null,
         ); //this is creating a new instance of item with the required field.
         Map<String, dynamic>? selectedDrink = widget.drinks.isNotEmpty ? widget.drinks[0] : null;
         Map<String, String>? selectedTemp = widget.temp.isNotEmpty ? widget.temp[0] : null;
@@ -109,6 +112,7 @@ class ProductItemState extends State<ProductItem> {
         Map<String, dynamic>? selectedMeePortion = widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
         Set<Map<String, dynamic>> selectedSide = {};
         Map<String, dynamic>? selectedAddOn = widget.addOns.isNotEmpty ? widget.addOns[0] : null;
+        Map<String, dynamic>? selectedSoupOrKonLou = widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null;
         double drinkPrice() {
           var drink = widget.drinks.firstWhere(
             (drink) => drink['name'] == selectedDrink?['name'],
@@ -126,7 +130,8 @@ class ProductItemState extends State<ProductItem> {
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
         double sidesPrice = 0.00;
         double addOnsPrice = widget.addOns.isNotEmpty && widget.addOns[0]['price'] != null ? widget.addOns[0]['price']! : 0.00;
-        double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice;
+        double soupOrKonlouPrice = widget.soupOrKonLou.isNotEmpty && widget.soupOrKonLou[0]['price'] != null ? widget.soupOrKonLou[0]['price']! : 0.00;
+        double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice + soupOrKonlouPrice;
 
         double calculateSidesPrice() {
           double sidesPrice = 0.0;
@@ -136,8 +141,8 @@ class ProductItemState extends State<ProductItem> {
           return sidesPrice;
         }
 
-        void calculateTotalPrice(
-            double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice, double addOnsPrice) {
+        void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
+            double addOnsPrice, double soupOrKonlouPrice) {
           // Log each value to ensure they're being passed correctly
           // log("Drink Price: $drinkPrice");
           // log("Choice Price: $choicePrice");
@@ -147,7 +152,7 @@ class ProductItemState extends State<ProductItem> {
           // log("Sides Price: $sidesPrice");
           // log("Add-Ons Price: $addOnsPrice");
 
-          double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice;
+          double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice + soupOrKonlouPrice;
 
           // log("Total Price: $totalPrice");
 
@@ -370,56 +375,86 @@ class ProductItemState extends State<ProductItem> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              item.selection && selectedNoodlesType != null
-                                                  ? Row(
-                                                      children: [
-                                                        Text(
-                                                          "${selectedNoodlesType!['name']} ",
-                                                          style: const TextStyle(fontSize: 14, color: Colors.white),
-                                                        ),
-                                                        // Display price only if it is greater than 0.00
-                                                        if (item.selectedNoodlesType!['price'] != 0.00)
-                                                          Text(
-                                                            "( + ${selectedNoodlesType!['price'].toStringAsFixed(2)} )",
-                                                            style: const TextStyle(
-                                                              fontSize: 14,
-                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                              Row(
+                                                children: [
+                                                  item.selection && selectedNoodlesType != null
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "${selectedNoodlesType!['name']} ",
+                                                              style: const TextStyle(fontSize: 14, color: Colors.white),
                                                             ),
-                                                          ),
-                                                        // next time add to display remarks
-                                                        // if (itemRemarks.isNotEmpty)
-                                                        // Text(
-                                                        //   "( + $itemRemarks )",
-                                                        //   style: const TextStyle(
-                                                        //     fontSize: 14,
-                                                        //     color: Colors.white
-                                                        //   ),
-                                                        // )
-                                                      ],
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              item.selection && selectedMeePortion != null && selectedMeePortion!['name'] != "Normal Mee"
-                                                  ? Row(
-                                                      children: [
-                                                        Text(
-                                                          "${selectedMeePortion!['name']} ",
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        // Display price only if it is greater than 0.00
-                                                        if (selectedMeePortion!['price'] != 0.00)
-                                                          Text(
-                                                            "( + ${selectedMeePortion!['price'].toStringAsFixed(2)} )",
-                                                            style: const TextStyle(
-                                                              fontSize: 14,
-                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                            // Display price only if it is greater than 0.00
+                                                            if (selectedNoodlesType!['price'] != 0.00)
+                                                              Text(
+                                                                "( + ${selectedNoodlesType!['price'].toStringAsFixed(2)} )",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                  item.selection && selectedSoupOrKonLou != null
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "- ${selectedSoupOrKonLou!['name']} ",
+                                                              style: const TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors.white,
+                                                              ),
                                                             ),
-                                                          )
-                                                      ],
-                                                    )
-                                                  : const SizedBox.shrink(),
+                                                            // Display price only if it is greater than 0.00
+                                                            if (selectedSoupOrKonLou!['price'] != 0.00)
+                                                              Text(
+                                                                "( + ${selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              )
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                  // next time add to display remarks
+                                                  // if (itemRemarks.isNotEmpty)
+                                                  // Text(
+                                                  //   "( + $itemRemarks )",
+                                                  //   style: const TextStyle(
+                                                  //     fontSize: 14,
+                                                  //     color: Colors.white
+                                                  //   ),
+                                                  // )
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  item.selection && selectedMeePortion != null && selectedMeePortion!['name'] != "Normal Mee"
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "${selectedMeePortion!['name']} ",
+                                                              style: const TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ),
+                                                            // Display price only if it is greater than 0.00
+                                                            if (selectedMeePortion!['price'] != 0.00)
+                                                              Text(
+                                                                "( + ${selectedMeePortion!['price'].toStringAsFixed(2)} )",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              )
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                ],
+                                              ),
                                               item.selection && selectedMeatPortion != null && selectedMeatPortion!['name'] != "Normal Meat"
                                                   ? Row(
                                                       children: [
@@ -537,7 +572,7 @@ class ProductItemState extends State<ProductItem> {
                                           ?
                                           // selectedDrink
                                           Expanded(
-                                            flex: 8,
+                                              flex: 8,
                                               child: Container(
                                                 padding: const EdgeInsets.all(10),
                                                 decoration: BoxDecoration(
@@ -564,7 +599,7 @@ class ProductItemState extends State<ProductItem> {
                                                               setState(() {
                                                                 selectedDrink = drink;
                                                                 calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice);
+                                                                    calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -603,7 +638,7 @@ class ProductItemState extends State<ProductItem> {
                                           ?
                                           // selectedTemp
                                           Expanded(
-                                            flex: 4,
+                                              flex: 4,
                                               child: Container(
                                                 padding: const EdgeInsets.all(10),
                                                 decoration: BoxDecoration(
@@ -630,7 +665,7 @@ class ProductItemState extends State<ProductItem> {
                                                               setState(() {
                                                                 selectedTemp = item;
                                                                 calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice);
+                                                                    calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -696,7 +731,7 @@ class ProductItemState extends State<ProductItem> {
                                                                 selectedChoice = choice;
                                                                 choicePrice = choice['price'];
                                                                 calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice);
+                                                                    calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -760,7 +795,7 @@ class ProductItemState extends State<ProductItem> {
                                                           selectedNoodlesType = noodlestype;
                                                           noodlesTypePrice = noodlestype['price'];
                                                           calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                              calculateSidesPrice(), addOnsPrice);
+                                                              calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
                                                       style: ButtonStyle(
@@ -834,7 +869,7 @@ class ProductItemState extends State<ProductItem> {
                                                             selectedSide.add(side);
                                                           }
                                                           calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                              calculateSidesPrice(), addOnsPrice);
+                                                              calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
                                                       style: ButtonStyle(
@@ -883,6 +918,53 @@ class ProductItemState extends State<ProductItem> {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
+                                                    if (widget.soupOrKonLou.isNotEmpty)
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          const Text(
+                                                            'Select Soup or Kon Lou',
+                                                            style: TextStyle(color: Colors.white, fontSize: 14),
+                                                          ),
+                                                          Wrap(
+                                                            spacing: 6, // space between buttons horizontally
+                                                            runSpacing: 0, // space between buttons vertically
+                                                            children: widget.soupOrKonLou.map((soup) {
+                                                              return ElevatedButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    selectedSoupOrKonLou = soup;
+                                                                    soupOrKonlouPrice = soup['price'];
+                                                                    calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
+                                                                        calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
+                                                                  });
+                                                                },
+                                                                style: ButtonStyle(
+                                                                  backgroundColor: WidgetStateProperty.all<Color>(
+                                                                    selectedSoupOrKonLou == soup ? Colors.orange : Colors.white,
+                                                                  ),
+                                                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                    RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5),
+                                                                    ),
+                                                                  ),
+                                                                  padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                                ),
+                                                                child: Text(
+                                                                  '${soup['name']}',
+                                                                  style: TextStyle(
+                                                                    color: selectedSoupOrKonLou == soup
+                                                                        ? Colors.white
+                                                                        : Colors.black, // Change the text color based on the selected button
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                          const SizedBox(height: 10),
+                                                        ],
+                                                      ),
                                                     const Text(
                                                       'Add Remarks',
                                                       style: TextStyle(color: Colors.white, fontSize: 14),
@@ -942,7 +1024,7 @@ class ProductItemState extends State<ProductItem> {
                                                             selectedAddOn = addOn;
                                                             addOnsPrice = addOn['price'];
                                                             calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice,
-                                                                calculateSidesPrice(), addOnsPrice);
+                                                                calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                           });
                                                         },
                                                         style: ButtonStyle(
@@ -1018,7 +1100,8 @@ class ProductItemState extends State<ProductItem> {
                                                               meatPrice, // Correctly updated meat price
                                                               meePrice, // Ensure meePrice is properly updated before
                                                               calculateSidesPrice(),
-                                                              addOnsPrice);
+                                                              addOnsPrice,
+                                                              soupOrKonlouPrice);
                                                         });
                                                       },
                                                       style: ButtonStyle(
@@ -1088,7 +1171,8 @@ class ProductItemState extends State<ProductItem> {
                                                               meatPrice, // Correctly updated meat price
                                                               meePrice, // Ensure meePrice is properly updated before
                                                               calculateSidesPrice(),
-                                                              addOnsPrice);
+                                                              addOnsPrice,
+                                                              soupOrKonlouPrice);
                                                         });
                                                       },
                                                       style: ButtonStyle(
@@ -1209,11 +1293,12 @@ class ProductItemState extends State<ProductItem> {
                                           item.selectedAddOn = selectedAddOn;
                                           item.selectedDrink = selectedDrink;
                                           item.selectedTemp = selectedTemp;
+                                          item.selectedSoupOrKonLou = selectedSoupOrKonLou;
 
                                           updateItemRemarks();
 
-                                          calculateTotalPrice(
-                                              drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice(), addOnsPrice);
+                                          calculateTotalPrice(drinkPrice(), choicePrice, noodlesTypePrice, meatPrice, meePrice, calculateSidesPrice(),
+                                              addOnsPrice, soupOrKonlouPrice);
                                           item.price = subTotalPrice;
                                           // log('item Price: ${item.price}');
                                           // log('subTotal Price: $subTotalPrice');

@@ -60,7 +60,7 @@ class Item with ChangeNotifier {
   @HiveField(26)
   bool tapao;
   @HiveField(27)
-  List<Map<String, dynamic>> soupOrKonlou;
+  List<Map<String, dynamic>> soupOrKonLou;
   @HiveField(28)
   Map<String, dynamic>? selectedSoupOrKonLou;
 
@@ -90,7 +90,7 @@ class Item with ChangeNotifier {
     this.selectedAddOn,
     this.itemRemarks,
     this.tapao = false,
-    required this.soupOrKonlou,
+    required this.soupOrKonLou,
     this.selectedSoupOrKonLou,
     required this.originalName,
   })  : originalPrice = price,
@@ -129,7 +129,7 @@ class Item with ChangeNotifier {
         // '\tselectedAddOn: ${selectedAddOn?.map((addOn) => addOn.toString()).join(', ')},\n'
         '\titemRemarks: ${itemRemarks.toString()}\n'
         '\ttapao: $tapao, \n'
-        '\tsoupOrKonlou: ${soupOrKonlou.toString()}, \n'
+        '\tsoupOrKonlou: ${soupOrKonLou.toString()}, \n'
         '\tselectedSoupOrKonLou: $selectedSoupOrKonLou, \n'
         '}';
   }
@@ -180,7 +180,7 @@ class Item with ChangeNotifier {
       selectedAddOn: selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
       itemRemarks: itemRemarks,
       tapao: tapao,
-      soupOrKonlou: soupOrKonlou,
+      soupOrKonLou: soupOrKonLou,
       selectedSoupOrKonLou: selectedSoupOrKonLou != null ? Map<String, dynamic>.from(selectedSoupOrKonLou!) : null,
 
     );
@@ -214,7 +214,7 @@ class Item with ChangeNotifier {
       // for practical purposes in JSON serialization, as JSON does not support sets. 
       'itemRemarks': itemRemarks,
       'tapao': tapao,
-      'soupOrKonlou': soupOrKonlou.map((type) => Map<String, dynamic>.from(type)).toList(),
+      'soupOrKonLou': soupOrKonLou.map((type) => Map<String, dynamic>.from(type)).toList(),
       'selectedSoupOrKonLou': selectedSoupOrKonLou != null ? Map<String, dynamic>.from(selectedSoupOrKonLou!) : null,
     };
   }
