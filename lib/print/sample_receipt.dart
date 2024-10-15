@@ -1,20 +1,27 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:jspos/models/client_profile.dart';
 
 // printer width is 58mm for Kitchen
-List<LineText> getSampleReceiptLines() {
+List<LineText> getSampleReceiptLines(ClientProfile profile) {
   List<LineText> list = [];
 
-  list.add(LineText(type: LineText.TYPE_TEXT, content: 'Restaurant Sing Ming Hing', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
+  list.add(LineText(
+      type: LineText.TYPE_TEXT, 
+      content: profile.name,
+      weight: 1, 
+      align: LineText.ALIGN_CENTER, 
+      fontZoom: 2, 
+      linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'Lot 16, Block B, Utara Place 1, Jalan Utara,',
+      content: profile.address1,
       weight: 1,
       align: LineText.ALIGN_CENTER,
       fontZoom: 2,
       linefeed: 1));
   list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: 'IJM Batu 6, Sandakan, Sandakan, Malaysia',
+      content: profile.address2,
       weight: 1,
       align: LineText.ALIGN_CENTER,
       fontZoom: 2,

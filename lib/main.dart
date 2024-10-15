@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
 import 'package:jspos/app/jpos.dart';
 import 'package:jspos/data/tables_data.dart';
+import 'package:jspos/models/client_profile.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -21,17 +22,18 @@ void main() async {
     Hive.registerAdapter(SelectedOrderAdapter());
     Hive.registerAdapter(ItemAdapter());
     Hive.registerAdapter(PrinterAdapter());
-    Hive.registerAdapter(DailySalesAdapter()); // Register the DailySales adapter
-    
-    // Open required Hive boxes
+    Hive.registerAdapter(DailySalesAdapter());
+    Hive.registerAdapter(ClientProfileAdapter());
+
+    // Open required Hive boxes (client profiles handled by provider)
     await Hive.openBox<Printer>('printersBox');
     var ordersBox = await Hive.openBox('orders');
     var tablesBox = await Hive.openBox('tables');
     var categoriesBox = await Hive.openBox('categories');
     var counterBox = await Hive.openBox('orderCounter');
-    var dailySalesBox = await Hive.openBox<DailySales>('dailySalesBox'); // Open dailySales box
+    var dailySalesBox = await Hive.openBox<DailySales>('dailySalesBox');
 
-    // Initialize orders, tables, categories, counterBox and dailySalesBox if not already present    
+    // Initialize orders, tables, categories, counterBox and dailySalesBox if not already present
     Orders orders;
     Orders? ordersData = ordersBox.get('orders');
     if (ordersData != null) {
@@ -40,6 +42,7 @@ void main() async {
       orders = Orders(data: []);
       ordersBox.put('orders', orders);
     }
+
     if (tablesBox.isEmpty) {
       tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
     }
@@ -56,16 +59,16 @@ void main() async {
     if (counterBox.isEmpty) {
       counterBox.put('orderCounter', 1);
     }
-    
-     // Check and initialize dailySales for today
+
+    // Check and initialize dailySales for today
     String today = getCurrentDate();
     DailySales? dailySalesData = dailySalesBox.get(today);
     if (dailySalesData == null) {
-      DailySales emptyDailySales = DailySales(orders: []); // Initialize with an empty list
+      DailySales emptyDailySales = DailySales(orders: []);
       await dailySalesBox.put(today, emptyDailySales);
     }
 
-    // Run the app
+    // Run the app with ProviderScope
     runApp(ProviderScope(child: JPOSApp(orders: orders, categories: categories)));
   } catch (e) {
     log('An error occurred at Main App: $e');
@@ -83,10 +86,12 @@ Future<void> saveDailySales(DailySales dailySales) async {
   
   // Get today's date in the format YYYY-MM-DD
   String today = getCurrentDate();
-  
+
   // Save the daily sales data for today
   await dailySalesBox.put(today, dailySales);
 }
+
+
 
 
 

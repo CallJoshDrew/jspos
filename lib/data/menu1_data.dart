@@ -1010,7 +1010,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Kopi",
     "category": "Drinks",
     "price": 2.00,
-    "image": "assets/drinks/teh.png",
+    "image": "assets/drinks/kopi1.png",
     "selection": true,
     "drinks": [
       {"name": "O", "Hot": 2.00, "Cold": 3.00},
@@ -1030,7 +1030,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Teh",
     "category": "Drinks",
     "price": 2.00,
-    "image": "assets/drinks/teh.png",
+    "image": "assets/drinks/teh1.png",
     "selection": true,
     "drinks": [
       {"name": "O", "Hot": 2.00, "Cold": 3.00},
@@ -1051,7 +1051,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Nescafe",
     "category": "Drinks",
     "price": 2.50,
-    "image": "assets/drinks/teh.png",
+    "image": "assets/drinks/nescafe1.png",
     "selection": true,
     "drinks": [
       {"name": "O", "Hot": 2.50, "Cold": 3.50},
@@ -1069,7 +1069,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Milo",
     "category": "Drinks",
     "price": 2.50,
-    "image": "assets/drinks/teh.png",
+    "image": "assets/drinks/milo1.png",
     "selection": true,
     "drinks": [
       {"name": "O", "Hot": 2.50, "Cold": 3.50},
@@ -1087,7 +1087,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Nestum",
     "category": "Drinks",
     "price": 2.50,
-    "image": "assets/drinks/teh.png",
+    "image": "assets/drinks/nestum.png",
     "selection": true,
     "drinks": [
       {"name": "O", "Hot": 2.50, "Cold": 3.50},
@@ -1105,7 +1105,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Lemon",
     "category": "Drinks",
     "price": 2.50,
-    "image": "assets/drinks/teh.png",
+    "image": "assets/drinks/lemon1.png",
     "selection": true,
     "drinks": [
       {"name": "Sui", "Hot": 2.50, "Cold": 3.50},
@@ -1152,7 +1152,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Kit Zai Sui",
     "category": "Drinks",
     "price": 3.00,
-    "image": "assets/drinks/sangSukLai.png",
+    "image": "assets/drinks/kitZaiSui.png",
     "selection": true,
     "drinks": [
       {"name": "Kit Zai Sui", "Hot": 3.00, "Cold": 4.00}
@@ -1167,7 +1167,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Hoko",
     "category": "Drinks",
     "price": 3.00,
-    "image": "assets/drinks/sangSukLai.png",
+    "image": "assets/drinks/hoko.png",
     "selection": true,
     "drinks": [
       {"name": "Hoko", "Hot": 3.50, "Cold": 4.50}
@@ -1182,7 +1182,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Oren",
     "category": "Drinks",
     "price": 0.50,
-    "image": "assets/drinks/chineseTeh.png",
+    "image": "assets/drinks/oren.png",
     "selection": true,
     "drinks": [
       {"name": "Oren", "Cold": 4.00},
@@ -1197,7 +1197,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Cincau",
     "category": "Drinks",
     "price": 0.50,
-    "image": "assets/drinks/chineseTeh.png",
+    "image": "assets/drinks/cincau.png",
     "selection": true,
     "drinks": [
       {"name": "O", "Cold": 4.00},
@@ -1226,18 +1226,16 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Wheatgrass",
     "category": "Drinks",
     "price": 4.50,
-    "image": "assets/drinks/chineseTeh.png",
+    "image": "assets/drinks/wheatgrass.png",
     "selection": true,
     "drinks": [
       {"name": "Wheatgrass", "Cold": 4.50},
+      {"name": "Wheatgrass with Lemon", "Cold": 5.00},
+      {"name": "Wheatgrass with Kit Zai", "Cold": 5.00},
+      {"name": "Wheatgrass with Milk", "Cold": 5.00},
     ],
     "temp": [
       {"name": "Cold"}
-    ],
-    "sides": [
-      {"name": "Add Lemon", "price": 0.50},
-      {"name": "Add Kit Zai", "price": 0.50},
-      {"name": "Add Milk", "price": 0.50},
     ],
   },
   {
@@ -1245,7 +1243,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Air Bandung",
     "category": "Drinks",
     "price": 4.50,
-    "image": "assets/drinks/chineseTeh.png",
+    "image": "assets/drinks/airBandung.png",
     "selection": true,
     "drinks": [
       {"name": "Air Bandung", "Cold": 4.50},
@@ -1260,7 +1258,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Minimum Tin",
     "category": "Drinks",
     "price": 3.00,
-    "image": "assets/drinks/chineseTeh.png",
+    "image": "assets/drinks/softDrinks.png",
     "selection": true,
     "drinks": [
       {"name": "Cola", "Cold": 3.00},
@@ -1274,24 +1272,21 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Cold"}
     ]
   },
-  {"id": "86", "name": "Mineral Water - 500ml", "category": "Drinks", "price": 1.00, "image": "assets/drinks/tehCSpecial.png"},
-  {"id": "87", "name": "Buang Panas", "category": "Drinks", "price": 3.00, "image": "assets/drinks/tehCSpecial.png"},
-  {"id": "88", "name": "Gui Ling Gao", "category": "Drinks", "price": 3.00, "image": "assets/drinks/tehCSpecial.png"},
+  {"id": "86", "name": "Mineral Water - 500ml", "category": "Drinks", "price": 1.00, "image": "assets/drinks/mineralWater.png"},
+  {"id": "87", "name": "Buang Panas", "category": "Drinks", "price": 3.00, "image": "assets/drinks/buangPanas.png"},
   {
     "id": "89",
     "name": "Gui Ling Gao",
     "category": "Drinks",
     "price": 2.50,
-    "image": "assets/drinks/chineseTeh.png",
+    "image": "assets/drinks/guiLingGao.png",
     "selection": true,
     "drinks": [
       {"name": "Gui Ling Gao", "Cold": 2.50},
+      {"name": "Gui Ling Gao with Milk", "Cold": 3.00},
     ],
     "temp": [
       {"name": "Cold"}
-    ],
-    "sides": [
-      {"name": "Add Milk", "price": 0.50},
     ],
   },
   {
@@ -1314,7 +1309,7 @@ final List<Map<String, dynamic>> menu1 = [
     "name": "Sky Juice (Water)",
     "category": "Drinks",
     "price": 0.50,
-    "image": "assets/drinks/chineseTeh.png",
+    "image": "assets/drinks/water.png",
     "selection": true,
     "drinks": [
       {"name": "Sky Juice (Water)", "Hot": 0.50, "Cold": 0.50}
@@ -1324,5 +1319,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Cold"}
     ]
   },
-  {"id": "150", "name": "Century Egg", "category": "Add On", "price": 1.50, "image": "assets/addOn/friedEgg.png"},
+  {"id": "150", "name": "Century Egg", "category": "Add On", "price": 1.50, "image": "assets/addOn/centuryEgg.png"},
+  {"id": "150", "name": "Fried Egg", "category": "Add On", "price": 2.00, "image": "assets/addOn/friedEgg.png"},
 ];

@@ -1,4 +1,5 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:jspos/models/client_profile.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/split_text_into_lines.dart';
 
@@ -44,44 +45,35 @@ class CashierReceiptGenerator {
       return baseXPosition + 50;  // Default adjustment
     }
   }
-  // Restaurant Sing Ming Hing
-  // Lot 16, Block B, Utara Place 1, Jalan Utara,
-  // IJM Batu 6, Sandakan, Malaysia
-  // Contact: +6016 822 6188
-
-  // TryMee IJM
-  // Lot 14, Ground Floor Utama Zone 3 Commercial,
-  // Jalan Dataran BU3, Sandakan, Malaysia
-  // Contact: +6011-5873 0128
 
   // printer width is 72mm for Cashier
-  List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder) {
+  List<LineText> getCashierReceiptLines(SelectedOrder selectedOrder, ClientProfile profile) {
     List<LineText> list = [];
     
     list.add(LineText(
         type: LineText.TYPE_TEXT, 
-        content: 'Restaurant Sing Ming Hing', 
+        content: profile.name, 
         // content: 'TryMee IJM', 
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: 'Lot 16, Block B, Utara Place 1, Jalan Utara,',
+        content: profile.address1,
         // content: 'Lot 14, Ground Floor Utama Zone 3 Commercial,',
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: 'IJM Batu 6, Sandakan, Malaysia',
+        content: profile.address2,
         // content: 'Jalan Dataran BU3, Sandakan, Malaysia',
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: 'Contact: +6016 822 6188',
+        content: 'Contact: ${profile.contactNumber}',
         // content: 'Contact: +6011 5873 0128',
         weight: 1,
         align: LineText.ALIGN_CENTER,
@@ -235,7 +227,7 @@ class CashierReceiptGenerator {
               content: '  - ${item.selectedNoodlesType!["name"]}',  // Print selectedNoodlesType
               align: LineText.ALIGN_LEFT,
               x: 0,
-              linefeed: 0,
+              linefeed: item.selectedNoodlesType == null ? 0 : 1,  // Dynamic linefeed
             ));
 
             // Conditionally print selectedMeePortion if it's not equal to "Normal Mee"

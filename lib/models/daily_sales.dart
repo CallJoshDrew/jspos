@@ -17,6 +17,7 @@ class DailySales {
 // SelectedOrder - HiveType(typeId: 2)
 // Item - HiveType(typeId: 3)
 // Printer - HiveType(typeId: 4)
+// Client Profile - HiveType(typeId: 5)
 
 
 // // SalesData class to hold yearly data
