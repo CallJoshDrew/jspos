@@ -19,6 +19,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -94,6 +95,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -169,6 +171,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -244,6 +247,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -314,6 +318,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish Head/Belly", "price": 13.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -389,6 +394,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -464,6 +470,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -539,6 +546,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -614,6 +622,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -689,6 +698,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -759,6 +769,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Fish Head/Belly", "price": 14.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -834,6 +845,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Spring Onion", "price": 1.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
@@ -894,14 +906,14 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "13",
     "name": "Chinese Chop Rice",
     "category": "Dishes",
-    "price": 13.00,
+    "price": 10.00,
     "image": "assets/dishes/chicken_chop.png",
     "selection": true,
     "choices": [
-      {"name": "Thai Sauce", "price": 13.00},
-      {"name": "Sweet Sour Sauce", "price": 14.00},
-      {"name": "Mayonnaise", "price": 15.00},
-      {"name": "Lemon Sauce", "price": 16.00},
+      {"name": "Thai Sauce", "price": 10.00},
+      {"name": "Sweet Sour Sauce", "price": 10.00},
+      {"name": "Mayonnaise", "price": 10.00},
+      {"name": "Lemon Sauce", "price": 10.00},
     ],
     "meat portion": [
       {"name": "Normal Meat", "price": 0.00},
@@ -943,7 +955,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Less Mee", "price": 0.00},
     ],
     "sides": [
-      {"name": "Century Egg", "price": 1.50},
+      {"name": "Black Soy Sauce Egg", "price": 1.50},
     ],
   },
   {
@@ -959,6 +971,7 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Whole Thigh with Rice/Mee", "price": 15.00},
     ],
     "noodlesTypes": [
+      {"name": "None", "price": 0.00},
       {"name": "Rice", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
@@ -1309,6 +1322,7 @@ final List<Map<String, dynamic>> menu1 = [
     ]
   },
   {"id": "150", "name": "Century Egg", "category": "Add On", "price": 1.50, "image": "assets/addOn/centuryEgg.png"},
-  {"id": "151", "name": "Fried Egg", "category": "Add On", "price": 2.00, "image": "assets/addOn/friedEgg.png"},
-  {"id": "152", "name": "Rice", "category": "Add On", "price": 2.00, "image": "assets/addOn/rice.png"},
+  {"id": "151", "name": "Black Soy Sauce Egg", "category": "Add On", "price": 1.50, "image": "assets/addOn/rice.png"},
+  {"id": "152", "name": "Fried Egg", "category": "Add On", "price": 2.00, "image": "assets/addOn/friedEgg.png"},
+  {"id": "153", "name": "Rice", "category": "Add On", "price": 2.00, "image": "assets/addOn/rice.png"},
 ];
