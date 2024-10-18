@@ -12,9 +12,7 @@ import 'package:jspos/print/order_receipt.dart';
 import 'package:jspos/print/sample_receipt.dart';
 import 'package:jspos/providers/printer_provider.dart';
 import 'package:jspos/print/cashier_receipt.dart';
-import 'package:jspos/providers/client_profile_provider.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/models/client_profile.dart';
 import 'package:jspos/providers/client_profile_provider.dart'; // Import the provider
 

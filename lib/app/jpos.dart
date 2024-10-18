@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jspos/models/orders.dart';
 // import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/history/history.dart';
+import 'package:jspos/screens/recommendation/recommend.dart';
 import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';
@@ -74,6 +75,8 @@ class _MainPageState extends State<MainPage> {
         return HistoryPage(orders: widget.orders);
       case 'Reports':
         return const ReportsPage();
+      case 'Recommend':
+        return const RecommendPage();
       case 'Settings':
         return SettingsPage(
           categories: widget.categories,
@@ -98,7 +101,7 @@ class _MainPageState extends State<MainPage> {
       body: Row(
         children: [
           Container(
-            width: 80,
+            width: 90,
             padding: const EdgeInsets.only(top: 40, right: 5, left: 5),
             height: MediaQuery.of(context).size.height,
             child: _sideMenu(),
@@ -133,6 +136,7 @@ class _MainPageState extends State<MainPage> {
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
             _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
+            _itemMenu(menu: 'Recommend', icon: Icons.recommend),
             _itemMenu(menu: 'Settings', icon: Icons.tune),
           ]),
         )
