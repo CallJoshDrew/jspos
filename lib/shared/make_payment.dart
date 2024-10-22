@@ -1085,7 +1085,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                     widget.selectedOrder.cancelledTime = 'None';
                                                                     widget.selectedOrder.addPaymentDateTime();
                                                                     widget.updateOrderStatus!();
-                                                                    widget.orders.addOrder(widget.selectedOrder.copyWith(categories));
+                                                                    widget.orders.addOrUpdateOrder(widget.selectedOrder.copyWith(categories));
                                                                     var emptyOrderNumber = '';
                                                                     widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
                                                                     widget.tables[widget.selectedTableIndex]['occupied'] = false;

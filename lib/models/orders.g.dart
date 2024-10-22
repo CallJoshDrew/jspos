@@ -17,7 +17,7 @@ class OrdersAdapter extends TypeAdapter<Orders> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Orders(
-      data: (fields[0] as List).cast<SelectedOrder>(),
+      data: (fields[0] as List?)?.cast<SelectedOrder>(),
     );
   }
 

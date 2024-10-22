@@ -16,7 +16,7 @@ void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
-    
+
     // Register all Hive adapters
     Hive.registerAdapter(OrdersAdapter());
     Hive.registerAdapter(SelectedOrderAdapter());
@@ -27,7 +27,8 @@ void main() async {
 
     // Open required Hive boxes (client profiles handled by provider)
     await Hive.openBox<Printer>('printersBox');
-    var ordersBox = await Hive.openBox('orders');
+    var ordersBox = await Hive.openBox<Orders>('orders');
+
     var tablesBox = await Hive.openBox('tables');
     var categoriesBox = await Hive.openBox('categories');
     var counterBox = await Hive.openBox('orderCounter');
@@ -83,7 +84,7 @@ String getCurrentDate() {
 // Function to save today's DailySales
 Future<void> saveDailySales(DailySales dailySales) async {
   var dailySalesBox = await Hive.openBox<DailySales>('dailySalesBox');
-  
+
   // Get today's date in the format YYYY-MM-DD
   String today = getCurrentDate();
 

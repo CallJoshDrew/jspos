@@ -9,6 +9,7 @@ import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/print_jobs.dart';
+import 'package:jspos/providers/orders.provider.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
@@ -29,7 +30,6 @@ import 'package:cherry_toast/resources/arrays.dart';
 // );
 class DineInPage extends ConsumerStatefulWidget {
   final void Function() freezeSideMenu;
-  final Orders orders;
 
   // final BluetoothPrint bluetoothPrint;
   // final ValueNotifier<BluetoothDevice?> printerDevices;
@@ -37,7 +37,6 @@ class DineInPage extends ConsumerStatefulWidget {
   const DineInPage({
     super.key,
     required this.freezeSideMenu,
-    required this.orders,
   });
   // required this.bluetoothPrint,
   // required this.printerDevices,
@@ -48,9 +47,13 @@ class DineInPage extends ConsumerStatefulWidget {
 
 class DineInPageState extends ConsumerState<DineInPage> {
   List<Map<String, dynamic>> tables = [];
+  late Orders orders; 
   @override
   void initState() {
     super.initState();
+    // Use ref.read() to access the provider during initialization
+    orders = ref.read(ordersProvider);
+    log('Initial Orders: ${orders.getAllOrders()}');
     loadTables();
     loadTableOrderCount();
     handleMethod = defaultMethod;
@@ -73,20 +76,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     }
   }
 
-  void loadTableOrderCount() async {
-    try {
-      if (Hive.isBoxOpen('orderCounter')) {
-        var counterBox = Hive.box('orderCounter');
-        var data = counterBox.get('orderCounter');
-        if (data != null) {
-          orderCounter = counterBox.get('orderCounter', defaultValue: 1);
-        }
-        setState(() {});
-      }
-    } catch (e) {
-      log('An error occurred at DineIn Page loadTable Order Count: $e');
-    }
-  }
+ 
 
   int orderCounter = 1;
   bool showMenu = false;
@@ -94,6 +84,26 @@ class DineInPageState extends ConsumerState<DineInPage> {
   late int selectedTableIndex;
   String orderNumber = "";
   List<Item> tempCartItems = [];
+   void loadTableOrderCount() async {
+  try {
+    if (!Hive.isBoxOpen('orderCounter')) {
+      // Open the box if it’s not open yet
+      await Hive.openBox('orderCounter');
+    }
+
+    // Now the box is guaranteed to be open
+    var counterBox = Hive.box('orderCounter');
+    orderCounter = counterBox.get('orderCounter', defaultValue: 1);
+
+    log('Loaded orderCounter: $orderCounter');
+    
+    // Update the state to reflect the loaded orderCounter
+    setState(() {});
+    
+  } catch (e) {
+    log('An error occurred while loading Table Order Count: $e');
+  }
+}
   SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
     tableName: "Table Name",
@@ -118,16 +128,38 @@ class DineInPageState extends ConsumerState<DineInPage> {
   // itemCounts: {},
   // itemQuantities: {},
   // totalItems: 0,
-
   String generateID(String tableName) {
+    // Ensure the counter is correctly loaded from Hive, with a default of 1
+    int orderCounter = Hive.box('orderCounter').get('orderCounter', defaultValue: 1);
+
+    // Properly format the counter with 4 digits (0001, 0002, etc.)
     final paddedCounter = orderCounter.toString().padLeft(4, '0');
-    final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s'), '');
+
+    // Remove any whitespace in the table name
+    final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s+'), '');
+
+    // Construct the order number correctly
     final orderNumber = '#Table$tableNameWithoutSpace-$paddedCounter';
+
+    // Increment the counter and save it back to Hive
     orderCounter++;
-    // Save the updated orderCounter to Hive
     Hive.box('orderCounter').put('orderCounter', orderCounter);
+
+    // Log the generated order number for debugging
+    log('Generated order number: $orderNumber');
+
     return orderNumber;
   }
+
+  // String generateID(String tableName) {
+  //   final paddedCounter = orderCounter.toString().padLeft(4, '0');
+  //   final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s'), '');
+  //   final orderNumber = '#Table$tableNameWithoutSpace-$paddedCounter';
+  //   orderCounter++;
+  //   // Save the updated orderCounter to Hive
+  //   Hive.box('orderCounter').put('orderCounter', orderCounter);
+  //   return orderNumber;
+  // }
 
   void printTables() {
     // Get the 'tables' box
@@ -163,26 +195,48 @@ class DineInPageState extends ConsumerState<DineInPage> {
     }
   }
 
+  Future<void> _saveOrdersToHive() async {
+    try {
+      if (Hive.isBoxOpen('orders')) {
+        var ordersBox = Hive.box('orders');
+        await ordersBox.put('orders', orders);
+        log('Orders saved to Hive successfully.');
+      } else {
+        log('Hive box is not open.');
+      }
+    } catch (e) {
+      log('Error saving orders to Hive: $e');
+    }
+  }
+
+  Future<void> _logStoredOrdersFromHive() async {
+    try {
+      if (Hive.isBoxOpen('orders')) {
+        var ordersBox = Hive.box('orders');
+        var storedOrders = ordersBox.get('orders');
+        log('Stored Orders from Hive: $storedOrders');
+      }
+    } catch (e) {
+      log('Error retrieving orders from Hive: $e');
+    }
+  }
+
   int pressedButtonIndex = -1;
   // Open Menu after set table number
   void _handleSetTables(String tableName, int index) {
     setState(() {
       // Set the selected table and its index
+      log('The table is table $tableName at index $index');
+      log('Current tables info are: $tables');
+
       selectedTableIndex = index;
       // Check if a table with the given index exists
       if (index != -1 && index < tables.length) {
         // If the table is not occupied, generate a new orderNumber
         if (!tables[index]['occupied']) {
-          var isOccupied = true;
           handlefreezeMenu();
-          orderNumber = generateID(tableName);
-          tables[index]['orderNumber'] = orderNumber;
-          tables[index]['occupied'] = isOccupied;
-          updateTables(index, orderNumber, isOccupied);
           // Generate a new instance of selectedOrder first, and then only assign it's fields and details to the selectedOrder
           selectedOrder = selectedOrder.newInstance(categories);
-          selectedOrder.orderNumber = orderNumber;
-          selectedOrder.tableName = tableName;
           selectedOrder.updateStatus("Ordering");
           tempCartItems = [];
           // below these are important updates for the UI, have to manually update it to cause rerender in orderDetails page.
@@ -194,7 +248,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
           isTableSelected = true;
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
-          var order = widget.orders.getOrder(orderNumber);
+          log('order number is $orderNumber');
+          log('Current orders: ${orders.getAllOrders}');
+
+          var order = orders.getOrder(orderNumber);
+          log('order now is $order');
           // If an order with the same orderNumber exists, update selectedOrder with its details
           if (order != null) {
             order.showEditBtn = true;
@@ -338,23 +396,23 @@ class DineInPageState extends ConsumerState<DineInPage> {
     List<Item> sortedList2 = List.from(list2)..sort((a, b) => a.name.compareTo(b.name));
     // Compare the items in the sorted lists
     for (int i = 0; i < sortedList1.length; i++) {
-    Map<String, dynamic> remarks1 = sortedList1[i].itemRemarks ?? {};
-    Map<String, dynamic> remarks2 = sortedList2[i].itemRemarks ?? {};
+      Map<String, dynamic> remarks1 = sortedList1[i].itemRemarks ?? {};
+      Map<String, dynamic> remarks2 = sortedList2[i].itemRemarks ?? {};
 
-    if (sortedList1[i].name != sortedList2[i].name ||
-        sortedList1[i].quantity != sortedList2[i].quantity ||
-        !const MapEquality().equals(remarks1, remarks2) ||
-        !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
-        !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||
-        !const MapEquality().equals(sortedList1[i].selectedNoodlesType, sortedList2[i].selectedNoodlesType) ||
-        !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
-        !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
-        !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
-        !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedSide, sortedList2[i].selectedSide)) {
-      log('Lists are not equal: Item difference found');
-      return false;
+      if (sortedList1[i].name != sortedList2[i].name ||
+          sortedList1[i].quantity != sortedList2[i].quantity ||
+          !const MapEquality().equals(remarks1, remarks2) ||
+          !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
+          !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||
+          !const MapEquality().equals(sortedList1[i].selectedNoodlesType, sortedList2[i].selectedNoodlesType) ||
+          !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
+          !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
+          !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
+          !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedSide, sortedList2[i].selectedSide)) {
+        log('Lists are not equal: Item difference found');
+        return false;
+      }
     }
-  }
     // If no differences were found, the lists are equal
     log('Lists are equal');
     return true;
@@ -453,11 +511,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
         selectedOrder.placeOrder();
         tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
         // Add a new SelectedOrder object to the orders list
-        widget.orders.addOrder(selectedOrder.copyWith(categories));
+        orders.addOrUpdateOrder(selectedOrder.copyWith(categories));
         // Save the updated orders object to Hive
         if (Hive.isBoxOpen('orders')) {
           var ordersBox = Hive.box('orders');
-          ordersBox.put('orders', widget.orders);
+          ordersBox.put('orders', orders);
           // printOrders();
         }
         updateOrderStatus();
@@ -484,7 +542,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
         builder: (context) => MakePaymentPage(
           selectedOrder: selectedOrder,
           updateOrderStatus: updateOrderStatus,
-          orders: widget.orders,
+          orders: orders,
           tables: tables,
           selectedTableIndex: selectedTableIndex,
           updateTables: updateTables,
@@ -627,81 +685,90 @@ class DineInPageState extends ConsumerState<DineInPage> {
           ),
           actions: <Widget>[
             TextButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
-                ),
-                child: const Text(
-                  'Yes',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
-                onPressed: () async {
-                  // Show CherryToast before any navigation or other tasks
-                  CherryToast(
-                    icon: Icons.info,
-                    iconColor: Colors.green,
-                    themeColor: Colors.green,
-                    backgroundColor: Colors.white,
-                    title: Text(
-                      // 'Printing ${selectedOrder.orderNumber} is in the process',
-                      'Please press table ${selectedOrder.tableName} for printing.',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
+                padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 5, 12, 5)), // Set the padding here
+              ),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              onPressed: () async {
+                // Show CherryToast before any navigation or other tasks
+                CherryToast(
+                  icon: Icons.info,
+                  iconColor: Colors.green,
+                  themeColor: Colors.green,
+                  backgroundColor: Colors.white,
+                  title: Text(
+                    'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
-                    toastPosition: Position.top,
-                    toastDuration: const Duration(milliseconds: 3000),
-                    animationType: AnimationType.fromTop,
-                    animationDuration: const Duration(milliseconds: 1500),
-                    autoDismiss: true,
-                    displayCloseButton: false,
-                  ).show(context);
+                  ),
+                  toastPosition: Position.top,
+                  toastDuration: const Duration(milliseconds: 3000),
+                  animationType: AnimationType.fromTop,
+                  animationDuration: const Duration(milliseconds: 1500),
+                  autoDismiss: true,
+                  displayCloseButton: false,
+                ).show(context);
+
+                log('Table is table ${tables[selectedTableIndex]['name']}');
+
+                try {
+                  // Place the order and update UI state inside setState.
+                  setState(() {
+                    // Generate a unique order number
+                    orderNumber = generateID(tables[selectedTableIndex]['name']);
+                    log('Generated orderNumber: $orderNumber');
+
+                    // Update table information
+                    tables[selectedTableIndex]['orderNumber'] = orderNumber;
+                    tables[selectedTableIndex]['occupied'] = true;
+                    updateTables(selectedTableIndex, orderNumber, true);
+
+                    // Update the selected order details
+                    selectedOrder.orderNumber = orderNumber;
+                    selectedOrder.tableName = tables[selectedTableIndex]['name'];
+                    selectedOrder.placeOrder();
+
+                    // Store the current items in the temporary cart
+                    tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+
+                    // Add or update the order in the orders list
+                    orders.addOrUpdateOrder(selectedOrder.copyWith(categories));
+                    log('Order added: ${selectedOrder.orderNumber}');
+                  });
+
+                  // // Save the updated orders list to Hive
+                  // await _saveOrdersToHive();
+
+                  // // Optional: Log orders to verify storage
+                  // await _logStoredOrdersFromHive();
+
+                  // Update UI elements and order status
+                  updateOrderStatus();
+                  handlefreezeMenu();
+
+                  // Close the dialog after a delay to allow toast display
                   Navigator.of(context).pop();
-                  try {
-                    // Place order and update UI state
-                    setState(() {
-                      selectedOrder.placeOrder();
-                      tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-                      // Add a new SelectedOrder object to the orders list
-                      widget.orders.addOrder(selectedOrder.copyWith(categories));
-                    });
-
-                    // Save the updated orders object to Hive
-                    if (Hive.isBoxOpen('orders')) {
-                      var ordersBox = Hive.box('orders');
-                      ordersBox.put('orders', widget.orders);
-                    }
-
-                    // Debug to check and log the orders stored in Hive
-                    // if (Hive.isBoxOpen('orders')) {
-                    //   var ordersBox = Hive.box('orders');
-                    //   var storedOrders = ordersBox.get('orders');
-                    //   log('Stored orders from Hive: $storedOrders');
-                    // }
-
-                    // Update order status and other logic
-                    updateOrderStatus();
-                    handlefreezeMenu();
-
-                    // Call the printReceipt function Stop printing function.
-                    // await handlePrintingJobs(context, ref, selectedOrder: selectedOrder);
-
-                    // Ensure the toast has enough time to show before popping the dialog
-                    await Future.delayed(const Duration(seconds: 10));
-                  } catch (e) {
-                    log('An error occurred in onPressed place order & print: $e');
-                  }
-                }),
+                  await Future.delayed(const Duration(seconds: 10));
+                } catch (e) {
+                  log('An error occurred while placing order & printing: $e');
+                }
+              },
+            ),
             const SizedBox(width: 2),
             TextButton(
               style: ButtonStyle(
@@ -925,79 +992,84 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       ),
                       Row(
                         children: [
-                          // isTableSelected ?
-                          // Expanded(
-                          //   flex: 1,
-                          //   child: ElevatedButton(
-                          //     style: ElevatedButton.styleFrom(
-                          //       foregroundColor: Colors.white,
-                          //       backgroundColor: Colors.redAccent,
-                          //       padding: const EdgeInsets.symmetric(vertical: 0),
-                          //       shape: RoundedRectangleBorder(
-                          //         borderRadius: BorderRadius.circular(5),
-                          //       ),
-                          //     ),
-                          //     onPressed: () async {
-                          //       // Clearing data from different Hive boxes
-                          //       var ordersBox = Hive.box('orders');
-                          //       var tablesBox = Hive.box('tables');
-                          //       var categoriesBox = Hive.box('categories');
-                          //       var orderCounterBox = Hive.box('orderCounter');
+                          isTableSelected
+                              ? Expanded(
+                                  flex: 1,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Colors.redAccent,
+                                      padding: const EdgeInsets.symmetric(vertical: 0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        // Ensure all required Hive boxes are open
+                                        var ordersBox = Hive.isBoxOpen('orders') ? Hive.box<Orders>('orders') : await Hive.openBox<Orders>('orders');
 
-                          //       await ordersBox.clear();
-                          //       await tablesBox.clear();
-                          //       await categoriesBox.clear();
-                          //       await orderCounterBox.clear();
+                                        var tablesBox = Hive.isBoxOpen('tables') ? Hive.box('tables') : await Hive.openBox('tables');
 
-                          //       // Clearing the printersBox
-                          //       var printersBox = Hive.box<Printer>('printersBox');
-                          //       await printersBox.clear();
+                                        var categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
 
-                          //       log('Categories have been reset.');
-                          //       log('orderCounter has been reset.');
-                          //       log('categoriesBox ${categoriesBox.values}');
-                          //       log('All data in orders box has been cleared.');
-                          //       log('All data in printers box has been cleared.');
+                                        var orderCounterBox = Hive.isBoxOpen('orderCounter') ? Hive.box('orderCounter') : await Hive.openBox('orderCounter');
 
-                          //       // Perform UI-related updates
-                          //       setState(() {
-                          //         widget.orders.clearOrders();
-                          //         resetTables();
-                          //         selectedOrder.resetDefault();
-                          //       });
+                                        var printersBox =
+                                            Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
 
-                          //       // Reset tables data if the box is empty
-                          //       if (tablesBox.isEmpty) {
-                          //         tablesBox.put(
-                          //           'tables',
-                          //           defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
-                          //         );
-                          //       }
+                                        // Clear data from the boxes
+                                        await ordersBox.clear();
+                                        await tablesBox.clear();
+                                        await categoriesBox.clear();
+                                        await orderCounterBox.clear();
+                                        await printersBox.clear();
 
-                          //       log('Tables data has been reset.');
-                          //       log('tables $tables');
-                          //     },
-                          //     child: const Padding(
-                          //       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          //       child: Row(
-                          //         mainAxisAlignment: MainAxisAlignment.center,
-                          //         children: [
-                          //           Icon(Icons.cancel, size: 20),
-                          //           SizedBox(width: 10),
-                          //           Text(
-                          //             'Clear Local Data',
-                          //             style: TextStyle(
-                          //               fontSize: 16,
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.white,
-                          //             ),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ): const SizedBox(),
-                          // const SizedBox(width: 10),
+                                        log('Categories, orders, and counters have been reset.');
+
+                                        // Perform UI-related updates
+                                        setState(() {
+                                          orders.clearOrders();
+                                          resetTables();
+                                          selectedOrder.resetDefault();
+                                        });
+
+                                        // Reset tables data if the box is empty
+                                        if (tablesBox.isEmpty) {
+                                          await tablesBox.put(
+                                            'tables',
+                                            defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
+                                          );
+                                        }
+
+                                        log('Tables data has been reset.');
+                                        log('Current tables: $tables');
+                                      } catch (e) {
+                                        log('An error occurred while clearing Hive data: $e');
+                                      }
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.cancel, size: 20),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Clear Local Data',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          const SizedBox(width: 10),
                           isTableSelected
                               ? Expanded(
                                   flex: 1,
@@ -1121,6 +1193,19 @@ class DineInPageState extends ConsumerState<DineInPage> {
     );
   }
 }
+
+class HiveBoxes {
+  static Box<Orders>? _ordersBox;
+
+  static Future<Box<Orders>> getOrdersBox() async {
+    if (_ordersBox != null && _ordersBox!.isOpen) {
+      return _ordersBox!;
+    }
+    _ordersBox = await Hive.openBox<Orders>('orders');
+    return _ordersBox!;
+  }
+}
+
 
 // close it when you seldom use it, in our case, we need it because of consistently write and read.
 // @override

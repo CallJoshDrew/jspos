@@ -66,7 +66,6 @@ class _MainPageState extends State<MainPage> {
       case 'Dine In':
         return DineInPage(
           freezeSideMenu: freezeSideMenu,
-          orders: widget.orders,
         );
       // bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected
       // case 'Take Out':
