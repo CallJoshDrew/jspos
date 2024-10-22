@@ -8,18 +8,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jspos/app/jpos.dart';
-import 'package:jspos/models/orders.dart';
 
 // import 'package:jspos/main.dart';
 
 void main() {
   testWidgets('Add category test', (WidgetTester tester) async {
-    // Create a mock Orders object
-    final mockOrders = Orders(data: []);
+   
     final mockCategories = ['Cakes', 'Dishes', 'Drinks'];
 
     // Build our app and trigger a frame.
-    await tester.pumpWidget(JPOSApp(orders: mockOrders, categories: mockCategories));
+    await tester.pumpWidget(JPOSApp(categories: mockCategories));
 
     // Find the add category button and tap it
     var addButton = find.byIcon(Icons.add);

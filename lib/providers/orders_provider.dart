@@ -1,10 +1,10 @@
-// lib/providers/orders_provider.dart
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:jspos/models/orders.dart';
-import 'package:jspos/models/selected_order.dart'; // Import the Orders model
+import 'package:jspos/models/selected_order.dart';
 
+// OrdersNotifier manages state using Orders
 class OrdersNotifier extends StateNotifier<Orders> {
   final Box<Orders> _ordersBox;
 
@@ -14,26 +14,21 @@ class OrdersNotifier extends StateNotifier<Orders> {
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
     await state.addOrUpdateOrder(order);
-    state = Orders(data: state.data); // Notify listeners of state change
+    state = Orders(data: state.data); // Notify listeners
+    await _ordersBox.put('orders', state); // Save to Hive
     log('Order added/updated: ${order.orderNumber}');
   }
 
   // Clear all orders
   Future<void> clearOrders() async {
-    await state.clearOrders();
-    state = Orders(data: []); // Reset state to an empty order list
+    state = Orders(data: []); // Reset state
+    await _ordersBox.clear(); // Clear the Hive box
     log('All orders cleared.');
-  }
-
-  // Reload orders from Hive (optional)
-  void reloadOrders() {
-    state = _ordersBox.get('orders', defaultValue: Orders(data: [])) ?? Orders();
-    log('Orders reloaded from Hive.');
   }
 }
 
-// Create a global provider for OrdersNotifier
+// Provider for OrdersNotifier
 final ordersProvider = StateNotifierProvider<OrdersNotifier, Orders>((ref) {
-  final ordersBox = Hive.box<Orders>('orders'); // Ensure Hive box is open
+  final ordersBox = Hive.box<Orders>('orders'); // Ensure the box is open
   return OrdersNotifier(ordersBox);
 });

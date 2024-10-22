@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/models/orders.dart';
 // import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/history/history.dart';
 import 'package:jspos/screens/recommendation/recommend.dart';
@@ -10,16 +9,12 @@ import 'package:jspos/screens/dineIn/dine_in.dart';
 // import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
-  final Orders orders;
   final List<String> categories;
-  const JPOSApp({super.key, required this.orders, required this.categories});
+  const JPOSApp({super.key, required this.categories});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-    // ValueNotifier<BluetoothDevice?> printerDevices = ValueNotifier<BluetoothDevice?>(null);
-    //  ValueNotifier<bool> printersConnected = ValueNotifier<bool>(false);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SMART POS SYSTEM',
@@ -27,23 +22,16 @@ class JPOSApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MainPage(
-        orders: orders,
         categories: categories,
       ),
-      // bluetoothPrint: bluetoothPrint, printerDevices: printerDevices, printersConnected: printersConnected
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  final Orders orders;
   final List<String> categories;
-  // final BluetoothPrint bluetoothPrint;
-  // final ValueNotifier<BluetoothDevice?> printerDevices;
-  // final ValueNotifier<bool> printersConnected;
   const MainPage({
     super.key,
-    required this.orders,
     required this.categories,
   });
 // required this.bluetoothPrint, required this.printerDevices, required this.printersConnected
@@ -71,7 +59,7 @@ class _MainPageState extends State<MainPage> {
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
-        return HistoryPage(orders: widget.orders);
+        return const HistoryPage();
       case 'Reports':
         return const ReportsPage();
       case 'Recommend':

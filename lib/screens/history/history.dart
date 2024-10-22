@@ -9,8 +9,7 @@ import 'package:jspos/shared/history_order.dart';
 import 'package:data_table_2/data_table_2.dart';
 
 class HistoryPage extends StatefulWidget {
-  final Orders orders;
-  const HistoryPage({super.key, required this.orders});
+  const HistoryPage({super.key});
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -19,39 +18,54 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   bool _sortAscending = true;
   int _sortColumnIndex = 0;
+  Orders? orders;
 
   @override
   void initState() {
     super.initState();
-    printOrders();
+    loadOrders();
+    // printOrders();
   }
 
-  void printOrders() async {
+  Future<void> loadOrders() async {
     try {
-      if (Hive.isBoxOpen('orders')) {
-        var ordersBox = await Hive.openBox('orders');
-        var ordersData = ordersBox.get('orders');
+      var ordersBox = await Hive.openBox<Orders>('orders');
+      var ordersData = ordersBox.get('orders');
 
-        if (ordersData != null) {
-          var orders = ordersData as Orders;
-          // Print out all orders
-          for (var order in orders.data) {
-            log('Order Number: ${order.orderNumber}, Status: ${order.status}');
-          }
-          // Print out only 'Paid' orders
-          var paidOrders = orders.data.where((order) => order.status == 'Paid');
-          for (var order in paidOrders) {
-            log('Paid Order Number: ${order.orderNumber}');
-          }
-        } else {
-          log('No orders found in the orders box.');
-        }
-      }
-      // log('Orders from History: ${widget.orders.toString()}');
+      setState(() {
+        orders = ordersData ?? Orders(data: []); // Initialize with an empty list if null
+      });
     } catch (e) {
-      log('An error occurred while printing orders: $e');
+      log('An error occurred while loading orders: $e');
     }
   }
+
+  // void printOrders() async {
+  //   try {
+  //     if (Hive.isBoxOpen('orders')) {
+  //       var ordersBox = await Hive.openBox('orders');
+  //       var ordersData = ordersBox.get('orders');
+
+  //       if (ordersData != null) {
+  //         var orders = ordersData as Orders;
+  //         // Print out all orders
+  //         for (var order in orders.data) {
+  //           log('Order Number: ${order.orderNumber}, Status: ${order.status}');
+  //         }
+  //         // Print out only 'Paid' orders
+  //         var paidOrders = orders.data.where((order) => order.status == 'Paid');
+  //         for (var order in paidOrders) {
+  //           log('Paid Order Number: ${order.orderNumber}');
+  //         }
+  //       } else {
+  //         log('No orders found in the orders box.');
+  //       }
+  //     }
+  //     // log('Orders from History: ${orders.toString()}');
+  //   } catch (e) {
+  //     log('An error occurred while printing orders: $e');
+  //   }
+  // }
 
   String formatDateTime(String dateTimeString) {
     // Parse the string into a DateTime object
@@ -64,6 +78,15 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (orders == null) {
+      // Show loading indicator while orders are being loaded
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return _buildOrdersTable(); // Build the table once orders are loaded
+  }
+
+  Widget _buildOrdersTable() {
     int filteredOrderIndex = 1;
     return Container(
       decoration: const BoxDecoration(
@@ -115,9 +138,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
-                    widget.orders.data.sort((a, b) => int.parse(a.orderNumber.split('-')[1]).compareTo(int.parse(b.orderNumber.split('-')[1])));
+                    orders?.data.sort((a, b) => int.parse(a.orderNumber.split('-')[1]).compareTo(int.parse(b.orderNumber.split('-')[1])));
                   } else {
-                    widget.orders.data.sort((a, b) => int.parse(b.orderNumber.split('-')[1]).compareTo(int.parse(a.orderNumber.split('-')[1])));
+                    orders?.data.sort((a, b) => int.parse(b.orderNumber.split('-')[1]).compareTo(int.parse(a.orderNumber.split('-')[1])));
                   }
                 });
               },
@@ -138,13 +161,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
-                    widget.orders.data.sort((a, b) {
+                    orders?.data.sort((a, b) {
                       var aTime = a.paymentTime != "None" ? a.paymentTime : a.cancelledTime;
                       var bTime = b.paymentTime != "None" ? b.paymentTime : b.cancelledTime;
                       return aTime.compareTo(bTime);
                     });
                   } else {
-                    widget.orders.data.sort((a, b) {
+                    orders?.data.sort((a, b) {
                       var aTime = a.paymentTime != "None" ? a.paymentTime : a.cancelledTime;
                       var bTime = b.paymentTime != "None" ? b.paymentTime : b.cancelledTime;
                       return bTime.compareTo(aTime);
@@ -168,9 +191,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
-                    widget.orders.data.sort((a, b) => a.totalQuantity.compareTo(b.totalQuantity));
+                    orders?.data.sort((a, b) => a.totalQuantity.compareTo(b.totalQuantity));
                   } else {
-                    widget.orders.data.sort((a, b) => b.totalQuantity.compareTo(a.totalQuantity));
+                    orders?.data.sort((a, b) => b.totalQuantity.compareTo(a.totalQuantity));
                   }
                 });
               },
@@ -189,9 +212,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
-                    widget.orders.data.sort((a, b) => a.status.compareTo(b.status));
+                    orders?.data.sort((a, b) => a.status.compareTo(b.status));
                   } else {
-                    widget.orders.data.sort((a, b) => b.status.compareTo(a.status));
+                    orders?.data.sort((a, b) => b.status.compareTo(a.status));
                   }
                 });
               },
@@ -210,9 +233,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
-                    widget.orders.data.sort((a, b) => a.paymentMethod.compareTo(b.paymentMethod));
+                    orders?.data.sort((a, b) => a.paymentMethod.compareTo(b.paymentMethod));
                   } else {
-                    widget.orders.data.sort((a, b) => b.paymentMethod.compareTo(a.paymentMethod));
+                    orders?.data.sort((a, b) => b.paymentMethod.compareTo(a.paymentMethod));
                   }
                 });
               },
@@ -231,9 +254,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   _sortColumnIndex = columnIndex;
                   _sortAscending = ascending;
                   if (ascending) {
-                    widget.orders.data.sort((a, b) => a.totalPrice.compareTo(b.totalPrice));
+                    orders?.data.sort((a, b) => a.totalPrice.compareTo(b.totalPrice));
                   } else {
-                    widget.orders.data.sort((a, b) => b.totalPrice.compareTo(a.totalPrice));
+                    orders?.data.sort((a, b) => b.totalPrice.compareTo(a.totalPrice));
                   }
                 });
               },
@@ -249,95 +272,105 @@ class _HistoryPageState extends State<HistoryPage> {
               )),
             ),
           ],
-          rows: widget.orders.data.asMap().entries.where((entry) {
-            log('Orders data: ${widget.orders.data}');
-            SelectedOrder order = entry.value;
-            return (order.status == "Paid" || order.status == "Cancelled");
-          }).map((entry) {
-            SelectedOrder order = entry.value;
+          rows: (orders?.data.asMap().entries
+        .where((entry) {
+          log('Orders data: ${orders?.data}');
+          SelectedOrder order = entry.value;
+          return (order.status == "Paid" || order.status == "Cancelled");
+        })
+        .map((entry) {
+          SelectedOrder order = entry.value;
 
-            return DataRow(
-              color: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
-                if (states.contains(WidgetState.hovered)) return Colors.white10;
-                return const Color(0xff1f2029);
-              }),
-              cells: <DataCell>[
-                DataCell(Center(
-                    child: Text(
+          return DataRow(
+            color: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+              if (states.contains(WidgetState.hovered)) return Colors.white10;
+              return const Color(0xff1f2029);
+            }),
+            cells: <DataCell>[
+              DataCell(Center(
+                child: Text(
                   (filteredOrderIndex++).toString(),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
-                ))),
-                DataCell(Center(
-                    child: Text(
+                ),
+              )),
+              DataCell(Center(
+                child: Text(
                   order.orderNumber,
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
-                ))),
-                DataCell(Center(
-                    child: Text(
+                ),
+              )),
+              DataCell(Center(
+                child: Text(
                   order.status == "Paid" ? formatDateTime(order.paymentTime) : formatDateTime(order.cancelledTime),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
-                ))),
-                DataCell(Center(
-                    child: Text(
+                ),
+              )),
+              DataCell(Center(
+                child: Text(
                   order.totalQuantity.toString(),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
-                ))),
-                DataCell(Center(
-                    child: Text(
+                ),
+              )),
+              DataCell(Center(
+                child: Text(
                   order.status,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
-                ))),
-                DataCell(Center(
-                    child: Text(
+                ),
+              )),
+              DataCell(Center(
+                child: Text(
                   order.paymentMethod,
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
-                ))),
-                DataCell(Center(
-                    child: Text(
+                ),
+              )),
+              DataCell(Center(
+                child: Text(
                   order.totalPrice.toStringAsFixed(2),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
-                ))),
-                DataCell(Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.file_open, color: Colors.white),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HistoryOrderPage(
-                            historyOrder: order,
-                          ),
+                ),
+              )),
+              DataCell(Center(
+                child: IconButton(
+                  icon: const Icon(Icons.file_open, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HistoryOrderPage(
+                          historyOrder: order,
                         ),
-                      );
-                    },
-                  ),
-                )),
-              ],
-            );
-          }).toList(),
+                      ),
+                    );
+                  },
+                ),
+              )),
+            ],
+          );
+        }).toList()) ?? [], // Fallback to an empty list if orders is null
+
         ),
       ),
     );

@@ -3,16 +3,18 @@ import 'dart:developer';
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/providers/orders_provider.dart';
 
-class MakePaymentPage extends StatefulWidget {
+class MakePaymentPage extends ConsumerStatefulWidget {
   final SelectedOrder selectedOrder;
   final VoidCallback? updateOrderStatus;
-  final Orders orders;
+
   final List<Map<String, dynamic>> tables;
   final int selectedTableIndex;
   final void Function(int index, String orderNumber, bool isOccupied) updateTables;
@@ -21,7 +23,6 @@ class MakePaymentPage extends StatefulWidget {
       {super.key,
       required this.selectedOrder,
       required this.updateOrderStatus,
-      required this.orders,
       required this.tables,
       required this.selectedTableIndex,
       required this.updateTables});
@@ -30,7 +31,8 @@ class MakePaymentPage extends StatefulWidget {
   MakePaymentPageState createState() => MakePaymentPageState();
 }
 
-class MakePaymentPageState extends State<MakePaymentPage> {
+class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
+  late Orders orders; // No need to reinitialize here directly.
   String selectedPaymentMethod = "Cash";
   final TextEditingController _controller = TextEditingController();
   late double originalBill; // Declare originalBill
@@ -142,6 +144,7 @@ class MakePaymentPageState extends State<MakePaymentPage> {
   @override
   void initState() {
     super.initState();
+    orders = ref.read(ordersProvider);
     originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
     // log('initState called, adjustedBill is now $adjustedBill');
@@ -314,7 +317,9 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                               children: [
                                                                 Row(
                                                                   children: [
-                                                                    item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] != 'None'
+                                                                    item.selection &&
+                                                                            item.selectedNoodlesType != null &&
+                                                                            item.selectedNoodlesType!['name'] != 'None'
                                                                         ? Row(
                                                                             children: [
                                                                               Text(
@@ -1071,47 +1076,56 @@ class MakePaymentPageState extends State<MakePaymentPage> {
                                                                 ),
                                                                 padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                               ),
-                                                              onPressed: () {
+                                                              onPressed: () async {
                                                                 try {
+                                                                  // Access the 'orders' box safely
+                                                                  var ordersBox = Hive.isBoxOpen('orders')
+                                                                      ? Hive.box<Orders>('orders')
+                                                                      : await Hive.openBox<Orders>('orders');
+
                                                                   setState(() {
+                                                                    // Calculate change and update the selectedOrder details
                                                                     _calculateChange();
-                                                                    // widget.selectedOrder.totalPrice =
-                                                                    //     double.parse((amountReceived - amountChanged).toStringAsFixed(2));
-                                                                    // widget.selectedOrder.amountReceived = amountReceived;
-                                                                    // widget.selectedOrder.amountChanged = amountChanged;
-                                                                    widget.selectedOrder.roundingAdjustment = roundingAdjustment;
-                                                                    widget.selectedOrder.paymentMethod = selectedPaymentMethod;
-                                                                    widget.selectedOrder.status = 'Paid';
-                                                                    widget.selectedOrder.cancelledTime = 'None';
-                                                                    widget.selectedOrder.addPaymentDateTime();
-                                                                    widget.updateOrderStatus!();
-                                                                    widget.orders.addOrUpdateOrder(widget.selectedOrder.copyWith(categories));
+                                                                    widget.selectedOrder
+                                                                      ..roundingAdjustment = roundingAdjustment
+                                                                      ..paymentMethod = selectedPaymentMethod
+                                                                      ..status = 'Paid'
+                                                                      ..cancelledTime = 'None'
+                                                                      ..addPaymentDateTime();
+
+                                                                    // Call updateOrderStatus if available
+                                                                    widget.updateOrderStatus?.call();
+
+                                                                    // Add or update the order in the Orders instance and save it to Hive
+                                                                    orders.addOrUpdateOrder(widget.selectedOrder);
+
+                                                                    // Save the updated orders instance to Hive
+                                                                    ordersBox.put('orders', orders);
+
+                                                                    // Clear the table data for the selected table
                                                                     var emptyOrderNumber = '';
                                                                     widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
                                                                     widget.tables[widget.selectedTableIndex]['occupied'] = false;
-                                                                    widget.updateTables(widget.selectedTableIndex, emptyOrderNumber, false);
-                                                                    log(widget.selectedOrder.discount.toString());
+
+                                                                    // Update the tables state
+                                                                    widget.updateTables(
+                                                                      widget.selectedTableIndex,
+                                                                      emptyOrderNumber,
+                                                                      false,
+                                                                    );
+
+                                                                    log('Order saved with discount: ${widget.selectedOrder.discount}');
                                                                   });
 
-                                                                  if (Hive.isBoxOpen('orders')) {
-                                                                    var ordersBox = Hive.box('orders');
-                                                                    ordersBox.put('orders', widget.orders);
-
-                                                                    // Print the latest orders
-                                                                    var latestOrders = ordersBox.get('orders') as Orders;
-                                                                    for (var order in latestOrders.data) {
-                                                                      log('Order Number from Payments: ${order.orderNumber}, Status: ${order.status}');
-                                                                    }
-                                                                  }
-                                                                  // Debug to check and log the orders stored in Hive
-                                                                  if (Hive.isBoxOpen('orders')) {
-                                                                    var ordersBox = Hive.box('orders');
-                                                                    var storedOrders = ordersBox.get('orders');
-                                                                    log('Stored orders from Hive: $storedOrders');
+                                                                  // Log the updated orders from Hive for debugging
+                                                                  var storedOrders = ordersBox.get('orders') as Orders;
+                                                                  for (var order in storedOrders.data) {
+                                                                    log('Order Number: ${order.orderNumber}, Status: ${order.status}');
                                                                   }
                                                                 } catch (e) {
                                                                   log('An error occurred at MakePaymentPage: $e');
                                                                 }
+
                                                                 CherryToast(
                                                                   icon: Icons.verified_rounded,
                                                                   iconColor: Colors.green,

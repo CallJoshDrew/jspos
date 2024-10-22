@@ -9,7 +9,7 @@ import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/print_jobs.dart';
-import 'package:jspos/providers/orders.provider.dart';
+import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
@@ -47,7 +47,7 @@ class DineInPage extends ConsumerStatefulWidget {
 
 class DineInPageState extends ConsumerState<DineInPage> {
   List<Map<String, dynamic>> tables = [];
-  late Orders orders; 
+  late Orders orders;
   @override
   void initState() {
     super.initState();
@@ -76,34 +76,32 @@ class DineInPageState extends ConsumerState<DineInPage> {
     }
   }
 
- 
-
   int orderCounter = 1;
   bool showMenu = false;
 
   late int selectedTableIndex;
   String orderNumber = "";
   List<Item> tempCartItems = [];
-   void loadTableOrderCount() async {
-  try {
-    if (!Hive.isBoxOpen('orderCounter')) {
-      // Open the box if it’s not open yet
-      await Hive.openBox('orderCounter');
+  void loadTableOrderCount() async {
+    try {
+      if (!Hive.isBoxOpen('orderCounter')) {
+        // Open the box if it’s not open yet
+        await Hive.openBox('orderCounter');
+      }
+
+      // Now the box is guaranteed to be open
+      var counterBox = Hive.box('orderCounter');
+      orderCounter = counterBox.get('orderCounter', defaultValue: 1);
+
+      log('Loaded orderCounter: $orderCounter');
+
+      // Update the state to reflect the loaded orderCounter
+      setState(() {});
+    } catch (e) {
+      log('An error occurred while loading Table Order Count: $e');
     }
-
-    // Now the box is guaranteed to be open
-    var counterBox = Hive.box('orderCounter');
-    orderCounter = counterBox.get('orderCounter', defaultValue: 1);
-
-    log('Loaded orderCounter: $orderCounter');
-    
-    // Update the state to reflect the loaded orderCounter
-    setState(() {});
-    
-  } catch (e) {
-    log('An error occurred while loading Table Order Count: $e');
   }
-}
+
   SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
     tableName: "Table Name",
@@ -192,32 +190,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
     } catch (e) {
       log('DINEIN Page: Failed to update tables in Hive: $e');
       // Handle the exception as appropriate for your app
-    }
-  }
-
-  Future<void> _saveOrdersToHive() async {
-    try {
-      if (Hive.isBoxOpen('orders')) {
-        var ordersBox = Hive.box('orders');
-        await ordersBox.put('orders', orders);
-        log('Orders saved to Hive successfully.');
-      } else {
-        log('Hive box is not open.');
-      }
-    } catch (e) {
-      log('Error saving orders to Hive: $e');
-    }
-  }
-
-  Future<void> _logStoredOrdersFromHive() async {
-    try {
-      if (Hive.isBoxOpen('orders')) {
-        var ordersBox = Hive.box('orders');
-        var storedOrders = ordersBox.get('orders');
-        log('Stored Orders from Hive: $storedOrders');
-      }
-    } catch (e) {
-      log('Error retrieving orders from Hive: $e');
     }
   }
 
@@ -442,7 +414,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
       orderStatus = "Make Payment";
       orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
       orderStatusIcon = Icons.monetization_on;
-      handleMethod = handlePaymentBtn;
+      handleMethod = () {
+        handlePaymentBtn(context, ref);
+      };
       // saveSelectedOrderToHive();
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       _showConfirmationCancelDialog();
@@ -526,23 +500,24 @@ class DineInPageState extends ConsumerState<DineInPage> {
     }
   }
 
-  void handlePaymentBtn() {
-// Log the selectedOrder with pretty-printed JSON
-    var encoder = const JsonEncoder.withIndent('  '); // 2 spaces for indentation
+  void handlePaymentBtn(BuildContext context, WidgetRef ref) {
+    // Use the provider to access the current orders state
+    final orders = ref.read(ordersProvider);
+
+    // Log the selectedOrder with pretty-printed JSON
+    var encoder = const JsonEncoder.withIndent('  ');
     log('The Selected Order Details in Payment Page is:\n${encoder.convert(selectedOrder.toJson())}');
-    // Debug to check and log the orders stored in Hive
-    if (Hive.isBoxOpen('orders')) {
-      var ordersBox = Hive.box('orders');
-      var storedOrders = ordersBox.get('orders');
-      log('Stored orders from Hive: $storedOrders');
-    }
+
+    // Log the current orders state (via Riverpod, instead of direct Hive access)
+    log('Stored orders from provider: ${orders.getAllOrders()}');
+
+    // Navigate to the payment page
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MakePaymentPage(
           selectedOrder: selectedOrder,
           updateOrderStatus: updateOrderStatus,
-          orders: orders,
           tables: tables,
           selectedTableIndex: selectedTableIndex,
           updateTables: updateTables,
@@ -822,7 +797,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
         orderStatus = "Make Payment";
         orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
-        handleMethod = handlePaymentBtn;
+        handleMethod = () {
+          handlePaymentBtn(context, ref);
+        };
         orderStatusIcon = Icons.monetization_on;
       } else if (selectedOrder.status == "Paid") {
         orderStatus = "COMPLETED (PAID)";
