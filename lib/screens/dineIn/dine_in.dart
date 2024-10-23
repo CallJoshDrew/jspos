@@ -10,6 +10,8 @@ import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/providers/orders_provider.dart';
+import 'package:jspos/providers/tables_provider.dart';
+import 'package:jspos/providers/order_counter_provider.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
@@ -30,17 +32,10 @@ import 'package:cherry_toast/resources/arrays.dart';
 // );
 class DineInPage extends ConsumerStatefulWidget {
   final void Function() freezeSideMenu;
-
-  // final BluetoothPrint bluetoothPrint;
-  // final ValueNotifier<BluetoothDevice?> printerDevices;
-  // final ValueNotifier<bool> printersConnected;
   const DineInPage({
     super.key,
     required this.freezeSideMenu,
   });
-  // required this.bluetoothPrint,
-  // required this.printerDevices,
-  // required this.printersConnected
   @override
   DineInPageState createState() => DineInPageState();
 }
@@ -48,59 +43,48 @@ class DineInPage extends ConsumerStatefulWidget {
 class DineInPageState extends ConsumerState<DineInPage> {
   List<Map<String, dynamic>> tables = [];
   late Orders orders;
+  late int orderCounter;
+  bool isLoading = true; // Track loading state
   @override
   void initState() {
     super.initState();
-    // Use ref.read() to access the provider during initialization
+    // Use ref.read() to access providers during initialization
     orders = ref.read(ordersProvider);
     log('Initial Orders: ${orders.getAllOrders()}');
-    loadTables();
-    loadTableOrderCount();
+
+    // Load both tables and order counter in one function
+    loadData();
+    log('initial order counter from Dine In is: $orderCounter');
     handleMethod = defaultMethod;
+  }
+
+  // Unified function to load tables and order counter
+  Future<void> loadData() async {
+    try {
+      // Read tables and orderCounter from their respective providers
+      final tablesData = ref.read(tablesProvider);
+      final counter = ref.read(orderCounterProvider);
+
+      setState(() {
+        tables = tablesData; // Update tables list
+        orderCounter = counter; // Update order counter
+        isLoading = false; // Loading complete
+      });
+
+      log('Loaded tables: $tables');
+      log('Loaded orderCounter: $orderCounter');
+    } catch (e) {
+      log('An error occurred while loading data: $e');
+    }
   }
 
   bool isTableSelected = false;
 
-  void loadTables() async {
-    try {
-      if (Hive.isBoxOpen('tables')) {
-        var tablesBox = Hive.box('tables');
-        var data = tablesBox.get('tables');
-        if (data != null) {
-          tables = (data as List).map((item) => Map<String, dynamic>.from(item)).toList();
-        }
-        setState(() {}); // Call setState to trigger a rebuild of the widget
-      }
-    } catch (e) {
-      log('An error occurred at DineIn Page loadTables: $e');
-    }
-  }
-
-  int orderCounter = 1;
   bool showMenu = false;
 
   late int selectedTableIndex;
   String orderNumber = "";
   List<Item> tempCartItems = [];
-  void loadTableOrderCount() async {
-    try {
-      if (!Hive.isBoxOpen('orderCounter')) {
-        // Open the box if it’s not open yet
-        await Hive.openBox('orderCounter');
-      }
-
-      // Now the box is guaranteed to be open
-      var counterBox = Hive.box('orderCounter');
-      orderCounter = counterBox.get('orderCounter', defaultValue: 1);
-
-      log('Loaded orderCounter: $orderCounter');
-
-      // Update the state to reflect the loaded orderCounter
-      setState(() {});
-    } catch (e) {
-      log('An error occurred while loading Table Order Count: $e');
-    }
-  }
 
   SelectedOrder selectedOrder = SelectedOrder(
     orderNumber: "Order Number",
@@ -127,9 +111,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
   // itemQuantities: {},
   // totalItems: 0,
   String generateID(String tableName) {
-    // Ensure the counter is correctly loaded from Hive, with a default of 1
-    int orderCounter = Hive.box('orderCounter').get('orderCounter', defaultValue: 1);
-
     // Properly format the counter with 4 digits (0001, 0002, etc.)
     final paddedCounter = orderCounter.toString().padLeft(4, '0');
 
@@ -148,16 +129,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
     return orderNumber;
   }
-
-  // String generateID(String tableName) {
-  //   final paddedCounter = orderCounter.toString().padLeft(4, '0');
-  //   final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s'), '');
-  //   final orderNumber = '#Table$tableNameWithoutSpace-$paddedCounter';
-  //   orderCounter++;
-  //   // Save the updated orderCounter to Hive
-  //   Hive.box('orderCounter').put('orderCounter', orderCounter);
-  //   return orderNumber;
-  // }
 
   void printTables() {
     // Get the 'tables' box
@@ -886,6 +857,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Display a loading indicator if data is still being fetched
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -983,44 +958,47 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                     ),
                                     onPressed: () async {
                                       try {
-                                        // Ensure all required Hive boxes are open
-                                        var ordersBox = Hive.isBoxOpen('orders') ? Hive.box<Orders>('orders') : await Hive.openBox<Orders>('orders');
-
-                                        var tablesBox = Hive.isBoxOpen('tables') ? Hive.box('tables') : await Hive.openBox('tables');
-
-                                        var categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
-
-                                        var orderCounterBox = Hive.isBoxOpen('orderCounter') ? Hive.box('orderCounter') : await Hive.openBox('orderCounter');
-
-                                        var printersBox =
+                                        // Ensure Hive boxes are open or open them if not
+                                        final ordersBox = Hive.isBoxOpen('orders') ? Hive.box<Orders>('orders') : await Hive.openBox<Orders>('orders');
+                                        final tablesBox = Hive.isBoxOpen('tables') ? Hive.box('tables') : await Hive.openBox('tables');
+                                        final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
+                                        final orderCounterBox = Hive.isBoxOpen('orderCounter') ? Hive.box('orderCounter') : await Hive.openBox('orderCounter');
+                                        final printersBox =
                                             Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
 
-                                        // Clear data from the boxes
+                                        // Step 1: Reset providers
+                                        ref.read(tablesProvider.notifier).resetTables();
+                                        ref.read(orderCounterProvider.notifier).updateOrderCounter(1); // Reset to 1
+                                        ref.read(ordersProvider.notifier).clearOrders();
+
+                                        log('Providers have been reset.');
+
+                                        // Step 2: Clear Hive boxes
                                         await ordersBox.clear();
                                         await tablesBox.clear();
                                         await categoriesBox.clear();
                                         await orderCounterBox.clear();
                                         await printersBox.clear();
 
-                                        log('Categories, orders, and counters have been reset.');
+                                        log('Hive boxes have been cleared.');
 
-                                        // Perform UI-related updates
+                                        // Step 3: Reinitialize tables if empty
+                                        if (tablesBox.isEmpty) {
+                                          await tablesBox.put(
+                                            'tables',
+                                            defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
+                                          );
+                                          log('Tables data has been reset with default values.');
+                                        }
+
+                                        // Step 4: Update UI after clearing and resetting
                                         setState(() {
                                           orders.clearOrders();
                                           resetTables();
                                           selectedOrder.resetDefault();
                                         });
 
-                                        // Reset tables data if the box is empty
-                                        if (tablesBox.isEmpty) {
-                                          await tablesBox.put(
-                                            'tables',
-                                            defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
-                                          );
-                                        }
-
-                                        log('Tables data has been reset.');
-                                        log('Current tables: $tables');
+                                        log('UI has been updated after resetting the data.');
                                       } catch (e) {
                                         log('An error occurred while clearing Hive data: $e');
                                       }

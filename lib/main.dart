@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart'; 
 import 'package:jspos/app/jpos.dart';
-import 'package:jspos/data/tables_data.dart';
 import 'package:jspos/models/client_profile.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
@@ -26,15 +25,21 @@ void main() async {
     Hive.registerAdapter(ClientProfileAdapter());
 
     // Open required Hive boxes
-    await Hive.openBox<Printer>('printersBox');
     await Hive.openBox<Orders>('orders');
-    await Hive.openBox('tables');
-    await Hive.openBox('categories');
-    await Hive.openBox('orderCounter');
+    await Hive.openBox<Printer>('printersBox');
+    var orderCounterBox = await Hive.openBox('orderCounter');
     await Hive.openBox<DailySales>('dailySalesBox');
+    await Hive.openBox('tables');
 
+    // Initialize the order counter if not present
+    if (orderCounterBox.get('orderCounter') == null) {
+      await orderCounterBox.put('orderCounter', 1);
+      log('Initialized orderCounter with default value: 1');
+    }
+
+    var categoriesBox = await Hive.openBox('categories');
     // Initialize categories
-    var categoriesBox = Hive.box('categories');
+    
     List<String> categories;
     String? categoriesString = categoriesBox.get('categories');
     if (categoriesString != null) {
