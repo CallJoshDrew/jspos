@@ -5,7 +5,7 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -140,6 +140,37 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   //       ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
   //       : '${index + 1}.${item.originalName}';
   // }
+  void _showSuccessToast() {
+    CherryToast(
+      icon: Icons.verified_rounded,
+      iconColor: Colors.green,
+      themeColor: const Color.fromRGBO(46, 125, 50, 1),
+      backgroundColor: Colors.white,
+      title: const Text(
+        'Thank you!',
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      description: Text(
+        'The payment for the table ${widget.tables[widget.selectedTableIndex]['name']} has been successfully processed.',
+        style: const TextStyle(fontSize: 14),
+      ),
+      toastPosition: Position.top,
+      toastDuration: const Duration(milliseconds: 3000),
+      animationType: AnimationType.fromTop,
+      animationDuration: const Duration(milliseconds: 200),
+      autoDismiss: true,
+      displayCloseButton: false,
+    ).show(context);
+  }
+
+  void _navigateBack() {
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+  }
 
   @override
   void initState() {
@@ -1083,79 +1114,50 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                       ? Hive.box<Orders>('orders')
                                                                       : await Hive.openBox<Orders>('orders');
 
-                                                                  setState(() {
-                                                                    // Calculate change and update the selectedOrder details
-                                                                    _calculateChange();
-                                                                    widget.selectedOrder
-                                                                      ..roundingAdjustment = roundingAdjustment
-                                                                      ..paymentMethod = selectedPaymentMethod
-                                                                      ..status = 'Paid'
-                                                                      ..cancelledTime = 'None'
-                                                                      ..addPaymentDateTime();
+                                                                  // Perform operations related to the order
+                                                                  _calculateChange();
+                                                                  widget.selectedOrder
+                                                                    ..roundingAdjustment = roundingAdjustment
+                                                                    ..paymentMethod = selectedPaymentMethod
+                                                                    ..status = 'Paid'
+                                                                    ..cancelledTime = 'None'
+                                                                    ..addPaymentDateTime();
 
-                                                                    // Call updateOrderStatus if available
-                                                                    widget.updateOrderStatus?.call();
+                                                                  // Call updateOrderStatus if available
+                                                                  widget.updateOrderStatus?.call();
 
-                                                                    // Add or update the order in the Orders instance and save it to Hive
-                                                                    orders.addOrUpdateOrder(widget.selectedOrder);
+                                                                  // Add or update the order and save it in Hive
+                                                                  orders.addOrUpdateOrder(widget.selectedOrder);
+                                                                  await ordersBox.put('orders', orders);
 
-                                                                    // Save the updated orders instance to Hive
-                                                                    ordersBox.put('orders', orders);
+                                                                  // Clear table data for the selected table
+                                                                  var emptyOrderNumber = '';
+                                                                  widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
+                                                                  widget.tables[widget.selectedTableIndex]['occupied'] = false;
 
-                                                                    // Clear the table data for the selected table
-                                                                    var emptyOrderNumber = '';
-                                                                    widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
-                                                                    widget.tables[widget.selectedTableIndex]['occupied'] = false;
+                                                                  // Update the tables state
+                                                                  widget.updateTables(
+                                                                    widget.selectedTableIndex,
+                                                                    emptyOrderNumber,
+                                                                    false,
+                                                                  );
 
-                                                                    // Update the tables state
-                                                                    widget.updateTables(
-                                                                      widget.selectedTableIndex,
-                                                                      emptyOrderNumber,
-                                                                      false,
-                                                                    );
+                                                                  log('Order saved with discount: ${widget.selectedOrder.discount}');
 
-                                                                    log('Order saved with discount: ${widget.selectedOrder.discount}');
-                                                                  });
-
-                                                                  // Log the updated orders from Hive for debugging
+                                                                  // Log updated orders from Hive for debugging
                                                                   var storedOrders = ordersBox.get('orders') as Orders;
                                                                   for (var order in storedOrders.data) {
                                                                     log('Order Number: ${order.orderNumber}, Status: ${order.status}');
                                                                   }
+
+                                                                  // Safely interact with UI if the widget is still in the tree
+                                                                  if (mounted) {
+                                                                    _showSuccessToast();
+                                                                    _navigateBack();
+                                                                  }
                                                                 } catch (e) {
                                                                   log('An error occurred at MakePaymentPage: $e');
                                                                 }
-
-                                                                CherryToast(
-                                                                  icon: Icons.verified_rounded,
-                                                                  iconColor: Colors.green,
-                                                                  themeColor: const Color.fromRGBO(46, 125, 50, 1),
-                                                                  backgroundColor: Colors.white,
-                                                                  title: const Text(
-                                                                    'Thank you!',
-                                                                    style: TextStyle(
-                                                                      fontSize: 14,
-                                                                      color: Colors.black,
-                                                                      fontWeight: FontWeight.bold,
-                                                                    ),
-                                                                  ),
-                                                                  description: Text(
-                                                                    'The payment for the table  ${widget.tables[widget.selectedTableIndex]['name']} has been successfully processed.',
-                                                                    style: const TextStyle(
-                                                                      fontSize: 14,
-                                                                      // color: Colors.black,
-                                                                      // fontWeight: FontWeight.bold,
-                                                                    ),
-                                                                  ),
-                                                                  toastPosition: Position.top,
-                                                                  toastDuration: const Duration(milliseconds: 3000),
-                                                                  animationType: AnimationType.fromTop,
-                                                                  animationDuration: const Duration(milliseconds: 200),
-                                                                  autoDismiss: true,
-                                                                  displayCloseButton: false,
-                                                                ).show(context);
-                                                                Navigator.of(context).pop();
-                                                                Navigator.of(context).pop();
                                                               },
                                                               child: const Padding(
                                                                 padding: EdgeInsets.all(6),
@@ -1207,6 +1209,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                             padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
                                           onPressed: () {
+                                            widget.selectedOrder.discount = 0;
                                             Navigator.of(context).pop();
                                           },
                                           child: const Text(

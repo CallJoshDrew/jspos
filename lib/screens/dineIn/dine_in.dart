@@ -42,41 +42,45 @@ class DineInPage extends ConsumerStatefulWidget {
 
 class DineInPageState extends ConsumerState<DineInPage> {
   List<Map<String, dynamic>> tables = [];
+  
   late Orders orders;
   late int orderCounter;
   bool isLoading = true; // Track loading state
   @override
   void initState() {
     super.initState();
-    // Use ref.read() to access providers during initialization
+    // Access orders provider in initState, but leave tables to the build method
     orders = ref.read(ordersProvider);
     log('Initial Orders: ${orders.getAllOrders()}');
-
-    // Load both tables and order counter in one function
     loadData();
-    log('initial order counter from Dine In is: $orderCounter');
     handleMethod = defaultMethod;
   }
 
   // Unified function to load tables and order counter
   Future<void> loadData() async {
     try {
-      // Read tables and orderCounter from their respective providers
+      // Load the data for tables from Hive or API
       final tablesData = ref.read(tablesProvider);
-      final counter = ref.read(orderCounterProvider);
+      final orderCounterData = ref.read(orderCounterProvider);
 
+      // Once the data is fetched, update state
       setState(() {
-        tables = tablesData; // Update tables list
-        orderCounter = counter; // Update order counter
-        isLoading = false; // Loading complete
+        tables = tablesData;
+        orderCounter = orderCounterData;
+        isLoading = false; // Data loaded, stop the loading spinner
       });
 
       log('Loaded tables: $tables');
+
       log('Loaded orderCounter: $orderCounter');
     } catch (e) {
-      log('An error occurred while loading data: $e');
+      log('Error loading tables: $e');
+      setState(() {
+        isLoading = false; // Stop loading in case of an error as well
+      });
     }
   }
+  // Unified function to load tables and order counter
 
   bool isTableSelected = false;
 
@@ -110,9 +114,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
   // itemCounts: {},
   // itemQuantities: {},
   // totalItems: 0,
-  String generateID(String tableName) {
+  String generateID(String tableName, WidgetRef ref) {
+    // Access the current orderCounter from the provider
+    final currentOrderCounter = ref.read(orderCounterProvider);
+
     // Properly format the counter with 4 digits (0001, 0002, etc.)
-    final paddedCounter = orderCounter.toString().padLeft(4, '0');
+    final paddedCounter = currentOrderCounter.toString().padLeft(4, '0');
 
     // Remove any whitespace in the table name
     final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s+'), '');
@@ -120,57 +127,69 @@ class DineInPageState extends ConsumerState<DineInPage> {
     // Construct the order number correctly
     final orderNumber = '#Table$tableNameWithoutSpace-$paddedCounter';
 
-    // Increment the counter and save it back to Hive
-    orderCounter++;
-    Hive.box('orderCounter').put('orderCounter', orderCounter);
+    // Increment the counter
+    final updatedOrderCounter = currentOrderCounter + 1;
+
+    // Update the orderCounter in the provider and then save it to Hive
+    ref.read(orderCounterProvider.notifier).updateOrderCounter(updatedOrderCounter);
 
     // Log the generated order number for debugging
     log('Generated order number: $orderNumber');
+    log('Updated orderCounter to: $updatedOrderCounter');
 
     return orderNumber;
   }
 
-  void printTables() {
-    // Get the 'tables' box
-    var tablesBox = Hive.box('tables');
+  // void printTables() {
+  //   // Get the 'tables' box
+  //   var tablesBox = Hive.box('tables');
 
-    List<Map<String, dynamic>> tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
+  //   List<Map<String, dynamic>> tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
 
-    // Print the tables list to the console
-    log('Tables: $tables');
-  }
+  //   // Print the tables list to the console
+  //   log('Tables: $tables');
+  // }
 
   void updateTables(int index, String orderNumber, bool isOccupied) async {
     try {
-      if (Hive.isBoxOpen('tables')) {
-        // Get the 'tables' box
-        var tablesBox = Hive.box('tables');
-        var rawTables = tablesBox.get('tables');
-        if (rawTables != null) {
-          // Get the tables list from the box and cast it to the correct type
-          List<Map<String, dynamic>> tables = (rawTables as List).map((item) => Map<String, dynamic>.from(item)).toList();
-          tables[index]['orderNumber'] = orderNumber;
-          tables[index]['occupied'] = isOccupied;
-          // Write the updated tables list back to the box
-          tablesBox.put('tables', tables);
-          // printTables();
-        } else {
-          log('DINEIN Page: Tables data is null');
-        }
+      // Step 1: Update the 'tables' box in Hive
+      var tablesBox = Hive.box('tables');
+      var rawTables = tablesBox.get('tables');
+
+      if (rawTables != null) {
+        List<Map<String, dynamic>> tables = (rawTables as List).map((item) => Map<String, dynamic>.from(item)).toList();
+
+        // Update the table data in Hive
+        tables[index]['orderNumber'] = orderNumber;
+        tables[index]['occupied'] = isOccupied;
+        tablesBox.put('tables', tables);
+        log('DINEIN Page: Updated tables in Hive.');
+      } else {
+        log('DINEIN Page: Tables data is null in Hive.');
       }
+
+      // Step 2: Update the provider state
+      ref.read(tablesProvider.notifier).updateSelectedTable(index, orderNumber, isOccupied);
+      log('DINEIN Page: Updated tables in Provider.');
     } catch (e) {
-      log('DINEIN Page: Failed to update tables in Hive: $e');
+      log('DINEIN Page: Failed to update tables: $e');
       // Handle the exception as appropriate for your app
     }
   }
 
   int pressedButtonIndex = -1;
   // Open Menu after set table number
+  // Update in _handleSetTables function when a new order is created
   void _handleSetTables(String tableName, int index) {
+    
     setState(() {
       // Set the selected table and its index
-      log('The table is table $tableName at index $index');
-      log('Current tables info are: $tables');
+      // log('The table is table $tableName at index $index');
+      // Filter and log only the tables that are occupied
+      // log('tables from DINE IN now is $tables');
+      final tablesData = ref.read(tablesProvider);
+      var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
+      log('Occupied tables: $occupiedTables');
 
       selectedTableIndex = index;
       // Check if a table with the given index exists
@@ -191,37 +210,22 @@ class DineInPageState extends ConsumerState<DineInPage> {
           isTableSelected = true;
           // If the table is occupied, use the existing orderNumber
           orderNumber = tables[index]['orderNumber'];
-          log('order number is $orderNumber');
-          log('Current orders: ${orders.getAllOrders}');
+          // log('Exisiting order number is $orderNumber');
+          // log('Current orders: ${orders.getAllOrders}');
 
           var order = orders.getOrder(orderNumber);
-          log('order now is $order');
           // If an order with the same orderNumber exists, update selectedOrder with its details
           if (order != null) {
             order.showEditBtn = true;
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             selectedOrder.calculateItemsAndQuantities();
-            CherryToast(
-              icon: Icons.info,
-              iconColor: Colors.green,
-              themeColor: Colors.green,
-              backgroundColor: Colors.white,
-              title: Text(
-                'You have selected TABLE ${tables[index]['name']}.',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              toastPosition: Position.top,
-              toastDuration: const Duration(milliseconds: 1000),
-              animationType: AnimationType.fromTop,
-              animationDuration: const Duration(milliseconds: 200),
-              autoDismiss: true,
-              displayCloseButton: false,
-            ).show(context);
+            // _showCherryToast(
+            //   'info', // Pass the icon key as a string
+            //   'You have selected TABLE ${tables[index]['name']}.', // Interpolated title text
+            //   1000, // Toast duration in milliseconds
+            //   200, // Animation duration in milliseconds
+            // );
           }
         }
       }
@@ -231,63 +235,79 @@ class DineInPageState extends ConsumerState<DineInPage> {
     updateOrderStatus();
   }
 
-  void printSelectedOrders() async {
-    try {
-      if (Hive.isBoxOpen('tables')) {
-        var selectedOrderBox = await Hive.openBox('selectedOrder');
-        var selectedOrder = selectedOrderBox.get('selectedOrder');
-        log('selectedOrder: $selectedOrder');
-      }
-    } catch (e) {
-      log('An error occurred at DineIn Page void printSelectedOrders: $e');
-    }
-  }
+  // // log Hive for selectedOrder
+  // void logSelectedOrders() async {
+  //   try {
+  //     if (Hive.isBoxOpen('tables')) {
+  //       var selectedOrderBox = await Hive.openBox('selectedOrder');
+  //       var selectedOrder = selectedOrderBox.get('selectedOrder');
+  //       log('selectedOrder: $selectedOrder');
+  //     }
+  //   } catch (e) {
+  //     log('An error occurred at DineIn Page void logSelectedOrders: $e');
+  //   }
+  // }
 
-  void saveSelectedOrderToHive() async {
-    try {
-      if (Hive.isBoxOpen('tables')) {
-        var selectedOrderBox = Hive.box('selectedOrder');
-        await selectedOrderBox.put('selectedOrder', selectedOrder);
-        // printSelectedOrders();
-      }
-    } catch (e) {
-      log('DineIn Page: Failed to save selectedOrder to Hive: $e');
-    }
-  }
+  // void saveSelectedOrderToHive() async {
+  //   try {
+  //     if (Hive.isBoxOpen('tables')) {
+  //       var selectedOrderBox = Hive.box('selectedOrder');
+  //       await selectedOrderBox.put('selectedOrder', selectedOrder);
+  //       // logSelectedOrders();
+  //     }
+  //   } catch (e) {
+  //     log('DineIn Page: Failed to save selectedOrder to Hive: $e');
+  //   }
+  // }
 
   void onItemAdded(Item item) {
     setState(() {
       // Try to find an item in selectedOrder.items with the same id as the new item
       addItemtoCart(item);
-      CherryToast(
-        icon: Icons.check_circle,
-        iconColor: Colors.green,
-        themeColor: const Color.fromRGBO(46, 125, 50, 1),
-        backgroundColor: Colors.white,
-        title: Text(
-          '${item.name} (RM ${item.price.toStringAsFixed(2)})',
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        // description: Text(
-        //   "RM ${item.price.toStringAsFixed(2)}",
-        //   style: const TextStyle(
-        //     fontSize: 14,
-        //     color: Colors.black54,
-        //     fontWeight: FontWeight.bold,
-        //   ),
-        // ),
-        toastPosition: Position.top,
-        toastDuration: const Duration(milliseconds: 1000),
-        animationType: AnimationType.fromTop,
-        animationDuration: const Duration(milliseconds: 200),
-        autoDismiss: true,
-        displayCloseButton: false,
-      ).show(context);
+      _showCherryToast(
+        'check_circle', // Pass the icon key as a string
+        '${item.name} (RM ${item.price.toStringAsFixed(2)})', // Interpolated title text
+        1500, // Toast duration in milliseconds
+        200, // Animation duration in milliseconds
+      );
     });
+  }
+
+  IconData _getIconData(String iconText) {
+    const iconMap = {
+      'check_circle': Icons.check_circle,
+      'info': Icons.info,
+    };
+
+    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
+  }
+
+  void _showCherryToast(
+    String iconText,
+    String titleText,
+    int toastDu, // Changed to int for duration
+    int animateDu,
+  ) {
+    CherryToast(
+      icon: _getIconData(iconText), // Retrieve the corresponding icon
+      iconColor: Colors.green,
+      themeColor: const Color.fromRGBO(46, 125, 50, 1),
+      backgroundColor: Colors.white,
+      title: Text(
+        titleText,
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      toastPosition: Position.top,
+      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
+      animationType: AnimationType.fromTop,
+      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
+      autoDismiss: true,
+      displayCloseButton: false,
+    ).show(context);
   }
 
   void addItemtoCart(item) {
@@ -300,33 +320,21 @@ class DineInPageState extends ConsumerState<DineInPage> {
     updateOrderStatus();
   }
 
-  void resetSelectedTable() {
+  void resetSelectedTable(WidgetRef ref) {
     var resetOrderNumber = "";
-    tables[selectedTableIndex]['occupied'] = false;
-    tables[selectedTableIndex]['orderNumber'] = resetOrderNumber;
-    updateTables(selectedTableIndex, resetOrderNumber, false);
-  }
+    // Check if the selected table index is valid
+    if (selectedTableIndex != -1 && selectedTableIndex < tables.length) {
+      // Reset the table's orderNumber and occupied status in the provider
+      ref.read(tablesProvider.notifier).updateSelectedTable(selectedTableIndex, resetOrderNumber, false);
 
-  void resetTables() async {
-    for (var table in defaultTables) {
-      table['occupied'] = false;
-      table['orderNumber'] = '';
+      // Optionally, save the updated tables state to Hive (not needed if updateTable handles it)
+      // ref.read(tablesProvider.notifier).updateTables(tables);
+
+      log('Table ${tables[selectedTableIndex]['name']} has been reset.');
+    } else {
+      log('Invalid table index, reset failed.');
     }
-
-    // Get the 'tables' box
-    var tablesBox = Hive.box('tables');
-
-    // Write the updated defaultTables list back to the box
-    await tablesBox.put('tables', defaultTables);
   }
-//   void resetSelectedTable(String orderNumber) {
-//   final existingTableIndex = data.indexWhere((t) => t.orderNumber == orderNumber);
-//   if (existingTableIndex != -1) {
-//     // Reset the existing table
-//     data[existingTableIndex].occupied = false;
-//     data[existingTableIndex].orderNumber = '';
-//   }
-// }
 
   bool areItemListsEqual(List<Item> list1, List<Item> list2) {
     // If the lengths of the lists are not equal, the lists are not equal
@@ -371,12 +379,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
         orderCounter--;
         // Save the updated orderCounter to Hive
         Hive.box('orderCounter').put('orderCounter', orderCounter);
-        resetSelectedTable();
+        resetSelectedTable(ref);
         selectedOrder.resetDefault();
         updateOrderStatus();
         handlefreezeMenu();
       });
-      // saveSelectedOrderToHive();
     } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
       _showConfirmationCancelDialog();
     } else if (selectedOrder.status == "Placed Order" && areItemListsEqual(tempCartItems, selectedOrder.items)) {
@@ -388,7 +395,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
       handleMethod = () {
         handlePaymentBtn(context, ref);
       };
-      // saveSelectedOrderToHive();
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       _showConfirmationCancelDialog();
     }
@@ -408,7 +414,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
       setState(() {
         orderCounter--;
         Hive.box('orderCounter').put('orderCounter', orderCounter);
-        resetSelectedTable();
+        resetSelectedTable(ref);
         selectedOrder.resetDefault();
       });
       // log('Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
@@ -649,59 +655,46 @@ class DineInPageState extends ConsumerState<DineInPage> {
               ),
               onPressed: () async {
                 // Show CherryToast before any navigation or other tasks
-                CherryToast(
-                  icon: Icons.info,
-                  iconColor: Colors.green,
-                  themeColor: Colors.green,
-                  backgroundColor: Colors.white,
-                  title: Text(
-                    'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  toastPosition: Position.top,
-                  toastDuration: const Duration(milliseconds: 3000),
-                  animationType: AnimationType.fromTop,
-                  animationDuration: const Duration(milliseconds: 1500),
-                  autoDismiss: true,
-                  displayCloseButton: false,
-                ).show(context);
+                _showCherryToast(
+                  'info', // Pass the icon key as a string
+                  'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
+                  2000, // Toast duration in milliseconds
+                  1500, // Animation duration in milliseconds
+                );
 
-                log('Table is table ${tables[selectedTableIndex]['name']}');
+                // log('Table is table ${tables[selectedTableIndex]['name']}');
 
                 try {
                   // Place the order and update UI state inside setState.
                   setState(() {
-                    // Generate a unique order number
-                    orderNumber = generateID(tables[selectedTableIndex]['name']);
-                    log('Generated orderNumber: $orderNumber');
+                    // Step 1: Check if the current table already has an order number from the provider.
+                    final currentOrderNumber = tables[selectedTableIndex]['orderNumber'];
 
-                    // Update table information
-                    tables[selectedTableIndex]['orderNumber'] = orderNumber;
-                    tables[selectedTableIndex]['occupied'] = true;
-                    updateTables(selectedTableIndex, orderNumber, true);
+                    if (currentOrderNumber == null || currentOrderNumber.isEmpty) {
+                      // Step 2: Generate a new order number if it doesn't exist.
+                      orderNumber = generateID(tables[selectedTableIndex]['name'], ref);
+                      log('Generated orderNumber: $orderNumber');
 
-                    // Update the selected order details
+                      // Update the table provider and Hive with the new order number.
+                      updateTables(selectedTableIndex, orderNumber, true);
+                    } else {
+                      // Use the existing order number from the provider.
+                      orderNumber = currentOrderNumber;
+                      log('Using existing orderNumber: $orderNumber');
+                    }
+
+                    // Step 3: Update the selected order details with the correct order number.
                     selectedOrder.orderNumber = orderNumber;
                     selectedOrder.tableName = tables[selectedTableIndex]['name'];
                     selectedOrder.placeOrder();
 
-                    // Store the current items in the temporary cart
+                    // Store the current items in the temporary cart.
                     tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
 
-                    // Add or update the order in the orders list
+                    // Add or update the order in the orders list.
                     orders.addOrUpdateOrder(selectedOrder.copyWith(categories));
                     log('Order added: ${selectedOrder.orderNumber}');
                   });
-
-                  // // Save the updated orders list to Hive
-                  // await _saveOrdersToHive();
-
-                  // // Optional: Log orders to verify storage
-                  // await _logStoredOrdersFromHive();
 
                   // Update UI elements and order status
                   updateOrderStatus();
@@ -806,26 +799,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
       ),
       onPressed: () {
         handlePrintingJobs(context, ref, selectedOrder: selectedOrder, specificArea: area);
-        CherryToast(
-          icon: Icons.info,
-          iconColor: Colors.green,
-          themeColor: Colors.green,
-          backgroundColor: Colors.white,
-          title: Text(
-            'Printing ${selectedOrder.orderNumber} is in the process',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          toastPosition: Position.top,
-          toastDuration: const Duration(milliseconds: 3000),
-          animationType: AnimationType.fromTop,
-          animationDuration: const Duration(milliseconds: 1000),
-          autoDismiss: true,
-          displayCloseButton: false,
-        ).show(context);
+        _showCherryToast(
+          'info', // Pass the icon key as a string
+          'Printing ${selectedOrder.orderNumber} is in the process',
+          2000, // Toast duration in milliseconds
+          1000, // Animation duration in milliseconds
+        );
         Navigator.of(context).pop();
       },
     );
@@ -857,6 +836,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Use ref.watch() to listen to tablesProvider for changes
+    final tables = ref.watch(tablesProvider);
     // Display a loading indicator if data is still being fetched
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -869,7 +850,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
             ? Expanded(
                 flex: 12,
                 child: Container(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -896,12 +877,16 @@ class DineInPageState extends ConsumerState<DineInPage> {
                               onPressed: () {
                                 setState(() {
                                   pressedButtonIndex = index;
+                                  var beforeUpdateTables = tables.where((table) => table['occupied'] == true).toList();
+                                  log('Before updating tables: $beforeUpdateTables');
                                   _handleSetTables(tables[index]['name'], index);
+                                  var afterUpdatedTables = tables.where((table) => table['occupied'] == true).toList();
+                                  log('After updating tables: $afterUpdatedTables');
                                 });
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.black,
-                                backgroundColor: pressedButtonIndex == index ? Colors.deepOrangeAccent : Colors.white,
+                                backgroundColor: pressedButtonIndex == index ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -914,28 +899,41 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Table',
+                                        'Table ${tables[index]['name']}',
                                         style: TextStyle(
-                                            fontSize: pressedButtonIndex == index ? 12 : 12,
+                                            fontSize: pressedButtonIndex == index ? 16 : 12,
                                             fontWeight: FontWeight.bold,
                                             color: pressedButtonIndex == index ? Colors.white : Colors.black),
                                       ),
-                                      Text(
-                                        tables[index]['name'],
-                                        style: TextStyle(
-                                            fontSize: pressedButtonIndex == index ? 12 : 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: pressedButtonIndex == index ? Colors.white : Colors.black),
-                                      ),
+                                      if (tables[index]['occupied'] && pressedButtonIndex != index)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), // Add space around the text
+                                          decoration: BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius: BorderRadius.circular(5.0), // Rounded corners (optional)
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                'SEATED',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: pressedButtonIndex == index ? Colors.white : Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                     ],
                                   ),
-                                  const SizedBox(width: 3),
-                                  if (tables[index]['occupied'])
-                                    Icon(
-                                      Icons.dinner_dining_rounded,
-                                      color: pressedButtonIndex == index ? Colors.white : Colors.deepOrangeAccent,
-                                      size: pressedButtonIndex == index ? 30 : 30,
-                                    ),
+                                  //
+                                  // if (tables[index]['occupied'])
+                                  //   Icon(
+                                  //     Icons.dining,
+                                  //     color: pressedButtonIndex == index ? Colors.white : const Color.fromRGBO(46, 125, 50, 1),
+                                  //     size: pressedButtonIndex == index ? 32 : 24,
+                                  //   ),
                                 ],
                               ),
                             );
@@ -958,7 +956,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                     ),
                                     onPressed: () async {
                                       try {
-                                        // Ensure Hive boxes are open or open them if not
                                         final ordersBox = Hive.isBoxOpen('orders') ? Hive.box<Orders>('orders') : await Hive.openBox<Orders>('orders');
                                         final tablesBox = Hive.isBoxOpen('tables') ? Hive.box('tables') : await Hive.openBox('tables');
                                         final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
@@ -968,7 +965,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
                                         // Step 1: Reset providers
                                         ref.read(tablesProvider.notifier).resetTables();
-                                        ref.read(orderCounterProvider.notifier).updateOrderCounter(1); // Reset to 1
+                                        ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
                                         ref.read(ordersProvider.notifier).clearOrders();
 
                                         log('Providers have been reset.');
@@ -984,17 +981,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
                                         // Step 3: Reinitialize tables if empty
                                         if (tablesBox.isEmpty) {
-                                          await tablesBox.put(
-                                            'tables',
-                                            defaultTables.map((item) => Map<String, dynamic>.from(item)).toList(),
-                                          );
+                                          await tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
                                           log('Tables data has been reset with default values.');
                                         }
 
                                         // Step 4: Update UI after clearing and resetting
                                         setState(() {
                                           orders.clearOrders();
-                                          resetTables();
                                           selectedOrder.resetDefault();
                                         });
 
@@ -1139,7 +1132,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
             handlefreezeMenu: handlefreezeMenu,
             updateOrderStatus: updateOrderStatus,
             onItemAdded: onItemAdded,
-            resetSelectedTable: resetSelectedTable,
+            resetSelectedTable: () => resetSelectedTable(ref),
             tempCartItems: tempCartItems,
             areItemListsEqual: areItemListsEqual,
           ),
@@ -1160,7 +1153,6 @@ class HiveBoxes {
     return _ordersBox!;
   }
 }
-
 
 // close it when you seldom use it, in our case, we need it because of consistently write and read.
 // @override

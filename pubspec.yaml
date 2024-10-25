@@ -81,6 +81,7 @@ flutter:
     - assets/cakes/
     - assets/drinks/
     - assets/dishes/
+    - assets/special/
     - assets/addOn/
     - assets/images/
 

@@ -19,16 +19,16 @@ class Orders {
 
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
-    log('Adding or updating order: $order');
+    // log('Adding or updating order: $order');
     
     int existingOrderIndex = data.indexWhere((o) => o.orderNumber == order.orderNumber);
     
     if (existingOrderIndex != -1) {
       data[existingOrderIndex] = order;
-      log('Order updated: $order');
+      // log('Order updated: $order');
     } else {
       data.add(order);
-      log('New order added: $order');
+      // log('New order added: $order');
     }
 
     await _saveToHive();
@@ -36,7 +36,7 @@ class Orders {
 
   // Retrieve an order by order number
   SelectedOrder? getOrder(String orderNumber) {
-    log('Fetching order: $orderNumber');
+    log('FROM orders.dart file - Fetching order: $orderNumber');
     return data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
   }
 

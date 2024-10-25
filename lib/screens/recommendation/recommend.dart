@@ -126,7 +126,7 @@ class _RecommendPageState extends State<RecommendPage> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         color: const Color(0xff1f2029),
-        border: isActive ? Border.all(color: Colors.deepOrangeAccent, width: 2) : Border.all(color: const Color(0xff1f2029), width: 2),
+        border: isActive ? Border.all(color: const Color.fromRGBO(46, 125, 50, 1), width: 2) : Border.all(color: const Color(0xff1f2029), width: 2),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

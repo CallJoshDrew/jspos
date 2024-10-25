@@ -60,8 +60,8 @@ class _MainPageState extends State<MainPage> {
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return const HistoryPage();
-      case 'Reports':
-        return const ReportsPage();
+      // case 'Reports':
+      //   return const ReportsPage();
       case 'Recommend':
         return const RecommendPage();
       case 'Settings':
@@ -122,7 +122,7 @@ class _MainPageState extends State<MainPage> {
             _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
-            _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
+            // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
             _itemMenu(menu: 'Recommend', icon: Icons.recommend),
             _itemMenu(menu: 'Settings', icon: Icons.tune),
           ]),
@@ -166,7 +166,7 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: pageActive == menu ? Colors.deepOrangeAccent : Colors.transparent,
+                color: pageActive == menu ? const Color.fromRGBO(46, 125, 50, 1) : Colors.transparent,
               ),
               duration: const Duration(milliseconds: 200),
               curve: Curves.slowMiddle,

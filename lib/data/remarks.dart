@@ -14,6 +14,7 @@ List<Map<String, dynamic>> remarksData = [
   {'id': '24', 'category': 'Drinks', 'remarks': 'Tambah Susu Cair'},
   {'id': '25', 'category': 'Drinks', 'remarks': 'Less Gao'},
   {'id': '26', 'category': 'Drinks', 'remarks': 'Extra Gao'},
+  {'id': '27', 'category': 'Drinks', 'remarks': 'Kosong'},
   // {'id': '27', 'category': 'Drinks', 'remarks': 'Extra Nai'},
   // {'id': '27', 'category': 'Drinks', 'remarks': 'Delivery'},
   // {'id': '29', 'category': 'Drinks', 'remarks': 'GrabFood'}, 

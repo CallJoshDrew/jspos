@@ -139,6 +139,47 @@ class _OrderDetailsState extends State<OrderDetails> {
     return result.length;
   }
 
+  IconData _getIconData(String iconText) {
+    const iconMap = {
+      'info': Icons.info,
+      'check_circle': Icons.check_circle,
+      'remove_circle': Icons.remove_circle,
+      'cancel': Icons.cancel,
+    };
+
+    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
+  }
+
+  void _showCherryToast(
+    String iconText,
+    String titleText,
+    // String iconClr,
+    // String themeClr,
+    int toastDu, // Changed to int for duration
+    int animateDu,
+  ) {
+    CherryToast(
+      icon: _getIconData(iconText), // Retrieve the corresponding icon
+      iconColor: Colors.green,
+      themeColor: const Color.fromRGBO(46, 125, 50, 1),
+      backgroundColor: Colors.white,
+      title: Text(
+        titleText,
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      toastPosition: Position.top,
+      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
+      animationType: AnimationType.fromTop,
+      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
+      autoDismiss: true,
+      displayCloseButton: false,
+    ).show(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Create a map where each key is a category and the value is a list of items in that category
@@ -430,25 +471,31 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         updateOrderStatus();
                                                       }
                                                     });
-                                                    CherryToast(
-                                                      icon: Icons.cancel,
-                                                      iconColor: Colors.red,
-                                                      themeColor: Colors.red,
-                                                      backgroundColor: Colors.white,
-                                                      title: const Text(
-                                                        'The order has being cancelled!',
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black,
-                                                        ),
-                                                      ),
-                                                      toastPosition: Position.top,
-                                                      toastDuration: const Duration(milliseconds: 3000),
-                                                      animationType: AnimationType.fromTop,
-                                                      animationDuration: const Duration(milliseconds: 200),
-                                                      autoDismiss: true,
-                                                      displayCloseButton: false,
-                                                    ).show(context);
+                                                    _showCherryToast(
+                                                      'cancel',
+                                                      'The order has being cancelled!',
+                                                      2000, // Toast duration in milliseconds
+                                                      200, // Animation duration in milliseconds
+                                                    );
+                                                    // CherryToast(
+                                                    //   icon: Icons.cancel,
+                                                    //   iconColor: Colors.red,
+                                                    //   themeColor: Colors.red,
+                                                    //   backgroundColor: Colors.white,
+                                                    //   title: const Text(
+                                                    //     'The order has being cancelled!',
+                                                    //     style: TextStyle(
+                                                    //       fontSize: 14,
+                                                    //       color: Colors.black,
+                                                    //     ),
+                                                    //   ),
+                                                    //   toastPosition: Position.top,
+                                                    //   toastDuration: const Duration(milliseconds: 3000),
+                                                    //   animationType: AnimationType.fromTop,
+                                                    //   animationDuration: const Duration(milliseconds: 200),
+                                                    //   autoDismiss: true,
+                                                    //   displayCloseButton: false,
+                                                    // ).show(context);
                                                     Navigator.of(context).pop();
                                                   },
                                                   child: const Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
@@ -1891,16 +1938,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             });
                                           },
                                           child: Container(
-                                            width: 30,
+                                            width: 20,
                                             height: 20,
                                             decoration: BoxDecoration(
                                               color: item.tapao ? Colors.red : const Color.fromARGB(255, 12, 120, 202), // Background color
                                               borderRadius: BorderRadius.circular(5), // Border radius
                                             ),
                                             child: const Icon(
-                                              Icons.delivery_dining_sharp,
+                                              Icons.takeout_dining_outlined,
                                               color: Colors.white,
-                                              size: 18,
+                                              size: 16,
                                             ),
                                           ),
                                         ),
@@ -1913,26 +1960,32 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               widget.selectedOrder.calculateItemsAndQuantities();
                                               widget.updateOrderStatus!();
                                             });
-                                            CherryToast(
-                                              icon: Icons.check_circle,
-                                              iconColor: Colors.green,
-                                              themeColor: const Color.fromRGBO(46, 125, 50, 1),
-                                              backgroundColor: Colors.white,
-                                              title: Text(
-                                                '${item.name} (RM ${item.price.toStringAsFixed(2)})',
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              toastPosition: Position.top,
-                                              toastDuration: const Duration(milliseconds: 1000),
-                                              animationType: AnimationType.fromTop,
-                                              animationDuration: const Duration(milliseconds: 200),
-                                              autoDismiss: true,
-                                              displayCloseButton: false,
-                                            ).show(context);
+                                            _showCherryToast(
+                                              'check_circle',
+                                              '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+                                              2000, // Toast duration in milliseconds
+                                              200, // Animation duration in milliseconds
+                                            );
+                                            // CherryToast(
+                                            //   icon: Icons.check_circle,
+                                            //   iconColor: Colors.green,
+                                            //   themeColor: const Color.fromRGBO(46, 125, 50, 1),
+                                            //   backgroundColor: Colors.white,
+                                            //   title: Text(
+                                            //     '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+                                            //     style: const TextStyle(
+                                            //       fontSize: 14,
+                                            //       color: Colors.black,
+                                            //       fontWeight: FontWeight.bold,
+                                            //     ),
+                                            //   ),
+                                            //   toastPosition: Position.top,
+                                            //   toastDuration: const Duration(milliseconds: 1000),
+                                            //   animationType: AnimationType.fromTop,
+                                            //   animationDuration: const Duration(milliseconds: 200),
+                                            //   autoDismiss: true,
+                                            //   displayCloseButton: false,
+                                            // ).show(context);
                                           },
                                           child: Container(
                                             width: 20, // Adjust this value to change the width of the rectangle
@@ -1966,47 +2019,59 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.selectedOrder.calculateItemsAndQuantities();
                                                 widget.updateOrderStatus!();
-                                                CherryToast(
-                                                  icon: Icons.remove_circle,
-                                                  iconColor: Colors.red,
-                                                  themeColor: Colors.red,
-                                                  backgroundColor: Colors.white,
-                                                  title: Text(
-                                                    '${item.name} (RM ${price.toStringAsFixed(2)})',
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  toastPosition: Position.top,
-                                                  toastDuration: const Duration(milliseconds: 1000),
-                                                  animationType: AnimationType.fromTop,
-                                                  animationDuration: const Duration(milliseconds: 200),
-                                                  autoDismiss: true,
-                                                  displayCloseButton: false,
-                                                ).show(context);
+                                                 _showCherryToast(
+                                                      'remove_circle',
+                                                      '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+                                                      2000, // Toast duration in milliseconds
+                                                      200, // Animation duration in milliseconds
+                                                    );
+                                                // CherryToast(
+                                                //   icon: Icons.remove_circle,
+                                                //   iconColor: Colors.red,
+                                                //   themeColor: Colors.red,
+                                                //   backgroundColor: Colors.white,
+                                                //   title: Text(
+                                                //     '${item.name} (RM ${price.toStringAsFixed(2)})',
+                                                //     style: const TextStyle(
+                                                //       fontSize: 14,
+                                                //       color: Colors.black,
+                                                //       fontWeight: FontWeight.bold,
+                                                //     ),
+                                                //   ),
+                                                //   toastPosition: Position.top,
+                                                //   toastDuration: const Duration(milliseconds: 1000),
+                                                //   animationType: AnimationType.fromTop,
+                                                //   animationDuration: const Duration(milliseconds: 200),
+                                                //   autoDismiss: true,
+                                                //   displayCloseButton: false,
+                                                // ).show(context);
                                               } else if (item.quantity == 1) {
-                                                CherryToast(
-                                                  icon: Icons.info,
-                                                  iconColor: Colors.green,
-                                                  themeColor: Colors.green,
-                                                  backgroundColor: Colors.white,
-                                                  title: const Text(
-                                                    "Swipe left/right to remove the item",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  toastPosition: Position.top,
-                                                  toastDuration: const Duration(milliseconds: 1000),
-                                                  animationType: AnimationType.fromTop,
-                                                  animationDuration: const Duration(milliseconds: 200),
-                                                  autoDismiss: true,
-                                                  displayCloseButton: false,
-                                                ).show(context);
+                                                 _showCherryToast(
+                                                      'info',
+                                                      "Swipe left/right to remove the item",
+                                                      2000, // Toast duration in milliseconds
+                                                      200, // Animation duration in milliseconds
+                                                    );
+                                                // CherryToast(
+                                                //   icon: Icons.info,
+                                                //   iconColor: Colors.green,
+                                                //   themeColor: Colors.green,
+                                                //   backgroundColor: Colors.white,
+                                                //   title: const Text(
+                                                //     "Swipe left/right to remove the item",
+                                                //     style: TextStyle(
+                                                //       fontSize: 14,
+                                                //       color: Colors.black,
+                                                //       fontWeight: FontWeight.bold,
+                                                //     ),
+                                                //   ),
+                                                //   toastPosition: Position.top,
+                                                //   toastDuration: const Duration(milliseconds: 1000),
+                                                //   animationType: AnimationType.fromTop,
+                                                //   animationDuration: const Duration(milliseconds: 200),
+                                                //   autoDismiss: true,
+                                                //   displayCloseButton: false,
+                                                // ).show(context);
                                               }
                                             });
                                           },
@@ -2119,26 +2184,32 @@ class _OrderDetailsState extends State<OrderDetails> {
           });
 
           // Then show a notifications
-          CherryToast(
-            icon: Icons.remove_circle,
-            iconColor: Colors.red,
-            themeColor: Colors.red,
-            backgroundColor: Colors.white,
-            title: Text(
-              name,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            toastPosition: Position.top,
-            toastDuration: const Duration(milliseconds: 1000),
-            animationType: AnimationType.fromTop,
-            animationDuration: const Duration(milliseconds: 200),
-            autoDismiss: true,
-            displayCloseButton: false,
-          ).show(context);
+          _showCherryToast(
+            'remove_circle',
+            name,
+            1000, // Toast duration in milliseconds
+            200, // Animation duration in milliseconds
+          );
+          // CherryToast(
+          //   icon: Icons.remove_circle,
+          //   iconColor: Colors.red,
+          //   themeColor: Colors.red,
+          //   backgroundColor: Colors.white,
+          //   title: Text(
+          //     name,
+          //     style: const TextStyle(
+          //       fontSize: 14,
+          //       color: Colors.black,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          //   toastPosition: Position.top,
+          //   toastDuration: const Duration(milliseconds: 1000),
+          //   animationType: AnimationType.fromTop,
+          //   animationDuration: const Duration(milliseconds: 200),
+          //   autoDismiss: true,
+          //   displayCloseButton: false,
+          // ).show(context);
           // ScaffoldMessenger.of(context).showSnackBar(
           //   SnackBar(
           //     backgroundColor: Colors.red,
