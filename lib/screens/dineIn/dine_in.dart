@@ -392,12 +392,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
     // log('tempCartItems before: $tempCartItems');
     if (selectedOrder.status == "Ordering" && selectedOrder.items.isEmpty) {
       setState(() {
-        // final orderCounterNotifier = ref.read(orderCounterProvider.notifier); // this is the object which gives you access to the notifier instance
-        final currentCounterValue = ref.read(orderCounterProvider); // gives the current state value
-        log('Order Counter Before Update is: $currentCounterValue');
-
-        // Save the updated orderCounter to Provider and Hive
-        ref.read(orderCounterProvider.notifier).decrementCounter();
         resetSelectedTable(ref);
         selectedOrder.resetDefault();
         updateOrderStatus();
@@ -427,18 +421,22 @@ class DineInPageState extends ConsumerState<DineInPage> {
     // log('selectedOrder.status before: ${selectedOrder.status}');
     // log('selectedOrder.items before: ${selectedOrder.items}');
     // log('tempCartItems before: $tempCartItems');
-    log('selectedOrder.items before copyWith: ${selectedOrder.items}');
+    final currentOrderCounter = ref.read(orderCounterProvider);
+    // log('selectedOrder.items before copyWith: ${selectedOrder.items}');
+    log('handel Cancel: $currentOrderCounter');
     // yes to cancel orders or cancel changes
     if (selectedOrder.status == "Ordering") {
       setState(() {
-        orderCounter--;
-        Hive.box('orderCounter').put('orderCounter', orderCounter);
+        // reset selected table and the selected order
         resetSelectedTable(ref);
         selectedOrder.resetDefault();
       });
       // log('Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       setState(() {
+        final currentCounterValue = ref.read(orderCounterProvider); // gives the current state value
+        log('Order Counter when status is Placed Order but cancel update: $currentCounterValue');
+
         selectedOrder.updateShowEditBtn(true);
         selectedOrder.items = tempCartItems.map((item) => item.copyWith()).toList();
       });
@@ -482,12 +480,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
         tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
         // Add a new SelectedOrder object to the orders list
         orders.addOrUpdateOrder(selectedOrder.copyWith(categories)); // this already include saving to hive
-        // // Save the updated orders object to Hive
-        // if (Hive.isBoxOpen('orders')) {
-        //   var ordersBox = Hive.box('orders');
-        //   ordersBox.put('orders', orders);
-        //   // printOrders();
-        // }
         updateOrderStatus();
         handlefreezeMenu();
       });
@@ -517,6 +509,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           tables: tables,
           selectedTableIndex: selectedTableIndex,
           updateTables: updateTables,
+          isTableInitiallySelected: isTableSelected,
         ),
       ),
     );
@@ -675,6 +668,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
               ),
               onPressed: () async {
                 // Show CherryToast before any navigation or other tasks
+                log('$selectedTableIndex');
                 _showCherryToast(
                   'info', // Pass the icon key as a string
                   'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
@@ -723,6 +717,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
                     orders.addOrUpdateOrder(selectedOrder.copyWith(categories));
                     log('Order added: ${selectedOrder.orderNumber}');
                   });
+
+                  isTableSelected = true;
 
                   // Update UI elements and order status
                   updateOrderStatus();

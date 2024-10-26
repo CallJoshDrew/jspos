@@ -18,6 +18,7 @@ class MakePaymentPage extends ConsumerStatefulWidget {
   final List<Map<String, dynamic>> tables;
   final int selectedTableIndex;
   final void Function(int index, String orderNumber, bool isOccupied) updateTables;
+  final bool isTableInitiallySelected; 
 
   const MakePaymentPage(
       {super.key,
@@ -25,7 +26,8 @@ class MakePaymentPage extends ConsumerStatefulWidget {
       required this.updateOrderStatus,
       required this.tables,
       required this.selectedTableIndex,
-      required this.updateTables});
+      required this.updateTables,
+      required this.isTableInitiallySelected,});
 
   @override
   MakePaymentPageState createState() => MakePaymentPageState();
@@ -43,6 +45,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   double amountChanged = 0.0;
   double roundingAdjustment = 0.0;
   int enteredDiscount = 0;
+  late bool isTableSelected;
 
   void _calculateTotalWithDiscount() {
     // Calculate the discount amount
@@ -179,6 +182,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
     originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
     // log('initState called, adjustedBill is now $adjustedBill');
+    isTableSelected = widget.isTableInitiallySelected;
   }
 
   @override
@@ -1141,7 +1145,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                     emptyOrderNumber,
                                                                     false,
                                                                   );
-
+                                                                  isTableSelected = !isTableSelected; // Update the state
                                                                   log('Order saved with discount: ${widget.selectedOrder.discount}');
 
                                                                   // Log updated orders from Hive for debugging

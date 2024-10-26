@@ -18,7 +18,23 @@ class OrdersNotifier extends StateNotifier<Orders> {
     await _ordersBox.put('orders', state); // Save to Hive
     log('Order added/updated: ${order.orderNumber}');
   }
+  // Method to find and update an existing order
+  Future<void> updateOrder(SelectedOrder updatedOrder) async {
+    final indexToUpdate = state.data.indexWhere((order) => order.orderNumber == updatedOrder.orderNumber);
 
+    if (indexToUpdate != -1) {
+      // Update the order in the list
+      final updatedOrders = List<SelectedOrder>.from(state.data);
+      updatedOrders[indexToUpdate] = updatedOrder;
+
+      // Update the state and Hive box
+      state = Orders(data: updatedOrders);
+      await _ordersBox.put('orders', state); // Save the updated orders list to Hive
+      log('Order updated: ${updatedOrder.orderNumber}');
+    } else {
+      log('Order not found: ${updatedOrder.orderNumber}');
+    }
+  }
   // Clear all orders
   Future<void> clearOrders() async {
     state = Orders(data: []); // Reset state

@@ -234,7 +234,7 @@ class CashierReceiptGenerator {
             if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
                 list.add(LineText(
                   type: LineText.TYPE_TEXT,
-                  content: '  (${item.selectedMeePortion!["name"]})',  // Print selectedMeePortion if it's not "Normal Mee"
+                  content: '  - ${item.selectedMeePortion!["name"]}',  // Print selectedMeePortion if it's not "Normal Mee"
                   align: LineText.ALIGN_LEFT,
                   x: 0,
                   linefeed: 1,
