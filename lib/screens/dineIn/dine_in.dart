@@ -42,7 +42,7 @@ class DineInPage extends ConsumerStatefulWidget {
 
 class DineInPageState extends ConsumerState<DineInPage> {
   List<Map<String, dynamic>> tables = [];
-  
+
   late Orders orders;
   late int orderCounter;
   bool isLoading = true; // Track loading state
@@ -181,21 +181,29 @@ class DineInPageState extends ConsumerState<DineInPage> {
   // Open Menu after set table number
   // Update in _handleSetTables function when a new order is created
   void _handleSetTables(String tableName, int index) {
-    
-    setState(() {
-      // Set the selected table and its index
-      // log('The table is table $tableName at index $index');
-      // Filter and log only the tables that are occupied
-      // log('tables from DINE IN now is $tables');
-      final tablesData = ref.read(tablesProvider);
-      var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
-      log('Occupied tables: $occupiedTables');
+    log('Entering _handleSetTables with table: $tableName, index: $index');
+    try {
+      setState(() {
+        // Set the selected table and its index
+        // log('The table is table $tableName at index $index');
+        // Filter and log only the tables that are occupied
+        // log('tables from DINE IN now is $tables');
+        final tablesData = ref.read(tablesProvider);
+        // var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
+        var currentTable = tablesData[index];
+        log('Current table data: $currentTable');
 
-      selectedTableIndex = index;
-      // Check if a table with the given index exists
-      if (index != -1 && index < tables.length) {
+        selectedTableIndex = index;
+
+        log('Selected index: $index');
+
         // If the table is not occupied, generate a new orderNumber
-        if (!tables[index]['occupied']) {
+        if (!currentTable['occupied']) {
+          log('Occupied field type: ${currentTable['occupied'].runtimeType}');
+          bool isOccupied = currentTable['occupied'] == true;
+          if (!isOccupied) {
+            log('Table is not occupied, creating new order.');
+          }
           handlefreezeMenu();
           // Generate a new instance of selectedOrder first, and then only assign it's fields and details to the selectedOrder
           selectedOrder = selectedOrder.newInstance(categories);
@@ -205,31 +213,39 @@ class DineInPageState extends ConsumerState<DineInPage> {
           orderStatus = "Empty Cart";
           orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
           orderStatusIcon = Icons.shopping_cart;
+          handleMethod = defaultMethod;
           isTableSelected = false;
         } else {
           isTableSelected = true;
           // If the table is occupied, use the existing orderNumber
-          orderNumber = tables[index]['orderNumber'];
+          var orderNumber = currentTable['orderNumber'].toString();
+          var order = orders.getOrder(orderNumber);
+
+          log('The selected Order Number is: $orderNumber');
           // log('Exisiting order number is $orderNumber');
           // log('Current orders: ${orders.getAllOrders}');
-
-          var order = orders.getOrder(orderNumber);
           // If an order with the same orderNumber exists, update selectedOrder with its details
           if (order != null) {
+            log('Order Found is: $orderNumber');
             order.showEditBtn = true;
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             selectedOrder.calculateItemsAndQuantities();
+            log('The selected Order is: $selectedOrder');
             // _showCherryToast(
             //   'info', // Pass the icon key as a string
             //   'You have selected TABLE ${tables[index]['name']}.', // Interpolated title text
             //   1000, // Toast duration in milliseconds
             //   200, // Animation duration in milliseconds
             // );
+          } else {
+            log('Order not found for order number: $orderNumber');
           }
         }
-      }
-    });
+      });
+    } catch (e, stack) {
+      log('Error in _handleSetTables: $e\n$stack');
+    }
     // printTables();
     // saveSelectedOrderToHive();
     updateOrderStatus();
@@ -376,9 +392,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
     // log('tempCartItems before: $tempCartItems');
     if (selectedOrder.status == "Ordering" && selectedOrder.items.isEmpty) {
       setState(() {
-        orderCounter--;
-        // Save the updated orderCounter to Hive
-        Hive.box('orderCounter').put('orderCounter', orderCounter);
+        // final orderCounterNotifier = ref.read(orderCounterProvider.notifier); // this is the object which gives you access to the notifier instance
+        final currentCounterValue = ref.read(orderCounterProvider); // gives the current state value
+        log('Order Counter Before Update is: $currentCounterValue');
+
+        // Save the updated orderCounter to Provider and Hive
+        ref.read(orderCounterProvider.notifier).decrementCounter();
         resetSelectedTable(ref);
         selectedOrder.resetDefault();
         updateOrderStatus();
@@ -462,13 +481,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
         selectedOrder.placeOrder();
         tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
         // Add a new SelectedOrder object to the orders list
-        orders.addOrUpdateOrder(selectedOrder.copyWith(categories));
-        // Save the updated orders object to Hive
-        if (Hive.isBoxOpen('orders')) {
-          var ordersBox = Hive.box('orders');
-          ordersBox.put('orders', orders);
-          // printOrders();
-        }
+        orders.addOrUpdateOrder(selectedOrder.copyWith(categories)); // this already include saving to hive
+        // // Save the updated orders object to Hive
+        // if (Hive.isBoxOpen('orders')) {
+        //   var ordersBox = Hive.box('orders');
+        //   ordersBox.put('orders', orders);
+        //   // printOrders();
+        // }
         updateOrderStatus();
         handlefreezeMenu();
       });
@@ -505,6 +524,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
   VoidCallback? handleMethod;
   void defaultMethod() {
+    log('handleMethod is disabled');
     // did nothing But explained here
     // when Dart creates a new object, it first initializes all the instance variables before it runs the constructor. Therefore, instance methods aren’t available yet.
     // handleMethod is initialized in the initState method, which is called exactly once and then never again for each State object. It’s the first method called after a State object is created, and it’s called before the build method
@@ -667,12 +687,20 @@ class DineInPageState extends ConsumerState<DineInPage> {
                 try {
                   // Place the order and update UI state inside setState.
                   setState(() {
+                    log('Tables data: $tables');
+                    log('Selected table index: $selectedTableIndex');
+                    final updatedTables = ref.read(tablesProvider);
+                    log('Updated tables: $updatedTables');
+                    log('Selected table: ${updatedTables[selectedTableIndex]}');
+
                     // Step 1: Check if the current table already has an order number from the provider.
-                    final currentOrderNumber = tables[selectedTableIndex]['orderNumber'];
+                    final currentOrderNumber = updatedTables[selectedTableIndex]['orderNumber'];
+                    // log('Current orderNumber: ${tables[selectedTableIndex]['orderNumber']}');
+                    // log('Current orderNumber: $currentOrderNumber');
 
                     if (currentOrderNumber == null || currentOrderNumber.isEmpty) {
                       // Step 2: Generate a new order number if it doesn't exist.
-                      orderNumber = generateID(tables[selectedTableIndex]['name'], ref);
+                      orderNumber = generateID(updatedTables[selectedTableIndex]['name'], ref);
                       log('Generated orderNumber: $orderNumber');
 
                       // Update the table provider and Hive with the new order number.
@@ -748,7 +776,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
         handleMethod = defaultMethod; // Disabled
         orderStatusIcon = Icons.shopping_cart;
       } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
-        // orderStatus = "Place Order & Print";
         orderStatus = "Place Order";
         orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
         handleMethod = handlePlaceOrderBtn;
@@ -877,11 +904,16 @@ class DineInPageState extends ConsumerState<DineInPage> {
                               onPressed: () {
                                 setState(() {
                                   pressedButtonIndex = index;
-                                  var beforeUpdateTables = tables.where((table) => table['occupied'] == true).toList();
-                                  log('Before updating tables: $beforeUpdateTables');
+
+                                  log('Before updating tables: ${tables.where((table) => table['occupied'] == true).toList()}');
+                                  log('Table Name is: ${tables[index]['name']}');
+
+                                  final tablesData = ref.read(tablesProvider);
+                                  log('Provider tables data before update: $tablesData');
+
                                   _handleSetTables(tables[index]['name'], index);
-                                  var afterUpdatedTables = tables.where((table) => table['occupied'] == true).toList();
-                                  log('After updating tables: $afterUpdatedTables');
+
+                                  log('After updating tables: ${tables.where((table) => table['occupied'] == true).toList()}');
                                 });
                               },
                               style: ElevatedButton.styleFrom(
