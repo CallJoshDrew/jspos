@@ -124,8 +124,8 @@ class Item with ChangeNotifier {
         '\tselectedType: $selectedNoodlesType, \n'
         '\tselectedMeatPortion: $selectedMeatPortion, \n'
         '\tselectedMeePortion: $selectedMeePortion, \n'
-         '\tselectedAddOn: ${selectedSide?.toString()}, \n' // Keep as a Set
-         '\tselectedAddOn: $selectedAddOn,\n' // Keep as a Set
+        '\tselectedAddOn: ${selectedSide?.toString()}, \n' // Keep as a Set
+        '\tselectedAddOn: $selectedAddOn,\n' // Keep as a Set
         // '\tselectedAddOn: ${selectedAddOn?.map((addOn) => addOn.toString()).join(', ')},\n'
         '\titemRemarks: ${itemRemarks.toString()}\n'
         '\ttapao: $tapao, \n'
@@ -152,37 +152,64 @@ class Item with ChangeNotifier {
   }
 
   // A method to create a copy of the Item
-  Item copyWith({Map<String, dynamic>? itemRemarks}) {
+  Item copyWith({
+    String? id,
+    String? name,
+    double? price,
+    String? category,
+    int? quantity,
+    String? image,
+    bool? selection,
+    List<Map<String, dynamic>>? drinks,
+    List<Map<String, dynamic>>? choices,
+    List<Map<String, dynamic>>? noodlesTypes,
+    List<Map<String, dynamic>>? meatPortion,
+    List<Map<String, dynamic>>? meePortion,
+    List<Map<String, dynamic>>? sides,
+    List<Map<String, dynamic>>? addOns,
+    Map<String, dynamic>? selectedDrink,
+    List<Map<String, String>>? temp,
+    Map<String, String>? selectedTemp,
+    Map<String, dynamic>? selectedChoice,
+    Map<String, dynamic>? selectedNoodlesType,
+    Map<String, dynamic>? selectedMeatPortion,
+    Map<String, dynamic>? selectedMeePortion,
+    Set<Map<String, dynamic>>? selectedSide,
+    Map<String, dynamic>? selectedAddOn,
+    Map<String, dynamic>? itemRemarks, // Ensure this is included in parameters
+    bool? tapao,
+    List<Map<String, dynamic>>? soupOrKonLou,
+    Map<String, dynamic>? selectedSoupOrKonLou,
+  }) {
     return Item(
-      id: id,
-      name: name,
+      id: id ?? this.id,
+      name: name ?? this.name,
       originalName: originalName,
-      category: category,
-      quantity: quantity,
-      price: price,
-      image: image,
-      selection: selection,
-      drinks: drinks,
-      choices: choices,
-      noodlesTypes: noodlesTypes,
-      meatPortion: meatPortion,
-      meePortion: meePortion,
-      sides: sides,
-      addOns: addOns,
-      selectedDrink: selectedDrink != null ? Map<String, dynamic>.from(selectedDrink!) : null,
-      temp: temp,
-      selectedTemp: selectedTemp,
-      selectedChoice: selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
-      selectedNoodlesType: selectedNoodlesType != null ? Map<String, dynamic>.from(selectedNoodlesType!) : null,
-      selectedMeatPortion: selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
-      selectedMeePortion: selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
-      selectedSide: selectedSide != null ? Set<Map<String, dynamic>>.from(selectedSide!) : null,
-      selectedAddOn: selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
-      itemRemarks: itemRemarks,
-      tapao: tapao,
-      soupOrKonLou: soupOrKonLou,
-      selectedSoupOrKonLou: selectedSoupOrKonLou != null ? Map<String, dynamic>.from(selectedSoupOrKonLou!) : null,
-
+      category: category ?? this.category,
+      quantity: quantity ?? this.quantity,
+      price: price ?? this.price,
+      image: image ?? this.image,
+      selection: selection ?? this.selection,
+      drinks: drinks ?? List<Map<String, dynamic>>.from(this.drinks),
+      choices: choices ?? List<Map<String, dynamic>>.from(this.choices),
+      noodlesTypes: noodlesTypes ?? List<Map<String, dynamic>>.from(this.noodlesTypes),
+      meatPortion: meatPortion ?? List<Map<String, dynamic>>.from(this.meatPortion),
+      meePortion: meePortion ?? List<Map<String, dynamic>>.from(this.meePortion),
+      sides: sides ?? List<Map<String, dynamic>>.from(this.sides),
+      addOns: addOns ?? List<Map<String, dynamic>>.from(this.addOns),
+      selectedDrink: selectedDrink ?? (this.selectedDrink != null ? Map<String, dynamic>.from(this.selectedDrink!) : null),
+      temp: temp ?? List<Map<String, String>>.from(this.temp),
+      selectedTemp: selectedTemp ?? this.selectedTemp,
+      selectedChoice: selectedChoice ?? (this.selectedChoice != null ? Map<String, dynamic>.from(this.selectedChoice!) : null),
+      selectedNoodlesType: selectedNoodlesType ?? (this.selectedNoodlesType != null ? Map<String, dynamic>.from(this.selectedNoodlesType!) : null),
+      selectedMeatPortion: selectedMeatPortion ?? (this.selectedMeatPortion != null ? Map<String, dynamic>.from(this.selectedMeatPortion!) : null),
+      selectedMeePortion: selectedMeePortion ?? (this.selectedMeePortion != null ? Map<String, dynamic>.from(this.selectedMeePortion!) : null),
+      selectedSide: selectedSide ?? (this.selectedSide != null ? Set<Map<String, dynamic>>.from(this.selectedSide!) : null),
+      selectedAddOn: selectedAddOn ?? (this.selectedAddOn != null ? Map<String, dynamic>.from(this.selectedAddOn!) : null),
+      itemRemarks: itemRemarks ?? this.itemRemarks, // This ensures the value is set
+      tapao: tapao ?? this.tapao,
+      soupOrKonLou: soupOrKonLou ?? List<Map<String, dynamic>>.from(this.soupOrKonLou),
+      selectedSoupOrKonLou: selectedSoupOrKonLou ?? (this.selectedSoupOrKonLou != null ? Map<String, dynamic>.from(this.selectedSoupOrKonLou!) : null),
     );
   }
 
@@ -211,7 +238,7 @@ class Item with ChangeNotifier {
       'selectedMeePortion': selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
       'selectedSide': selectedSide?.map((sides) => Map<String, dynamic>.from(sides)).toList(), // Convert set to list for JSON
       'selectedAddOn': selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
-      // for practical purposes in JSON serialization, as JSON does not support sets. 
+      // for practical purposes in JSON serialization, as JSON does not support sets.
       'itemRemarks': itemRemarks,
       'tapao': tapao,
       'soupOrKonLou': soupOrKonLou.map((type) => Map<String, dynamic>.from(type)).toList(),
@@ -220,49 +247,47 @@ class Item with ChangeNotifier {
   }
 }
 
-
-
 // {
 // Orders
 // latest: Orders: [{
-// 	orderNumber: #Table1-0001, 
-// 	tableName: Table 1, 
-// 	orderType: Dine-In, 
-// 	status: Placed Order, 
+// 	orderNumber: #Table1-0001,
+// 	tableName: Table 1,
+// 	orderType: Dine-In,
+// 	status: Placed Order,
 // 	items: [
 // 		Item: {
-// 	id: 2, 
-// 	name: UFO Tart, 
-// 	price: 2.6, 
+// 	id: 2,
+// 	name: UFO Tart,
+// 	price: 2.6,
 // 	category: Cakes,
-// 	quantity: 1,  
-// 	image: assets/cakes/ufoTart.png, 
-// 	selection: false, 
-// 	selectedChoice: null, 
-// 	selectedType: null, 
-// 	selectedMeatPortion: null, 
+// 	quantity: 1,
+// 	image: assets/cakes/ufoTart.png,
+// 	selection: false,
+// 	selectedChoice: null,
+// 	selectedType: null,
+// 	selectedMeatPortion: null,
 // 	selectedMeePortion: null
 // },
 // 		Item: {
-// 	id: 3, 
-// 	name: HawFlake Cake, 
-// 	price: 4.2, 
+// 	id: 3,
+// 	name: HawFlake Cake,
+// 	price: 4.2,
 // 	category: Cakes,
-// 	quantity: 1,  
-// 	image: assets/cakes/hawFlakeCake.png, 
-// 	selection: false, 
-// 	selectedChoice: null, 
-// 	selectedType: null, 
-//  	selectedMeatPortion: null, 
+// 	quantity: 1,
+// 	image: assets/cakes/hawFlakeCake.png,
+// 	selection: false,
+// 	selectedChoice: null,
+// 	selectedType: null,
+//  	selectedMeatPortion: null,
 //  	selectedMeePortion: null
 //  }
-//  	], 
-//  	subTotal: 6.8, 
-//  	serviceCharge: 0.0, 
-//  	totalPrice: 6.8, 
-//  	quantity: 0, 
-//  	paymentMethod: Cash, 
-//  	remarks: No Remarks, 
+//  	],
+//  	subTotal: 6.8,
+//  	serviceCharge: 0.0,
+//  	totalPrice: 6.8,
+//  	quantity: 0,
+//  	paymentMethod: Cash,
+//  	remarks: No Remarks,
 //  	showEditBtn: false
 //  }],
 
@@ -270,62 +295,62 @@ class Item with ChangeNotifier {
 // {
 // Orders
 // latest: Orders: [{
-// 	orderNumber: #Table3-0000, 
-// 	tableName: Table 3, 
-// 	orderType: Dine-In, 
-// 	status: Placed Order, 
+// 	orderNumber: #Table3-0000,
+// 	tableName: Table 3,
+// 	orderType: Dine-In,
+// 	status: Placed Order,
 // 	items: [
 // 		Item: {
-// 	id: 7, 
-// 	name: Chocolate Swiss Roll, 
-// 	price: 2.4, 
+// 	id: 7,
+// 	name: Chocolate Swiss Roll,
+// 	price: 2.4,
 // 	category: Cakes,
-// 	quantity: 2,  
-// 	image: assets/cakes/chocolateSwissRoll.png, 
-// 	selection: false, 
-// 	selectedChoice: null, 
-// 	selectedType: null, 
-// 	selectedMeatPortion: null, 
+// 	quantity: 2,
+// 	image: assets/cakes/chocolateSwissRoll.png,
+// 	selection: false,
+// 	selectedChoice: null,
+// 	selectedType: null,
+// 	selectedMeatPortion: null,
 // 	selectedMeePortion: null
 // }
-// 	], 
-// 	subTotal: 4.8, 
-// 	serviceCharge: 0.0, 
-// 	totalPrice: 4.8, 
-// 	quantity: 0, 
-// 	paymentMethod: Cash, 
-// 	remarks: No Remarks, 
+// 	],
+// 	subTotal: 4.8,
+// 	serviceCharge: 0.0,
+// 	totalPrice: 4.8,
+// 	quantity: 0,
+// 	paymentMethod: Cash,
+// 	remarks: No Remarks,
 // 	showEditBtn: false
 // }, {
-// 	orderNumber: #Table3-0000, 
-// 	tableName: Table 3, 
-// 	orderType: Dine-In, 
-// 	status: Placed Order, 
+// 	orderNumber: #Table3-0000,
+// 	tableName: Table 3,
+// 	orderType: Dine-In,
+// 	status: Placed Order,
 //    	items: [
 //  		Item: {
-//  	id: 7, 
-//  	name: Chocolate Swiss Roll, 
-//  	price: 2.4, 
+//  	id: 7,
+//  	name: Chocolate Swiss Roll,
+//  	price: 2.4,
 //  	category: Cakes,
-//  	quantity: 2,  
-//  	image: assets/cakes/chocolateSwissRoll.png, 
-//  	selection: false, 
-//  	selectedChoice: null, 
-//  	selectedType: null, 
-//  	selectedMeatPortion: null, 
+//  	quantity: 2,
+//  	image: assets/cakes/chocolateSwissRoll.png,
+//  	selection: false,
+//  	selectedChoice: null,
+//  	selectedType: null,
+//  	selectedMeatPortion: null,
 //  	selectedMeePortion: null
 //  }
-//  	], 
-//  	subTotal: 4.8, 
-//  	serviceCharge: 0.0, 
-//  	totalPrice: 4.8, 
-//  	quantity: 0, 
-//  	paymentMethod: Cash, 
+//  	],
+//  	subTotal: 4.8,
+//  	serviceCharge: 0.0,
+//  	totalPrice: 4.8,
+//  	quantity: 0,
+//  	paymentMethod: Cash,
 //  	remarks
 // }]}
 
 // I have a flutter app which i need to update the selectedOrder every time. After update it, i also need to save that selectedOrder to the list orders. So orders will keep record of all the orders in different status. Beside that, i also have tables list that keep track of the occupacies and orderNumber associate with the tables. For example:
 // After client choose the table, an orderNumber will be created and the status will become "Ordering" The default status is "Start Your Order" and default orderNumber is "Order Number".
-// Then client can choose to add items to the selectedOrder.items. There is a section which is responsible to display the selectedOrder object UI. So it will show the latest items added, together with the calculation of the subtotal and total cost. 
-// After client finished adding the items they want, they can press "Place Order & Print". Then, the selectedOrder.status will become "Placed Order" and items will be added to selectedOrder.items. And then this selectedOrder object will be added to the list orders. The table which has the same orderNumber will have a field "occupied" change to true from false. 
+// Then client can choose to add items to the selectedOrder.items. There is a section which is responsible to display the selectedOrder object UI. So it will show the latest items added, together with the calculation of the subtotal and total cost.
+// After client finished adding the items they want, they can press "Place Order & Print". Then, the selectedOrder.status will become "Placed Order" and items will be added to selectedOrder.items. And then this selectedOrder object will be added to the list orders. The table which has the same orderNumber will have a field "occupied" change to true from false.
 // So if let's say we have 3 orders and it all added to the orders list. There is an issue whereby some of the orders have the same orderNumber and table Number. The unexpected behavior is what caused confusion. How to find the real issue and whch code caused this issues?

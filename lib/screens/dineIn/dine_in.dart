@@ -23,6 +23,7 @@ import 'package:jspos/data/tables_data.dart';
 
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
+import 'package:jspos/shared/printItems.dart';
 
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 // SpinningLines, FoldingCube,  DancingSquare
@@ -502,6 +503,33 @@ class DineInPageState extends ConsumerState<DineInPage> {
       context,
       MaterialPageRoute(
         builder: (context) => MakePaymentPage(
+          selectedOrder: selectedOrder,
+          updateOrderStatus: updateOrderStatus,
+          tables: tables,
+          selectedTableIndex: selectedTableIndex,
+          updateTables: updateTables,
+          isTableInitiallySelected: isTableSelected,
+        ),
+      ),
+    );
+  }
+
+  void handlePrintItems(BuildContext context, WidgetRef ref) {
+    // Use the provider to access the current orders state
+    final orders = ref.read(ordersProvider);
+
+    // Log the selectedOrder with pretty-printed JSON
+    var encoder = const JsonEncoder.withIndent('  ');
+    log('The Selected Order Details in Payment Page is:\n${encoder.convert(selectedOrder.toJson())}');
+
+    // Log the current orders state (via Riverpod, instead of direct Hive access)
+    log('Stored orders from provider: ${orders.getAllOrders()}');
+
+    // Navigate to the payment page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PrintItemsPage(
           selectedOrder: selectedOrder,
           updateOrderStatus: updateOrderStatus,
           tables: tables,
@@ -1102,7 +1130,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                                         resetSelectedTable(ref);
 
                                                         // Cancel the order through ordersProvider
-                                                         ref.read(ordersProvider.notifier).cancelOrder(selectedOrder.orderNumber, categories);
+                                                        ref.read(ordersProvider.notifier).cancelOrder(selectedOrder.orderNumber, categories);
 
                                                         log('Order from order details page cancelled: ${selectedOrder.orderNumber}');
 
@@ -1182,60 +1210,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                   flex: 1,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      showDialog<void>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            backgroundColor: Colors.grey[900],
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              side: const BorderSide(color: Colors.green, width: 1),
-                                            ),
-                                            content: ConstrainedBox(
-                                              constraints: const BoxConstraints(
-                                                maxWidth: 300,
-                                                maxHeight: 70,
-                                              ),
-                                              child: const Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Wrap(
-                                                    alignment: WrapAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        'To print, please choose',
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 20,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        'designated printer of the area',
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 20,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            actions: <Widget>[
-                                              buildPrintButton('Cashier', 'Cashier', context, ref),
-                                              const SizedBox(width: 2),
-                                              buildPrintButton('Kitchen', 'Kitchen', context, ref),
-                                              const SizedBox(width: 2),
-                                              buildPrintButton('Beverage', 'Beverage', context, ref),
-                                              const SizedBox(width: 2),
-                                              buildCancelButton(context),
-                                            ],
-                                          );
-                                        },
-                                      );
+                                      handlePrintItems(context, ref);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.white,
@@ -1266,6 +1241,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                   ),
                                 )
                               : const SizedBox(),
+                          // buildPrintButton('Cashier', 'Cashier', context, ref),
+                          // const SizedBox(width: 2),
+                          // buildPrintButton('Kitchen', 'Kitchen', context, ref),
+                          // const SizedBox(width: 2),
+                          // buildPrintButton('Beverage', 'Beverage', context, ref),
+                          // const SizedBox(width: 2),
+                          // buildCancelButton(context),
                         ],
                       ),
                     ],
