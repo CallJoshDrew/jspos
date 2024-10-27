@@ -55,7 +55,7 @@ class TablesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   //   state = newTables;
   // }
 
-  void resetTables() async {
+  Future<void> resetTables() async {
     log('Resetting tables to default state.');
 
     final defaultState = defaultTables.map((item) => Map<String, dynamic>.from(item)).toList();

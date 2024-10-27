@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 
@@ -33,6 +34,33 @@ class OrdersNotifier extends StateNotifier<Orders> {
       log('Order updated: ${updatedOrder.orderNumber}');
     } else {
       log('Order not found: ${updatedOrder.orderNumber}');
+    }
+  }
+  // Method to cancel an order
+  Future<void> cancelOrder(String orderNumber, List<String> categories) async {
+    final indexToUpdate = state.data.indexWhere((order) => order.orderNumber == orderNumber);
+
+    if (indexToUpdate != -1) {
+      var orderCopy = state.data[indexToUpdate].copyWith();
+
+      // Set cancellation details
+      orderCopy = orderCopy.copyWith(
+        status: "Cancelled",
+        cancelledTime: DateFormat('h:mm a, d MMMM yyyy').format(DateTime.now()),
+        paymentTime: "None",
+        paymentMethod: "None",
+      );
+
+      final updatedOrders = List<SelectedOrder>.from(state.data);
+      updatedOrders[indexToUpdate] = orderCopy;
+
+      // Update the state and Hive box
+      state = Orders(data: updatedOrders);
+      await _ordersBox.put('orders', state);
+
+      log('Order cancelled: ${orderCopy.orderNumber}');
+    } else {
+      log('Order not found for cancellation: $orderNumber');
     }
   }
   // Clear all orders

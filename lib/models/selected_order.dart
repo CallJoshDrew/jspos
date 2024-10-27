@@ -132,30 +132,53 @@ class SelectedOrder with ChangeNotifier {
     );
   }
 
-  SelectedOrder copyWith(List<String> categoryList) {
-    return SelectedOrder(
-      orderNumber: orderNumber,
-      tableName: tableName,
-      orderType: orderType,
-      orderDate: orderDate,
-      orderTime: orderTime,
-      status: status,
-      items: List.from(items), // Create a copy of the items list
-      subTotal: subTotal,
-      serviceCharge: serviceCharge,
-      totalPrice: totalPrice,
-      paymentMethod: paymentMethod,
-      showEditBtn: showEditBtn,
-      categoryList: categoryList,
-      amountReceived: amountReceived,
-      amountChanged: amountChanged,
-      roundingAdjustment: roundingAdjustment,
-      totalQuantity: totalQuantity,
-      paymentTime: paymentTime,
-      cancelledTime: cancelledTime,
-      discount: discount,
-    );
-  }
+  SelectedOrder copyWith({
+  String? orderNumber,
+  String? tableName,
+  String? orderType,
+  String? orderDate,
+  String? orderTime,
+  String? status,
+  List<Item>? items,
+  double? subTotal,
+  double? serviceCharge,
+  double? totalPrice,
+  String? paymentMethod,
+  bool? showEditBtn,
+  Map<String, Map<String, int>>? categories,
+  double? amountReceived,
+  double? amountChanged,
+  double? roundingAdjustment,
+  int? totalQuantity,
+  String? paymentTime,
+  String? cancelledTime,
+  List<String>? categoryList,
+  int? discount,
+}) {
+  return SelectedOrder(
+    orderNumber: orderNumber ?? this.orderNumber,
+    tableName: tableName ?? this.tableName,
+    orderType: orderType ?? this.orderType,
+    orderDate: orderDate ?? this.orderDate,
+    orderTime: orderTime ?? this.orderTime,
+    status: status ?? this.status,
+    items: items ?? List.from(this.items), // Copy the items list
+    subTotal: subTotal ?? this.subTotal,
+    serviceCharge: serviceCharge ?? this.serviceCharge,
+    totalPrice: totalPrice ?? this.totalPrice,
+    paymentMethod: paymentMethod ?? this.paymentMethod,
+    showEditBtn: showEditBtn ?? this.showEditBtn,
+    categoryList: categoryList ?? this.categoryList,
+    amountReceived: amountReceived ?? this.amountReceived,
+    amountChanged: amountChanged ?? this.amountChanged,
+    roundingAdjustment: roundingAdjustment ?? this.roundingAdjustment,
+    totalQuantity: totalQuantity ?? this.totalQuantity,
+    paymentTime: paymentTime ?? this.paymentTime,
+    cancelledTime: cancelledTime ?? this.cancelledTime,
+    discount: discount ?? this.discount,
+  );
+}
+
 
   Map<String, dynamic> toJson() {
     return {

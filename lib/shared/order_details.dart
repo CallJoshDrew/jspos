@@ -355,181 +355,181 @@ class _OrderDetailsState extends State<OrderDetails> {
                     ],
                   ),
                   const SizedBox(width: 10),
-                  // Cancel and Remove and Delete Selected Order
-                  (!showEditBtn && widget.selectedOrder.status != "Start Your Order" && widget.selectedOrder.status != "Ordering")
-                      ? Container(
-                          width: 35,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                spreadRadius: 2,
-                                blurRadius: 2,
-                                offset: const Offset(0, 1), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: IconButton(
-                              icon: const Icon(Icons.delete_forever, size: 20),
-                              color: Colors.redAccent,
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Dialog(
-                                      insetPadding: EdgeInsets.zero, // Make dialog full-screen
-                                      backgroundColor: Colors.black87,
-                                      child: AlertDialog(
-                                        backgroundColor: const Color(0xff1f2029),
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                          side: const BorderSide(color: Colors.green, width: 1), // This is the border color
-                                          borderRadius: BorderRadius.circular(10.0),
-                                        ),
-                                        content: ConstrainedBox(
-                                          constraints: const BoxConstraints(
-                                            maxWidth: 400,
-                                            maxHeight: 100,
-                                          ),
-                                          child: const Wrap(
-                                            alignment: WrapAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Are you sure?',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
-                                              ),
-                                              Text(
-                                                'Please note, once cancelled, the action is irreversible.',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 18, color: Colors.white),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
-                                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(5),
-                                                      ),
-                                                    ),
-                                                    padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                                  ),
-                                                  onPressed: () {
-                                                    widget.resetSelectedTable?.call();
-                                                    if (Hive.isBoxOpen('orders')) {
-                                                      var ordersBox = Hive.box('orders');
-                                                      var orders = ordersBox.get('orders') as Orders;
+                  // // Cancel and Remove and Delete Selected Order
+                  // (!showEditBtn && widget.selectedOrder.status != "Start Your Order" && widget.selectedOrder.status != "Ordering")
+                  //     ? Container(
+                  //         width: 35,
+                  //         height: 35,
+                  //         decoration: BoxDecoration(
+                  //           borderRadius: BorderRadius.circular(12),
+                  //           color: Colors.white,
+                  //           shape: BoxShape.rectangle,
+                  //           boxShadow: [
+                  //             BoxShadow(
+                  //               color: Colors.grey.withOpacity(0.1),
+                  //               spreadRadius: 2,
+                  //               blurRadius: 2,
+                  //               offset: const Offset(0, 1), // changes position of shadow
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         child: IconButton(
+                  //             icon: const Icon(Icons.delete_forever, size: 20),
+                  //             color: Colors.redAccent,
+                  //             onPressed: () {
+                  //               showDialog(
+                  //                 context: context,
+                  //                 builder: (BuildContext context) {
+                  //                   return Dialog(
+                  //                     insetPadding: EdgeInsets.zero, // Make dialog full-screen
+                  //                     backgroundColor: Colors.black87,
+                  //                     child: AlertDialog(
+                  //                       backgroundColor: const Color(0xff1f2029),
+                  //                       elevation: 5,
+                  //                       shape: RoundedRectangleBorder(
+                  //                         side: const BorderSide(color: Colors.green, width: 1), // This is the border color
+                  //                         borderRadius: BorderRadius.circular(10.0),
+                  //                       ),
+                  //                       content: ConstrainedBox(
+                  //                         constraints: const BoxConstraints(
+                  //                           maxWidth: 400,
+                  //                           maxHeight: 100,
+                  //                         ),
+                  //                         child: const Wrap(
+                  //                           alignment: WrapAlignment.center,
+                  //                           children: [
+                  //                             Text(
+                  //                               'Are you sure?',
+                  //                               textAlign: TextAlign.center,
+                  //                               style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
+                  //                             ),
+                  //                             Text(
+                  //                               'Please note, once cancelled, the action is irreversible.',
+                  //                               textAlign: TextAlign.center,
+                  //                               style: TextStyle(fontSize: 18, color: Colors.white),
+                  //                             ),
+                  //                           ],
+                  //                         ),
+                  //                       ),
+                  //                       actions: [
+                  //                         Padding(
+                  //                           padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
+                  //                           child: Row(
+                  //                             mainAxisAlignment: MainAxisAlignment.center,
+                  //                             children: [
+                  //                               ElevatedButton(
+                  //                                 style: ButtonStyle(
+                  //                                   backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                  //                                   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  //                                     RoundedRectangleBorder(
+                  //                                       borderRadius: BorderRadius.circular(5),
+                  //                                     ),
+                  //                                   ),
+                  //                                   padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                  //                                 ),
+                  //                                 onPressed: () {
+                  //                                   widget.resetSelectedTable?.call();
+                  //                                   if (Hive.isBoxOpen('orders')) {
+                  //                                     var ordersBox = Hive.box('orders');
+                  //                                     var orders = ordersBox.get('orders') as Orders;
 
-                                                      // Find the index of the order to update
-                                                      int indexToUpdate =
-                                                          orders.data.indexWhere((order) => order.orderNumber == widget.selectedOrder.orderNumber);
+                  //                                     // Find the index of the order to update
+                  //                                     int indexToUpdate =
+                  //                                         orders.data.indexWhere((order) => order.orderNumber == widget.selectedOrder.orderNumber);
 
-                                                      // Check if the order was found
-                                                      if (indexToUpdate != -1) {
-                                                        // Create a copy of the selectedOrder
-                                                        var orderCopy = widget.selectedOrder.copyWith(categories);
-                                                        String addCancelDateTime() {
-                                                          DateTime now = DateTime.now();
-                                                          return DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
-                                                        }
+                  //                                     // Check if the order was found
+                  //                                     if (indexToUpdate != -1) {
+                  //                                       // Create a copy of the selectedOrder
+                  //                                       var orderCopy = widget.selectedOrder.copyWith();
+                  //                                       String addCancelDateTime() {
+                  //                                         DateTime now = DateTime.now();
+                  //                                         return DateFormat('h:mm a, d MMMM yyyy').format(now); // Outputs: 1:03 AM, 5 May 2024
+                  //                                       }
 
-                                                        orderCopy.status = "Cancelled";
-                                                        // Set orderCopy.cancelTime using the addCancelDateTime method
-                                                        orderCopy.cancelledTime = addCancelDateTime();
-                                                        orderCopy.paymentTime = "None";
-                                                        orderCopy.paymentMethod = "None";
-                                                        // Update the order in the list
-                                                        orders.data[indexToUpdate] = orderCopy;
-                                                        log('order was found: $indexToUpdate');
+                  //                                       orderCopy.status = "Cancelled";
+                  //                                       // Set orderCopy.cancelTime using the addCancelDateTime method
+                  //                                       orderCopy.cancelledTime = addCancelDateTime();
+                  //                                       orderCopy.paymentTime = "None";
+                  //                                       orderCopy.paymentMethod = "None";
+                  //                                       // Update the order in the list
+                  //                                       orders.data[indexToUpdate] = orderCopy;
+                  //                                       log('order was found: $indexToUpdate');
 
-                                                        // Put the updated list back into the box
-                                                        ordersBox.put('orders', orders);
-                                                      } else {
-                                                        log('order was not found');
-                                                      }
-                                                      log('order from order Details page: $orders');
-                                                    }
-                                                    setState(() {
-                                                      widget.selectedOrder.handleCancelOrder();
-                                                      if (handlefreezeMenu != null) {
-                                                        handlefreezeMenu();
-                                                      }
-                                                      if (updateOrderStatus != null) {
-                                                        updateOrderStatus();
-                                                      }
-                                                    });
-                                                    _showCherryToast(
-                                                      'cancel',
-                                                      'The order has being cancelled!',
-                                                      2000, // Toast duration in milliseconds
-                                                      200, // Animation duration in milliseconds
-                                                    );
-                                                    // CherryToast(
-                                                    //   icon: Icons.cancel,
-                                                    //   iconColor: Colors.red,
-                                                    //   themeColor: Colors.red,
-                                                    //   backgroundColor: Colors.white,
-                                                    //   title: const Text(
-                                                    //     'The order has being cancelled!',
-                                                    //     style: TextStyle(
-                                                    //       fontSize: 14,
-                                                    //       color: Colors.black,
-                                                    //     ),
-                                                    //   ),
-                                                    //   toastPosition: Position.top,
-                                                    //   toastDuration: const Duration(milliseconds: 3000),
-                                                    //   animationType: AnimationType.fromTop,
-                                                    //   animationDuration: const Duration(milliseconds: 200),
-                                                    //   autoDismiss: true,
-                                                    //   displayCloseButton: false,
-                                                    // ).show(context);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: const Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
-                                                ),
-                                                const SizedBox(width: 20),
-                                                ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(5),
-                                                      ),
-                                                    ),
-                                                    padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: const Text(
-                                                    'Cancel',
-                                                    style: TextStyle(fontSize: 14, color: Colors.black),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              }),
-                        )
-                      : const SizedBox.shrink(),
+                  //                                       // Put the updated list back into the box
+                  //                                       ordersBox.put('orders', orders);
+                  //                                     } else {
+                  //                                       log('order was not found');
+                  //                                     }
+                  //                                     log('order from order Details page: $orders');
+                  //                                   }
+                  //                                   setState(() {
+                  //                                     widget.selectedOrder.handleCancelOrder();
+                  //                                     if (handlefreezeMenu != null) {
+                  //                                       handlefreezeMenu();
+                  //                                     }
+                  //                                     if (updateOrderStatus != null) {
+                  //                                       updateOrderStatus();
+                  //                                     }
+                  //                                   });
+                  //                                   _showCherryToast(
+                  //                                     'cancel',
+                  //                                     'The order has being cancelled!',
+                  //                                     2000, // Toast duration in milliseconds
+                  //                                     200, // Animation duration in milliseconds
+                  //                                   );
+                  //                                   // CherryToast(
+                  //                                   //   icon: Icons.cancel,
+                  //                                   //   iconColor: Colors.red,
+                  //                                   //   themeColor: Colors.red,
+                  //                                   //   backgroundColor: Colors.white,
+                  //                                   //   title: const Text(
+                  //                                   //     'The order has being cancelled!',
+                  //                                   //     style: TextStyle(
+                  //                                   //       fontSize: 14,
+                  //                                   //       color: Colors.black,
+                  //                                   //     ),
+                  //                                   //   ),
+                  //                                   //   toastPosition: Position.top,
+                  //                                   //   toastDuration: const Duration(milliseconds: 3000),
+                  //                                   //   animationType: AnimationType.fromTop,
+                  //                                   //   animationDuration: const Duration(milliseconds: 200),
+                  //                                   //   autoDismiss: true,
+                  //                                   //   displayCloseButton: false,
+                  //                                   // ).show(context);
+                  //                                   Navigator.of(context).pop();
+                  //                                 },
+                  //                                 child: const Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
+                  //                               ),
+                  //                               const SizedBox(width: 20),
+                  //                               ElevatedButton(
+                  //                                 style: ButtonStyle(
+                  //                                   backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                  //                                   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  //                                     RoundedRectangleBorder(
+                  //                                       borderRadius: BorderRadius.circular(5),
+                  //                                     ),
+                  //                                   ),
+                  //                                   padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                  //                                 ),
+                  //                                 onPressed: () {
+                  //                                   Navigator.of(context).pop();
+                  //                                 },
+                  //                                 child: const Text(
+                  //                                   'Cancel',
+                  //                                   style: TextStyle(fontSize: 14, color: Colors.black),
+                  //                                 ),
+                  //                               ),
+                  //                             ],
+                  //                           ),
+                  //                         ),
+                  //                       ],
+                  //                     ),
+                  //                   );
+                  //                 },
+                  //               );
+                  //             }),
+                  //       )
+                  //     : const SizedBox.shrink(),
                 ],
               ),
               // show Edit Button when it is true

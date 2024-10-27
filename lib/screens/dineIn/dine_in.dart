@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/printer.dart';
@@ -290,10 +291,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   IconData _getIconData(String iconText) {
-    const iconMap = {
-      'check_circle': Icons.check_circle,
-      'info': Icons.info,
-    };
+    const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
 
     return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
   }
@@ -479,7 +477,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
         selectedOrder.placeOrder();
         tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
         // Add a new SelectedOrder object to the orders list
-        orders.addOrUpdateOrder(selectedOrder.copyWith(categories)); // this already include saving to hive
+        orders.addOrUpdateOrder(selectedOrder.copyWith()); // this already include saving to hive
         updateOrderStatus();
         handlefreezeMenu();
       });
@@ -714,7 +712,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                     tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
 
                     // Add or update the order in the orders list.
-                    orders.addOrUpdateOrder(selectedOrder.copyWith(categories));
+                    orders.addOrUpdateOrder(selectedOrder.copyWith());
                     log('Order added: ${selectedOrder.orderNumber}');
                   });
 
@@ -984,38 +982,23 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                     ),
                                     onPressed: () async {
                                       try {
-                                        final ordersBox = Hive.isBoxOpen('orders') ? Hive.box<Orders>('orders') : await Hive.openBox<Orders>('orders');
-                                        final tablesBox = Hive.isBoxOpen('tables') ? Hive.box('tables') : await Hive.openBox('tables');
                                         final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
-                                        final orderCounterBox = Hive.isBoxOpen('orderCounter') ? Hive.box('orderCounter') : await Hive.openBox('orderCounter');
-                                        final printersBox =
-                                            Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
+                                        // final printersBox =
+                                        //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
 
                                         // Step 1: Reset providers
-                                        ref.read(tablesProvider.notifier).resetTables();
-                                        ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
-                                        ref.read(ordersProvider.notifier).clearOrders();
-
+                                        await ref.read(tablesProvider.notifier).resetTables();
+                                        await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
+                                        await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
                                         log('Providers have been reset.');
 
                                         // Step 2: Clear Hive boxes
-                                        await ordersBox.clear();
-                                        await tablesBox.clear();
                                         await categoriesBox.clear();
-                                        await orderCounterBox.clear();
-                                        await printersBox.clear();
-
+                                        // await printersBox.clear();
                                         log('Hive boxes have been cleared.');
 
-                                        // Step 3: Reinitialize tables if empty
-                                        if (tablesBox.isEmpty) {
-                                          await tablesBox.put('tables', defaultTables.map((item) => Map<String, dynamic>.from(item)).toList());
-                                          log('Tables data has been reset with default values.');
-                                        }
-
-                                        // Step 4: Update UI after clearing and resetting
+                                        // Step 3: Update UI after clearing and resetting
                                         setState(() {
-                                          orders.clearOrders();
                                           selectedOrder.resetDefault();
                                         });
 
@@ -1032,11 +1015,159 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                           Icon(Icons.cancel, size: 20),
                                           SizedBox(width: 10),
                                           Text(
-                                            'Clear Local Data',
+                                            'Clear',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          const SizedBox(width: 10),
+                          // Cancel and Remove and Delete Selected Order
+                          (isTableSelected && selectedOrder.status != "Start Your Order" && selectedOrder.status != "Ordering")
+                              ? Expanded(
+                                  flex: 1,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            backgroundColor: Colors.grey[900],
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                              side: const BorderSide(color: Colors.green, width: 1),
+                                            ),
+                                            content: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 300,
+                                                maxHeight: 90,
+                                              ),
+                                              child: const Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Wrap(
+                                                    alignment: WrapAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        'Are you sure?',
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                                                      ),
+                                                      Text(
+                                                        'Please note, once cancelled,',
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'the action is irreversible.',
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                        ),
+                                                        padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                                      ),
+                                                      onPressed: () {
+                                                        resetSelectedTable(ref);
+
+                                                        // Cancel the order through ordersProvider
+                                                         ref.read(ordersProvider.notifier).cancelOrder(selectedOrder.orderNumber, categories);
+
+                                                        log('Order from order details page cancelled: ${selectedOrder.orderNumber}');
+
+                                                        setState(() {
+                                                          selectedOrder.handleCancelOrder();
+                                                          updateOrderStatus();
+                                                        });
+                                                        _showCherryToast(
+                                                          'cancel',
+                                                          'The order has being cancelled!',
+                                                          2000, // Toast duration in milliseconds
+                                                          200, // Animation duration in milliseconds
+                                                        );
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
+                                                    ),
+                                                    const SizedBox(width: 20),
+                                                    ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                        ),
+                                                        padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text(
+                                                        'Cancel',
+                                                        style: TextStyle(fontSize: 14, color: Colors.black),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.redAccent,
+                                      backgroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.delete_forever, size: 22),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.redAccent,
                                             ),
                                           ),
                                         ],
