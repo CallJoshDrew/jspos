@@ -43,44 +43,25 @@ class DineInPage extends ConsumerStatefulWidget {
 }
 
 class DineInPageState extends ConsumerState<DineInPage> {
-  List<Map<String, dynamic>> tables = [];
-
   late Orders orders;
+  List<Map<String, dynamic>> tables = [];
   late int orderCounter;
   bool isLoading = true; // Track loading state
+
   @override
   void initState() {
     super.initState();
-    // Access orders provider in initState, but leave tables to the build method
+    // Initialize orders and other data synchronously
     orders = ref.read(ordersProvider);
+    tables = ref.read(tablesProvider); // Directly read initial tables data
+    orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
+
     log('Initial Orders: ${orders.getAllOrders()}');
-    loadData();
+    log('Loaded tables: $tables');
+    log('Loaded orderCounter: $orderCounter');
+
+    isLoading = false; // Set loading flag to false if needed
     handleMethod = defaultMethod;
-  }
-
-  // Unified function to load tables and order counter
-  Future<void> loadData() async {
-    try {
-      // Load the data for tables from Hive or API
-      final tablesData = ref.read(tablesProvider);
-      final orderCounterData = ref.read(orderCounterProvider);
-
-      // Once the data is fetched, update state
-      setState(() {
-        tables = tablesData;
-        orderCounter = orderCounterData;
-        isLoading = false; // Data loaded, stop the loading spinner
-      });
-
-      log('Loaded tables: $tables');
-
-      log('Loaded orderCounter: $orderCounter');
-    } catch (e) {
-      log('Error loading tables: $e');
-      setState(() {
-        isLoading = false; // Stop loading in case of an error as well
-      });
-    }
   }
   // Unified function to load tables and order counter
 
@@ -488,15 +469,15 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handlePaymentBtn(BuildContext context, WidgetRef ref) {
-    // Use the provider to access the current orders state
-    final orders = ref.read(ordersProvider);
+    // // Use the provider to access the current orders state
+    // final orders = ref.read(ordersProvider);
 
-    // Log the selectedOrder with pretty-printed JSON
-    var encoder = const JsonEncoder.withIndent('  ');
-    log('The Selected Order Details in Payment Page is:\n${encoder.convert(selectedOrder.toJson())}');
+    // // Log the selectedOrder with pretty-printed JSON
+    // var encoder = const JsonEncoder.withIndent('  ');
+    // log('The Selected Order Details in Payment Page is:\n${encoder.convert(selectedOrder.toJson())}');
 
-    // Log the current orders state (via Riverpod, instead of direct Hive access)
-    log('Stored orders from provider: ${orders.getAllOrders()}');
+    // // Log the current orders state (via Riverpod, instead of direct Hive access)
+    // log('Stored orders from provider: ${orders.getAllOrders()}');
 
     // Navigate to the payment page
     Navigator.push(
@@ -515,17 +496,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handlePrintItems(BuildContext context, WidgetRef ref) {
-    // Use the provider to access the current orders state
-    final orders = ref.read(ordersProvider);
-
-    // Log the selectedOrder with pretty-printed JSON
-    var encoder = const JsonEncoder.withIndent('  ');
-    log('The Selected Order Details in Payment Page is:\n${encoder.convert(selectedOrder.toJson())}');
-
-    // Log the current orders state (via Riverpod, instead of direct Hive access)
-    log('Stored orders from provider: ${orders.getAllOrders()}');
-
-    // Navigate to the payment page
+    // Navigate to the Print Items page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -888,7 +859,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
     // Use ref.watch() to listen to tablesProvider for changes
     final tables = ref.watch(tablesProvider);
     // Display a loading indicator if data is still being fetched
-    if (isLoading) {
+    if (isLoading && tables.isEmpty) {
+      log('Show info: $tables');
       return const Center(child: CircularProgressIndicator());
     }
     return Row(

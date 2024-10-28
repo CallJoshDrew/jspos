@@ -36,7 +36,7 @@ class PrintItemsPage extends ConsumerStatefulWidget {
 
 class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   late Orders orders; // No need to reinitialize here directly.
-  String selectedPaymentMethod = "Cash";
+  String selectedPrinter = "All";
   final TextEditingController _controller = TextEditingController();
   late double originalBill; // Declare originalBill
   late double adjustedBill;
@@ -55,23 +55,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     // Calculate the original and adjusted bill
     originalBill = widget.selectedOrder.subTotal - discountAmount;
     adjustedBill = isRoundingApplied ? roundBill(originalBill) : originalBill;
-  }
-
-  void _calculateChange() {
-    // Ensure amountReceived is properly handled
-    amountReceived = double.parse(amountReceived.toStringAsFixed(2));
-
-    // If rounding is applied, adjust the bill accordingly
-    if (isRoundingApplied) {
-      adjustedBill = roundBill(originalBill);
-    }
-
-    // Calculate the change
-    double calculatedChange = amountReceived - (isRoundingApplied ? adjustedBill : originalBill);
-    amountChanged = calculatedChange < 0 ? 0.0 : calculatedChange;
-
-    // Round the result to two decimal places
-    amountChanged = double.parse(amountChanged.toStringAsFixed(2));
   }
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
@@ -175,7 +158,8 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     Navigator.of(context).pop();
     Navigator.of(context).pop();
   }
-   // A map to keep track of selected items, categorized by category
+
+  // A map to keep track of selected items, categorized by category
   Map<String, List<Item>> selectedItems = {};
 
   // Function to toggle item selection
@@ -186,10 +170,40 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
       }
       if (selectedItems[category]!.contains(item)) {
         selectedItems[category]!.remove(item);
+        log('Item removed: ${item.name} from category $category');
       } else {
         selectedItems[category]!.add(item);
+        log('Item added: ${item.name} to category $category');
       }
+
+      // Log the entire selectedItems map for tracking
+      log('Updated selectedItems: ${selectedItems.map((k, v) => MapEntry(k, v.map((item) => item.name).toList()))}');
     });
+  }
+
+  Widget buildDottedLine() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final boxWidth = constraints.constrainWidth();
+          const dashWidth = 3.0;
+          final dashCount = (boxWidth / (2 * dashWidth)).floor();
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(dashCount, (_) {
+              return Row(
+                children: <Widget>[
+                  Container(width: dashWidth, height: 2, color: Colors.black87),
+                  const SizedBox(width: dashWidth),
+                ],
+              );
+            }),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -206,11 +220,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-    double fractionAmount = widget.selectedOrder.totalPrice - widget.selectedOrder.totalPrice.floor();
-    // Assuming 'items' is a List<Item>
-    for (Item item in widget.selectedOrder.items) {
-      log('side: ${item.selectedSide}');
-    }
+
     _calculateTotalWithDiscount();
 
     return Scaffold(
@@ -289,7 +299,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                               children: () {
                                 Map<String, List<Item>> categorizedItems = categorizeItems(widget.selectedOrder.items);
                                 Map<String, int> totalQuantities = calculateTotalQuantities(categorizedItems);
-                                Map<String, double> totalPrices = calculateTotalPrices(categorizedItems);
                                 List<Widget> categoryWidgets = [];
                                 categorizedItems.forEach((category, items) {
                                   categoryWidgets.add(
@@ -347,14 +356,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                             color: Colors.white,
                                                                           ),
                                                                         ),
-                                                                        const SizedBox(width: 5),
-                                                                        Text(
-                                                                          "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
-                                                                          style: const TextStyle(
-                                                                            fontSize: 14,
-                                                                            color: Color.fromARGB(255, 114, 226, 118),
-                                                                          ),
-                                                                        ),
                                                                       ],
                                                                     )
                                                                   : Text(
@@ -385,15 +386,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                                 "${item.selectedNoodlesType!['name']} ",
                                                                                 style: const TextStyle(fontSize: 14, color: Colors.white),
                                                                               ),
-                                                                              // Display price only if it is greater than 0.00
-                                                                              if (item.selectedNoodlesType!['price'] != 0.00)
-                                                                                Text(
-                                                                                  "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
-                                                                                  style: const TextStyle(
-                                                                                    fontSize: 14,
-                                                                                    color: Color.fromARGB(255, 114, 226, 118),
-                                                                                  ),
-                                                                                ),
                                                                             ],
                                                                           )
                                                                         : const SizedBox.shrink(),
@@ -407,15 +399,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                                   color: Colors.white,
                                                                                 ),
                                                                               ),
-                                                                              // Display price only if it is greater than 0.00
-                                                                              if (item.selectedSoupOrKonLou!['price'] != 0.00)
-                                                                                Text(
-                                                                                  "( + ${item.selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
-                                                                                  style: const TextStyle(
-                                                                                    fontSize: 14,
-                                                                                    color: Color.fromARGB(255, 114, 226, 118),
-                                                                                  ),
-                                                                                )
                                                                             ],
                                                                           )
                                                                         : const SizedBox.shrink(),
@@ -433,15 +416,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
-                                                                          // Display price only if it is greater than 0.00
-                                                                          if (item.selectedMeePortion!['price'] != 0.00)
-                                                                            Text(
-                                                                              "( + ${item.selectedMeePortion!['price'].toStringAsFixed(2)} )",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Color.fromARGB(255, 114, 226, 118),
-                                                                              ),
-                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -457,14 +431,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                               color: Colors.white,
                                                                             ),
                                                                           ),
-                                                                          if (item.selectedMeatPortion!['price'] != 0.00)
-                                                                            Text(
-                                                                              "( + ${item.selectedMeatPortion!['price'].toStringAsFixed(2)} )",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Color.fromARGB(255, 114, 226, 118),
-                                                                              ),
-                                                                            )
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -494,14 +460,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                                     color: Colors.white,
                                                                                   ),
                                                                                 ),
-                                                                                if (side['price'] != null && side['price'] != 0.00)
-                                                                                  Text(
-                                                                                    "( + ${side['price'].toStringAsFixed(2)} )",
-                                                                                    style: const TextStyle(
-                                                                                      fontSize: 14,
-                                                                                      color: Color.fromARGB(255, 114, 226, 118),
-                                                                                    ),
-                                                                                  ),
                                                                                 Text(
                                                                                   "${side != item.selectedSide!.last ? ', ' : ''} ",
                                                                                   style: const TextStyle(
@@ -510,28 +468,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                                   ),
                                                                                 ),
                                                                               ],
-                                                                            ),
-                                                                        ],
-                                                                      )
-                                                                    : const SizedBox.shrink(),
-                                                                item.selection && item.selectedAddOn != null
-                                                                    ? Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            "Extra Sides Charges: ${item.selectedAddOn?['name']}",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Colors.yellow,
-                                                                            ),
-                                                                          ),
-                                                                          const SizedBox(width: 5),
-                                                                          if (item.selectedAddOn!['price'] > 0.00)
-                                                                            Text(
-                                                                              "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Color.fromARGB(255, 114, 226, 118),
-                                                                              ),
                                                                             ),
                                                                         ],
                                                                       )
@@ -574,14 +510,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                       color: Colors.white,
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 50),
-                                                  Text(
-                                                    (item.price * item.quantity).toStringAsFixed(2),
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
                                                   const SizedBox(width: 10),
                                                 ],
                                               ),
@@ -590,23 +518,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                           ),
                                         );
                                       }).toList(),
-                                    ),
-                                  );
-                                  categoryWidgets.add(
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 30),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            'Total $category :   ${totalPrices[category]?.toStringAsFixed(2)}',
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
                                     ),
                                   );
                                 });
@@ -637,143 +548,81 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                 ),
                                 child: Column(
                                   children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Sub Total',
-                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                        Text(
-                                          widget.selectedOrder.subTotal.toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                      ],
-                                    ),
-                                    // Row(
+                                    // const Row(
                                     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     //   children: [
-                                    //     const Text(
-                                    //       'Service Charges',
+                                    //     Text(
+                                    //       'Item',
                                     //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                     //     ),
                                     //     Text(
-                                    //       widget.selectedOrder.serviceCharge.toStringAsFixed(2),
-                                    //       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                    //       'Quantity',
+                                    //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                     //     ),
                                     //   ],
                                     // ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Discount (${widget.selectedOrder.discount}%)',
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                        Text(
-                                          (widget.selectedOrder.subTotal * (widget.selectedOrder.discount / 100)).toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                      ],
-                                    ),
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
-                                        ? Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                'Rounding Adjustment',
-                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                              ),
-                                              Text(
-                                                '- ${(roundingAdjustment).toStringAsFixed(2)}',
-                                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                              ),
-                                            ],
-                                          )
-                                        : const SizedBox.shrink(),
-                                    // custom doted line.
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 12),
-                                      child: LayoutBuilder(
-                                        builder: (BuildContext context, BoxConstraints constraints) {
-                                          final boxWidth = constraints.constrainWidth();
-                                          const dashWidth = 4.0;
-                                          final dashCount = (boxWidth / (2 * dashWidth)).floor();
-                                          return Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: List.generate(dashCount, (_) {
-                                              return Row(
-                                                children: <Widget>[
-                                                  Container(width: dashWidth, height: 2, color: Colors.black87),
-                                                  const SizedBox(width: dashWidth),
+                                    // buildDottedLine(),
+                                    // Display selectedItems
+                                    ...selectedItems.entries.map((entry) {
+                                      String category = entry.key;
+                                      List<Item> items = entry.value;
+                                      return Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff1f2029), // Background color
+                                              borderRadius: BorderRadius.circular(5.0), // Optional: Rounded corners
+                                            ),
+                                            child: Text(
+                                              category,
+                                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                                            ),
+                                          ),
+                                          // Display each item's index, name, and quantity
+                                          ...items.asMap().entries.map((entry) {
+                                            int index = entry.key + 1; // Index in a 1-based count
+                                            Item item = entry.value;
+                                            return Padding(
+                                              padding: const EdgeInsets.only(right: 12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    '$index. ${item.name}', // Displays index and item name
+                                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                  ),
+                                                  Text(
+                                                    'x ${items.where((i) => i == item).length}', // Display quantity
+                                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                  ),
                                                 ],
-                                              );
-                                            }),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Total (RM)',
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                        Text(
-                                          (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                      ],
-                                    ),
-                                    // custom doted line.
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 12),
-                                      child: LayoutBuilder(
-                                        builder: (BuildContext context, BoxConstraints constraints) {
-                                          final boxWidth = constraints.constrainWidth();
-                                          const dashWidth = 4.0;
-                                          final dashCount = (boxWidth / (2 * dashWidth)).floor();
-                                          return Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: List.generate(dashCount, (_) {
-                                              return Row(
-                                                children: <Widget>[
-                                                  Container(width: dashWidth, height: 2, color: Colors.black87),
-                                                  const SizedBox(width: dashWidth),
-                                                ],
-                                              );
-                                            }),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Amount Received',
-                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                        Text(
-                                          amountReceived.toStringAsFixed(2),
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Amount Change',
-                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                        Text(
-                                          '- ${amountChanged.toStringAsFixed(2)}',
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                      ],
-                                    ),
+                                              ),
+                                            );
+                                          }),
+                                          buildDottedLine(),
+                                          Padding(
+                                            padding: const EdgeInsets.only(right: 12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                const Text(
+                                                  'Total',
+                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Text(
+                                                  '${items.length}',
+                                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          buildDottedLine(),
+                                        ],
+                                      );
+                                    }),
                                   ],
                                 ),
                               ),
@@ -782,85 +631,24 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
-                                        ? Row(
-                                            children: [
-                                              const Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Allow Rounding Adjustment?",
-                                                      style: TextStyle(fontSize: 14, color: Colors.white),
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                    Text(
-                                                      "- Less than 0.50",
-                                                      style: TextStyle(fontSize: 12, color: Colors.white),
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 40,
-                                                child: ToggleButtons(
-                                                  onPressed: (int index) {
-                                                    setState(() {
-                                                      for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                                        if (buttonIndex == index) {
-                                                          isSelected[buttonIndex] = true;
-                                                          // index 0 is Yes, index 1 is No.
-                                                          if (index == 0) {
-                                                            adjustedBill = roundBill(originalBill);
-                                                            roundingAdjustment = double.parse((originalBill - adjustedBill).toStringAsFixed(2));
-                                                            isRoundingApplied = true;
-                                                          } else {
-                                                            adjustedBill = originalBill;
-                                                            roundingAdjustment = 0.0;
-                                                            isRoundingApplied = false;
-                                                          }
-                                                          // Call _calculateChange after updating adjustedBill and isRoundingApplied
-                                                          _calculateChange();
-                                                        } else {
-                                                          isSelected[buttonIndex] = false;
-                                                        }
-                                                      }
-                                                    });
-                                                  },
-                                                  isSelected: isSelected,
-                                                  fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
-                                                  selectedBorderColor: Colors.green,
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderWidth: 1.0,
-                                                  borderColor: Colors.white,
-                                                  children: const <Widget>[
-                                                    Text('Yes', style: TextStyle(fontSize: 14, color: Colors.white)),
-                                                    Text('No', style: TextStyle(fontSize: 14, color: Colors.white)),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : const SizedBox.shrink(),
-                                    const SizedBox(height: 10),
+                                    const SizedBox(height: 5),
                                     const Text(
-                                      "Payment Method",
-                                      style: TextStyle(fontSize: 14, color: Colors.white),
+                                      "Select Printer",
+                                      style: TextStyle(fontSize: 15, color: Colors.white),
                                       textAlign: TextAlign.start,
                                     ),
                                     Wrap(
                                       alignment: WrapAlignment.start,
                                       spacing: 6,
                                       runSpacing: 0,
-                                      children: <String>['Cash', 'DuitNow', 'FoodPanda', 'GrabFood', 'ShopeeFood'].map((String value) {
+                                      children: <String>['Cashier', 'Kitchen', 'Beverage', 'All'].map((String value) {
                                         return ElevatedButton(
                                           style: ButtonStyle(
                                             foregroundColor: WidgetStateProperty.all<Color>(
-                                              selectedPaymentMethod == value ? Colors.white : Colors.black87,
+                                              selectedPrinter == value ? Colors.white : Colors.black87,
                                             ),
                                             backgroundColor: WidgetStateProperty.all<Color>(
-                                              selectedPaymentMethod == value ? Colors.green : Colors.white,
+                                              selectedPrinter == value ? Colors.green : Colors.white,
                                             ),
                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
@@ -871,8 +659,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                           ),
                                           onPressed: () {
                                             setState(() {
-                                              selectedPaymentMethod = value;
-                                              widget.selectedOrder.paymentMethod = value;
+                                              selectedPrinter = value;
                                             });
                                           },
                                           child: Text(
@@ -884,111 +671,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                         );
                                       }).toList(),
                                     ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        // Discount Input
-                                        Expanded(
-                                          flex: 5,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                "Enter Discount (%)",
-                                                style: TextStyle(fontSize: 14, color: Colors.white),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              const SizedBox(height: 5), // Add spacing between label and input
-                                              TextField(
-                                                keyboardType: TextInputType.number,
-                                                textAlign: TextAlign.center,
-                                                decoration: const InputDecoration(
-                                                  hintText: "0",
-                                                  hintStyle: TextStyle(color: Colors.grey),
-                                                  contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                  fillColor: Colors.white,
-                                                  filled: true,
-                                                  border: OutlineInputBorder(),
-                                                  focusedBorder: OutlineInputBorder(
-                                                    borderSide: BorderSide(color: Colors.grey),
-                                                  ),
-                                                ),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    enteredDiscount = int.tryParse(value) ?? 0;
-                                                    // Ensure discount is between 1 and 100, otherwise reset to 0
-                                                    if (enteredDiscount >= 1 && enteredDiscount <= 100) {
-                                                      widget.selectedOrder.discount = enteredDiscount;
-                                                    } else {
-                                                      widget.selectedOrder.discount = 0;
-                                                    }
-                                                  });
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(width: 20), // Spacing between the two input fields
-                                        // Amount Received Input
-                                        Expanded(
-                                          flex: 7,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                "Enter Amount Received (RM)",
-                                                style: TextStyle(fontSize: 14, color: Colors.white),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              const SizedBox(height: 5), // Add spacing between label and input
-                                              TextField(
-                                                controller: _controller,
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                keyboardType: TextInputType.number,
-                                                textAlign: TextAlign.center,
-                                                decoration: InputDecoration(
-                                                  hintText: (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
-                                                  hintStyle: const TextStyle(color: Colors.green),
-                                                  contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                  fillColor: Colors.white,
-                                                  filled: true,
-                                                  border: const OutlineInputBorder(),
-                                                  focusedBorder: const OutlineInputBorder(
-                                                    borderSide: BorderSide(color: Colors.grey),
-                                                  ),
-                                                ),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    // Determine the amount received based on user input or fallback to the bill amount
-                                                    amountReceived =
-                                                        value.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill) : double.tryParse(value) ?? 0.0;
-
-                                                    // Update the selected order with the amount received
-                                                    widget.selectedOrder.amountReceived = amountReceived;
-
-                                                    // Trigger the change calculation
-                                                    _calculateChange();
-
-                                                    // Ensure totalPrice defaults to the original bill if no valid input is provided
-                                                    widget.selectedOrder.totalPrice =
-                                                        value.isEmpty ? originalBill : double.parse((amountReceived - amountChanged).toStringAsFixed(2));
-
-                                                    // Update the amount changed in the selected order
-                                                    widget.selectedOrder.amountChanged = amountChanged;
-                                                  });
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
+                                    const SizedBox(height: 20),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end, // This will space the buttons evenly in the row.
                                       children: [
@@ -1051,7 +734,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                 ),
                                                               ),
                                                               const Text(
-                                                                'payment ',
+                                                                'Printer ',
                                                                 textAlign: TextAlign.center,
                                                                 style: TextStyle(
                                                                   fontSize: 18,
@@ -1098,7 +781,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                 ),
                                                               ),
                                                               Text(
-                                                                '‘$selectedPaymentMethod‘,',
+                                                                '‘$selectedPrinter‘,',
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontSize: 18,
@@ -1136,56 +819,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                 padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                               ),
                                                               onPressed: () async {
-                                                                try {
-                                                                  // Access the 'orders' box safely
-                                                                  var ordersBox = Hive.isBoxOpen('orders')
-                                                                      ? Hive.box<Orders>('orders')
-                                                                      : await Hive.openBox<Orders>('orders');
-
-                                                                  // Perform operations related to the order
-                                                                  _calculateChange();
-                                                                  widget.selectedOrder
-                                                                    ..roundingAdjustment = roundingAdjustment
-                                                                    ..paymentMethod = selectedPaymentMethod
-                                                                    ..status = 'Paid'
-                                                                    ..cancelledTime = 'None'
-                                                                    ..addPaymentDateTime();
-
-                                                                  // Call updateOrderStatus if available
-                                                                  widget.updateOrderStatus?.call();
-
-                                                                  // Add or update the order and save it in Hive
-                                                                  orders.addOrUpdateOrder(widget.selectedOrder);
-                                                                  await ordersBox.put('orders', orders);
-
-                                                                  // Clear table data for the selected table
-                                                                  var emptyOrderNumber = '';
-                                                                  widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
-                                                                  widget.tables[widget.selectedTableIndex]['occupied'] = false;
-
-                                                                  // Update the tables state
-                                                                  widget.updateTables(
-                                                                    widget.selectedTableIndex,
-                                                                    emptyOrderNumber,
-                                                                    false,
-                                                                  );
-                                                                  isTableSelected = !isTableSelected; // Update the state
-                                                                  log('Order saved with discount: ${widget.selectedOrder.discount}');
-
-                                                                  // Log updated orders from Hive for debugging
-                                                                  var storedOrders = ordersBox.get('orders') as Orders;
-                                                                  for (var order in storedOrders.data) {
-                                                                    log('Order Number: ${order.orderNumber}, Status: ${order.status}');
-                                                                  }
-
-                                                                  // Safely interact with UI if the widget is still in the tree
-                                                                  if (mounted) {
-                                                                    _showSuccessToast();
-                                                                    _navigateBack();
-                                                                  }
-                                                                } catch (e) {
-                                                                  log('An error occurred at MakePaymentPage: $e');
-                                                                }
+                                                                log('You have confirmed');
                                                               },
                                                               child: const Padding(
                                                                 padding: EdgeInsets.all(6),

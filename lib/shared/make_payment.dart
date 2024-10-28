@@ -190,10 +190,10 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
     double fractionAmount = widget.selectedOrder.totalPrice - widget.selectedOrder.totalPrice.floor();
-    // Assuming 'items' is a List<Item>
-    for (Item item in widget.selectedOrder.items) {
-      log('side: ${item.selectedSide}');
-    }
+    // // Assuming 'items' is a List<Item>
+    // for (Item item in widget.selectedOrder.items) {
+    //   log('side: ${item.selectedSide}');
+    // }
     _calculateTotalWithDiscount();
 
     return Scaffold(
