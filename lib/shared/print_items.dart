@@ -4,7 +4,6 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
@@ -37,25 +36,10 @@ class PrintItemsPage extends ConsumerStatefulWidget {
 class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   late Orders orders; // No need to reinitialize here directly.
   String selectedPrinter = "All";
-  final TextEditingController _controller = TextEditingController();
-  late double originalBill; // Declare originalBill
-  late double adjustedBill;
-  bool isRoundingApplied = false;
-  List<bool> isSelected = [false, true];
-  double amountReceived = 0.0;
-  double amountChanged = 0.0;
-  double roundingAdjustment = 0.0;
-  int enteredDiscount = 0;
+  final printerNames = ['All','Cashier', 'Kitchen', 'Beverage'];
+  
   late bool isTableSelected;
-
-  void _calculateTotalWithDiscount() {
-    // Calculate the discount amount
-    double discountAmount = widget.selectedOrder.subTotal * (widget.selectedOrder.discount / 100);
-
-    // Calculate the original and adjusted bill
-    originalBill = widget.selectedOrder.subTotal - discountAmount;
-    adjustedBill = isRoundingApplied ? roundBill(originalBill) : originalBill;
-  }
+  bool isSelectedAll = true;
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
@@ -90,15 +74,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     return totalPrices;
   }
 
-  double roundBill(double bill) {
-    double fractionalPart = bill - bill.floor();
-    if (fractionalPart <= 0.50) {
-      return bill.floorToDouble();
-    } else {
-      return bill;
-    }
-  }
-
   Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
     Map<String, dynamic> filteredRemarks = {};
     if (itemRemarks != null) {
@@ -115,43 +90,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
     final filteredRemarks = filterRemarks(itemRemarks);
     return filteredRemarks.values.join(', ');
-  }
-
-  // String getItemNameWithLog(int index, dynamic item) {
-  //   // Log the item name using developer.log
-  //   log('Item Original Name: ${item.originalName}');
-  //   log('Item selectedDrink Name: ${item.selectedDrink?['name']}');
-
-  //   // Return the formatted string based on the conditions
-  //   return item.selectedDrink !=null
-  //       ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
-  //       : '${index + 1}.${item.originalName}';
-  // }
-  void _showSuccessToast() {
-    CherryToast(
-      icon: Icons.verified_rounded,
-      iconColor: Colors.green,
-      themeColor: const Color.fromRGBO(46, 125, 50, 1),
-      backgroundColor: Colors.white,
-      title: const Text(
-        'Thank you!',
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      description: Text(
-        'The payment for the table ${widget.tables[widget.selectedTableIndex]['name']} has been successfully processed.',
-        style: const TextStyle(fontSize: 14),
-      ),
-      toastPosition: Position.top,
-      toastDuration: const Duration(milliseconds: 3000),
-      animationType: AnimationType.fromTop,
-      animationDuration: const Duration(milliseconds: 200),
-      autoDismiss: true,
-      displayCloseButton: false,
-    ).show(context);
   }
 
   void _navigateBack() {
@@ -181,9 +119,38 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     });
   }
 
+  void selectAllItems() {
+    setState(() {
+      isSelectedAll = true;
+      // Group items by category
+      selectedItems = {};
+      for (var item in widget.selectedOrder.items) {
+        final category = item.category; // Assuming `Item` has a `category` field
+        if (selectedItems[category] == null) {
+          selectedItems[category] = [];
+        }
+        selectedItems[category]!.add(item);
+      }
+
+      log('All items selected in all categories');
+    });
+  }
+
+  void deselectAllItems() {
+    setState(() {
+      isSelectedAll = false;
+      // Clear all items in each category
+      selectedItems = selectedItems.map((category, items) {
+        return MapEntry(category, []);
+      });
+
+      log('All items deselected in all categories');
+    });
+  }
+
   Widget buildDottedLine() {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           final boxWidth = constraints.constrainWidth();
@@ -206,13 +173,50 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     );
   }
 
+  // Example of your categories list
+  final List<String> categories = ["Cakes", "Dishes", "Drinks", "Special", "Add On"];
+
+// Printer-Category Mapping
+  static const printerCategories = {
+    'Cashier': ["Cakes", "Dishes", "Drinks", "Special", "Add On"],
+    'Kitchen': ["Dishes", "Special", "Add On"],
+    'Beverage': ["Drinks"],
+  };
+
+// Grouping logic: Organize items by their assigned printers
+  Map<String, List<Item>> groupItemsByPrinter(Map<String, List<Item>> selectedItems) {
+    // Initialize the map with empty lists for each printer.
+    Map<String, List<Item>> printerItems = {
+      'Cashier': [],
+      'Kitchen': [],
+      'Beverage': [],
+    };
+
+    // Iterate over selected items and assign them to the appropriate printer.
+    selectedItems.forEach((category, items) {
+      printerCategories.forEach((printer, printerCategoriesList) {
+        if (printerCategoriesList.contains(category)) {
+          printerItems[printer]!.addAll(items); // Assign items to the printer group.
+        }
+      });
+    });
+
+    return printerItems;
+  }
+
+  void sendToPrinter(Map<String, List<Item>> selectedItems) {
+    Map<String, List<Item>> printerItems = groupItemsByPrinter(selectedItems);
+
+    printerItems.forEach((printer, items) {
+      // Send the grouped items to the relevant printer.
+      log('Sending to $printer: ${items.length} items.');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     orders = ref.read(ordersProvider);
-    originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
-    adjustedBill = originalBill; // Initialize adjustedBill here
-    // log('initState called, adjustedBill is now $adjustedBill');
     isTableSelected = widget.isTableInitiallySelected;
   }
 
@@ -220,8 +224,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-
-    _calculateTotalWithDiscount();
 
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
@@ -244,7 +246,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.green,
+                      color: const Color.fromRGBO(46, 125, 50, 1),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -319,7 +321,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                         int index = entry.key;
                                         Item item = entry.value;
                                         return Container(
-                                          padding: const EdgeInsets.fromLTRB(6, 10, 6, 10),
+                                          padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
                                           margin: const EdgeInsets.fromLTRB(0, 0, 15, 6),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(5),
@@ -332,7 +334,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                   Checkbox(
                                                     value: selectedItems[category]?.contains(item) ?? false,
                                                     onChanged: (bool? selected) {
-                                                      toggleItemSelection(category, item);
+                                                      toggleItemSelection(category, item); // Toggle individual item
                                                     },
                                                     activeColor: Colors.green,
                                                   ),
@@ -539,63 +541,342 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 5),
+                                    const Text(
+                                      "Select Printer",
+                                      style: TextStyle(fontSize: 15, color: Colors.white),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: List.generate(
+                                        printerNames.length,
+                                        (index) {
+                                          final value = printerNames[index];
+                                          final isLastItem = index == printerNames.length - 1; // Check if it's the last item
+
+                                          return Expanded(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: ElevatedButton(
+                                                    style: ButtonStyle(
+                                                      foregroundColor: WidgetStateProperty.all<Color>(
+                                                        selectedPrinter == value ? Colors.white : Colors.black87,
+                                                      ),
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
+                                                        selectedPrinter == value ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
+                                                      ),
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(5),
+                                                        ),
+                                                      ),
+                                                      padding: WidgetStateProperty.all(
+                                                        const EdgeInsets.fromLTRB(12, 5, 12, 5),
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        selectedPrinter = value;
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      value,
+                                                      style: const TextStyle(fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Add spacing except for the last button
+                                                if (!isLastItem) const SizedBox(width: 10),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    // Buttons for Select All and Deselect All
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          // Select All Button
+                                          ElevatedButton(
+                                            style: ButtonStyle(
+                                              foregroundColor: WidgetStateProperty.all<Color>(
+                                                isSelectedAll ? Colors.white : Colors.black,
+                                              ),
+                                              backgroundColor: WidgetStateProperty.all<Color>(
+                                                isSelectedAll ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
+                                              ),
+                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                              ),
+                                              padding: WidgetStateProperty.all(
+                                                const EdgeInsets.fromLTRB(12, 5, 12, 5),
+                                              ),
+                                            ),
+                                            onPressed: selectAllItems,
+                                            child: Row(
+                                              children: [
+                                                Icon(isSelectedAll ? Icons.check_box : Icons.check_box_outline_blank, size: 22, color: isSelectedAll ? Colors.white : Colors.black),
+                                                const SizedBox(width: 6),
+                                                const Text(
+                                                  'All',
+                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          // Deselect All Button
+                                          ElevatedButton(
+                                            style: ButtonStyle(
+                                              foregroundColor: WidgetStateProperty.all<Color>(
+                                                isSelectedAll ? Colors.black : Colors.white,
+                                              ),
+                                              backgroundColor: WidgetStateProperty.all<Color>(
+                                                isSelectedAll ? Colors.white : const Color.fromRGBO(46, 125, 50, 1),
+                                              ),
+                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                              ),
+                                              padding: WidgetStateProperty.all(
+                                                const EdgeInsets.fromLTRB(12, 5, 12, 5),
+                                              ),
+                                            ),
+                                            onPressed: deselectAllItems,
+                                            child: Row(
+                                              children: [
+                                                Icon(isSelectedAll ? Icons.check_box_outline_blank :Icons.check_box, size: 22, color: isSelectedAll ? Colors.black : Colors.white,),
+                                                const SizedBox(width: 6),
+                                                const Text(
+                                                  'Remove',
+                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            style: ButtonStyle(
+                                              backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
+                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                              ),
+                                              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                            ),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return Dialog(
+                                                    insetPadding: EdgeInsets.zero, // Make dialog full-screen
+                                                    backgroundColor: Colors.black87,
+                                                    child: AlertDialog(
+                                                      backgroundColor: const Color(0xff1f2029),
+                                                      elevation: 5,
+                                                      shape: RoundedRectangleBorder(
+                                                        side: const BorderSide(color: Colors.green, width: 1), // This is the border color
+                                                        borderRadius: BorderRadius.circular(10.0),
+                                                      ),
+                                                      content: ConstrainedBox(
+                                                        constraints: const BoxConstraints(
+                                                          maxWidth: 600,
+                                                          maxHeight: 100,
+                                                        ),
+                                                        child: const Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          children: [
+                                                            Text(
+                                                              'Are you sure?',
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
+                                                            ),
+                                                            Wrap(
+                                                              alignment: WrapAlignment.center,
+                                                              children: [
+                                                                Text(
+                                                                  'Please confirm you before ',
+                                                                  textAlign: TextAlign.center,
+                                                                  style: TextStyle(
+                                                                    fontSize: 18,
+                                                                    color: Colors.white,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  'printing ',
+                                                                  textAlign: TextAlign.center,
+                                                                  style: TextStyle(
+                                                                    fontSize: 18,
+                                                                    color: Colors.white,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      actions: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                style: ButtonStyle(
+                                                                  backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                    RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5),
+                                                                    ),
+                                                                  ),
+                                                                  padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                                                ),
+                                                                onPressed: () async {
+                                                                  log('You have confirmed');
+                                                                },
+                                                                child: const Padding(
+                                                                  padding: EdgeInsets.all(6),
+                                                                  child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(width: 20),
+                                                              ElevatedButton(
+                                                                style: ButtonStyle(
+                                                                  backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                    RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5),
+                                                                    ),
+                                                                  ),
+                                                                  padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                                                ),
+                                                                onPressed: () {
+                                                                  Navigator.of(context).pop();
+                                                                },
+                                                                child: const Text(
+                                                                  'Cancel',
+                                                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: const Row(
+                                              children: [
+                                                Icon(Icons.print, size: 22, color: Colors.white,),
+                                                SizedBox(width: 6),
+                                                Text(
+                                                  'Print',
+                                                  style: TextStyle(fontSize: 14, color: Colors.white),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            style: ButtonStyle(
+                                              backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                              ),
+                                              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
+                                            ),
+                                            onPressed: () {
+                                              widget.selectedOrder.discount = 0;
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(fontSize: 14, color: Colors.black),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               Container(
                                 padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                margin: const EdgeInsets.symmetric(vertical: 10),
+                                margin: const EdgeInsets.symmetric(vertical: 6),
                                 decoration: const BoxDecoration(
                                   borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                                   color: Colors.white,
                                 ),
                                 child: Column(
                                   children: [
-                                    // const Row(
-                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    //   children: [
-                                    //     Text(
-                                    //       'Item',
-                                    //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                    //     ),
-                                    //     Text(
-                                    //       'Quantity',
-                                    //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    // buildDottedLine(),
-                                    // Display selectedItems
-                                    ...selectedItems.entries.map((entry) {
-                                      String category = entry.key;
+                                    // Group the items by printers.
+                                    ...groupItemsByPrinter(selectedItems).entries.map((entry) {
+                                      String printer = entry.key; // Printer name
                                       List<Item> items = entry.value;
+
                                       return Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
+                                          // Display the printer name.
                                           Container(
                                             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                                             decoration: BoxDecoration(
-                                              color: const Color(0xff1f2029), // Background color
-                                              borderRadius: BorderRadius.circular(5.0), // Optional: Rounded corners
+                                              color: const Color(0xff1f2029),
+                                              borderRadius: BorderRadius.circular(5.0),
                                             ),
                                             child: Text(
-                                              category,
-                                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                                              printer, // Printer name displayed
+                                              style: const TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
-                                          // Display each item's index, name, and quantity
+                                          // Display each item's index, name, and quantity.
                                           ...items.asMap().entries.map((entry) {
-                                            int index = entry.key + 1; // Index in a 1-based count
+                                            int index = entry.key + 1; // 1-based index
                                             Item item = entry.value;
+
                                             return Padding(
                                               padding: const EdgeInsets.only(right: 12),
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Text(
-                                                    '$index. ${item.name}', // Displays index and item name
-                                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                    '$index. ${item.name}', // Index and item name
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black87,
+                                                    ),
                                                   ),
                                                   Text(
-                                                    'x ${items.where((i) => i == item).length}', // Display quantity
-                                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                    'x ${items.where((i) => i == item).length}', // Quantity
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black87,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -609,278 +890,21 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                               children: [
                                                 const Text(
                                                   'Total',
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                                                 ),
                                                 const SizedBox(width: 10),
                                                 Text(
                                                   '${items.length}',
-                                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                                                 ),
                                               ],
                                             ),
                                           ),
                                           buildDottedLine(),
+                                          const SizedBox(height: 6)
                                         ],
                                       );
                                     }),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(20, 0, 10, 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 5),
-                                    const Text(
-                                      "Select Printer",
-                                      style: TextStyle(fontSize: 15, color: Colors.white),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                    Wrap(
-                                      alignment: WrapAlignment.start,
-                                      spacing: 6,
-                                      runSpacing: 0,
-                                      children: <String>['Cashier', 'Kitchen', 'Beverage', 'All'].map((String value) {
-                                        return ElevatedButton(
-                                          style: ButtonStyle(
-                                            foregroundColor: WidgetStateProperty.all<Color>(
-                                              selectedPrinter == value ? Colors.white : Colors.black87,
-                                            ),
-                                            backgroundColor: WidgetStateProperty.all<Color>(
-                                              selectedPrinter == value ? Colors.green : Colors.white,
-                                            ),
-                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              selectedPrinter = value;
-                                            });
-                                          },
-                                          child: Text(
-                                            value,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end, // This will space the buttons evenly in the row.
-                                      children: [
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
-                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                            padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                          ),
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return Dialog(
-                                                  insetPadding: EdgeInsets.zero, // Make dialog full-screen
-                                                  backgroundColor: Colors.black87,
-                                                  child: AlertDialog(
-                                                    backgroundColor: const Color(0xff1f2029),
-                                                    elevation: 5,
-                                                    shape: RoundedRectangleBorder(
-                                                      side: const BorderSide(color: Colors.green, width: 1), // This is the border color
-                                                      borderRadius: BorderRadius.circular(10.0),
-                                                    ),
-                                                    content: ConstrainedBox(
-                                                      constraints: const BoxConstraints(
-                                                        maxWidth: 600,
-                                                        maxHeight: 100,
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                        children: [
-                                                          const Text(
-                                                            'Are you sure?',
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500),
-                                                          ),
-                                                          Wrap(
-                                                            alignment: WrapAlignment.center,
-                                                            children: [
-                                                              const Text(
-                                                                'Please confirm you have received ',
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                '‘RM${_controller.text.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2) : _controller.text}‘ ',
-                                                                textAlign: TextAlign.center,
-                                                                style: const TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                              const Text(
-                                                                'Printer ',
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
-                                                              (amountChanged > 0)
-                                                                  ? Wrap(
-                                                                      children: [
-                                                                        const Text(
-                                                                          'and provide ',
-                                                                          textAlign: TextAlign.center,
-                                                                          style: TextStyle(
-                                                                            fontSize: 18,
-                                                                            color: Colors.white,
-                                                                          ),
-                                                                        ),
-                                                                        Text(
-                                                                          '‘RM${amountChanged.toStringAsFixed(2)}‘',
-                                                                          textAlign: TextAlign.center,
-                                                                          style: const TextStyle(
-                                                                            fontSize: 18,
-                                                                            color: Colors.red,
-                                                                            fontWeight: FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                        const Text(
-                                                                          '(change) ',
-                                                                          textAlign: TextAlign.center,
-                                                                          style: TextStyle(
-                                                                            fontSize: 18,
-                                                                            color: Colors.white,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    )
-                                                                  : const SizedBox.shrink(),
-                                                              const Text(
-                                                                'in ',
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                '‘$selectedPrinter‘,',
-                                                                textAlign: TextAlign.center,
-                                                                style: const TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                              const Text(
-                                                                ' before pressing confirm.',
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Colors.white,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(bottom: 0, left: 40, right: 40),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            ElevatedButton(
-                                                              style: ButtonStyle(
-                                                                backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
-                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                                padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                                              ),
-                                                              onPressed: () async {
-                                                                log('You have confirmed');
-                                                              },
-                                                              child: const Padding(
-                                                                padding: EdgeInsets.all(6),
-                                                                child: Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 14)),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(width: 20),
-                                                            ElevatedButton(
-                                                              style: ButtonStyle(
-                                                                backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                                                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(5),
-                                                                  ),
-                                                                ),
-                                                                padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                                              ),
-                                                              onPressed: () {
-                                                                Navigator.of(context).pop();
-                                                              },
-                                                              child: const Text(
-                                                                'Cancel',
-                                                                style: TextStyle(fontSize: 14, color: Colors.black),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: const Text(
-                                            'Accept',
-                                            style: TextStyle(fontSize: 14, color: Colors.white),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                            padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
-                                          ),
-                                          onPressed: () {
-                                            widget.selectedOrder.discount = 0;
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text(
-                                            'Cancel',
-                                            style: TextStyle(fontSize: 14, color: Colors.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ],
                                 ),
                               ),

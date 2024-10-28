@@ -217,7 +217,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.green,
+                      color: const Color.fromRGBO(46, 125, 50, 1),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -836,7 +836,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                               selectedPaymentMethod == value ? Colors.white : Colors.black87,
                                             ),
                                             backgroundColor: WidgetStateProperty.all<Color>(
-                                              selectedPaymentMethod == value ? Colors.green : Colors.white,
+                                              selectedPaymentMethod == value ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
                                             ),
                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
@@ -970,7 +970,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                       children: [
                                         ElevatedButton(
                                           style: ButtonStyle(
-                                            backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+                                            backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(5),

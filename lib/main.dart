@@ -17,44 +17,45 @@ void main() async {
     await Hive.initFlutter();
 
     // Register all Hive adapters
-    Hive
-      ..registerAdapter(OrdersAdapter())
-      ..registerAdapter(SelectedOrderAdapter())
-      ..registerAdapter(ItemAdapter())
-      ..registerAdapter(PrinterAdapter())
-      ..registerAdapter(DailySalesAdapter())
-      ..registerAdapter(ClientProfileAdapter());
+    Hive.registerAdapter(OrdersAdapter());
+    Hive.registerAdapter(SelectedOrderAdapter());
+    Hive.registerAdapter(ItemAdapter());
+    Hive.registerAdapter(PrinterAdapter());
+    Hive.registerAdapter(DailySalesAdapter());
+    Hive.registerAdapter(ClientProfileAdapter());
 
-    // Open all necessary Hive boxes
-    final ordersBox = await Hive.openBox<Orders>('orders');
-    final printersBox = await Hive.openBox<Printer>('printersBox');
-    final orderCounterBox = await Hive.openBox('orderCounter');
-    final dailySalesBox = await Hive.openBox<DailySales>('dailySalesBox');
-    final tablesBox = await Hive.openBox('tables');
-    final categoriesBox = await Hive.openBox('categories');
+    // Open required Hive boxes
+    await Hive.openBox<Orders>('orders');
+    await Hive.openBox<Printer>('printersBox');
+    var orderCounterBox = await Hive.openBox('orderCounter');
+    await Hive.openBox<DailySales>('dailySalesBox');
+    await Hive.openBox('tables');
 
-    // Initialize order counter if not present
+    // Initialize the order counter if not present
     if (orderCounterBox.get('orderCounter') == null) {
       await orderCounterBox.put('orderCounter', 1);
       log('Initialized orderCounter with default value: 1');
     }
 
-    // Initialize categories if not present
-    List<String> categories = categoriesBox.get('categories')?.split(',') ?? [
-      "Cakes",
-      "Dishes",
-      "Drinks",
-      "Special",
-      "Add On"
-    ];
-    if (categoriesBox.get('categories') == null) {
-      await categoriesBox.put('categories', categories.join(','));
+    var categoriesBox = await Hive.openBox('categories');
+    // Initialize categories
+    
+    List<String> categories;
+    String? categoriesString = categoriesBox.get('categories');
+    if (categoriesString != null) {
+      categories = categoriesString.split(',');
+    } else {
+      categories = ["Cakes", "Dishes", "Drinks", "Special", "Add On"];
+      categoriesBox.put('categories', categories.join(','));
     }
 
-    // Initialize today's DailySales if not present
+    // Initialize DailySales for today
     String today = getCurrentDate();
-    if (dailySalesBox.get(today) == null) {
-      await dailySalesBox.put(today, DailySales(orders: []));
+    var dailySalesBox = Hive.box<DailySales>('dailySalesBox');
+    DailySales? dailySalesData = dailySalesBox.get(today);
+    if (dailySalesData == null) {
+      DailySales emptyDailySales = DailySales(orders: []);
+      await dailySalesBox.put(today, emptyDailySales);
     }
 
     // Run the app with ProviderScope
@@ -64,17 +65,17 @@ void main() async {
   }
 }
 
-// Helper function to get today's date in YYYY-MM-DD format
+// Function to get today's date in YYYY-MM-DD format
 String getCurrentDate() {
   return DateFormat('yyyy-MM-dd').format(DateTime.now());
 }
 
 // Function to save today's DailySales
 Future<void> saveDailySales(DailySales dailySales) async {
-  final dailySalesBox = await Hive.openBox<DailySales>('dailySalesBox');
-  await dailySalesBox.put(getCurrentDate(), dailySales);
+  var dailySalesBox = await Hive.openBox<DailySales>('dailySalesBox');
+  String today = getCurrentDate();
+  await dailySalesBox.put(today, dailySales);
 }
-
 
 
 // Main color green
