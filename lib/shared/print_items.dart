@@ -36,10 +36,12 @@ class PrintItemsPage extends ConsumerStatefulWidget {
 class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   late Orders orders; // No need to reinitialize here directly.
   String selectedPrinter = "All";
-  final printerNames = ['All','Cashier', 'Kitchen', 'Beverage'];
-  
+  final printerNames = ['All', 'Cashier', 'Kitchen', 'Beverage'];
+
   late bool isTableSelected;
   bool isSelectedAll = true;
+  bool isAnyCategorySelected = false; // Track if any category is selected
+  List<Item> currentFilteredItems = [];
 
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
@@ -119,6 +121,26 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     });
   }
 
+  void toggleCategoryItems(String category) {
+    setState(() {
+      if (selectedItems.containsKey(category) && selectedItems[category]!.isNotEmpty) {
+        // Deselect category if items are already selected
+        selectedItems[category] = [];
+      } else {
+        // Select all items of the category
+        selectedItems[category] = widget.selectedOrder.items.where((item) => item.category == category).toList();
+      }
+
+      // Update isSelectedAll
+      isSelectedAll = selectedItems.keys.every((key) => selectedItems[key]?.isNotEmpty ?? false);
+
+      // Update isAnyCategorySelected
+      isAnyCategorySelected = selectedItems.values.any((items) => items.isNotEmpty);
+
+      log('$category items toggled');
+    });
+  }
+
   void selectAllItems() {
     setState(() {
       isSelectedAll = true;
@@ -132,6 +154,9 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
         selectedItems[category]!.add(item);
       }
 
+      // Update isAnyCategorySelected
+      isAnyCategorySelected = true;
+
       log('All items selected in all categories');
     });
   }
@@ -144,11 +169,14 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
         return MapEntry(category, []);
       });
 
+      // Update isAnyCategorySelected
+      isAnyCategorySelected = false;
+
       log('All items deselected in all categories');
     });
   }
 
-  Widget buildDottedLine() {
+  Widget buildLongDottedLine() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: LayoutBuilder(
@@ -164,6 +192,34 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                 children: <Widget>[
                   Container(width: dashWidth, height: 2, color: Colors.black87),
                   const SizedBox(width: dashWidth),
+                ],
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildDottedLine() {
+    return Container(
+      width: 85.0, // Set the desired width for the dotted line here
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final boxWidth = constraints.constrainWidth();
+          const dashWidth = 3.0; // Width of each dot
+          const dashSpacing = 3.0; // Space between dots
+
+          final dashCount = (boxWidth / (dashWidth + dashSpacing)).floor();
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.end, // Aligns the dots to the right
+            children: List.generate(dashCount, (_) {
+              return Row(
+                children: <Widget>[
+                  Container(width: dashWidth, height: 2, color: Colors.black87),
+                  const SizedBox(width: dashSpacing),
                 ],
               );
             }),
@@ -204,6 +260,39 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     return printerItems;
   }
 
+  List<Item> getFilteredItemsByPrinter(String printer) {
+    if (printer == "All") {
+      // Aggregate items from all categories for each printer
+      List<Item> allItems = [];
+      printerCategories.forEach((printerKey, categoriesList) {
+        for (var category in categoriesList) {
+          if (selectedItems.containsKey(category)) {
+            allItems.addAll(selectedItems[category]!);
+          }
+        }
+      });
+      return allItems;
+    } else {
+      // Filter items for a specific printer
+      List<Item> filteredItems = [];
+      if (printerCategories.containsKey(printer)) {
+        for (var category in printerCategories[printer]!) {
+          if (selectedItems.containsKey(category)) {
+            filteredItems.addAll(selectedItems[category]!);
+          }
+        }
+      }
+      return filteredItems;
+    }
+  }
+
+  void updateSelectedPrinter(String printer) {
+    setState(() {
+      selectedPrinter = printer;
+      currentFilteredItems = getFilteredItemsByPrinter(selectedPrinter);
+    });
+  }
+
   void sendToPrinter(Map<String, List<Item>> selectedItems) {
     Map<String, List<Item>> printerItems = groupItemsByPrinter(selectedItems);
 
@@ -217,7 +306,9 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   void initState() {
     super.initState();
     orders = ref.read(ordersProvider);
+    selectAllItems();
     isTableSelected = widget.isTableInitiallySelected;
+    currentFilteredItems = getFilteredItemsByPrinter(selectedPrinter);
   }
 
   @override
@@ -244,9 +335,13 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: const Color.fromRGBO(46, 125, 50, 1),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(5),
+                        topRight: Radius.circular(5),
+                        bottomLeft: Radius.circular(5),
+                      ),
+                      color: Color.fromRGBO(46, 125, 50, 1),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,41 +390,176 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                         flex: 6,
                         child: SingleChildScrollView(
                           child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: () {
-                                Map<String, List<Item>> categorizedItems = categorizeItems(widget.selectedOrder.items);
-                                Map<String, int> totalQuantities = calculateTotalQuantities(categorizedItems);
-                                List<Widget> categoryWidgets = [];
-                                categorizedItems.forEach((category, items) {
-                                  categoryWidgets.add(
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10, top: 10, bottom: 5),
-                                      child: Text(
-                                        '$category: ${totalQuantities[category]}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
+                            child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              // Select All Button
+                              Container(
+                                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                margin: const EdgeInsets.fromLTRB(0, 10, 15, 0),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xff1f2029),
+                                  borderRadius: BorderRadius.circular(5.0), // Rounded corners (optional)
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                      style: ButtonStyle(
+                                        foregroundColor: WidgetStateProperty.all<Color>(
+                                          Colors.white,
+                                          // isSelectedAll ? Colors.white : Colors.black,
                                         ),
+                                        backgroundColor: WidgetStateProperty.all<Color>(
+                                          const Color(0xff1f2029),
+                                          // isSelectedAll ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
+                                        ),
+                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                        ),
+                                        padding: WidgetStateProperty.all(
+                                          const EdgeInsets.fromLTRB(12, 5, 12, 5),
+                                        ),
+                                        // Set minimum size for the button
+                                        minimumSize: WidgetStateProperty.all<Size>(const Size(40, 30)),
+                                      ),
+                                      onPressed: selectAllItems,
+                                      child: Row(
+                                        children: [
+                                          Icon(isSelectedAll ? Icons.check_box : Icons.check_box_outline_blank, size: 20, color: Colors.white),
+                                          // color: isSelectedAll ? Colors.white : Colors.black),
+                                          const SizedBox(width: 6),
+                                          const Text(
+                                            'All',
+                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  );
-                                  categoryWidgets.add(
-                                    Column(
-                                      children: items.asMap().entries.map((entry) {
-                                        int index = entry.key;
-                                        Item item = entry.value;
-                                        return Container(
-                                          padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
-                                          margin: const EdgeInsets.fromLTRB(0, 0, 15, 6),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            color: const Color(0xff1f2029),
+                                    // Dynamically created category buttons
+
+                                    for (var category in categories)
+                                      if (widget.selectedOrder.items.any((item) => item.category == category))
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                            foregroundColor: WidgetStateProperty.all<Color>(Colors.white
+                                                // selectedItems[category]?.isNotEmpty == true ? Colors.white : Colors.black,
+                                                ),
+                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                              const Color(0xff1f2029),
+                                              // selectedItems[category]?.isNotEmpty == true ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
+                                            ),
+                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                            padding: WidgetStateProperty.all(
+                                              const EdgeInsets.fromLTRB(12, 5, 12, 5),
+                                            ),
+                                            minimumSize: WidgetStateProperty.all<Size>(const Size(40, 30)),
                                           ),
-                                          child: Column(
+                                          onPressed: () => toggleCategoryItems(category),
+                                          child: Row(
                                             children: [
-                                              Row(
+                                              Icon(
+                                                selectedItems[category]?.isNotEmpty == true ? Icons.check_box : Icons.check_box_outline_blank,
+                                                size: 20,
+                                                // color: Colors.white,
+                                                color: selectedItems[category]?.isNotEmpty == true ? Colors.green : Colors.white,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                category,
+                                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    // Deselect All Button
+                                    ElevatedButton(
+                                      style: ButtonStyle(
+                                        foregroundColor: WidgetStateProperty.all<Color>(
+                                          Colors.white,
+                                          // isSelectedAll ? Colors.black : Colors.white,
+                                        ),
+                                        backgroundColor: WidgetStateProperty.all<Color>(
+                                          const Color(0xff1f2029),
+                                          // isSelectedAll ? Colors.white : const Color.fromRGBO(46, 125, 50, 1),
+                                        ),
+                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                        ),
+                                        padding: WidgetStateProperty.all(
+                                          const EdgeInsets.fromLTRB(12, 5, 12, 5),
+                                        ),
+                                        minimumSize: WidgetStateProperty.all<Size>(const Size(40, 30)),
+                                      ),
+                                      onPressed: deselectAllItems,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            !isSelectedAll && !isAnyCategorySelected ? Icons.check_box : Icons.check_box_outline_blank,
+                                            size: 20,
+                                            color: Colors.white,
+                                            // color: isSelectedAll ? Colors.black : Colors.white,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          const Text(
+                                            'Remove',
+                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: () {
+                                  Map<String, List<Item>> categorizedItems = categorizeItems(widget.selectedOrder.items);
+                                  Map<String, int> totalQuantities = calculateTotalQuantities(categorizedItems);
+
+                                  List<Widget> categoryWidgets = [];
+
+                                  // Iterate through categories in the desired order
+                                  for (var category in categories) {
+                                    if (categorizedItems.containsKey(category)) {
+                                      var items = categorizedItems[category]!;
+
+                                      // Add category header with total quantity
+                                      categoryWidgets.add(
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 10, top: 10, bottom: 5),
+                                          child: Text(
+                                            '$category: ${totalQuantities[category] ?? 0}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
+                                      // Add items within each category, keeping track of index and item
+                                      categoryWidgets.add(
+                                        Column(
+                                          children: items.asMap().entries.map((entry) {
+                                            int index = entry.key; // Item index within the category
+                                            Item item = entry.value; // The item itself
+
+                                            return Container(
+                                              padding: const EdgeInsets.all(6),
+                                              margin: const EdgeInsets.fromLTRB(0, 0, 15, 6),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: const Color(0xff1f2029),
+                                              ),
+                                              child: Row(
                                                 children: [
                                                   Checkbox(
                                                     value: selectedItems[category]?.contains(item) ?? false,
@@ -361,7 +591,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                       ],
                                                                     )
                                                                   : Text(
-                                                                      // getItemNameWithLog(index, item),
                                                                       item.selectedDrink != null
                                                                           ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
                                                                           : '${index + 1}.${item.originalName}',
@@ -515,18 +744,16 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                   const SizedBox(width: 10),
                                                 ],
                                               ),
-                                              // first column
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  );
-                                });
-
-                                return categoryWidgets;
-                              }(),
-                            ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  return categoryWidgets;
+                                }(),
+                              ),
+                            ]),
                           ),
                         ),
                       ),
@@ -535,7 +762,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                         child: Container(
                           padding: const EdgeInsets.only(bottom: 0),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(0),
                             color: const Color(0xff1f2029),
                           ),
                           child: Column(
@@ -547,128 +774,11 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 5),
-                                    const Text(
-                                      "Select Printer",
-                                      style: TextStyle(fontSize: 15, color: Colors.white),
-                                      textAlign: TextAlign.start,
-                                    ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: List.generate(
-                                        printerNames.length,
-                                        (index) {
-                                          final value = printerNames[index];
-                                          final isLastItem = index == printerNames.length - 1; // Check if it's the last item
-
-                                          return Expanded(
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: ElevatedButton(
-                                                    style: ButtonStyle(
-                                                      foregroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedPrinter == value ? Colors.white : Colors.black87,
-                                                      ),
-                                                      backgroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedPrinter == value ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
-                                                      ),
-                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                      ),
-                                                      padding: WidgetStateProperty.all(
-                                                        const EdgeInsets.fromLTRB(12, 5, 12, 5),
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        selectedPrinter = value;
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      value,
-                                                      style: const TextStyle(fontSize: 12),
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Add spacing except for the last button
-                                                if (!isLastItem) const SizedBox(width: 10),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    // Buttons for Select All and Deselect All
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          // Select All Button
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              foregroundColor: WidgetStateProperty.all<Color>(
-                                                isSelectedAll ? Colors.white : Colors.black,
-                                              ),
-                                              backgroundColor: WidgetStateProperty.all<Color>(
-                                                isSelectedAll ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
-                                              ),
-                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(5),
-                                                ),
-                                              ),
-                                              padding: WidgetStateProperty.all(
-                                                const EdgeInsets.fromLTRB(12, 5, 12, 5),
-                                              ),
-                                            ),
-                                            onPressed: selectAllItems,
-                                            child: Row(
-                                              children: [
-                                                Icon(isSelectedAll ? Icons.check_box : Icons.check_box_outline_blank, size: 22, color: isSelectedAll ? Colors.white : Colors.black),
-                                                const SizedBox(width: 6),
-                                                const Text(
-                                                  'All',
-                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          // Deselect All Button
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              foregroundColor: WidgetStateProperty.all<Color>(
-                                                isSelectedAll ? Colors.black : Colors.white,
-                                              ),
-                                              backgroundColor: WidgetStateProperty.all<Color>(
-                                                isSelectedAll ? Colors.white : const Color.fromRGBO(46, 125, 50, 1),
-                                              ),
-                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(5),
-                                                ),
-                                              ),
-                                              padding: WidgetStateProperty.all(
-                                                const EdgeInsets.fromLTRB(12, 5, 12, 5),
-                                              ),
-                                            ),
-                                            onPressed: deselectAllItems,
-                                            child: Row(
-                                              children: [
-                                                Icon(isSelectedAll ? Icons.check_box_outline_blank :Icons.check_box, size: 22, color: isSelectedAll ? Colors.black : Colors.white,),
-                                                const SizedBox(width: 6),
-                                                const Text(
-                                                  'Remove',
-                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          ElevatedButton(
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton(
                                             style: ButtonStyle(
                                               backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
                                               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
@@ -710,7 +820,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                               alignment: WrapAlignment.center,
                                                               children: [
                                                                 Text(
-                                                                  'Please confirm you before ',
+                                                                  'Please confirm before we ',
                                                                   textAlign: TextAlign.center,
                                                                   style: TextStyle(
                                                                     fontSize: 18,
@@ -718,7 +828,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                   ),
                                                                 ),
                                                                 Text(
-                                                                  'printing ',
+                                                                  'proceed for printing',
                                                                   textAlign: TextAlign.center,
                                                                   style: TextStyle(
                                                                     fontSize: 18,
@@ -783,8 +893,13 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                               );
                                             },
                                             child: const Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                Icon(Icons.print, size: 22, color: Colors.white,),
+                                                Icon(
+                                                  Icons.print,
+                                                  size: 22,
+                                                  color: Colors.white,
+                                                ),
                                                 SizedBox(width: 6),
                                                 Text(
                                                   'Print',
@@ -793,27 +908,74 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                               ],
                                             ),
                                           ),
-                                          const Spacer(),
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(5),
-                                                ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(5),
                                               ),
-                                              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                             ),
-                                            onPressed: () {
-                                              widget.selectedOrder.discount = 0;
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text(
-                                              'Cancel',
-                                              style: TextStyle(fontSize: 14, color: Colors.black),
-                                            ),
+                                            padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
-                                        ],
+                                          onPressed: () {
+                                            widget.selectedOrder.discount = 0;
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text(
+                                            'Cancel',
+                                            style: TextStyle(fontSize: 14, color: Colors.black),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: List.generate(
+                                        printerNames.length,
+                                        (index) {
+                                          final value = printerNames[index];
+                                          final isLastItem = index == printerNames.length - 1; // Check if it's the last item
+
+                                          return Expanded(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: ElevatedButton(
+                                                    style: ButtonStyle(
+                                                      foregroundColor: WidgetStateProperty.all<Color>(
+                                                        selectedPrinter == value ? Colors.white : Colors.black87,
+                                                      ),
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
+                                                        selectedPrinter == value ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
+                                                      ),
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(5),
+                                                        ),
+                                                      ),
+                                                      padding: WidgetStateProperty.all(
+                                                        const EdgeInsets.fromLTRB(12, 5, 12, 5),
+                                                      ),
+                                                      minimumSize: WidgetStateProperty.all<Size>(const Size(40, 30)),
+                                                    ),
+                                                    onPressed: () {
+                                                      updateSelectedPrinter(value);
+                                                    },
+                                                    child: Text(
+                                                      value,
+                                                      style: const TextStyle(fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Add spacing except for the last button
+                                                if (!isLastItem) const SizedBox(width: 10),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ],
@@ -821,90 +983,102 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                               ),
                               Container(
                                 padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                margin: const EdgeInsets.symmetric(vertical: 6),
                                 decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
                                   color: Colors.white,
                                 ),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start, // Align items to the start
                                   children: [
                                     // Group the items by printers.
                                     ...groupItemsByPrinter(selectedItems).entries.map((entry) {
                                       String printer = entry.key; // Printer name
                                       List<Item> items = entry.value;
 
-                                      return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          // Display the printer name.
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xff1f2029),
-                                              borderRadius: BorderRadius.circular(5.0),
-                                            ),
-                                            child: Text(
-                                              printer, // Printer name displayed
-                                              style: const TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                      // Only display if there are items for this printer
+                                      if (items.isNotEmpty) {
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // Display the printer name.
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xff1f2029),
+                                                borderRadius: BorderRadius.circular(5.0),
+                                              ),
+                                              child: Text(
+                                                printer, // Printer name displayed
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          // Display each item's index, name, and quantity.
-                                          ...items.asMap().entries.map((entry) {
-                                            int index = entry.key + 1; // 1-based index
-                                            Item item = entry.value;
 
-                                            return Padding(
+                                            // Display each item's index, name, and quantity.
+                                            ...items.asMap().entries.map((entry) {
+                                              int index = entry.key + 1; // 1-based index
+                                              Item item = entry.value;
+
+                                              return Padding(
+                                                padding: const EdgeInsets.only(right: 12),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '$index. ${item.name}', // Index and item name
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'x ${item.quantity}', // Quantity
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                            buildLongDottedLine(),
+                                            // Display total items for this printer
+                                            Padding(
                                               padding: const EdgeInsets.only(right: 12),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.end,
                                                 children: [
-                                                  Text(
-                                                    '$index. ${item.name}', // Index and item name
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black87,
-                                                    ),
+                                                  const Text(
+                                                    'Total',
+                                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                                                   ),
+                                                  const SizedBox(width: 10),
                                                   Text(
-                                                    'x ${items.where((i) => i == item).length}', // Quantity
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black87,
-                                                    ),
+                                                    '${items.fold<int>(0, (sum, item) => sum + item.quantity)}',
+                                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                                                   ),
                                                 ],
                                               ),
-                                            );
-                                          }),
-                                          buildDottedLine(),
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 12),
-                                            child: Row(
+                                            ),
+                                            Row(
                                               mainAxisAlignment: MainAxisAlignment.end,
                                               children: [
-                                                const Text(
-                                                  'Total',
-                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Text(
-                                                  '${items.length}',
-                                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-                                                ),
+                                                buildDottedLine(),
                                               ],
                                             ),
-                                          ),
-                                          buildDottedLine(),
-                                          const SizedBox(height: 6)
-                                        ],
-                                      );
-                                    }),
+                                            const SizedBox(height: 6), // Add some spacing below each printer section
+                                          ],
+                                        );
+                                      } else {
+                                        return Container(); // Return an empty container if no items
+                                      }
+                                    }), // Ensure to convert the iterable to a list
                                   ],
                                 ),
                               ),
