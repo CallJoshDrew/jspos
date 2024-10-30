@@ -101,7 +101,8 @@ class _MainPageState extends State<MainPage> {
                 // borderRadius: BorderRadius.only(
                 //     topLeft: Radius.circular(0),
                 //     topRight: Radius.circular(0)),
-                color: Color(0xff17181f),
+                color: Color(0xff17181f)
+                // Colors.blueGrey, can try this for next color theme
               ),
               child: _pageView(),
             ),

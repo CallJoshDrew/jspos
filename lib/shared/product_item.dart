@@ -141,6 +141,17 @@ class ProductItemState extends State<ProductItem> {
           return sidesPrice;
         }
 
+        void sortSelectedSidesAlphabetically() {
+          // Convert the set to a list for sorting
+          List<Map<String, dynamic>> sortedSides = selectedSide.toList();
+
+          // Sort the list alphabetically by 'name'
+          sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+
+          // Update selectedSide to reflect the sorted order
+          selectedSide = sortedSides.toSet();
+        }
+
         void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
             double addOnsPrice, double soupOrKonlouPrice) {
           // Log each value to ensure they're being passed correctly
@@ -1285,6 +1296,8 @@ class ProductItemState extends State<ProductItem> {
                                           ),
                                         ),
                                         onPressed: () {
+                                          // Sort selectedSide alphabetically before saving
+                                          sortSelectedSidesAlphabetically();
                                           item.selectedChoice = selectedChoice;
                                           item.selectedNoodlesType = selectedNoodlesType;
                                           item.selectedMeatPortion = selectedMeatPortion;

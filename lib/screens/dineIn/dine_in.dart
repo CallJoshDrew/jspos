@@ -1030,7 +1030,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                               : const SizedBox(),
                           const SizedBox(width: 10),
                           // Cancel and Remove and Delete Selected Order
-                          (isTableSelected && selectedOrder.status != "Start Your Order" && selectedOrder.status != "Ordering")
+                          (isTableSelected && selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true)
                               ? Expanded(
                                   flex: 1,
                                   child: ElevatedButton(

@@ -648,6 +648,17 @@ class _OrderDetailsState extends State<OrderDetails> {
             return sidesPrice;
           }
 
+          void sortSelectedSidesAlphabetically() {
+            // Convert the set to a list for sorting
+            List<Map<String, dynamic>> sortedSides = selectedSide.toList();
+
+            // Sort the list alphabetically by 'name'
+            sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+
+            // Update selectedSide to reflect the sorted order
+            selectedSide = sortedSides.toSet();
+          }
+
           void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
               double addOnsPrice, double soupOrKonlouPrice) {
             double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice + soupOrKonlouPrice;
@@ -1723,6 +1734,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             // SubTotal, Service Charges Total OnPressed Function
                                             onPressed: () {
                                               setState(() {
+                                                // Sort selectedSide alphabetically before saving
+                                                sortSelectedSidesAlphabetically();
                                                 item.selectedChoice = selectedChoice;
                                                 // log('before changes: item name is ${item.name}');
                                                 // if (selectedChoice != null) {
@@ -2019,12 +2032,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.selectedOrder.calculateItemsAndQuantities();
                                                 widget.updateOrderStatus!();
-                                                 _showCherryToast(
-                                                      'remove_circle',
-                                                      '${item.name} (RM ${item.price.toStringAsFixed(2)})',
-                                                      2000, // Toast duration in milliseconds
-                                                      200, // Animation duration in milliseconds
-                                                    );
+                                                _showCherryToast(
+                                                  'remove_circle',
+                                                  '${item.name} (RM ${item.price.toStringAsFixed(2)})',
+                                                  2000, // Toast duration in milliseconds
+                                                  200, // Animation duration in milliseconds
+                                                );
                                                 // CherryToast(
                                                 //   icon: Icons.remove_circle,
                                                 //   iconColor: Colors.red,
@@ -2046,12 +2059,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 //   displayCloseButton: false,
                                                 // ).show(context);
                                               } else if (item.quantity == 1) {
-                                                 _showCherryToast(
-                                                      'info',
-                                                      "Swipe left/right to remove the item",
-                                                      2000, // Toast duration in milliseconds
-                                                      200, // Animation duration in milliseconds
-                                                    );
+                                                _showCherryToast(
+                                                  'info',
+                                                  "Swipe left/right to remove the item",
+                                                  2000, // Toast duration in milliseconds
+                                                  200, // Animation duration in milliseconds
+                                                );
                                                 // CherryToast(
                                                 //   icon: Icons.info,
                                                 //   iconColor: Colors.green,
