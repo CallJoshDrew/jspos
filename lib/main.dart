@@ -82,6 +82,10 @@ Future<void> saveDailySales(DailySales dailySales) async {
 // const Color.fromRGBO(46, 125, 50, 1)
 // Second Color
 // Colors.deepOrangeAccent
+// Nice Color Blue
+// Colors.blueGrey
+// Black Color
+// const Color(0xff1f2029),
 
 
 

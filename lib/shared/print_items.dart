@@ -35,8 +35,9 @@ class PrintItemsPage extends ConsumerStatefulWidget {
 
 class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   late Orders orders; // No need to reinitialize here directly.
-  String selectedPrinter = "All";
+
   final printerNames = ['All', 'Cashier', 'Kitchen', 'Beverage'];
+  Set<String> selectedPrinters = {}; // Holds selected printers
 
   late bool isTableSelected;
   bool isSelectedAll = true;
@@ -66,16 +67,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     return totalQuantities;
   }
 
-  Map<String, double> calculateTotalPrices(Map<String, List<Item>> categorizedItems) {
-    Map<String, double> totalPrices = {};
-
-    for (var entry in categorizedItems.entries) {
-      totalPrices[entry.key] = entry.value.fold(0.0, (sum, item) => sum + item.quantity * item.price);
-    }
-
-    return totalPrices;
-  }
-
   Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
     Map<String, dynamic> filteredRemarks = {};
     if (itemRemarks != null) {
@@ -92,11 +83,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
     final filteredRemarks = filterRemarks(itemRemarks);
     return filteredRemarks.values.join(', ');
-  }
-
-  void _navigateBack() {
-    Navigator.of(context).pop();
-    Navigator.of(context).pop();
   }
 
   // A map to keep track of selected items, categorized by category
@@ -121,6 +107,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     });
   }
 
+  // For categories buttons that handles select and deselect their own categories
   void toggleCategoryItems(String category) {
     setState(() {
       if (selectedItems.containsKey(category) && selectedItems[category]!.isNotEmpty) {
@@ -176,59 +163,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     });
   }
 
-  Widget buildLongDottedLine() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final boxWidth = constraints.constrainWidth();
-          const dashWidth = 3.0;
-          final dashCount = (boxWidth / (2 * dashWidth)).floor();
-
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(dashCount, (_) {
-              return Row(
-                children: <Widget>[
-                  Container(width: dashWidth, height: 2, color: Colors.black87),
-                  const SizedBox(width: dashWidth),
-                ],
-              );
-            }),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget buildDottedLine() {
-    return Container(
-      width: 85.0, // Set the desired width for the dotted line here
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final boxWidth = constraints.constrainWidth();
-          const dashWidth = 3.0; // Width of each dot
-          const dashSpacing = 3.0; // Space between dots
-
-          final dashCount = (boxWidth / (dashWidth + dashSpacing)).floor();
-
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.end, // Aligns the dots to the right
-            children: List.generate(dashCount, (_) {
-              return Row(
-                children: <Widget>[
-                  Container(width: dashWidth, height: 2, color: Colors.black87),
-                  const SizedBox(width: dashSpacing),
-                ],
-              );
-            }),
-          );
-        },
-      ),
-    );
-  }
-
   // Example of your categories list
   final List<String> categories = ["Cakes", "Dishes", "Drinks", "Special", "Add On"];
 
@@ -260,9 +194,9 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     return printerItems;
   }
 
-  List<Item> getFilteredItemsByPrinter(String printer) {
-    if (printer == "All") {
-      // Aggregate items from all categories for each printer
+  List<Item> getFilteredItemsByPrinters(Set<String> printers) {
+    if (printers.contains("All")) {
+      // Show all items if "All" is selected
       List<Item> allItems = [];
       printerCategories.forEach((printerKey, categoriesList) {
         for (var category in categoriesList) {
@@ -273,12 +207,14 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
       });
       return allItems;
     } else {
-      // Filter items for a specific printer
+      // Show items for selected printers only
       List<Item> filteredItems = [];
-      if (printerCategories.containsKey(printer)) {
-        for (var category in printerCategories[printer]!) {
-          if (selectedItems.containsKey(category)) {
-            filteredItems.addAll(selectedItems[category]!);
+      for (var printer in printers) {
+        if (printerCategories.containsKey(printer)) {
+          for (var category in printerCategories[printer]!) {
+            if (selectedItems.containsKey(category)) {
+              filteredItems.addAll(selectedItems[category]!);
+            }
           }
         }
       }
@@ -286,10 +222,31 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     }
   }
 
-  void updateSelectedPrinter(String printer) {
+  void updateSelectedPrinters(String printer) {
     setState(() {
-      selectedPrinter = printer;
-      currentFilteredItems = getFilteredItemsByPrinter(selectedPrinter);
+      if (printer == "All") {
+        // Clear all selections if "All" is selected
+        selectedPrinters.clear();
+        selectedPrinters.add("All");
+      } else {
+        // Toggle individual printer selections
+        if (selectedPrinters.contains("All")) {
+          selectedPrinters.remove("All"); // Remove "All" if other printers are selected
+        }
+
+        if (selectedPrinters.contains(printer)) {
+          selectedPrinters.remove(printer);
+        } else {
+          selectedPrinters.add(printer);
+        }
+
+        // If no specific printers are selected, add "All" back
+        if (selectedPrinters.isEmpty) {
+          selectedPrinters.add("All");
+        }
+      }
+
+      currentFilteredItems = getFilteredItemsByPrinters(selectedPrinters);
     });
   }
 
@@ -302,13 +259,74 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     });
   }
 
+  Widget buildLongDottedLine() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final boxWidth = constraints.constrainWidth();
+          const dashWidth = 3.0;
+          final dashCount = (boxWidth / (2 * dashWidth)).floor();
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(dashCount, (_) {
+              return Row(
+                children: <Widget>[
+                  Container(width: dashWidth, height: 2, color: Colors.black87),
+                  const SizedBox(width: dashWidth),
+                ],
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildDottedLine() {
+    return Container(
+      width: 80.0, // Set the desired width for the dotted line here
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final boxWidth = constraints.constrainWidth();
+          const dashWidth = 3.0; // Width of each dot
+          const dashSpacing = 3.0; // Space between dots
+
+          final dashCount = (boxWidth / (dashWidth + dashSpacing)).floor();
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.end, // Aligns the dots to the right
+            children: List.generate(dashCount, (_) {
+              return Row(
+                children: <Widget>[
+                  Container(width: dashWidth, height: 2, color: Colors.black87),
+                  const SizedBox(width: dashSpacing),
+                ],
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     orders = ref.read(ordersProvider);
     selectAllItems();
     isTableSelected = widget.isTableInitiallySelected;
-    currentFilteredItems = getFilteredItemsByPrinter(selectedPrinter);
+    // Initialize selectedPrinters with 'Kitchen' and 'Beverage'
+    if (widget.selectedOrder.status != "Paid") {
+      selectedPrinters = {'Kitchen', 'Beverage'};
+    } else {
+      selectedPrinters = {'Cashier'};
+    }
+
+    // Get items filtered by the initial selected printers
+    currentFilteredItems = getFilteredItemsByPrinters(selectedPrinters);
   }
 
   @override
@@ -465,8 +483,8 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                               Icon(
                                                 selectedItems[category]?.isNotEmpty == true ? Icons.check_box : Icons.check_box_outline_blank,
                                                 size: 20,
-                                                // color: Colors.white,
-                                                color: selectedItems[category]?.isNotEmpty == true ? Colors.green : Colors.white,
+                                                color: Colors.white,
+                                                // color: selectedItems[category]?.isNotEmpty == true ? Colors.blueGrey : Colors.white,
                                               ),
                                               const SizedBox(width: 6),
                                               Text(
@@ -763,13 +781,13 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                           padding: const EdgeInsets.only(bottom: 0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(0),
-                            color: const Color(0xff1f2029),
+                            // color: const Color(0xff1f2029),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+                                padding: const EdgeInsets.fromLTRB(0, 2, 10, 0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -937,7 +955,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                         printerNames.length,
                                         (index) {
                                           final value = printerNames[index];
-                                          final isLastItem = index == printerNames.length - 1; // Check if it's the last item
+                                          final isSelected = selectedPrinters.contains(value);
 
                                           return Expanded(
                                             child: Row(
@@ -945,24 +963,24 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                 Expanded(
                                                   child: ElevatedButton(
                                                     style: ButtonStyle(
-                                                      foregroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedPrinter == value ? Colors.white : Colors.black87,
+                                                      foregroundColor: MaterialStateProperty.all<Color>(
+                                                        isSelected ? Colors.white : Colors.black87,
                                                       ),
-                                                      backgroundColor: WidgetStateProperty.all<Color>(
-                                                        selectedPrinter == value ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
+                                                      backgroundColor: MaterialStateProperty.all<Color>(
+                                                        isSelected ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
                                                       ),
-                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
                                                       ),
-                                                      padding: WidgetStateProperty.all(
+                                                      padding: MaterialStateProperty.all(
                                                         const EdgeInsets.fromLTRB(12, 5, 12, 5),
                                                       ),
-                                                      minimumSize: WidgetStateProperty.all<Size>(const Size(40, 30)),
+                                                      minimumSize: MaterialStateProperty.all<Size>(const Size(40, 30)),
                                                     ),
                                                     onPressed: () {
-                                                      updateSelectedPrinter(value);
+                                                      updateSelectedPrinters(value);
                                                     },
                                                     child: Text(
                                                       value,
@@ -970,8 +988,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                     ),
                                                   ),
                                                 ),
-                                                // Add spacing except for the last button
-                                                if (!isLastItem) const SizedBox(width: 10),
+                                                if (index < printerNames.length - 1) const SizedBox(width: 10), // Add spacing except for last button
                                               ],
                                             ),
                                           );
@@ -983,32 +1000,39 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                               ),
                               Container(
                                 padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
                                   color: Colors.white,
                                 ),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start, // Align items to the start
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Group the items by printers.
                                     ...groupItemsByPrinter(selectedItems).entries.map((entry) {
                                       String printer = entry.key; // Printer name
                                       List<Item> items = entry.value;
+
+                                      // If specific printers are selected, only display items for those printers
+                                      if (selectedPrinters.isNotEmpty && !selectedPrinters.contains("All") && !selectedPrinters.contains(printer)) {
+                                        return Container(); // Skip if this printer is not selected
+                                      }
+
+                                      // Group items by category within each printer
+                                      final categorizedItems = categorizeItems(items);
 
                                       // Only display if there are items for this printer
                                       if (items.isNotEmpty) {
                                         return Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            // Display the printer name.
+                                            // Display the printer name
                                             Container(
                                               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                                               decoration: BoxDecoration(
-                                                color: const Color(0xff1f2029),
+                                                color: const Color.fromRGBO(46, 125, 50, 1),
                                                 borderRadius: BorderRadius.circular(5.0),
                                               ),
                                               child: Text(
-                                                printer, // Printer name displayed
+                                                printer,
                                                 style: const TextStyle(
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
@@ -1017,38 +1041,64 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                               ),
                                             ),
 
-                                            // Display each item's index, name, and quantity.
-                                            ...items.asMap().entries.map((entry) {
-                                              int index = entry.key + 1; // 1-based index
-                                              Item item = entry.value;
+                                            // Display categories and items in the specified order
+                                            ...categories.map((category) {
+                                              List<Item> categoryItems = categorizedItems[category] ?? [];
+                                              if (categoryItems.isEmpty) {
+                                                return Container(); // Skip if no items in this category
+                                              }
+                                              return Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  // Display category name
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
+                                                      top: 4,
+                                                    ),
+                                                    child: Text(
+                                                      category,
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.blueGrey,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // Display each item in this category
+                                                  ...categoryItems.asMap().entries.map((itemEntry) {
+                                                    int index = itemEntry.key + 1; // 1-based index
+                                                    Item item = itemEntry.value;
 
-                                              return Padding(
-                                                padding: const EdgeInsets.only(right: 12),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      '$index. ${item.name}', // Index and item name
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black87,
+                                                    return Padding(
+                                                      padding: const EdgeInsets.only(right: 12),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            '$index. ${item.name}',
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.black87,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            'x ${item.quantity}',
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.black87,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    ),
-                                                    Text(
-                                                      'x ${item.quantity}', // Quantity
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                    );
+                                                  }),
+                                                ],
                                               );
                                             }),
                                             buildLongDottedLine(),
-                                            // Display total items for this printer
+                                            // Display total quantity for this printer
                                             Padding(
                                               padding: const EdgeInsets.only(right: 12),
                                               child: Row(
@@ -1056,16 +1106,18 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                 children: [
                                                   const Text(
                                                     'Total',
-                                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                                   ),
                                                   const SizedBox(width: 10),
                                                   Text(
                                                     '${items.fold<int>(0, (sum, item) => sum + item.quantity)}',
-                                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                                   ),
                                                 ],
                                               ),
                                             ),
+
+                                            // Divider line for the end of each printer's item list
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.end,
                                               children: [
@@ -1078,7 +1130,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                       } else {
                                         return Container(); // Return an empty container if no items
                                       }
-                                    }), // Ensure to convert the iterable to a list
+                                    }).toList(),
                                   ],
                                 ),
                               ),
