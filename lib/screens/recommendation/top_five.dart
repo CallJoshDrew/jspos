@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/menu_data.dart';
 
 class TopFivePage extends StatelessWidget {
   // Extract only the necessary details from the menu
@@ -31,7 +32,7 @@ class TopFivePage extends StatelessWidget {
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 6.0), // Small margin between items
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(10),
                         color: Colors.white,
                         boxShadow: const [
                           BoxShadow(
@@ -42,7 +43,7 @@ class TopFivePage extends StatelessWidget {
                         ],
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -51,12 +52,12 @@ class TopFivePage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                               child: Image.asset(
                                 item['image'],
-                                width: 50,
-                                height: 50,
+                                width: 40,
+                                height: 40,
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
 
                             // Item Name and Price
                             Expanded(
@@ -67,16 +68,21 @@ class TopFivePage extends StatelessWidget {
                                   Text(
                                     item['name'],
                                     style: const TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      height: 1.1, // Set the line height as a multiple of the font size
+                                    ),
+                                    textAlign: TextAlign.left,
+                                    overflow: TextOverflow.ellipsis, // Adds ellipsis if text exceeds maxLines
+                                    maxLines: 2, // Controls how many lines the text wraps to
+                                  ),
+                                  const Text(
+                                    'x 100',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.green,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis, // Handle long names gracefully
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    'RM ${item['price'].toStringAsFixed(2)}',
-                                    style: const TextStyle(fontSize: 13, color: Colors.green, fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),

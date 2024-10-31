@@ -82,7 +82,7 @@ class _RecommendPageState extends State<RecommendPage> {
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: SizedBox(
-                height: 120,
+                height: 110,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -125,8 +125,7 @@ class _RecommendPageState extends State<RecommendPage> {
       margin: const EdgeInsets.only(right: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
-        color: const Color(0xff1f2029),
-        border: isActive ? Border.all(color: const Color.fromRGBO(46, 125, 50, 1), width: 2) : Border.all(color: const Color(0xff1f2029), width: 2),
+        color: isActive ? const Color.fromRGBO(46, 125, 50, 1) : const Color(0xff1f2029),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -172,13 +171,6 @@ class _RecommendPageState extends State<RecommendPage> {
               style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-          // Align(
-          //   alignment: Alignment.centerLeft,
-          //   child: Text(
-          //     "RM $formattedAmount",
-          //     style: const TextStyle(fontSize: 14, color: Colors.white),
-          //   ),
-          // ),
         ],
       ),
     );
