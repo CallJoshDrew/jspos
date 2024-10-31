@@ -420,6 +420,28 @@ class ProductItemState extends State<ProductItem> {
                                             children: [
                                               Row(
                                                 children: [
+                                                  item.selection && selectedSoupOrKonLou != null
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "${selectedSoupOrKonLou!['name']} - ",
+                                                              style: const TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors.yellow,
+                                                              ),
+                                                            ),
+                                                            // Display price only if it is greater than 0.00
+                                                            if (selectedSoupOrKonLou!['price'] != 0.00)
+                                                              Text(
+                                                                "( + ${selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              )
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
                                                   item.selection && selectedNoodlesType.isNotEmpty
                                                       ? Wrap(
                                                           children: [
@@ -441,6 +463,8 @@ class ProductItemState extends State<ProductItem> {
                                                                 ),
                                                               ),
                                                             ),
+
+                                                            
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
@@ -463,28 +487,7 @@ class ProductItemState extends State<ProductItem> {
                                                   //         ],
                                                   //       )
                                                   //     : const SizedBox.shrink(),
-                                                  item.selection && selectedSoupOrKonLou != null
-                                                      ? Row(
-                                                          children: [
-                                                            Text(
-                                                              "- ${selectedSoupOrKonLou!['name']} ",
-                                                              style: const TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors.white,
-                                                              ),
-                                                            ),
-                                                            // Display price only if it is greater than 0.00
-                                                            if (selectedSoupOrKonLou!['price'] != 0.00)
-                                                              Text(
-                                                                "( + ${selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
-                                                                style: const TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                ),
-                                                              )
-                                                          ],
-                                                        )
-                                                      : const SizedBox.shrink(),
+                                                  
                                                   // next time add to display remarks
                                                   // if (itemRemarks.isNotEmpty)
                                                   // Text(
@@ -864,6 +867,7 @@ class ProductItemState extends State<ProductItem> {
                                                           } else {
                                                             selectedNoodlesType.add(noodletype);
                                                           }
+                                                          sortSelectedNoodlesAlphabetically();
                                                           calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                         });
@@ -938,6 +942,7 @@ class ProductItemState extends State<ProductItem> {
                                                           } else {
                                                             selectedSide.add(side);
                                                           }
+                                                          sortSelectedSidesAlphabetically();
                                                           calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                         });
@@ -1355,9 +1360,6 @@ class ProductItemState extends State<ProductItem> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          // Sort selectedSide alphabetically before saving
-                                          sortSelectedNoodlesAlphabetically();
-                                          sortSelectedSidesAlphabetically();
                                           item.selectedChoice = selectedChoice;
                                           item.selectedNoodlesType = selectedNoodlesType;
                                           item.selectedMeatPortion = selectedMeatPortion;

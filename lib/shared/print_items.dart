@@ -625,31 +625,44 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                               children: [
                                                                 Row(
                                                                   children: [
+                                                                    item.selection && item.selectedSoupOrKonLou != null
+                                                                        ? Row(
+                                                                            children: [
+                                                                              Text(
+                                                                                "${item.selectedSoupOrKonLou!['name']} - ",
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 14,
+                                                                                  color: Colors.yellow,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          )
+                                                                        : const SizedBox.shrink(),
                                                                     item.selection && item.selectedNoodlesType != null
-                                                                    ? Wrap(
-                                                                        children: [
-                                                                          for (var noodleType in item.selectedNoodlesType!.toList())
-                                                                            Wrap(
-                                                                              children: [
-                                                                                Text(
-                                                                                  "${noodleType['name']} ",
-                                                                                  style: const TextStyle(
-                                                                                    fontSize: 14,
-                                                                                    color: Colors.white,
-                                                                                  ),
+                                                                        ? Wrap(
+                                                                            children: [
+                                                                              for (var noodleType in item.selectedNoodlesType!.toList())
+                                                                                Wrap(
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      "${noodleType['name']} ",
+                                                                                      style: const TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        color: Colors.white,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "${noodleType != item.selectedNoodlesType!.last ? ', ' : ''} ",
+                                                                                      style: const TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        color: Colors.white,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
                                                                                 ),
-                                                                                Text(
-                                                                                  "${noodleType != item.selectedNoodlesType!.last ? ', ' : ''} ",
-                                                                                  style: const TextStyle(
-                                                                                    fontSize: 14,
-                                                                                    color: Colors.white,
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                        ],
-                                                                      )
-                                                                    : const SizedBox.shrink(),
+                                                                            ],
+                                                                          )
+                                                                        : const SizedBox.shrink(),
                                                                     // item.selection &&
                                                                     //         item.selectedNoodlesType != null &&
                                                                     //         item.selectedNoodlesType!['name'] != 'None'
@@ -662,19 +675,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                     //         ],
                                                                     //       )
                                                                     //     : const SizedBox.shrink(),
-                                                                    item.selection && item.selectedSoupOrKonLou != null
-                                                                        ? Row(
-                                                                            children: [
-                                                                              Text(
-                                                                                "- ${item.selectedSoupOrKonLou!['name']} ",
-                                                                                style: const TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  color: Colors.white,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          )
-                                                                        : const SizedBox.shrink(),
                                                                   ],
                                                                 ),
                                                                 item.selection &&

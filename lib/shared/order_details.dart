@@ -241,7 +241,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             ),
           ),
         ),
-        // Category, Items, Quantity UI
+        // Total quantity of items under the category UI and handle method status
         Container(
           padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
           margin: const EdgeInsets.symmetric(vertical: 10),
@@ -587,6 +587,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     );
   }
 
+  // selected items details iamge, name, quantity, sides, meePortion, meatPortion, noodlesTypes, etc
   Widget _itemOrder({
     required String image,
     required String name,
@@ -639,7 +640,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           double addOnsPrice = item.selectedAddOn?['price'] ?? 0;
           double soupOrKonlouPrice = item.selectedSoupOrKonLou?['price'] ?? 0;
           double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice;
-          
+
           double calculateNoodlesPrice() {
             double noodlesPrice = 0.0;
             for (var noodle in selectedNoodlesType) {
@@ -883,30 +884,52 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      item.selection && selectedNoodlesType.isNotEmpty
-                                                      ? Wrap(
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 500, // Adjust the width as needed
-                                                              child: RichText(
-                                                                text: TextSpan(
+                                                      item.selection && selectedSoupOrKonLou != null
+                                                          ? Row(
+                                                              children: [
+                                                                Text(
+                                                                  "${selectedSoupOrKonLou!['name']} - ",
                                                                   style: const TextStyle(
                                                                     fontSize: 14,
-                                                                    color: Colors.white,
+                                                                    color: Colors.yellow,
                                                                   ),
-                                                                  // Convert Set to List here
-                                                                  children: selectedNoodlesType.toList().asMap().entries.map((entry) {
-                                                                    int idx = entry.key;
-                                                                    Map<String, dynamic> noodle = entry.value;
-                                                                    bool isLast = idx == selectedNoodlesType.length - 1;
-                                                                    return generateNoodlesOnTextSpan(noodle, isLast);
-                                                                  }).toList(),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : const SizedBox.shrink(),
+                                                                // Display price only if it is greater than 0.00
+                                                                if (selectedSoupOrKonLou!['price'] != 0.00)
+                                                                  Text(
+                                                                    "( + ${selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
+                                                                    style: const TextStyle(
+                                                                      fontSize: 14,
+                                                                      color: Color.fromARGB(255, 114, 226, 118),
+                                                                    ),
+                                                                  )
+                                                              ],
+                                                            )
+                                                          : const SizedBox.shrink(),
+                                                      item.selection && selectedNoodlesType.isNotEmpty
+                                                          ? Wrap(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 500, // Adjust the width as needed
+                                                                  child: RichText(
+                                                                    text: TextSpan(
+                                                                      style: const TextStyle(
+                                                                        fontSize: 14,
+                                                                        color: Colors.white,
+                                                                      ),
+                                                                      // Convert Set to List here
+                                                                      children: selectedNoodlesType.toList().asMap().entries.map((entry) {
+                                                                        int idx = entry.key;
+                                                                        Map<String, dynamic> noodle = entry.value;
+                                                                        bool isLast = idx == selectedNoodlesType.length - 1;
+                                                                        return generateNoodlesOnTextSpan(noodle, isLast);
+                                                                      }).toList(),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : const SizedBox.shrink(),
                                                       // item.selection && selectedNoodlesType != null && selectedNoodlesType!['name'] != 'None'
                                                       //     ? Row(
                                                       //         children: [
@@ -926,28 +949,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       //         ],
                                                       //       )
                                                       //     : const SizedBox.shrink(),
-                                                      item.selection && selectedSoupOrKonLou != null
-                                                          ? Row(
-                                                              children: [
-                                                                Text(
-                                                                  "- ${selectedSoupOrKonLou!['name']} ",
-                                                                  style: const TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors.white,
-                                                                  ),
-                                                                ),
-                                                                // Display price only if it is greater than 0.00
-                                                                if (selectedSoupOrKonLou!['price'] != 0.00)
-                                                                  Text(
-                                                                    "( + ${selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
-                                                                    style: const TextStyle(
-                                                                      fontSize: 14,
-                                                                      color: Color.fromARGB(255, 114, 226, 118),
-                                                                    ),
-                                                                  )
-                                                              ],
-                                                            )
-                                                          : const SizedBox.shrink(),
                                                     ],
                                                   ),
                                                   item.selection && selectedMeePortion != null && selectedMeePortion!['name'] != "Normal Mee"
@@ -1299,12 +1300,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       children: item.noodlesTypes.map((noodleType) {
                                                         return ElevatedButton(
                                                           onPressed: () {
-                                                           setState(() {
+                                                            setState(() {
                                                               if (selectedNoodlesType.contains(noodleType)) {
                                                                 selectedNoodlesType.remove(noodleType);
                                                               } else {
                                                                 selectedNoodlesType.add(noodleType);
                                                               }
+                                                              sortSelectedNoodlesAlphabetically();
                                                               calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                   calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                             });
@@ -1379,6 +1381,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               } else {
                                                                 selectedSide.add(side);
                                                               }
+                                                              sortSelectedSidesAlphabetically();
                                                               // log('selectedSide after: $selectedSide');
                                                               calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                   calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
@@ -1792,9 +1795,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             // SubTotal, Service Charges Total OnPressed Function
                                             onPressed: () {
                                               setState(() {
-                                                // Sort selectedSide alphabetically before saving
-                                                sortSelectedNoodlesAlphabetically();
-                                                sortSelectedSidesAlphabetically();
                                                 item.selectedChoice = selectedChoice;
                                                 // log('before changes: item name is ${item.name}');
                                                 // if (selectedChoice != null) {
@@ -1815,8 +1815,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   selectedMeatPortion: selectedMeatPortion,
                                                   item: item,
                                                 );
-                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice, calculateSidesPrice(),
-                                                    addOnsPrice, soupOrKonlouPrice);
+                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                    calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                 item.price = subTotalPrice;
                                                 widget.selectedOrder.updateTotalCost(0);
                                                 widget.selectedOrder.updateItem(item);
@@ -1873,7 +1873,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                 });
           }
         },
-        // Item Name and Price
+
+        // The main display ui for selected Order - Item Name and Price
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -2177,22 +2178,35 @@ class _OrderDetailsState extends State<OrderDetails> {
             Row(
               children: [
                 // Check if either itemRemarks or selectedSide are non-null and not empty
-                if ((item.itemRemarks?.isNotEmpty ?? false) || (item.selectedSide?.isNotEmpty ?? false))
+                if ((item.itemRemarks?.isNotEmpty ?? false) || (item.selectedSide?.isNotEmpty ?? false) || (item.selectedNoodlesType?.isNotEmpty ?? false))
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                           // Safely handle selectedSide and ensure it's not null or empty
-                          if (item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty)
-                            Text(
-                              item.selectedNoodlesType!.map((noodleType) => noodleType['name']).join(', '),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
+                          Row(
+                            children: [
+                              if (item.selectedSoupOrKonLou != null)
+                                Text(
+                                  '${item.selectedSoupOrKonLou!['name']} ',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.yellow,
+                                  ),
+                                ),
+
+                              // Safely handle selectedNoodles and ensure it's not null or empty
+                              if (item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty)
+                                Text(
+                                  item.selectedNoodlesType!.map((noodleType) => noodleType['name']).join(', '),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                            ],
+                          ),
                           Wrap(
                             children: [
                               // Item Remarks & Comments UI
@@ -2212,7 +2226,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               item.selectedSide!.map((side) => side['name']).join(', '),
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: Colors.white,
+                                color: Colors.yellow,
                               ),
                             ),
                         ],
