@@ -26,6 +26,8 @@ Future<void> handlePrintingJobs(
   // Fetch printer list once at the beginning avoid using ref after this point
   final List<Printer> printerList = ref.read(printerListProvider);
   log('Printer List: $printerList');
+  log('SelectedOrder for Printing is : $selectedOrder');
+
 
   final List<String> areas = specificArea != null ? [specificArea] : ['Kitchen', 'Beverage'];
   // removed cashier from specific

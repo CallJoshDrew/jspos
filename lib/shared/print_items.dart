@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/providers/orders_provider.dart';
 
 class PrintItemsPage extends ConsumerStatefulWidget {
@@ -35,7 +36,7 @@ class PrintItemsPage extends ConsumerStatefulWidget {
 class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   late Orders orders; // No need to reinitialize here directly.
 
-  final printerNames = ['All', 'Cashier', 'Kitchen', 'Beverage'];
+  final printerNames = ['All', "Cashier", "Kitchen", "Beverage"];
   Set<String> selectedPrinters = {}; // Holds selected printers
 
   late bool isTableSelected;
@@ -309,6 +310,40 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
         },
       ),
     );
+  }
+
+  IconData _getIconData(String iconText) {
+    const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
+
+    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
+  }
+
+  void _showCherryToast(
+    String iconText,
+    String titleText,
+    int toastDu, // Changed to int for duration
+    int animateDu,
+  ) {
+    CherryToast(
+      icon: _getIconData(iconText), // Retrieve the corresponding icon
+      iconColor: Colors.green,
+      themeColor: const Color.fromRGBO(46, 125, 50, 1),
+      backgroundColor: Colors.white,
+      title: Text(
+        titleText,
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      toastPosition: Position.top,
+      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
+      animationType: AnimationType.fromTop,
+      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
+      autoDismiss: true,
+      displayCloseButton: false,
+    ).show(context);
   }
 
   @override
@@ -898,8 +933,29 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                   ),
                                                                   padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                                 ),
-                                                                onPressed: () async {
-                                                                  log('You have confirmed');
+                                                                onPressed: () {
+                                                                  // handlePrintingJobs(context, ref, selectedOrder: widget.selectedOrder, specificArea: 'Kitchen');
+                                                                  // Determine which areas to send to `handlePrintingJobs`
+                                                                  final List<String> areasToPrint = selectedPrinters.contains("All")
+                                                                      ? ["Cashier", "Kitchen", "Beverage"]
+                                                                      : selectedPrinters.toList();
+
+                                                                  for (var area in areasToPrint) {
+                                                                    handlePrintingJobs(
+                                                                      context,
+                                                                      ref,
+                                                                      selectedOrder: widget.selectedOrder,
+                                                                      specificArea: area,
+                                                                    );
+                                                                  }
+                                                                  _showCherryToast(
+                                                                    'info', // Pass the icon key as a string
+                                                                    'Printing ${widget.selectedOrder.orderNumber} is in the process',
+                                                                    2000, // Toast duration in milliseconds
+                                                                    1000, // Animation duration in milliseconds
+                                                                  );
+                                                                  Navigator.of(context).pop();
+                                                                  log('The SelectedOrders are : ${widget.selectedOrder}');
                                                                 },
                                                                 child: const Padding(
                                                                   padding: EdgeInsets.all(6),
@@ -987,21 +1043,21 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                 Expanded(
                                                   child: ElevatedButton(
                                                     style: ButtonStyle(
-                                                      foregroundColor: MaterialStateProperty.all<Color>(
+                                                      foregroundColor: WidgetStateProperty.all<Color>(
                                                         isSelected ? Colors.white : Colors.black87,
                                                       ),
-                                                      backgroundColor: MaterialStateProperty.all<Color>(
+                                                      backgroundColor: WidgetStateProperty.all<Color>(
                                                         isSelected ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
                                                       ),
-                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
                                                       ),
-                                                      padding: MaterialStateProperty.all(
+                                                      padding: WidgetStateProperty.all(
                                                         const EdgeInsets.fromLTRB(12, 5, 12, 5),
                                                       ),
-                                                      minimumSize: MaterialStateProperty.all<Size>(const Size(40, 30)),
+                                                      minimumSize: WidgetStateProperty.all<Size>(const Size(40, 30)),
                                                     ),
                                                     onPressed: () {
                                                       updateSelectedPrinters(value);

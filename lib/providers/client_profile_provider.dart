@@ -18,6 +18,24 @@ final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async 
 
   return box;
 });
+
+Future<void> addHardCodedClientProfile(Box<ClientProfile> box) async {
+  var profile = ClientProfile(
+    name: "TryMee IJM",
+    businessRegistrationNumber: "123456789",
+    tinNumber: "TIN987654321",
+    address1: "Lot 14, Ground Floor Utama Zone 3 Commercial",
+    address2: "Jalan Dataran BU3, Sandakan, Malaysia",
+    postcode: "90000",
+    state: "Sabah",
+    contactNumber: "+6011-5873 0128",
+    // logoPath: "/path/to/logo.png",
+  );
+
+  await box.add(profile);
+}
+
+
 // Restaurant Sing Ming Hing
   // Lot 16, Block B, Utara Place 1, Jalan Utara,
   // IJM Batu 6, Sandakan, Malaysia
@@ -44,19 +62,3 @@ final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async 
 
 //   await box.add(profile);
 // }
-
-Future<void> addHardCodedClientProfile(Box<ClientProfile> box) async {
-  var profile = ClientProfile(
-    name: "TryMee IJM",
-    businessRegistrationNumber: "123456789",
-    tinNumber: "TIN987654321",
-    address1: "Lot 14, Ground Floor Utama Zone 3 Commercial",
-    address2: "Jalan Dataran BU3, Sandakan, Malaysia",
-    postcode: "90000",
-    state: "Sabah",
-    contactNumber: "+6011-5873 0128",
-    // logoPath: "/path/to/logo.png",
-  );
-
-  await box.add(profile);
-}
