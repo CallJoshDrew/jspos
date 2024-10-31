@@ -35,7 +35,7 @@ class PrintItemsPage extends ConsumerStatefulWidget {
 
 class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   late Orders orders; // No need to reinitialize here directly.
-
+  late SelectedOrder printingOrder = widget.selectedOrder.copyWith();
   final printerNames = ['All', "Cashier", "Kitchen", "Beverage"];
   Set<String> selectedPrinters = {}; // Holds selected printers
 
@@ -88,6 +88,14 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   // A map to keep track of selected items, categorized by category
   Map<String, List<Item>> selectedItems = {};
 
+  // Function to update printingOrder items from selectedItems
+  void updatePrintingOrderItems() {
+    setState(() {
+      printingOrder.items = selectedItems.values.expand((items) => items).map((item) => item.copyWith()).toList();
+    });
+    log('${printingOrder.items}');
+  }
+
   // Function to toggle item selection
   void toggleItemSelection(String category, Item item) {
     setState(() {
@@ -101,7 +109,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
         selectedItems[category]!.add(item);
         log('Item added: ${item.name} to category $category');
       }
-
+      updatePrintingOrderItems();
       // Log the entire selectedItems map for tracking
       log('Updated selectedItems: ${selectedItems.map((k, v) => MapEntry(k, v.map((item) => item.name).toList()))}');
     });
@@ -123,7 +131,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
 
       // Update isAnyCategorySelected
       isAnyCategorySelected = selectedItems.values.any((items) => items.isNotEmpty);
-
+      updatePrintingOrderItems();
       log('$category items toggled');
     });
   }
@@ -143,7 +151,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
 
       // Update isAnyCategorySelected
       isAnyCategorySelected = true;
-
+      updatePrintingOrderItems();
       log('All items selected in all categories');
     });
   }
@@ -158,7 +166,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
 
       // Update isAnyCategorySelected
       isAnyCategorySelected = false;
-
+      updatePrintingOrderItems();
       log('All items deselected in all categories');
     });
   }
@@ -250,14 +258,14 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     });
   }
 
-  void sendToPrinter(Map<String, List<Item>> selectedItems) {
-    Map<String, List<Item>> printerItems = groupItemsByPrinter(selectedItems);
+  // void sendToPrinter(Map<String, List<Item>> selectedItems) {
+  //   Map<String, List<Item>> printerItems = groupItemsByPrinter(selectedItems);
 
-    printerItems.forEach((printer, items) {
-      // Send the grouped items to the relevant printer.
-      log('Sending to $printer: ${items.length} items.');
-    });
-  }
+  //   printerItems.forEach((printer, items) {
+  //     // Send the grouped items to the relevant printer.
+  //     log('Sending to $printer: ${items.length} items.');
+  //   });
+  // }
 
   Widget buildLongDottedLine() {
     return Container(
@@ -934,7 +942,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                   padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                                 ),
                                                                 onPressed: () {
-                                                                  // handlePrintingJobs(context, ref, selectedOrder: widget.selectedOrder, specificArea: 'Kitchen');
                                                                   // Determine which areas to send to `handlePrintingJobs`
                                                                   final List<String> areasToPrint = selectedPrinters.contains("All")
                                                                       ? ["Cashier", "Kitchen", "Beverage"]
@@ -944,7 +951,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                     handlePrintingJobs(
                                                                       context,
                                                                       ref,
-                                                                      selectedOrder: widget.selectedOrder,
+                                                                      selectedOrder: printingOrder,
                                                                       specificArea: area,
                                                                     );
                                                                   }
@@ -955,7 +962,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                     1000, // Animation duration in milliseconds
                                                                   );
                                                                   Navigator.of(context).pop();
-                                                                  log('The SelectedOrders are : ${widget.selectedOrder}');
+                                                                  log('The printingOrder is : ${printingOrder}');
                                                                 },
                                                                 child: const Padding(
                                                                   padding: EdgeInsets.all(6),
@@ -1019,7 +1026,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                             padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
                                           onPressed: () {
-                                            widget.selectedOrder.discount = 0;
                                             Navigator.of(context).pop();
                                           },
                                           child: const Text(
