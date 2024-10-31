@@ -242,25 +242,58 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                               children: [
                                                                 Row(
                                                                   children: [
-                                                                    item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] != 'None'
-                                                                        ? Row(
-                                                                            children: [
-                                                                              Text(
-                                                                                "${item.selectedNoodlesType!['name']} ",
-                                                                                style: const TextStyle(fontSize: 14, color: Colors.white),
-                                                                              ),
-                                                                              // Display price only if it is greater than 0.00
-                                                                              if (item.selectedNoodlesType!['price'] != 0.00)
+                                                                    item.selection && item.selectedNoodlesType != null
+                                                                    ? Wrap(
+                                                                        children: [
+                                                                          for (var noodleType in item.selectedNoodlesType!.toList())
+                                                                            Wrap(
+                                                                              children: [
                                                                                 Text(
-                                                                                  "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
+                                                                                  "${noodleType['name']} ",
                                                                                   style: const TextStyle(
                                                                                     fontSize: 14,
-                                                                                    color: Color.fromARGB(255, 114, 226, 118),
+                                                                                    color: Colors.white,
                                                                                   ),
                                                                                 ),
-                                                                            ],
-                                                                          )
-                                                                        : const SizedBox.shrink(),
+                                                                                if (noodleType['price'] != null && noodleType['price'] != 0.00)
+                                                                                  Text(
+                                                                                    "( + ${noodleType['price'].toStringAsFixed(2)} )",
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 14,
+                                                                                      color: Color.fromARGB(255, 114, 226, 118),
+                                                                                    ),
+                                                                                  ),
+                                                                                Text(
+                                                                                  "${noodleType != item.selectedNoodlesType!.last ? ', ' : ''} ",
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                    // item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] != 'None'
+                                                                    //     ? Row(
+                                                                    //         children: [
+                                                                    //           Text(
+                                                                    //             "${item.selectedNoodlesType!['name']} ",
+                                                                    //             style: const TextStyle(fontSize: 14, color: Colors.white),
+                                                                    //           ),
+                                                                    //           // Display price only if it is greater than 0.00
+                                                                    //           if (item.selectedNoodlesType!['price'] != 0.00)
+                                                                    //             Text(
+                                                                    //               "( + ${item.selectedNoodlesType!['price'].toStringAsFixed(2)} )",
+                                                                    //               style: const TextStyle(
+                                                                    //                 fontSize: 14,
+                                                                    //                 color: Color.fromARGB(255, 114, 226, 118),
+                                                                    //               ),
+                                                                    //             ),
+                                                                    //         ],
+                                                                    //       )
+                                                                    //     : const SizedBox.shrink(),
                                                                     item.selection && item.selectedSoupOrKonLou != null
                                                                         ? Row(
                                                                             children: [

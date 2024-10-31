@@ -217,12 +217,13 @@ class SelectedOrder with ChangeNotifier {
 
         // Create a SetEquality with a MapEquality to compare sets of maps
         bool areSidesEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedSide, item.selectedSide);
+        bool areNoodlesTypeEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedNoodlesType, item.selectedNoodlesType);
 
         return i.name == item.name &&
             i.selectedDrink?['name'] == item.selectedDrink?['name'] &&
             i.selectedTemp?['name'] == item.selectedTemp?['name'] &&
             i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
-            i.selectedNoodlesType?['name'] == item.selectedNoodlesType?['name'] &&
+            areNoodlesTypeEqual &&
             i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
             i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
             areRemarksEqual && // Use the result of the deep equality check
@@ -260,10 +261,11 @@ class SelectedOrder with ChangeNotifier {
 
       // Create a SetEquality with a MapEquality to compare sets of maps
       bool areSidesEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedSide, item.selectedSide);
+      bool areNoodlesTypeEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedNoodlesType, item.selectedNoodlesType);
       return i.id == item.id &&
           i.name == item.name &&
           i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
-          i.selectedNoodlesType?['name'] == item.selectedNoodlesType?['name'] &&
+          areNoodlesTypeEqual &&
           i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
           i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
           areRemarksEqual && // Use the result of the deep equality check

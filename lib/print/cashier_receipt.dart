@@ -220,15 +220,31 @@ class CashierReceiptGenerator {
           //       linefeed: 1));
           //   }
           // }
-          if (item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!['name'] !="None") {
-            // Always print selectedNoodlesType
-            list.add(LineText(
-              type: LineText.TYPE_TEXT,
-              content: '  - ${item.selectedNoodlesType!["name"]}',  // Print selectedNoodlesType
-              align: LineText.ALIGN_LEFT,
-              x: 0,
-              linefeed: item.selectedNoodlesType == null ? 0 : 1,  // Dynamic linefeed
-            ));
+
+
+            String noodlesTypeText = '';
+
+          if (item.selection && item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty) {
+            // Build the add-on names string with commas between them
+            for (int i = 0; i < item.selectedNoodlesType!.length; i++) {
+              var noodleType = item.selectedNoodlesType!.elementAt(i);
+              noodlesTypeText += noodleType['name'];
+
+              // Add a comma and space except for the last add-on
+              if (i != item.selectedNoodlesType!.length - 1) {
+                noodlesTypeText += ', ';
+              }
+            }
+
+            // Use the addFormattedLines function for add-ons
+            addFormattedLines(
+              text: noodlesTypeText,
+              list: list,
+              maxLength: 26,
+              firstLinePrefix: '  - ',  // Start the first line with "- "
+              subsequentLinePrefix: '    '  // Start subsequent lines with two spaces
+            );
+          }
 
             // Conditionally print selectedMeePortion if it's not equal to "Normal Mee"
             if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
@@ -240,7 +256,7 @@ class CashierReceiptGenerator {
                   linefeed: 1,
                 ));
               }
-          }
+          
 
           // Check and add selectedMeatPortion to the receipt
           if (item.selection && item.selectedMeatPortion != null) {

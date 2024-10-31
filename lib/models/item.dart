@@ -46,7 +46,7 @@ class Item with ChangeNotifier {
   @HiveField(19)
   Map<String, dynamic>? _selectedChoice;
   @HiveField(20)
-  Map<String, dynamic>? selectedNoodlesType;
+  Set<Map<String, dynamic>>? selectedNoodlesType;
   @HiveField(21)
   Map<String, dynamic>? selectedMeatPortion;
   @HiveField(22)
@@ -121,7 +121,7 @@ class Item with ChangeNotifier {
         '\ttemp: $temp, \n'
         '\tselectedTemp: $selectedTemp, \n'
         '\tselectedChoice: $selectedChoice, \n'
-        '\tselectedType: $selectedNoodlesType, \n'
+        '\tselectedType: ${selectedNoodlesType?.toString()}, \n'
         '\tselectedMeatPortion: $selectedMeatPortion, \n'
         '\tselectedMeePortion: $selectedMeePortion, \n'
         '\tselectedAddOn: ${selectedSide?.toString()}, \n' // Keep as a Set
@@ -171,15 +171,22 @@ class Item with ChangeNotifier {
     List<Map<String, String>>? temp,
     Map<String, String>? selectedTemp,
     Map<String, dynamic>? selectedChoice,
-    Map<String, dynamic>? selectedNoodlesType,
+    Set<Map<String, dynamic>>? selectedNoodlesType,
     Map<String, dynamic>? selectedMeatPortion,
     Map<String, dynamic>? selectedMeePortion,
-    Set<Map<String, dynamic>>? selectedSide,
+    // Use a Map<String, dynamic> when you want to represent a collection of related data where each item can be uniquely identified by a key. It’s especially useful when you need to handle data in key-value pairs or JSON-like structures (e.g., a user profile or settings configuration).
+    Set<Map<String, dynamic>>? selectedSide, 
+    // Use Set<Map<String, dynamic>> when you need a collection of unique maps, particularly if you don’t care about the order of the elements and want to ensure there are no duplicates. This could be helpful when storing unique configurations or items that shouldn’t repeat.
     Map<String, dynamic>? selectedAddOn,
-    Map<String, dynamic>? itemRemarks, // Ensure this is included in parameters
+    Map<String, dynamic>? itemRemarks,
     bool? tapao,
     List<Map<String, dynamic>>? soupOrKonLou,
+    // Use List<Map<String, dynamic>> when you need an ordered collection of maps, and it’s acceptable for maps to be duplicated. This is useful for data where the order matters, like a list of user profiles, transaction history, or ordered items in a cart.
     Map<String, dynamic>? selectedSoupOrKonLou,
+
+  // •	Map<String, dynamic>: Use for single objects with key-value pairs (e.g., user settings).
+	// •	Set<Map<String, dynamic>>: Use for unique collections where order doesn’t matter (e.g., unique configurations).
+	// •	List<Map<String, dynamic>>: Use for ordered collections with possible duplicates (e.g., lists of items or records).
   }) {
     return Item(
       id: id ?? this.id,
@@ -201,7 +208,7 @@ class Item with ChangeNotifier {
       temp: temp ?? List<Map<String, String>>.from(this.temp),
       selectedTemp: selectedTemp ?? this.selectedTemp,
       selectedChoice: selectedChoice ?? (this.selectedChoice != null ? Map<String, dynamic>.from(this.selectedChoice!) : null),
-      selectedNoodlesType: selectedNoodlesType ?? (this.selectedNoodlesType != null ? Map<String, dynamic>.from(this.selectedNoodlesType!) : null),
+      selectedNoodlesType: selectedNoodlesType ?? (this.selectedNoodlesType != null ? Set<Map<String, dynamic>>.from(this.selectedNoodlesType!) : null),
       selectedMeatPortion: selectedMeatPortion ?? (this.selectedMeatPortion != null ? Map<String, dynamic>.from(this.selectedMeatPortion!) : null),
       selectedMeePortion: selectedMeePortion ?? (this.selectedMeePortion != null ? Map<String, dynamic>.from(this.selectedMeePortion!) : null),
       selectedSide: selectedSide ?? (this.selectedSide != null ? Set<Map<String, dynamic>>.from(this.selectedSide!) : null),
@@ -233,7 +240,7 @@ class Item with ChangeNotifier {
       'addOns': addOns.map((addon) => Map<String, dynamic>.from(addon)).toList(),
       'selectedDrink': selectedDrink != null ? Map<String, dynamic>.from(selectedDrink!) : null,
       'selectedChoice': selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
-      'selectedNoodlesType': selectedNoodlesType != null ? Map<String, dynamic>.from(selectedNoodlesType!) : null,
+      'selectedNoodlesType': selectedNoodlesType?.map((noodlesTypes) => Map<String, dynamic>.from(noodlesTypes)).toList(),
       'selectedMeatPortion': selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
       'selectedMeePortion': selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
       'selectedSide': selectedSide?.map((sides) => Map<String, dynamic>.from(sides)).toList(), // Convert set to list for JSON

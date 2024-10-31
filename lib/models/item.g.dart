@@ -49,7 +49,9 @@ class ItemAdapter extends TypeAdapter<Item> {
           .map((dynamic e) => (e as Map).cast<String, String>())
           .toList(),
       selectedTemp: (fields[18] as Map?)?.cast<String, String>(),
-      selectedNoodlesType: (fields[20] as Map?)?.cast<String, dynamic>(),
+      selectedNoodlesType: (fields[20] as List?)
+          ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toSet(),
       selectedMeatPortion: (fields[21] as Map?)?.cast<String, dynamic>(),
       selectedMeePortion: (fields[22] as Map?)?.cast<String, dynamic>(),
       selectedSide: (fields[23] as List?)
@@ -113,7 +115,7 @@ class ItemAdapter extends TypeAdapter<Item> {
       ..writeByte(19)
       ..write(obj._selectedChoice)
       ..writeByte(20)
-      ..write(obj.selectedNoodlesType)
+      ..write(obj.selectedNoodlesType?.toList())
       ..writeByte(21)
       ..write(obj.selectedMeatPortion)
       ..writeByte(22)
