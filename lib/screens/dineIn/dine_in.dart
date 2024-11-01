@@ -56,9 +56,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
     tables = ref.read(tablesProvider); // Directly read initial tables data
     orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
 
-    log('Initial Orders: ${orders.getAllOrders()}');
-    log('Loaded tables: $tables');
-    log('Loaded orderCounter: $orderCounter');
+    // log('Initial Orders: ${orders.getAllOrders()}');
+    // log('Loaded tables: $tables');
+    // log('Loaded orderCounter: $orderCounter');
 
     isLoading = false; // Set loading flag to false if needed
     handleMethod = defaultMethod;
@@ -117,8 +117,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
     ref.read(orderCounterProvider.notifier).updateOrderCounter(updatedOrderCounter);
 
     // Log the generated order number for debugging
-    log('Generated order number: $orderNumber');
-    log('Updated orderCounter to: $updatedOrderCounter');
+    // log('Generated order number: $orderNumber');
+    // log('Updated orderCounter to: $updatedOrderCounter');
 
     return orderNumber;
   }
@@ -204,7 +204,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           var orderNumber = currentTable['orderNumber'].toString();
           var order = orders.getOrder(orderNumber);
 
-          log('The selected Order Number is: $orderNumber');
+          // log('The selected Order Number is: $orderNumber');
           // log('Exisiting order number is $orderNumber');
           // log('Current orders: ${orders.getAllOrders}');
           // If an order with the same orderNumber exists, update selectedOrder with its details
@@ -214,7 +214,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
             selectedOrder = order;
             tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             selectedOrder.calculateItemsAndQuantities();
-            log('The selected Order is: $selectedOrder');
+            // log('The selected Order is: $selectedOrder');
             // _showCherryToast(
             //   'info', // Pass the icon key as a string
             //   'You have selected TABLE ${tables[index]['name']}.', // Interpolated title text
@@ -426,8 +426,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
       });
       // log('Menu closed. Current selectedOrder status: ${selectedOrder.status}');
     }
-    log('selectedOrder.items after copyWith: ${selectedOrder.items}');
-    log('tempCartItems copyWith: $tempCartItems');
+    // log('selectedOrder.items after copyWith: ${selectedOrder.items}');
+    // log('tempCartItems copyWith: $tempCartItems');
     handlefreezeMenu();
     updateOrderStatus();
   }
@@ -442,7 +442,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
       if (Hive.isBoxOpen('orders')) {
         var ordersBox = Hive.box('orders');
         var orders = ordersBox.get('orders');
-        log('Orders: $orders');
+        // log('Orders: $orders');
       }
     } catch (e) {
       log('An error occurred at DineIn Page void printOrders: $e');
@@ -665,7 +665,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
               ),
               onPressed: () async {
                 // Show CherryToast before any navigation or other tasks
-                log('$selectedTableIndex');
+                // log('$selectedTableIndex');
                 _showCherryToast(
                   'info', // Pass the icon key as a string
                   'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
@@ -867,7 +867,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     final totalOrdersPrice = ref.watch(ordersProvider.notifier).totalOrdersPrice;
     // Display a loading indicator if data is still being fetched
     if (isLoading && tables.isEmpty) {
-      log('Show info: $tables');
+      // log('Show info: $tables');
       return const Center(child: CircularProgressIndicator());
     }
     return Row(
@@ -909,15 +909,15 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                 setState(() {
                                   pressedButtonIndex = index;
 
-                                  log('Before updating tables: ${tables.where((table) => table['occupied'] == true).toList()}');
-                                  log('Table Name is: ${tables[index]['name']}');
+                                  // log('Before updating tables: ${tables.where((table) => table['occupied'] == true).toList()}');
+                                  // log('Table Name is: ${tables[index]['name']}');
 
-                                  final tablesData = ref.read(tablesProvider);
-                                  log('Provider tables data before update: $tablesData');
+                                  // final tablesData = ref.read(tablesProvider);
+                                  // log('Provider tables data before update: $tablesData');
 
                                   _handleSetTables(tables[index]['name'], index);
 
-                                  log('After updating tables: ${tables.where((table) => table['occupied'] == true).toList()}');
+                                  // log('After updating tables: ${tables.where((table) => table['occupied'] == true).toList()}');
                                 });
                               },
                               style: ElevatedButton.styleFrom(

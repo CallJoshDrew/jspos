@@ -8,10 +8,8 @@ import 'package:jspos/models/client_profile.dart';
 final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async {
   var box = await Hive.openBox<ClientProfile>('clientProfiles');
   
-  // Check if the box is empty and add the hard-coded profile if necessary
-  if (box.isEmpty) {
-    await addHardCodedClientProfile(box);
-  }
+  // Check if the box is empty and add or update the hard-coded profile if necessary
+  await addOrUpdateHardCodedClientProfile(box);
   
   // Future cloud sync logic can go here (e.g., download from cloud)
   log('Client profile loaded and synced (if needed).');
@@ -19,20 +17,34 @@ final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async 
   return box;
 });
 
-Future<void> addHardCodedClientProfile(Box<ClientProfile> box) async {
-  var profile = ClientProfile(
+// Modified function to add or update the client profile
+Future<void> addOrUpdateHardCodedClientProfile(Box<ClientProfile> box) async {
+  // Define the hard-coded profile data
+  var newProfile = ClientProfile(
     name: "TryMee IJM",
     businessRegistrationNumber: "123456789",
     tinNumber: "TIN987654321",
-    address1: "Lot 14, Ground Floor Utama Zone 3 Commercial",
-    address2: "Jalan Dataran BU3, Sandakan, Malaysia",
+    address1: "Lot 14, Ground Floor Utama Zone 3 Commercial, Jalan Dataran BU3",
+    address2: "90000 Sandakan, Sabah, Malaysia",
     postcode: "90000",
     state: "Sabah",
     contactNumber: "+6011-5873 0128",
     // logoPath: "/path/to/logo.png",
   );
 
-  await box.add(profile);
+  // Find if the profile with matching business registration number exists
+  var profileIndex = box.values.toList().indexWhere(
+      (profile) => profile.businessRegistrationNumber == newProfile.businessRegistrationNumber);
+
+  if (profileIndex != -1) {
+    // Update the existing entry
+    await box.putAt(profileIndex, newProfile);
+    log('Profile updated in Hive box.');
+  } else {
+    // Add the new profile if no matching profile is found
+    await box.add(newProfile);
+    log('Profile added to Hive box.');
+  }
 }
 
 

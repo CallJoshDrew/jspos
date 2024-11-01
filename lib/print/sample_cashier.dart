@@ -1,13 +1,9 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/client_profile.dart';
 
-// list.add(LineText(type: LineText.TYPE_TEXT, content: profile.name, weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
-// list.add(LineText(type: LineText.TYPE_TEXT, content: profile.address1, weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
-// list.add(LineText(type: LineText.TYPE_TEXT, content: profile.address2, weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
-
 // if printer width is 58mm then use linelength 32, if it is 80mm then use linelength 48
 String formatItemLine(String itemName, int quantity) {
-  const int lineLength = 32;
+  const int lineLength = 48;
   String quantityStr = quantity.toString();
 
   // Calculate remaining space for itemName by subtracting the quantity and space between them
@@ -20,7 +16,7 @@ String formatItemLine(String itemName, int quantity) {
 }
 
 String formatTextLine(String text1, String text2) {
-  const int lineLength = 32;
+  const int lineLength = 48;
   String quantityStr = text2.toString();
 
   // Calculate remaining space for itemName by subtracting the quantity and space between them
@@ -32,12 +28,11 @@ String formatTextLine(String text1, String text2) {
   return text1 + ' ' * spaces + quantityStr;
 }
 
-List<LineText> getSampleReceiptLines(ClientProfile profile) {
+List<LineText> getSampleCashierLines(ClientProfile profile) {
   List<LineText> list = [];
 
   list.add(LineText(type: LineText.TYPE_TEXT, content: 'JACKPOT 1288!!!', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
-  // list.add(LineText(type: LineText.TYPE_TEXT, content: '------------Details------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: '--------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
+  list.add(LineText(type: LineText.TYPE_TEXT, content: '------------------------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
 
   // Headers for Items and Quantity (aligned to fit within 32 characters)
   list.add(LineText(
@@ -47,7 +42,7 @@ List<LineText> getSampleReceiptLines(ClientProfile profile) {
     linefeed: 1,
     fontZoom: 1,
   ));
-  list.add(LineText(type: LineText.TYPE_TEXT, content: '--------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
+  list.add(LineText(type: LineText.TYPE_TEXT, content: '------------------------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
 
   // Use the helper function to format items
   list.add(LineText(
@@ -67,8 +62,7 @@ List<LineText> getSampleReceiptLines(ClientProfile profile) {
   ));
 
   // Footer for the details section
-  list.add(LineText(type: LineText.TYPE_TEXT, content: '--------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
-  // list.add(LineText(type: LineText.TYPE_TEXT, content: '------------- End -------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
+  list.add(LineText(type: LineText.TYPE_TEXT, content: '------------------------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
   list.add(LineText(
     type: LineText.TYPE_TEXT,
     content: 'Total 1,887',
@@ -77,7 +71,6 @@ List<LineText> getSampleReceiptLines(ClientProfile profile) {
     linefeed: 1,
   ));
   list.add(LineText(type: LineText.TYPE_TEXT, content: '------------', weight: 1, align: LineText.ALIGN_RIGHT, fontZoom: 1, linefeed: 1));
-  list.add(LineText(linefeed: 1));
   list.add(LineText(linefeed: 1));
 
   return list;

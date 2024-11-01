@@ -9,6 +9,7 @@ import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/order_receipt.dart';
+import 'package:jspos/print/sample_cashier.dart';
 import 'package:jspos/print/sample_receipt.dart';
 import 'package:jspos/providers/printer_provider.dart';
 import 'package:jspos/print/cashier_receipt.dart';
@@ -95,7 +96,7 @@ Future<void> handlePrintingJobs(
                     break;
                   case 'Cashier':
                   default:
-                    receiptContent = getSampleReceiptLines(profile);
+                    receiptContent = getSampleCashierLines(profile);
                     break;
                 }
               } else {
