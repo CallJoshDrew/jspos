@@ -159,8 +159,8 @@ class _HistoryPageState extends State<HistoryPage> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
       child: DataTable2(
-        columnSpacing: 8,
-        horizontalMargin: 8,
+        columnSpacing: 1,
+        horizontalMargin: 1,
         minWidth: 800,
         headingTextStyle: const TextStyle(fontSize: 14, color: Colors.white, inherit: false),
         dataRowHeight: 52, // Set row height (default is 48)
@@ -361,9 +361,9 @@ class _HistoryPageState extends State<HistoryPage> {
         child: Text(
           order.status,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Colors.white,
+            color: order.status == "Paid" ?  Colors.white : Colors.red,
           ),
         ),
       )),

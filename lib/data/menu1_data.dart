@@ -828,7 +828,7 @@ final List<Map<String, dynamic>> menu1 = [
   },
   {
     "id": "13",
-    "name": "Chinese Chop Rice",
+    "name": "Chicken Chop Rice",
     "category": "Dishes",
     "price": 10.00,
     "image": "assets/dishes/chicken_chop.png",
@@ -1209,6 +1209,36 @@ final List<Map<String, dynamic>> menu1 = [
     "selection": true,
     "drinks": [
       {"name": "Sky Juice (Water)", "Hot": 0.50, "Cold": 0.50}
+    ],
+    "temp": [
+      {"name": "Hot"},
+      {"name": "Cold"}
+    ]
+  },
+  {
+    "id": "92",
+    "name": "Special Drink",
+    "category": "Drinks",
+    "price": 3.00,
+    "image": "assets/drinks/specialDrinkRM3.png",
+    "selection": true,
+    "drinks": [
+      {"name": "Special Drink", "Hot": 3.00, "Cold": 4.00}
+    ],
+    "temp": [
+      {"name": "Hot"},
+      {"name": "Cold"}
+    ]
+  },
+  {
+    "id": "93",
+    "name": "Special Drink",
+    "category": "Drinks",
+    "price": 3.50,
+    "image": "assets/drinks/specialDrinkRM3_50.png",
+    "selection": true,
+    "drinks": [
+      {"name": "Special Drink", "Hot": 3.50, "Cold": 4.50}
     ],
     "temp": [
       {"name": "Hot"},

@@ -19,6 +19,7 @@ final List<Map<String, dynamic>> defaultTables = [
     { "id": 18, "name": "18", "occupied": false, "orderNumber": ""},
     { "id": 19, "name": "19", "occupied": false, "orderNumber": ""},
     { "id": 20, "name": "20", "occupied": false, "orderNumber": ""},
+    { "id": 21, "name": "21", "occupied": false, "orderNumber": ""},
   ];
 // final List<Map<String, dynamic>> defaultTables = [
 //     { "id": 1, "name": "1", "occupied": false, "orderNumber": ""},

@@ -9,8 +9,7 @@ import 'package:jspos/models/selected_order.dart';
 class OrdersNotifier extends StateNotifier<Orders> {
   final Box<Orders> _ordersBox;
 
-  OrdersNotifier(this._ordersBox)
-      : super(_ordersBox.get('orders', defaultValue: Orders(data: [])) ?? Orders());
+  OrdersNotifier(this._ordersBox) : super(_ordersBox.get('orders', defaultValue: Orders(data: [])) ?? Orders());
 
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
@@ -19,6 +18,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
     await _ordersBox.put('orders', state); // Save to Hive
     log('Order added/updated: ${order.orderNumber}');
   }
+
   // Method to find and update an existing order
   Future<void> updateOrder(SelectedOrder updatedOrder) async {
     final indexToUpdate = state.data.indexWhere((order) => order.orderNumber == updatedOrder.orderNumber);
@@ -36,6 +36,23 @@ class OrdersNotifier extends StateNotifier<Orders> {
       log('Order not found: ${updatedOrder.orderNumber}');
     }
   }
+
+  // Method to get an order by orderNumber
+  SelectedOrder? getOrder(String orderNumber) {
+    try {
+      return state.data.firstWhere((order) => order.orderNumber == orderNumber);
+    } catch (e) {
+      return null; // Return null if no matching order is found
+    }
+  }
+
+  // Getter to calculate the total of totalPrices from orders with status "Placed Order"
+  double get totalOrdersPrice {
+    return state.data
+        .where((order) => order.status == "Placed Order") // Filter for "Placed Order"
+        .fold(0.0, (sum, order) => sum + order.totalPrice); // Sum totalPrice of filtered orders
+  }
+
   // Method to cancel an order
   Future<void> cancelOrder(String orderNumber, List<String> categories) async {
     final indexToUpdate = state.data.indexWhere((order) => order.orderNumber == orderNumber);
@@ -63,6 +80,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
       log('Order not found for cancellation: $orderNumber');
     }
   }
+
   // Clear all orders
   Future<void> clearOrders() async {
     state = Orders(data: []); // Reset state

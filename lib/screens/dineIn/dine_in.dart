@@ -678,11 +678,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
                 try {
                   // Place the order and update UI state inside setState.
                   setState(() {
-                    log('Tables data: $tables');
-                    log('Selected table index: $selectedTableIndex');
+                    // log('Tables data: $tables');
+                    // log('Selected table index: $selectedTableIndex');
                     final updatedTables = ref.read(tablesProvider);
-                    log('Updated tables: $updatedTables');
-                    log('Selected table: ${updatedTables[selectedTableIndex]}');
+                    // log('Updated tables: $updatedTables');
+                    // log('Selected table: ${updatedTables[selectedTableIndex]}');
 
                     // Step 1: Check if the current table already has an order number from the provider.
                     final currentOrderNumber = updatedTables[selectedTableIndex]['orderNumber'];
@@ -692,14 +692,14 @@ class DineInPageState extends ConsumerState<DineInPage> {
                     if (currentOrderNumber == null || currentOrderNumber.isEmpty) {
                       // Step 2: Generate a new order number if it doesn't exist.
                       orderNumber = generateID(updatedTables[selectedTableIndex]['name'], ref);
-                      log('Generated orderNumber: $orderNumber');
+                      // log('Generated orderNumber: $orderNumber');
 
                       // Update the table provider and Hive with the new order number.
                       updateTables(selectedTableIndex, orderNumber, true);
                     } else {
                       // Use the existing order number from the provider.
                       orderNumber = currentOrderNumber;
-                      log('Using existing orderNumber: $orderNumber');
+                      // log('Using existing orderNumber: $orderNumber');
                     }
 
                     // Step 3: Update the selected order details with the correct order number.
@@ -712,7 +712,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
                     // Add or update the order in the orders list.
                     orders.addOrUpdateOrder(selectedOrder.copyWith());
-                    log('Order added: ${selectedOrder.orderNumber}');
+                    // Check if the selectedOrder's orderNumber exists in the orders list and log it if found.
+                    final matchingOrder = ref.read(ordersProvider.notifier).getOrder(selectedOrder.orderNumber);
+                    if (matchingOrder != null) {
+                      log('Matching orderNumber found: ${matchingOrder.orderNumber}');
+                    } else {
+                      log('No matching order found.');
+                    }
                   });
 
                   isTableSelected = true;
@@ -858,6 +864,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   Widget build(BuildContext context) {
     // Use ref.watch() to listen to tablesProvider for changes
     final tables = ref.watch(tablesProvider);
+    final totalOrdersPrice = ref.watch(ordersProvider.notifier).totalOrdersPrice;
     // Display a loading indicator if data is still being fetched
     if (isLoading && tables.isEmpty) {
       log('Show info: $tables');
@@ -871,7 +878,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
             ? Expanded(
                 flex: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+                  padding: const EdgeInsets.fromLTRB(10, 16, 10, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -894,6 +901,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
                             mainAxisSpacing: 10, // Add vertical spacing
                           ),
                           itemBuilder: (context, index) {
+                            // Get the matching order for the current table
+                            final matchingOrder = ref.read(ordersProvider.notifier).getOrder(tables[index]['orderNumber']);
+
                             return ElevatedButton(
                               onPressed: () {
                                 setState(() {
@@ -927,25 +937,26 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                       Text(
                                         'Table ${tables[index]['name']}',
                                         style: TextStyle(
-                                            fontSize: pressedButtonIndex == index ? 16 : 12,
+                                            fontSize: pressedButtonIndex == index ? 14 : 12,
                                             fontWeight: FontWeight.bold,
                                             color: pressedButtonIndex == index ? Colors.white : Colors.black),
                                       ),
-                                      if (tables[index]['occupied'] && pressedButtonIndex != index)
+                                      if (tables[index]['occupied'])
                                         Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), // Add space around the text
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // Add space around the text
                                           decoration: BoxDecoration(
-                                            color: Colors.green,
+                                            color: pressedButtonIndex == index ? Colors.white : Colors.green,
                                             borderRadius: BorderRadius.circular(5.0), // Rounded corners (optional)
                                           ),
                                           child: Row(
                                             children: [
                                               Text(
-                                                'SEATED',
+                                                // Show matchingOrder's totalPrice if found, otherwise fallback to selectedOrder's totalPrice
+                                                'RM ${(matchingOrder != null ? matchingOrder.totalPrice : selectedOrder.totalPrice).toStringAsFixed(2)}',
                                                 style: TextStyle(
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
-                                                  color: pressedButtonIndex == index ? Colors.white : Colors.white,
+                                                  color: pressedButtonIndex == index ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
                                                 ),
                                               ),
                                             ],
@@ -966,6 +977,39 @@ class DineInPageState extends ConsumerState<DineInPage> {
                           },
                         ),
                       ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xff1f2029), // Background color
+                                border: Border.all(
+                                  color: Colors.white10,
+                                ), // Border color and width
+                                borderRadius: BorderRadius.circular(5), // Optional rounded corners
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // const Icon(Icons.monetization_on_rounded, size: 20, color: Colors.green),
+                                  // const SizedBox(width: 8),
+                                  Text(
+                                    'To Collect RM ${totalOrdersPrice.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      // fontWeight: FontWeight.bold,
+                                      color: Colors.white, // Text color to match border or your preferred color
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (isTableSelected) const SizedBox(height: 16),
                       Row(
                         children: [
                           isTableSelected
