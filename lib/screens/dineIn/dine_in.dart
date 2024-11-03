@@ -1,13 +1,12 @@
-import 'dart:convert';
+// import 'dart:convert';
+// import 'package:intl/intl.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
-import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/providers/orders_provider.dart';
@@ -19,7 +18,6 @@ import 'package:jspos/shared/make_payment.dart';
 import 'package:jspos/data/menu1_data.dart';
 // import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
-import 'package:jspos/data/tables_data.dart';
 
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
@@ -439,17 +437,17 @@ class DineInPageState extends ConsumerState<DineInPage> {
     showMenu = !showMenu;
   }
 
-  void printOrders() async {
-    try {
-      if (Hive.isBoxOpen('orders')) {
-        var ordersBox = Hive.box('orders');
-        var orders = ordersBox.get('orders');
-        // log('Orders: $orders');
-      }
-    } catch (e) {
-      log('An error occurred at DineIn Page void printOrders: $e');
-    }
-  }
+  // void printOrders() async {
+  //   try {
+  //     if (Hive.isBoxOpen('orders')) {
+  //       var ordersBox = Hive.box('orders');
+  //       var orders = ordersBox.get('orders');
+  //       // log('Orders: $orders');
+  //     }
+  //   } catch (e) {
+  //     log('An error occurred at DineIn Page void printOrders: $e');
+  //   }
+  // }
 
   void handlePlaceOrderBtn() {
     _showComfirmPlaceOrdersDialog();

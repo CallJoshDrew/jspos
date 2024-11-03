@@ -4,13 +4,13 @@ import 'package:bluetooth_print/bluetooth_print_model.dart';
 // Function to split long text into multiple lines based on the max characters per line
 List<String> splitTextIntoLines(String text, int maxLength) {
   List<String> lines = [];
-  
+
   // Split text into chunks of maxLength
   while (text.length > maxLength) {
-    int splitIndex = text.lastIndexOf(' ', maxLength);  // Find last space within the limit
-    if (splitIndex == -1) splitIndex = maxLength;  // If no space, split at maxLength
-    lines.add(text.substring(0, splitIndex).trim());  // Add trimmed line
-    text = text.substring(splitIndex).trim();  // Move to the next part
+    int splitIndex = text.lastIndexOf(' ', maxLength); // Find last space within the limit
+    if (splitIndex == -1) splitIndex = maxLength; // If no space, split at maxLength
+    lines.add(text.substring(0, splitIndex).trim()); // Add trimmed line
+    text = text.substring(splitIndex).trim(); // Move to the next part
   }
 
   // Add the remaining text
@@ -22,13 +22,13 @@ List<String> splitTextIntoLines(String text, int maxLength) {
 }
 
 // Define a function to add lines with dynamic content and prefixes
-void addFormattedLines({
-  required String text, 
-  required List<LineText> list, 
-  required int maxLength, 
-  String firstLinePrefix = '', 
-  String subsequentLinePrefix = '  '  // Two spaces by default for subsequent lines
-}) {
+void addFormattedLines(
+    {required String text,
+    required List<LineText> list,
+    required int maxLength,
+    String firstLinePrefix = '',
+    String subsequentLinePrefix = '  ' // Two spaces by default for subsequent lines
+    }) {
   // Split the text into lines based on the character limit
   List<String> lines = splitTextIntoLines(text, maxLength);
 
@@ -36,10 +36,10 @@ void addFormattedLines({
   for (int i = 0; i < lines.length; i++) {
     list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: (i == 0 ? firstLinePrefix : subsequentLinePrefix) + lines[i],  // Add prefix based on line position
+      content: (i == 0 ? firstLinePrefix : subsequentLinePrefix) + lines[i], // Add prefix based on line position
       align: LineText.ALIGN_LEFT,
-      x: 0,
-      linefeed: 1
+      linefeed: 1,
+      fontZoom: 1,
     ));
   }
 }
@@ -72,7 +72,7 @@ void printItemWithQuantityAndPrice({
   for (int i = 1; i < lines.length; i++) {
     list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: '  ${lines[i]}',  // Add spaces for indentation
+      content: '  ${lines[i]}', // Add spaces for indentation
       align: LineText.ALIGN_LEFT,
       x: 0,
       linefeed: 0,

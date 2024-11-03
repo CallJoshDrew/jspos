@@ -29,7 +29,6 @@ Future<void> handlePrintingJobs(
   // log('Printer List: $printerList');
   // log('SelectedOrder for Printing is : $selectedOrder');
 
-
   final List<String> areas = specificArea != null ? [specificArea] : ['Kitchen', 'Beverage'];
   // removed cashier from specific
 
@@ -92,7 +91,7 @@ Future<void> handlePrintingJobs(
                     receiptContent = getSampleReceiptLines(profile);
                     break;
                   case 'Beverage':
-                receiptContent = getSampleReceiptLines(profile);
+                    receiptContent = getSampleReceiptLines(profile);
                     break;
                   case 'Cashier':
                   default:
@@ -107,11 +106,10 @@ Future<void> handlePrintingJobs(
 
                 switch (area) {
                   case 'Kitchen':
-                    if (hasDishesItems(selectedOrder!)) {
-                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(
-                          selectedOrder, printer.paperWidth, "Dishes");
+                    if (hasItemsInCategories(selectedOrder!, ['Dishes','Special', 'Add On'])) {
+                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, ["Dishes", "Special", "Add On"]);
                     } else {
-                      log('No "Dishes" items in the order for the Kitchen area.');
+                      log('No relevant items in the order for the Kitchen area.');
                       await bluetoothInstance.disconnect();
                       continue;
                     }
@@ -119,8 +117,7 @@ Future<void> handlePrintingJobs(
 
                   case 'Beverage':
                     if (hasDrinksItems(selectedOrder!)) {
-                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(
-                          selectedOrder, printer.paperWidth, "Drinks");
+                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, ["Drinks"]);
                     } else {
                       log('No "Drinks" items in the order for the Beverage area.');
                       await bluetoothInstance.disconnect();
@@ -130,8 +127,7 @@ Future<void> handlePrintingJobs(
 
                   case 'Cashier':
                   default:
-                    receiptContent = cashierReceiptGenerator.getCashierReceiptLines(
-                        selectedOrder!, profile);  // Pass the profile here
+                    receiptContent = cashierReceiptGenerator.getCashierReceiptLines(selectedOrder!, profile);
                     break;
                 }
               }
@@ -192,8 +188,8 @@ bool hasDrinksItems(SelectedOrder selectedOrder) {
   return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => item.category == 'Drinks');
 }
 
-bool hasDishesItems(SelectedOrder selectedOrder) {
-  return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => item.category == 'Dishes');
+bool hasItemsInCategories(SelectedOrder selectedOrder, List<String> categories) {
+  return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => categories.contains(item.category));
 }
 
 void showCherryToast(BuildContext context, String message, {Color? iconColor, IconData? icon}) {

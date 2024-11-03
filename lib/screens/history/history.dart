@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -28,10 +27,10 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
-     orders = ref.read(ordersProvider);
-     // Access OrdersNotifier and log payment times
+    orders = ref.read(ordersProvider);
+    // Access OrdersNotifier and log payment times
     ref.read(ordersProvider.notifier).logPaymentTimes();
-     _sortByTransactionDate(ascending: false); 
+    _sortByTransactionDate(ascending: false);
     // loadOrders();
   }
 
@@ -40,20 +39,6 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
     _controller.dispose();
     super.dispose();
   }
-
-  // Future<void> loadOrders() async {
-  //   try {
-  //     var ordersBox = await Hive.openBox<Orders>('orders');
-  //     var ordersData = ordersBox.get('orders');
-
-  //     setState(() {
-  //       orders = ordersData ?? Orders(data: []);
-  //       _sortByTransactionDate(ascending: false); // Sort by latest first
-  //     });
-  //   } catch (e) {
-  //     log('An error occurred while loading orders: $e');
-  //   }
-  // }
 
   void _sortByTransactionDate({required bool ascending}) {
     orders?.data.sort((a, b) {
@@ -140,6 +125,16 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
 
     // Safely call groupOrdersByDate() only when orders are loaded
     Map<String, List<SelectedOrder>> groupedOrders = orders != null ? groupOrdersByDate() : {};
+
+    // Check if there are no completed or cancelled orders
+    if (groupedOrders.isEmpty) {
+      return Center(
+        child: Text(
+          "No Completed Orders Yet",
+          style: TextStyle(fontSize: 16, color: Colors.grey[600]), // Adjust style as needed
+        ),
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -438,3 +433,20 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
     ];
   }
 }
+
+
+
+
+  // Future<void> loadOrders() async {
+  //   try {
+  //     var ordersBox = await Hive.openBox<Orders>('orders');
+  //     var ordersData = ordersBox.get('orders');
+
+  //     setState(() {
+  //       orders = ordersData ?? Orders(data: []);
+  //       _sortByTransactionDate(ascending: false); // Sort by latest first
+  //     });
+  //   } catch (e) {
+  //     log('An error occurred while loading orders: $e');
+  //   }
+  // }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/app/charts/bar_chart.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:jspos/screens/recommendation/top_five.dart';
 
 class RecommendPage extends StatefulWidget {
@@ -35,14 +35,14 @@ class _RecommendPageState extends State<RecommendPage> {
 
   @override
   Widget build(BuildContext context) {
-    int? operationStart;
-    int? operationClose;
+    // int? operationStart;
+    // int? operationClose;
 
-    // Set operational hours only if the selected tab is "Day"
-    if (selectedTab == 'Day') {
-      operationStart = 7; // 7 AM
-      operationClose = 20; // 8 PM in 24-hour format
-    }
+    // // Set operational hours only if the selected tab is "Day"
+    // if (selectedTab == 'Day') {
+    //   operationStart = 7; // 7 AM
+    //   operationClose = 20; // 8 PM in 24-hour format
+    // }
 
     return Container(
       decoration: const BoxDecoration(
@@ -145,14 +145,14 @@ class _RecommendPageState extends State<RecommendPage> {
 
   // Widget to display the total summary tab
   Widget _totalSumTab({required String title, required double amount}) {
-    final NumberFormat formatter = NumberFormat('#,##0.00');
-    String formattedAmount;
+    // final NumberFormat formatter = NumberFormat('#,##0.00');
+    // String formattedAmount;
 
-    if (amount % 1 == 0) {
-      formattedAmount = NumberFormat('#,##0').format(amount); // No decimal places
-    } else {
-      formattedAmount = formatter.format(amount); // Two decimal places
-    }
+    // if (amount % 1 == 0) {
+    //   formattedAmount = NumberFormat('#,##0').format(amount); // No decimal places
+    // } else {
+    //   formattedAmount = formatter.format(amount); // Two decimal places
+    // }
 
     return Container(
       padding: const EdgeInsets.only(top: 5, left: 10),
