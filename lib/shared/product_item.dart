@@ -148,22 +148,23 @@ class ProductItemState extends State<ProductItem> {
           }
           return sidesPrice;
         }
-         void sortSelectedNoodlesAlphabetically() {
-            // Convert the set to a list for sorting
-            List<Map<String, dynamic>> sortedSides = selectedNoodlesType.toList();
 
-            // Sort the list alphabetically by 'name'
-            sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+        void sortSelectedNoodlesAlphabetically() {
+          // Convert the set to a list for sorting
+          List<Map<String, dynamic>> sortedSides = selectedNoodlesType.toList();
 
-            // Update selectedSide to reflect the sorted order
-            selectedNoodlesType = sortedSides.toSet();
-          }
+          // Sort the list alphabetically by 'name'
+          sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
 
-          void sortSelectedSidesAlphabetically() {
-            List<Map<String, dynamic>> sortedSides = selectedSide.toList();
-            sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
-            selectedSide = sortedSides.toSet();
-          }
+          // Update selectedSide to reflect the sorted order
+          selectedNoodlesType = sortedSides.toSet();
+        }
+
+        void sortSelectedSidesAlphabetically() {
+          List<Map<String, dynamic>> sortedSides = selectedSide.toList();
+          sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+          selectedSide = sortedSides.toSet();
+        }
 
         void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
             double addOnsPrice, double soupOrKonlouPrice) {
@@ -463,8 +464,6 @@ class ProductItemState extends State<ProductItem> {
                                                                 ),
                                                               ),
                                                             ),
-
-                                                            
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
@@ -487,7 +486,7 @@ class ProductItemState extends State<ProductItem> {
                                                   //         ],
                                                   //       )
                                                   //     : const SizedBox.shrink(),
-                                                  
+
                                                   // next time add to display remarks
                                                   // if (itemRemarks.isNotEmpty)
                                                   // Text(
@@ -547,74 +546,62 @@ class ProductItemState extends State<ProductItem> {
                                                     )
                                                   : const SizedBox.shrink(),
                                               // Product Details after select side, noodles, choices, etc
-                                              item.selection && selectedAddOn != null
-                                                  ? Row(
-                                                      children: [
-                                                        Text(
-                                                          "Total Sides: ${(selectedSide.length)}",
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.yellow,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              item.selection && selectedSide.isNotEmpty
-                                                  ? Wrap(
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 500, // Adjust the width as needed
-                                                          child: RichText(
-                                                            text: TextSpan(
+                                              item.selection
+                                                      ? Row(
+                                                          children: [
+                                                            Text(
+                                                              "Total Sides: ${selectedSide.length}",
                                                               style: const TextStyle(
                                                                 fontSize: 14,
-                                                                color: Colors.white,
+                                                                color: Colors.yellow,
                                                               ),
-                                                              children: selectedSide.toList().asMap().entries.map((entry) {
-                                                                int idx = entry.key;
-                                                                // side is singular because represent single item
-                                                                Map<String, dynamic> side = entry.value;
-                                                                bool isLast = idx == selectedSide.length - 1;
-                                                                return generateSidesOnTextSpan(side, isLast);
-                                                              }).toList(),
                                                             ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              // item.selection && selectedAddOn != null
-                                              //     ? Text(
-                                              //         "Selected: ${getTotalSelectedSides()}",
-                                              //         style: const TextStyle(
-                                              //           fontSize: 14,
-                                              //           color: Colors.white,
-                                              //         ),
-                                              //       )
-                                              //     : const SizedBox.shrink(),
-                                              item.selection && selectedAddOn != null
-                                                  ? Row(
-                                                      children: [
-                                                        Text(
-                                                          "Extra Sides Charges: ${selectedAddOn?['name']}",
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.yellow,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(width: 5),
-                                                        if (selectedAddOn!['price'] > 0.00)
-                                                          Text(
-                                                            "( + ${(selectedAddOn?['price'].toStringAsFixed(2))})",
-                                                            style: const TextStyle(
-                                                              fontSize: 14,
-                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                            const SizedBox(width: 5),
+                                                            if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
+                                                              Text(
+                                                                "( ${selectedAddOn!['name']} Extra Sides ",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              ),
+                                                            const SizedBox(width: 5),
+                                                            if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
+                                                              Text(
+                                                                "+ ${(selectedAddOn!['price'] as double).toStringAsFixed(2)})",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                  item.selection && selectedSide.isNotEmpty
+                                                      ? Wrap(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 500, // Adjust the width as needed
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                  style: const TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Colors.white,
+                                                                  ),
+                                                                  // Convert Set to List here
+                                                                  children: selectedSide.toList().asMap().entries.map((entry) {
+                                                                    int idx = entry.key;
+                                                                    Map<String, dynamic> side = entry.value;
+                                                                    bool isLast = idx == selectedSide.length - 1;
+                                                                    return generateSidesOnTextSpan(side, isLast);
+                                                                  }).toList(),
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                      ],
-                                                    )
-                                                  : const SizedBox.shrink(),
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                             
                                             ],
                                           ),
                                         ],
@@ -858,14 +845,14 @@ class ProductItemState extends State<ProductItem> {
                                                 Wrap(
                                                   spacing: 6, // space between buttons horizontally
                                                   runSpacing: 0, // space between buttons vertically
-                                                  children: widget.noodlesTypes.map((noodletype) {
+                                                  children: widget.noodlesTypes.map((noodleType) {
                                                     return ElevatedButton(
                                                       onPressed: () {
                                                         setState(() {
-                                                          if (selectedNoodlesType.contains(noodletype)) {
-                                                            selectedNoodlesType.remove(noodletype);
+                                                          if (selectedNoodlesType.contains(noodleType)) {
+                                                            selectedNoodlesType.remove(noodleType);
                                                           } else {
-                                                            selectedNoodlesType.add(noodletype);
+                                                            selectedNoodlesType.add(noodleType);
                                                           }
                                                           sortSelectedNoodlesAlphabetically();
                                                           calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
@@ -874,7 +861,7 @@ class ProductItemState extends State<ProductItem> {
                                                       },
                                                       style: ButtonStyle(
                                                         backgroundColor: WidgetStateProperty.all<Color>(
-                                                          selectedNoodlesType.contains(noodletype) ? Colors.orange : Colors.white,
+                                                          selectedNoodlesType.any((n) => n['name'] == noodleType['name']) ? Colors.orange : Colors.white,
                                                         ),
                                                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                           RoundedRectangleBorder(
@@ -884,9 +871,9 @@ class ProductItemState extends State<ProductItem> {
                                                         padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                       ),
                                                       child: Text(
-                                                        '${noodletype['name']}',
+                                                        '${noodleType['name']}',
                                                         style: TextStyle(
-                                                          color: selectedNoodlesType.contains(noodletype)
+                                                          color: selectedNoodlesType.any((n) => n['name'] == noodleType['name'])
                                                               ? Colors.white
                                                               : Colors.black, // Change the text color based on the selected button
                                                           fontSize: 12,
@@ -949,7 +936,7 @@ class ProductItemState extends State<ProductItem> {
                                                       },
                                                       style: ButtonStyle(
                                                         backgroundColor: WidgetStateProperty.all<Color>(
-                                                          selectedSide.contains(side) ? Colors.orange : Colors.white,
+                                                          selectedSide.any((s) => s['name'] == side['name']) ? Colors.orange : Colors.white,
                                                         ),
                                                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                           RoundedRectangleBorder(
@@ -961,7 +948,7 @@ class ProductItemState extends State<ProductItem> {
                                                       child: Text(
                                                         '${side['name']}',
                                                         style: TextStyle(
-                                                          color: selectedSide.contains(side) ? Colors.white : Colors.black,
+                                                          color: selectedSide.any((s) => s['name'] == side['name']) ? Colors.white : Colors.black,
                                                           fontSize: 12,
                                                         ),
                                                       ),

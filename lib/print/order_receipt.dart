@@ -171,7 +171,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         if (item.selection && item.selectedSoupOrKonLou != null) {
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '${item.selectedSoupOrKonLou!["name"]}',
+            content: '- ${item.selectedSoupOrKonLou!["name"]}',
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1,
@@ -193,7 +193,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           // Add the fully built noodlesTypeText to the list, outside of the loop
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: noodlesTypeText,
+            content: '- $noodlesTypeText',
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1,
@@ -240,7 +240,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           String remarks = getFilteredRemarks(item.itemRemarks);
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: ' - $remarks', // Dynamic remarks with 'Remarks:' prefix
+            content: '- $remarks', // Dynamic remarks with 'Remarks:' prefix
             align: LineText.ALIGN_LEFT,
             linefeed: 1,
             fontZoom: 1,
@@ -250,7 +250,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: ' Total Sides: ${item.selectedSide!.length}', // Print meat portion if not "Normal"
+            content: 'Total Sides: ${item.selectedSide!.length}', // Print meat portion if not "Normal"
             align: LineText.ALIGN_LEFT,
             linefeed: 1,
             fontZoom: 1,
@@ -276,8 +276,8 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
               text: sidesText,
               list: list,
               maxLength: 26,
-              firstLinePrefix: ' - ', // Start the first line with " - "
-              subsequentLinePrefix: '   ' // Start subsequent lines with two spaces
+              firstLinePrefix: '- ', // Start the first line with " - "
+              subsequentLinePrefix: '  ' // Start subsequent lines with two spaces
               );
         }
         // Increment the index for the next item across all categories

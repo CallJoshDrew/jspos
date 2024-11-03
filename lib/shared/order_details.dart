@@ -616,6 +616,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           Map<String, dynamic>? selectedMeatPortion = item.selectedMeatPortion;
           Map<String, dynamic>? selectedMeePortion = item.selectedMeePortion;
           Set<Map<String, dynamic>> selectedSide = Set<Map<String, dynamic>>.from(item.selectedSide ?? {});
+          log('From the ORDER DETAILS selected Side is: $selectedSide');
+          log('Selected Side from item.selectedSide is: ${item.selectedSide}');
           Map<String, dynamic>? selectedSoupOrKonLou = item.selectedSoupOrKonLou;
           log('selected side are : $selectedSide');
           // The Map elements in selectedSide and item.selectedSide are the same Map objects.
@@ -848,9 +850,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           "( ${selectedChoice?['price'].toStringAsFixed(2)} )",
                                                           style: const TextStyle(
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white,
-                                                            // color: Color.fromARGB(255, 114, 226, 118),
+                                                            // fontWeight: FontWeight.bold,
+                                                            // color: Colors.white,
+                                                            color: Color.fromARGB(255, 114, 226, 118),
                                                           ),
                                                         )
                                                       ],
@@ -999,12 +1001,30 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       ? Row(
                                                           children: [
                                                             Text(
-                                                              "Total Sides: ${(selectedSide.length)}",
+                                                              "Total Sides: ${selectedSide.length}",
                                                               style: const TextStyle(
                                                                 fontSize: 14,
                                                                 color: Colors.yellow,
                                                               ),
                                                             ),
+                                                            const SizedBox(width: 5),
+                                                            if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
+                                                              Text(
+                                                                "( ${selectedAddOn!['name']} Extra Sides ",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              ),
+                                                            const SizedBox(width: 5),
+                                                            if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
+                                                              Text(
+                                                                "+ ${(selectedAddOn!['price'] as double).toStringAsFixed(2)})",
+                                                                style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                ),
+                                                              ),
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
@@ -1032,29 +1052,32 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
-
-                                                  item.selection && selectedAddOn != null
-                                                      ? Row(
-                                                          children: [
-                                                            Text(
-                                                              "Extra Sides Charges: ${selectedAddOn?['name']}",
-                                                              style: const TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors.yellow,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(width: 5),
-                                                            if (selectedAddOn!['price'] > 0.00)
-                                                              Text(
-                                                                "( + ${(selectedAddOn?['price'].toStringAsFixed(2))})",
-                                                                style: const TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                ),
-                                                              ),
-                                                          ],
-                                                        )
-                                                      : const SizedBox.shrink(),
+                                                  // Next need to update and separate meePortion and meatPortion from the remarks
+                                                  // item.itemRemarks != null && item.itemRemarks!.isNotEmpty
+                                                  //     ? Column(
+                                                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //         children: [
+                                                  //           Row(
+                                                  //             children: [
+                                                  //               const Text(
+                                                  //                 "Remarks: ",
+                                                  //                 style: TextStyle(
+                                                  //                   fontSize: 14,
+                                                  //                   color: Colors.yellow,
+                                                  //                 ),
+                                                  //               ),
+                                                  //               Text(
+                                                  //                 item.itemRemarks!.values.join(", "), // Get the values and join them with commas
+                                                  //                 style: const TextStyle(
+                                                  //                   fontSize: 14,
+                                                  //                   color: Colors.white,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ],
+                                                  //       )
+                                                  //     : const SizedBox.shrink(),
                                                 ],
                                               ),
                                             ],
@@ -1313,7 +1336,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           },
                                                           style: ButtonStyle(
                                                             backgroundColor: WidgetStateProperty.all<Color>(
-                                                              selectedNoodlesType.contains(noodleType) ? Colors.orange : Colors.white,
+                                                              selectedNoodlesType.any((n) => n['name'] == noodleType['name']) ? Colors.orange : Colors.white,
                                                             ),
                                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                               RoundedRectangleBorder(
@@ -1325,7 +1348,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           child: Text(
                                                             '${noodleType['name']}',
                                                             style: TextStyle(
-                                                              color: selectedNoodlesType.contains(noodleType) ? Colors.white : Colors.black,
+                                                              color:
+                                                                  selectedNoodlesType.any((n) => n['name'] == noodleType['name']) ? Colors.white : Colors.black,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -1389,7 +1413,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           },
                                                           style: ButtonStyle(
                                                             backgroundColor: WidgetStateProperty.all<Color>(
-                                                              selectedSide.contains(side) ? Colors.orange : Colors.white,
+                                                              selectedSide.any((s) => s['name'] == side['name']) ? Colors.orange : Colors.white,
                                                             ),
                                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                               RoundedRectangleBorder(
@@ -1401,7 +1425,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           child: Text(
                                                             '${side['name']}',
                                                             style: TextStyle(
-                                                              color: selectedSide.contains(side) ? Colors.white : Colors.black,
+                                                              color: selectedSide.any((s) => s['name'] == side['name']) ? Colors.white : Colors.black,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -1451,7 +1475,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               },
                                                               style: ButtonStyle(
                                                                 backgroundColor: WidgetStateProperty.all<Color>(
-                                                                  selectedSoupOrKonLou == soup ? Colors.orange : Colors.white,
+                                                                  selectedSoupOrKonLou != null && selectedSoupOrKonLou!['name'] == soup['name']
+                                                                      ? Colors.orange
+                                                                      : Colors.white,
                                                                 ),
                                                                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                                   RoundedRectangleBorder(
@@ -1463,7 +1489,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                               child: Text(
                                                                 '${soup['name']}',
                                                                 style: TextStyle(
-                                                                  color: selectedSoupOrKonLou == soup
+                                                                  color: selectedSoupOrKonLou != null && selectedSoupOrKonLou!['name'] == soup['name']
                                                                       ? Colors.white
                                                                       : Colors.black, // Change the text color based on the selected button
                                                                   fontSize: 12,
@@ -1537,7 +1563,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             },
                                                             style: ButtonStyle(
                                                               backgroundColor: WidgetStateProperty.all<Color>(
-                                                                selectedAddOn == addOn ? Colors.orange : Colors.white,
+                                                                selectedAddOn != null && selectedAddOn!['name'] == addOn['name'] ? Colors.orange : Colors.white,
                                                               ),
                                                               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                                 RoundedRectangleBorder(
@@ -1549,7 +1575,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             child: Text(
                                                               '+ ${addOn['name']}',
                                                               style: TextStyle(
-                                                                color: selectedAddOn == addOn
+                                                                color: selectedAddOn != null && selectedAddOn!['name'] == addOn['name']
                                                                     ? Colors.white
                                                                     : Colors.black, // Change the text color based on the selected button
                                                                 fontSize: 12,
@@ -1614,7 +1640,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           },
                                                           style: ButtonStyle(
                                                             backgroundColor: WidgetStateProperty.all<Color>(
-                                                              selectedMeePortion == meePortion ? Colors.orange : Colors.white,
+                                                              selectedMeePortion != null && selectedMeePortion!['name'] == meePortion['name']
+                                                                  ? Colors.orange
+                                                                  : Colors.white,
                                                             ),
                                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                               RoundedRectangleBorder(
@@ -1626,7 +1654,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           child: Text(
                                                             '${meePortion['name']}',
                                                             style: TextStyle(
-                                                              color: selectedMeePortion == meePortion
+                                                              color: selectedMeePortion != null && selectedMeePortion!['name'] == meePortion['name']
                                                                   ? Colors.white
                                                                   : Colors.black, // Change the text color based on the selected button
                                                               fontSize: 12,
@@ -1685,7 +1713,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           },
                                                           style: ButtonStyle(
                                                             backgroundColor: WidgetStateProperty.all<Color>(
-                                                              selectedMeatPortion == meatPortion ? Colors.orange : Colors.white,
+                                                              selectedMeatPortion != null && selectedMeatPortion!['name'] == meatPortion['name']
+                                                                  ? Colors.orange
+                                                                  : Colors.white,
                                                             ),
                                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                               RoundedRectangleBorder(
@@ -1697,7 +1727,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           child: Text(
                                                             '${meatPortion['name']}',
                                                             style: TextStyle(
-                                                              color: selectedMeatPortion == meatPortion
+                                                              color: selectedMeatPortion != null && selectedMeatPortion!['name'] == meatPortion['name']
                                                                   ? Colors.white
                                                                   : Colors.black, // Change the text color based on the selected button
                                                               fontSize: 12,
