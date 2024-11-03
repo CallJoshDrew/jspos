@@ -343,11 +343,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
     List<Item> sortedList2 = List.from(list2)..sort((a, b) => a.name.compareTo(b.name));
     // Compare the items in the sorted lists
     for (int i = 0; i < sortedList1.length; i++) {
+      log('Comparing items: ${sortedList1[i].name}, Tapao in list1: ${sortedList1[i].tapao}, Tapao in list2: ${sortedList2[i].tapao}');
       Map<String, dynamic> remarks1 = sortedList1[i].itemRemarks ?? {};
       Map<String, dynamic> remarks2 = sortedList2[i].itemRemarks ?? {};
 
       if (sortedList1[i].name != sortedList2[i].name ||
           sortedList1[i].quantity != sortedList2[i].quantity ||
+          sortedList1[i].tapao != sortedList2[i].tapao || 
           !const MapEquality().equals(remarks1, remarks2) ||
           !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
           !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||

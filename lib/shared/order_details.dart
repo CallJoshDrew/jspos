@@ -2008,6 +2008,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           onTap: () {
                                             setState(() {
                                               item.tapao = !item.tapao;
+                                              widget.updateOrderStatus!();
                                             });
                                           },
                                           child: Container(

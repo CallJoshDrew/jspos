@@ -26,8 +26,8 @@ Future<void> handlePrintingJobs(
 }) async {
   // Fetch printer list once at the beginning avoid using ref after this point
   final List<Printer> printerList = ref.read(printerListProvider);
-  log('Printer List: $printerList');
-  log('SelectedOrder for Printing is : $selectedOrder');
+  // log('Printer List: $printerList');
+  // log('SelectedOrder for Printing is : $selectedOrder');
 
 
   final List<String> areas = specificArea != null ? [specificArea] : ['Kitchen', 'Beverage'];
@@ -80,7 +80,7 @@ Future<void> handlePrintingJobs(
 
             if (isConnected) {
               log('Waiting 3 seconds before printing...');
-              await Future.delayed(const Duration(seconds: 4));
+              await Future.delayed(const Duration(seconds: 3));
               List<LineText> receiptContent;
 
               if (testPrint != null) {
@@ -142,7 +142,7 @@ Future<void> handlePrintingJobs(
               await bluetoothInstance.printReceipt(config, receiptContent);
               log('Successfully printed receipt for $area area.');
 
-              await Future.delayed(const Duration(seconds: 3));
+              await Future.delayed(const Duration(seconds: 1));
               await bluetoothInstance.disconnect();
               log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
 

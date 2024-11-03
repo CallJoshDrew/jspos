@@ -4,56 +4,79 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/shared/history_order.dart';
 import 'package:data_table_2/data_table_2.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class HistoryPage extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class HistoryPage extends ConsumerStatefulWidget {
   const HistoryPage({super.key});
 
   @override
-  State<HistoryPage> createState() => _HistoryPageState();
+  HistoryPageState createState() => HistoryPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
+class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProviderStateMixin {
   bool _sortAscending = true;
   int _sortColumnIndex = 0;
   Orders? orders;
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    loadOrders();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
+     orders = ref.read(ordersProvider);
+     // Access OrdersNotifier and log payment times
+    ref.read(ordersProvider.notifier).logPaymentTimes();
+     _sortByTransactionDate(ascending: false); 
+    // loadOrders();
   }
 
-  Future<void> loadOrders() async {
-    try {
-      var ordersBox = await Hive.openBox<Orders>('orders');
-      var ordersData = ordersBox.get('orders');
-
-      setState(() {
-        orders = ordersData ?? Orders(data: []);
-        _sortByTransactionDate(ascending: false); // Sort by latest first
-      });
-    } catch (e) {
-      log('An error occurred while loading orders: $e');
-    }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
+
+  // Future<void> loadOrders() async {
+  //   try {
+  //     var ordersBox = await Hive.openBox<Orders>('orders');
+  //     var ordersData = ordersBox.get('orders');
+
+  //     setState(() {
+  //       orders = ordersData ?? Orders(data: []);
+  //       _sortByTransactionDate(ascending: false); // Sort by latest first
+  //     });
+  //   } catch (e) {
+  //     log('An error occurred while loading orders: $e');
+  //   }
+  // }
 
   void _sortByTransactionDate({required bool ascending}) {
     orders?.data.sort((a, b) {
-      // Select the appropriate date strings
       var aTime = (a.paymentTime != "None" && a.paymentTime.isNotEmpty) ? a.paymentTime : a.cancelledTime;
       var bTime = (b.paymentTime != "None" && b.paymentTime.isNotEmpty) ? b.paymentTime : b.cancelledTime;
 
+      DateTime aDate;
+      DateTime bDate;
       try {
-        DateTime aDate = DateFormat('h:mm a, d MMMM yyyy').parse(aTime);
-        DateTime bDate = DateFormat('h:mm a, d MMMM yyyy').parse(bTime);
-        return ascending ? aDate.compareTo(bDate) : bDate.compareTo(aDate);
+        aDate = DateFormat('h:mm a, d MMMM yyyy').parse(aTime);
       } catch (e) {
-        log('Date parsing error: $e');
-        // In case of error, consider setting a default date, or skip the entry by returning 0
-        return 0;
+        log('Date parsing error for aTime: $aTime - $e');
+        aDate = DateTime(2024); // Default to a recent year
       }
+
+      try {
+        bDate = DateFormat('h:mm a, d MMMM yyyy').parse(bTime);
+      } catch (e) {
+        log('Date parsing error for bTime: $bTime - $e');
+        bDate = DateTime(2024); // Default to a recent year
+      }
+
+      return ascending ? aDate.compareTo(bDate) : bDate.compareTo(aDate);
     });
   }
 
@@ -104,51 +127,63 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Return a loading spinner if orders are not loaded yet
     if (orders == null) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: SpinKitCubeGrid(
+          color: Colors.green,
+          size: 50.0,
+          controller: _controller,
+        ),
+      );
     }
 
-    Map<String, List<SelectedOrder>> groupedOrders = groupOrdersByDate();
+    // Safely call groupOrdersByDate() only when orders are loaded
+    Map<String, List<SelectedOrder>> groupedOrders = orders != null ? groupOrdersByDate() : {};
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      // decoration: BoxDecoration(
-      //   color: Colors.blueGrey,
-      //   borderRadius: BorderRadius.circular(5.0), // Rounded corners (optional)
-      // ),
-      // Add scrollable container
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(5),
-        child: Column(
-          children: groupedOrders.entries.map((entry) {
-            String date = entry.key;
-            List<SelectedOrder> ordersForDate = entry.value;
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 100),
+          child: SingleChildScrollView(
+            child: Column(
+              children: groupedOrders.entries.map((entry) {
+                String date = entry.key;
+                List<SelectedOrder> ordersForDate = entry.value;
 
-            return Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(5.0), // Rounded corners (optional)
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    margin: const EdgeInsets.only(bottom: 6),
-                    child: Text(
-                      date,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        // fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(5.0), // Rounded corners (optional)
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        margin: const EdgeInsets.only(bottom: 6),
+                        child: Text(
+                          date,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            // fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(
+                        height: (ordersForDate.length * 52) + 40,
+                        child: _buildOrdersTable(ordersForDate),
+                      ),
+                    ],
                   ),
-                  Expanded(child: SizedBox(height: double.infinity, child: _buildOrdersTable(ordersForDate))),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ),
     );
@@ -161,7 +196,7 @@ class _HistoryPageState extends State<HistoryPage> {
       child: DataTable2(
         columnSpacing: 1,
         horizontalMargin: 1,
-        minWidth: 800,
+        // minWidth: 400,
         headingTextStyle: const TextStyle(fontSize: 14, color: Colors.white, inherit: false),
         dataRowHeight: 52, // Set row height (default is 48)
         headingRowHeight: 40, // Set header row height (default is 56)
@@ -345,7 +380,7 @@ class _HistoryPageState extends State<HistoryPage> {
             fontSize: 14,
             color: Colors.white,
           ),
-          textAlign: TextAlign.center,
+          // textAlign: TextAlign.center,
         ),
       )),
       DataCell(Center(
@@ -360,10 +395,10 @@ class _HistoryPageState extends State<HistoryPage> {
       DataCell(Center(
         child: Text(
           order.status,
-          textAlign: TextAlign.center,
+          // textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
-            color: order.status == "Paid" ?  Colors.white : Colors.red,
+            color: order.status == "Paid" ? Colors.white : Colors.red,
           ),
         ),
       )),

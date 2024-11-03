@@ -133,52 +133,51 @@ class SelectedOrder with ChangeNotifier {
   }
 
   SelectedOrder copyWith({
-  String? orderNumber,
-  String? tableName,
-  String? orderType,
-  String? orderDate,
-  String? orderTime,
-  String? status,
-  List<Item>? items,
-  double? subTotal,
-  double? serviceCharge,
-  double? totalPrice,
-  String? paymentMethod,
-  bool? showEditBtn,
-  Map<String, Map<String, int>>? categories,
-  double? amountReceived,
-  double? amountChanged,
-  double? roundingAdjustment,
-  int? totalQuantity,
-  String? paymentTime,
-  String? cancelledTime,
-  List<String>? categoryList,
-  int? discount,
-}) {
-  return SelectedOrder(
-    orderNumber: orderNumber ?? this.orderNumber,
-    tableName: tableName ?? this.tableName,
-    orderType: orderType ?? this.orderType,
-    orderDate: orderDate ?? this.orderDate,
-    orderTime: orderTime ?? this.orderTime,
-    status: status ?? this.status,
-    items: items ?? List.from(this.items), // Copy the items list
-    subTotal: subTotal ?? this.subTotal,
-    serviceCharge: serviceCharge ?? this.serviceCharge,
-    totalPrice: totalPrice ?? this.totalPrice,
-    paymentMethod: paymentMethod ?? this.paymentMethod,
-    showEditBtn: showEditBtn ?? this.showEditBtn,
-    categoryList: categoryList ?? this.categoryList,
-    amountReceived: amountReceived ?? this.amountReceived,
-    amountChanged: amountChanged ?? this.amountChanged,
-    roundingAdjustment: roundingAdjustment ?? this.roundingAdjustment,
-    totalQuantity: totalQuantity ?? this.totalQuantity,
-    paymentTime: paymentTime ?? this.paymentTime,
-    cancelledTime: cancelledTime ?? this.cancelledTime,
-    discount: discount ?? this.discount,
-  );
-}
-
+    String? orderNumber,
+    String? tableName,
+    String? orderType,
+    String? orderDate,
+    String? orderTime,
+    String? status,
+    List<Item>? items,
+    double? subTotal,
+    double? serviceCharge,
+    double? totalPrice,
+    String? paymentMethod,
+    bool? showEditBtn,
+    Map<String, Map<String, int>>? categories,
+    double? amountReceived,
+    double? amountChanged,
+    double? roundingAdjustment,
+    int? totalQuantity,
+    String? paymentTime,
+    String? cancelledTime,
+    List<String>? categoryList,
+    int? discount,
+  }) {
+    return SelectedOrder(
+      orderNumber: orderNumber ?? this.orderNumber,
+      tableName: tableName ?? this.tableName,
+      orderType: orderType ?? this.orderType,
+      orderDate: orderDate ?? this.orderDate,
+      orderTime: orderTime ?? this.orderTime,
+      status: status ?? this.status,
+      items: items ?? List.from(this.items), // Copy the items list
+      subTotal: subTotal ?? this.subTotal,
+      serviceCharge: serviceCharge ?? this.serviceCharge,
+      totalPrice: totalPrice ?? this.totalPrice,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      showEditBtn: showEditBtn ?? this.showEditBtn,
+      categoryList: categoryList ?? this.categoryList,
+      amountReceived: amountReceived ?? this.amountReceived,
+      amountChanged: amountChanged ?? this.amountChanged,
+      roundingAdjustment: roundingAdjustment ?? this.roundingAdjustment,
+      totalQuantity: totalQuantity ?? this.totalQuantity,
+      paymentTime: paymentTime ?? this.paymentTime,
+      cancelledTime: cancelledTime ?? this.cancelledTime,
+      discount: discount ?? this.discount,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -269,7 +268,8 @@ class SelectedOrder with ChangeNotifier {
           i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
           i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
           areRemarksEqual && // Use the result of the deep equality check
-          areSidesEqual; // Check if the selectedSide sets are equal
+          areSidesEqual && // Check if the selectedSide sets are equal
+          i.tapao == item.tapao;
     });
 
     if (existingItem != null) {

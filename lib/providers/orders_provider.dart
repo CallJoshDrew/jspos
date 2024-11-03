@@ -11,6 +11,12 @@ class OrdersNotifier extends StateNotifier<Orders> {
 
   OrdersNotifier(this._ordersBox) : super(_ordersBox.get('orders', defaultValue: Orders(data: [])) ?? Orders());
 
+  // Method to log payment times for all orders
+  void logPaymentTimes() {
+    final paymentTimes = state.data.map((order) => order.paymentTime).toList();
+    log('Payment Times: $paymentTimes');
+  }
+
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
     await state.addOrUpdateOrder(order);

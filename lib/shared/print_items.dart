@@ -93,7 +93,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     setState(() {
       printingOrder.items = selectedItems.values.expand((items) => items).map((item) => item.copyWith()).toList();
     });
-    log('${printingOrder.items}');
+    // log('${printingOrder.items}');
   }
 
   // Function to toggle item selection
@@ -132,7 +132,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
       // Update isAnyCategorySelected
       isAnyCategorySelected = selectedItems.values.any((items) => items.isNotEmpty);
       updatePrintingOrderItems();
-      log('$category items toggled');
+      // log('$category items toggled');
     });
   }
 
@@ -152,7 +152,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
       // Update isAnyCategorySelected
       isAnyCategorySelected = true;
       updatePrintingOrderItems();
-      log('All items selected in all categories');
+      // log('All items selected in all categories');
     });
   }
 
@@ -941,28 +941,51 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                   ),
                                                                   padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                                 ),
-                                                                onPressed: () {
-                                                                  // Determine which areas to send to `handlePrintingJobs`
+                                                                onPressed: () async {
+                                                                  if (context.mounted) {
+                                                                    _showCherryToast(
+                                                                      'info',
+                                                                      'Please wait while printing ${widget.selectedOrder.orderNumber} is in the process',
+                                                                      5000, // Toast duration in milliseconds
+                                                                      5000, // Animation duration in milliseconds
+                                                                    );
+                                                                  }
+                                                                  if (context.mounted) {
+                                                                    Navigator.of(context).pop(); 
+                                                                  }
+                                                                  // Ensure selected areas to print are set correctly
                                                                   final List<String> areasToPrint = selectedPrinters.contains("All")
                                                                       ? ["Cashier", "Kitchen", "Beverage"]
                                                                       : selectedPrinters.toList();
 
+                                                                  // Sequentially process each printing job
                                                                   for (var area in areasToPrint) {
-                                                                    handlePrintingJobs(
+                                                                    // Use mounted check before each handlePrintingJobs call, in case of async gaps
+                                                                    if (!mounted) return; // Exit if the widget is unmounted
+
+                                                                    await handlePrintingJobs(
                                                                       context,
                                                                       ref,
                                                                       selectedOrder: printingOrder,
                                                                       specificArea: area,
                                                                     );
                                                                   }
-                                                                  _showCherryToast(
-                                                                    'info', // Pass the icon key as a string
-                                                                    'Printing ${widget.selectedOrder.orderNumber} is in the process',
-                                                                    2000, // Toast duration in milliseconds
-                                                                    1000, // Animation duration in milliseconds
-                                                                  );
-                                                                  Navigator.of(context).pop();
-                                                                  log('The printingOrder is : ${printingOrder}');
+                                                                  if (context.mounted) {
+                                                                    _showCherryToast(
+                                                                      'info',
+                                                                      'Printing is completed',
+                                                                      2000, // Toast duration in milliseconds
+                                                                      1000, // Animation duration in milliseconds
+                                                                    );
+                                                                  }
+
+                                                                  // Guard all context-based operations, including toast and navigation
+                                                                  if (context.mounted) {
+                                                                    Navigator.of(context).pop(); // Close dialog safely if mounted
+                                                                    Navigator.of(context).pop(); // Close dialog safely if mounted
+                                                                  }
+
+                                                                  // log('The printingOrder is: $printingOrder');
                                                                 },
                                                                 child: const Padding(
                                                                   padding: EdgeInsets.all(6),
