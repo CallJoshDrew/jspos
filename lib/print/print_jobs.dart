@@ -79,7 +79,7 @@ Future<void> handlePrintingJobs(
 
             if (isConnected) {
               log('Waiting 3 seconds before printing...');
-              await Future.delayed(const Duration(seconds: 3));
+              await Future.delayed(const Duration(seconds: 4));
               List<LineText> receiptContent;
 
               if (testPrint != null) {
@@ -108,6 +108,7 @@ Future<void> handlePrintingJobs(
                   case 'Kitchen':
                     if (hasItemsInCategories(selectedOrder!, ['Dishes','Special', 'Add On'])) {
                       receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, ["Dishes", "Special", "Add On"]);
+                      log('Paper width Kitchen printer is ${printer.paperWidth}');
                     } else {
                       log('No relevant items in the order for the Kitchen area.');
                       await bluetoothInstance.disconnect();
@@ -118,6 +119,7 @@ Future<void> handlePrintingJobs(
                   case 'Beverage':
                     if (hasDrinksItems(selectedOrder!)) {
                       receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, ["Drinks"]);
+                      log('Paper width Beverage printer is ${printer.paperWidth}');
                     } else {
                       log('No "Drinks" items in the order for the Beverage area.');
                       await bluetoothInstance.disconnect();
@@ -138,7 +140,7 @@ Future<void> handlePrintingJobs(
               await bluetoothInstance.printReceipt(config, receiptContent);
               log('Successfully printed receipt for $area area.');
 
-              await Future.delayed(const Duration(seconds: 1));
+              await Future.delayed(const Duration(seconds: 3));
               await bluetoothInstance.disconnect();
               log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
 

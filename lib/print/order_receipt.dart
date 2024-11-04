@@ -41,18 +41,18 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
     List<LineText> list = [];
 
     // Use the helper function to get the configuration based on paperWidth
-    PaperSizeConfig paperSizeConfig = getPaperSizeConfig(paperWidth);
+    // PaperSizeConfig paperSizeConfig = getPaperSizeConfig(paperWidth);
 
     // Access the configuration values from the enum
     // int orderTypeWidth = paperSizeConfig.orderTypeWidth;
     // int orderTimeWidth = paperSizeConfig.orderTimeWidth;
     // int qtyWidth = paperSizeConfig.qtyWidth;
-    String dottedLineWidth = paperSizeConfig.dottedLineWidth;
-    int itemQtyWidth = paperSizeConfig.itemQtyWidth;
-    int totalWidth = paperSizeConfig.totalWidth;
-    int totalDottedLineWidth = paperSizeConfig.totalDottedLineWidth;
-    int totalQtyWidth = paperSizeConfig.totalQtyWidth;
-    String lastDottedLineWidth = paperSizeConfig.lastDottedLineWidth;
+    // String dottedLineWidth = paperSizeConfig.dottedLineWidth;
+    // int itemQtyWidth = paperSizeConfig.itemQtyWidth;
+    // int totalWidth = paperSizeConfig.totalWidth;
+    // int totalDottedLineWidth = paperSizeConfig.totalDottedLineWidth;
+    // int totalQtyWidth = paperSizeConfig.totalQtyWidth;
+    // String lastDottedLineWidth = paperSizeConfig.lastDottedLineWidth;
 
     // Calculate the total quantity using an anonymous function
     int totalQuantityByCategory = (() {
@@ -66,7 +66,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
     })();
 
     String formatTwoTextLine(String text1, String text2) {
-      const int lineLength = 32; // 48 for 80mm printer width?
+      int lineLength = paperWidth == '58 mm' ? 32 : 48;
       String quantityStr = text2.toString();
 
       // Calculate remaining space for itemName by subtracting the quantity and space between them
@@ -94,8 +94,13 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
       linefeed: 1,
       fontZoom: 1,
     ));
-    list.add(
-        LineText(type: LineText.TYPE_TEXT, content: '--------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: paperWidth == '58 mm' ? '--------------------------------' : '------------------------------------------------',
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        fontZoom: 1,
+        linefeed: 1));
     // list.add(LineText(type: LineText.TYPE_TEXT, content: '------------------------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
@@ -104,8 +109,13 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
       linefeed: 1,
       fontZoom: 1,
     ));
-    list.add(
-        LineText(type: LineText.TYPE_TEXT, content: '--------------------------------', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 1, linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: paperWidth == '58 mm' ? '--------------------------------' : '------------------------------------------------',
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        fontZoom: 1,
+        linefeed: 1));
     // Initialize the index outside of the category loop for continuous increment
     int itemIndex = 1;
     // Loop through selectedOrder items to print each item
@@ -121,28 +131,28 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           // Print the originalName first
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '$itemIndex.${item.originalName}',
+            content: formatTwoTextLine('$itemIndex.${item.originalName}', "x${item.quantity}"),
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1, // Move to the next line after printing originalName
           ));
 
           // Then print selectedChoice name and quantity on the same line
-          itemName = itemName = formatTwoTextLine("- ${item.selectedChoice!['name']}", "${item.quantity}");
+          itemName = itemName = "- ${item.selectedChoice!['name']}";
           linefeed = 0;
         }
         // If the item has a selected drink and temperature
         else if (item.selectedDrink != null && item.selectedTemp != null) {
           itemName = item.originalName == item.selectedDrink!['name']
               ? item.originalName
-              : '${item.originalName} ${item.selectedDrink?['name']} (${item.selectedTemp?['name']})';
+              : '${item.originalName} ${item.selectedDrink?['name']}(${item.selectedTemp?['name']})';
           // Format itemName and quantity with formatTwoTextLine
-          itemName = formatTwoTextLine("$itemIndex.$itemName", "${item.quantity}");
+          itemName = formatTwoTextLine("$itemIndex.$itemName", "x${item.quantity}");
           linefeed = 1;
         }
         // Default case with just the item name
         else {
-          itemName = formatTwoTextLine("$itemIndex.${item.name}", "${item.quantity}");
+          itemName = formatTwoTextLine("$itemIndex.${item.name}", "x${item.quantity}");
           linefeed = 1;
         }
 
@@ -280,29 +290,46 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
               subsequentLinePrefix: '  ' // Start subsequent lines with two spaces
               );
         }
+        // Check and display Tapao if it is true
+        if (item.tapao != false) {
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: '(Take Away / Tapao)',
+            align: LineText.ALIGN_LEFT,
+            linefeed: 1,
+            fontZoom: 1,
+          ));
+        }
         // Increment the index for the next item across all categories
         itemIndex++;
       }
     }
-    list.add(LineText(type: LineText.TYPE_TEXT, content: dottedLineWidth, weight: 1, align: LineText.ALIGN_CENTER, linefeed: 1));
-    list.add(LineText(type: LineText.TYPE_TEXT, content: 'Total:', x: totalWidth, relativeX: 0, linefeed: 0));
-    // Determine the relativeX position based on the totalQuantity's number of digits
-    int totalQuantityXPosition = totalQtyWidth + 40; // Default for 2 digits
-    if (selectedOrder.totalQuantity.toString().length == 1) {
-      totalQuantityXPosition = totalQtyWidth + 50; // Adjust for 1 digit
-    } else if (selectedOrder.totalQuantity.toString().length == 3) {
-      totalQuantityXPosition = totalQtyWidth + 30; // Adjust for 3 digits
-    }
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: paperWidth == '58 mm' ? '--------------------------------' : '------------------------------------------------',
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        fontZoom: 1,
+        linefeed: 1));
+    list.add(
+        LineText(type: LineText.TYPE_TEXT, content: 'Total: ${totalQuantityByCategory.toString()}', align: LineText.ALIGN_RIGHT, fontZoom: 1, linefeed: 1));
+    // // Determine the relativeX position based on the totalQuantity's number of digits
+    // int totalQuantityXPosition = totalQtyWidth + 40; // Default for 2 digits
+    // if (selectedOrder.totalQuantity.toString().length == 1) {
+    //   totalQuantityXPosition = totalQtyWidth + 50; // Adjust for 1 digit
+    // } else if (selectedOrder.totalQuantity.toString().length == 3) {
+    //   totalQuantityXPosition = totalQtyWidth + 30; // Adjust for 3 digits
+    // }
 
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: totalQuantityByCategory.toString(),
-        x: totalQuantityXPosition, // Use the calculated relativeX value
+        content: '-------------',
+        // content: paperWidth == '58 mm' ? '-------------' : '-------------',
+        weight: 1,
+        align: LineText.ALIGN_RIGHT,
+        fontZoom: 1,
         linefeed: 1));
-    list.add(LineText(type: LineText.TYPE_TEXT, content: lastDottedLineWidth, weight: 1, align: LineText.ALIGN_CENTER, x: totalDottedLineWidth, linefeed: 1));
-    list.add(LineText(linefeed: 1));
-    list.add(LineText(linefeed: 1));
-    if (paperWidth == '80 mm') {
+    if (paperWidth == '58 mm') {
       list.add(LineText(linefeed: 1));
       list.add(LineText(linefeed: 1));
     }
