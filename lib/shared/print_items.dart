@@ -375,6 +375,17 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
+    // Create a map with index and originalName for each item in selectedOrder.items
+    Map<int, String> itemNamesMap = {
+      for (int i = 0; i < widget.selectedOrder.items.length; i++) i: widget.selectedOrder.items[i].originalName,
+    };
+    // Log each item's selectedDrink for debugging
+    widget.selectedOrder.items.asMap().forEach((index, item) {
+      log('Item $index: ${item.originalName}, selectedDrink: ${item.selectedDrink}');
+    });
+
+// Log the map to see the index and originalName of each item
+    log('selectedOrder.items.originalName: $itemNamesMap');
 
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
@@ -651,14 +662,19 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                       ],
                                                                     )
                                                                   : Text(
-                                                                      item.selectedDrink != null
-                                                                          ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
-                                                                          : '${index + 1}.${item.originalName}',
+                                                                      (item.selectedDrink != null && item.selectedDrink!['name']?.isNotEmpty == true)
+                                                                          ? (item.originalName == item.selectedDrink!['name']
+                                                                              ? '${index + 1}.${item.originalName}  - ${item.selectedTemp?["name"]}'
+                                                                              : '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}')
+                                                                          : '${index + 1}.${item.originalName}', // Display originalName if selectedDrink is null or empty
                                                                       style: const TextStyle(
                                                                         fontSize: 14,
                                                                         color: Colors.white,
                                                                       ),
                                                                     ),
+                                                              // item.selectedDrink != null
+                                                              //         ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
+                                                              //         : '${index + 1}.${item.originalName}',
                                                             ],
                                                           ),
                                                           Padding(
@@ -760,6 +776,15 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                               color: Colors.yellow,
                                                                             ),
                                                                           ),
+                                                                          const SizedBox(width: 5),
+                                                                          if (item.selectedAddOn != null && item.selectedAddOn!['price'] > 0.00)
+                                                                            Text(
+                                                                              "( ${item.selectedAddOn!['name']} Extra Sides )",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Color.fromARGB(255, 114, 226, 118),
+                                                                              ),
+                                                                            ),
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
@@ -951,7 +976,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                     );
                                                                   }
                                                                   if (context.mounted) {
-                                                                    Navigator.of(context).pop(); 
+                                                                    Navigator.of(context).pop();
                                                                   }
                                                                   // Ensure selected areas to print are set correctly
                                                                   final List<String> areasToPrint = selectedPrinters.contains("All")

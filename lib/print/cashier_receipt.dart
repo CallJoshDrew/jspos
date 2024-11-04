@@ -140,7 +140,7 @@ class CashierReceiptGenerator {
     // Loop through selectedOrder items to print each item
     int itemIndex = 1; // Initialize the index outside of the category loop for continuous increment
 
-    for (var category in ['Cakes', 'Dishes', 'Drinks', 'Add On']) {
+    for (var category in ['Cakes', 'Dishes', 'Drinks', 'Special', 'Add On']) {
       // Get items for the current category
       var categoryItems = selectedOrder.items.where((item) => item.category == category).toList();
       

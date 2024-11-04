@@ -385,7 +385,7 @@ class ProductItemState extends State<ProductItem> {
                                                       "( ${selectedChoice?['price'].toStringAsFixed(2)} )",
                                                       style: const TextStyle(
                                                         fontSize: 14,
-                                                        // fontWeight: FontWeight.bold,
+                                                        fontWeight: FontWeight.bold,
                                                         // color: Colors.white,
                                                         color: Color.fromARGB(255, 114, 226, 118),
                                                       ),

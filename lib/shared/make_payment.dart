@@ -340,10 +340,11 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                         ],
                                                                       )
                                                                     : Text(
-                                                                        // getItemNameWithLog(index, item),
-                                                                        item.selectedDrink != null
-                                                                            ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
-                                                                            : '${index + 1}.${item.originalName}',
+                                                                        (item.selectedDrink != null && item.selectedDrink!['name']?.isNotEmpty == true)
+                                                                            ? (item.originalName == item.selectedDrink!['name']
+                                                                                ? '${index + 1}.${item.originalName}  - ${item.selectedTemp?["name"]}'
+                                                                                : '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}')
+                                                                            : '${index + 1}.${item.originalName}', // Display originalName if selectedDrink is null or empty
                                                                         style: const TextStyle(
                                                                           fontSize: 14,
                                                                           color: Colors.white,
@@ -493,6 +494,24 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                                 color: Colors.yellow,
                                                                               ),
                                                                             ),
+                                                                            const SizedBox(width: 5),
+                                                                            if (item.selectedAddOn != null && item.selectedAddOn!['price'] > 0.00)
+                                                                              Text(
+                                                                                "( ${item.selectedAddOn!['name']} Extra Sides ",
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 14,
+                                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                                ),
+                                                                              ),
+                                                                            const SizedBox(width: 5),
+                                                                            if (item.selectedAddOn != null && item.selectedAddOn!['price'] > 0.00)
+                                                                              Text(
+                                                                                "+ ${(item.selectedAddOn!['price'] as double).toStringAsFixed(2)})",
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 14,
+                                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                                ),
+                                                                              ),
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
@@ -529,28 +548,28 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
-                                                                  item.selection && item.selectedAddOn != null
-                                                                      ? Row(
-                                                                          children: [
-                                                                            Text(
-                                                                              "Extra Sides Charges: ${item.selectedAddOn?['name']}",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Colors.yellow,
-                                                                              ),
-                                                                            ),
-                                                                            const SizedBox(width: 5),
-                                                                            if (item.selectedAddOn!['price'] > 0.00)
-                                                                              Text(
-                                                                                "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
-                                                                                style: const TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                                ),
-                                                                              ),
-                                                                          ],
-                                                                        )
-                                                                      : const SizedBox.shrink(),
+                                                                  // item.selection && item.selectedAddOn != null
+                                                                  //     ? Row(
+                                                                  //         children: [
+                                                                  //           Text(
+                                                                  //             "Extra Sides Charges: ${item.selectedAddOn?['name']}",
+                                                                  //             style: const TextStyle(
+                                                                  //               fontSize: 14,
+                                                                  //               color: Colors.yellow,
+                                                                  //             ),
+                                                                  //           ),
+                                                                  //           const SizedBox(width: 5),
+                                                                  //           if (item.selectedAddOn!['price'] > 0.00)
+                                                                  //             Text(
+                                                                  //               "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
+                                                                  //               style: const TextStyle(
+                                                                  //                 fontSize: 14,
+                                                                  //                 color: Color.fromARGB(255, 114, 226, 118),
+                                                                  //               ),
+                                                                  //             ),
+                                                                  //         ],
+                                                                  //       )
+                                                                  //     : const SizedBox.shrink(),
                                                                   Wrap(
                                                                     children: [
                                                                       item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
