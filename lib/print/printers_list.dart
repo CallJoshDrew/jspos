@@ -41,19 +41,15 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                 return ListTile(
                   title: Text(
                     '${printer.assignedArea} Area',
-                    style: const TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, color: Colors.green, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(printer.name),
-                      Text(printer.macAddress),
-                      Text(
-                        'Paper: ${printer.paperWidth}',
-                      ),
-                      Text(
-                        'Interface: ${printer.interface}',
-                      ),
+                      Text(printer.name, style: const TextStyle(fontSize: 16)),
+                      Text(printer.macAddress, style: const TextStyle(fontSize: 16)),
+                      Text('Paper: ${printer.paperWidth}', style: const TextStyle(fontSize: 16, color: Colors.blueGrey, fontWeight: FontWeight.bold)),
+                      Text('Interface: ${printer.interface}', style: const TextStyle(fontSize: 16)),
                       // Row(
                       //   crossAxisAlignment: CrossAxisAlignment.center,
                       //   children: [
@@ -106,8 +102,26 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                       //   ),
                       // const SizedBox(width: 10),
                       ElevatedButton(
+                        style: ButtonStyle(
+                          foregroundColor: WidgetStateProperty.all<Color>(
+                            Colors.white,
+                          ),
+                          backgroundColor: WidgetStateProperty.all<Color>(
+                            Colors.green,
+                          ),
+                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          padding: WidgetStateProperty.all(
+                            const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                          ),
+                          // Set minimum size for the button
+                          // minimumSize: WidgetStateProperty.all<Size>(const Size(40, 50)),
+                        ),
                         onPressed: () {
-                          handlePrintingJobs(context, ref, specificArea: printer.assignedArea, testPrint:'Test Print');
+                          handlePrintingJobs(context, ref, specificArea: printer.assignedArea, testPrint: 'Test Print');
                           CherryToast(
                             icon: Icons.print,
                             iconColor: Colors.green,
@@ -129,36 +143,30 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                             displayCloseButton: false,
                           ).show(context);
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          textStyle: const TextStyle(fontSize: 14),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blueGrey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                        child: const Text(
+                          'Print Test Receipt',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        child: const Text('Test Receipt'),
                       ),
                       const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => EditPrint(printer: printer)),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          textStyle: const TextStyle(fontSize: 14),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text('Edit'),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(builder: (context) => EditPrint(printer: printer)),
+                      //     );
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      //     textStyle: const TextStyle(fontSize: 14),
+                      //     foregroundColor: Colors.white,
+                      //     backgroundColor: Colors.green,
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //   ),
+                      //   child: const Text('Edit'),
+                      // ),
                       const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () {
@@ -279,16 +287,28 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                             },
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          textStyle: const TextStyle(fontSize: 14),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                        style: ButtonStyle(
+                          foregroundColor: WidgetStateProperty.all<Color>(
+                            Colors.white,
                           ),
+                          backgroundColor: WidgetStateProperty.all<Color>(
+                            Colors.red,
+                          ),
+                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          padding: WidgetStateProperty.all(
+                            const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                          ),
+                          // Set minimum size for the button
+                          // minimumSize: WidgetStateProperty.all<Size>(const Size(30, 20)),
                         ),
-                        child: const Text('Delete'),
+                        child: const Text(
+                          'Delete',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
@@ -303,6 +323,8 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
             MaterialPageRoute(builder: (context) => const CreatePrint()),
           );
         },
+        backgroundColor: Colors.green, // Set the background color
+        foregroundColor: Colors.white, // Set the icon color
         child: const Icon(Icons.add),
       ),
     );

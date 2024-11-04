@@ -26,7 +26,8 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
 
   List<String> areas = ['Cashier', 'Kitchen', 'Beverage'];
   List<String> paperWidth = ['80 mm', '58 mm'];
-  List<String> interface = ['Bluetooth', 'USB', 'Ethernet', 'Wifi'];
+  List<String> interface = ['Bluetooth'];
+  // List<String> interface = ['Bluetooth', 'USB', 'Ethernet', 'Wifi'];
   String assignedArea = '';
   String selectedPaperWidth = '';
   String selectedInterface = '';
@@ -375,10 +376,15 @@ class CreatePrintState extends ConsumerState<CreatePrint> {
                 return FloatingActionButton(
                   onPressed: () => bluetoothPrint.stopScan(),
                   backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
                   child: const Icon(Icons.stop),
                 );
               } else {
-                return FloatingActionButton(child: const Icon(Icons.search), onPressed: () => bluetoothPrint.startScan(timeout: const Duration(seconds: 5)));
+                return FloatingActionButton(
+                    backgroundColor: Colors.green, // Set the background color
+                    foregroundColor: Colors.white,
+                    child: const Icon(Icons.search),
+                    onPressed: () => bluetoothPrint.startScan(timeout: const Duration(seconds: 5)));
               }
             },
           ),
