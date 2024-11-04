@@ -61,8 +61,8 @@ class _MainPageState extends State<MainPage> {
         return const HistoryPage();
       // case 'Reports':
       //   return const ReportsPage();
-      case 'Recommend':
-        return const RecommendPage();
+      // case 'Recommend':
+      //   return const RecommendPage();
       case 'Settings':
         return SettingsPage(
           categories: widget.categories,
@@ -85,6 +85,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
       body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 90,
@@ -94,12 +95,12 @@ class _MainPageState extends State<MainPage> {
           ),
           Expanded(
             child: Container(
-              // margin: const EdgeInsets.only(top: 0, right: 0),
-              padding: const EdgeInsets.only(top: 30, right: 0, left: 0), // control the pageView width (dineIn + OrderDetails)
+              margin: const EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(top: 20, bottom: 5), // control the pageView width (dineIn + OrderDetails)
               decoration: const BoxDecoration(
-                // borderRadius: BorderRadius.only(
-                //     topLeft: Radius.circular(0),
-                //     topRight: Radius.circular(0)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    bottomLeft: Radius.circular(5)),
                 color: Color(0xff17181f)
                 // Colors.blueGrey, can try this for next color theme
               ),
@@ -123,7 +124,7 @@ class _MainPageState extends State<MainPage> {
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
             // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
-            _itemMenu(menu: 'Recommend', icon: Icons.recommend),
+            // _itemMenu(menu: 'Recommend', icon: Icons.recommend),
             _itemMenu(menu: 'Settings', icon: Icons.tune),
           ]),
         )

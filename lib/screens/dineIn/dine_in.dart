@@ -951,14 +951,23 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                           child: Row(
                                             children: [
                                               Text(
-                                                // Show matchingOrder's totalPrice if found, otherwise fallback to selectedOrder's totalPrice
-                                                'RM ${(matchingOrder != null ? matchingOrder.totalPrice : selectedOrder.totalPrice).toStringAsFixed(2)}',
+                                                // Show Seated 
+                                                'SEATED',
                                                 style: TextStyle(
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
                                                   color: pressedButtonIndex == index ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
                                                 ),
                                               ),
+                                              // Text(
+                                              //   // Show matchingOrder's totalPrice if found, otherwise fallback to selectedOrder's totalPrice
+                                              //   'RM ${(matchingOrder != null ? matchingOrder.totalPrice : selectedOrder.totalPrice).toStringAsFixed(2)}',
+                                              //   style: TextStyle(
+                                              //     fontSize: 10,
+                                              //     fontWeight: FontWeight.bold,
+                                              //     color: pressedButtonIndex == index ? const Color.fromRGBO(46, 125, 50, 1) : Colors.white,
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
                                         ),
@@ -977,102 +986,104 @@ class DineInPageState extends ConsumerState<DineInPage> {
                           },
                         ),
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xff1f2029), // Background color
-                                border: Border.all(
-                                  color: Colors.white10,
-                                ), // Border color and width
-                                borderRadius: BorderRadius.circular(5), // Optional rounded corners
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // const Icon(Icons.monetization_on_rounded, size: 20, color: Colors.green),
-                                  // const SizedBox(width: 8),
-                                  Text(
-                                    'To Collect RM ${totalOrdersPrice.toStringAsFixed(2)}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      // fontWeight: FontWeight.bold,
-                                      color: Colors.white, // Text color to match border or your preferred color
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Collect Money
+                      // Row(
+                      //   children: [
+                      //     Expanded(
+                      //       flex: 1,
+                      //       child: Container(
+                      //         decoration: BoxDecoration(
+                      //           color: const Color(0xff1f2029), // Background color
+                      //           border: Border.all(
+                      //             color: Colors.white10,
+                      //           ), // Border color and width
+                      //           borderRadius: BorderRadius.circular(5), // Optional rounded corners
+                      //         ),
+                      //         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      //         child: Row(
+                      //           mainAxisAlignment: MainAxisAlignment.center,
+                      //           children: [
+                      //             // const Icon(Icons.monetization_on_rounded, size: 20, color: Colors.green),
+                      //             // const SizedBox(width: 8),
+                      //             Text(
+                      //               'To Collect RM ${totalOrdersPrice.toStringAsFixed(2)}',
+                      //               style: const TextStyle(
+                      //                 fontSize: 16,
+                      //                 // fontWeight: FontWeight.bold,
+                      //                 color: Colors.white, // Text color to match border or your preferred color
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       if (isTableSelected) const SizedBox(height: 16),
                       Row(
                         children: [
-                          isTableSelected
-                              ? Expanded(
-                                  flex: 1,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: Colors.redAccent,
-                                      padding: const EdgeInsets.symmetric(vertical: 0),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      try {
-                                        final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
-                                        // final printersBox =
-                                        //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
+                          // Clear Local Data
+                          // isTableSelected
+                          //     ? Expanded(
+                          //         flex: 1,
+                          //         child: ElevatedButton(
+                          //           style: ElevatedButton.styleFrom(
+                          //             foregroundColor: Colors.white,
+                          //             backgroundColor: Colors.redAccent,
+                          //             padding: const EdgeInsets.symmetric(vertical: 0),
+                          //             shape: RoundedRectangleBorder(
+                          //               borderRadius: BorderRadius.circular(5),
+                          //             ),
+                          //           ),
+                          //           onPressed: () async {
+                          //             try {
+                          //               final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
+                          //               // final printersBox =
+                          //               //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
 
-                                        // Step 1: Reset providers
-                                        await ref.read(tablesProvider.notifier).resetTables();
-                                        await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
-                                        await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
-                                        log('Providers have been reset.');
+                          //               // Step 1: Reset providers
+                          //               await ref.read(tablesProvider.notifier).resetTables();
+                          //               await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
+                          //               await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
+                          //               log('Providers have been reset.');
 
-                                        // Step 2: Clear Hive boxes
-                                        await categoriesBox.clear();
-                                        // await printersBox.clear();
-                                        log('Hive boxes have been cleared.');
+                          //               // Step 2: Clear Hive boxes
+                          //               await categoriesBox.clear();
+                          //               // await printersBox.clear();
+                          //               log('Hive boxes have been cleared.');
 
-                                        // Step 3: Update UI after clearing and resetting
-                                        setState(() {
-                                          selectedOrder.resetDefault();
-                                        });
+                          //               // Step 3: Update UI after clearing and resetting
+                          //               setState(() {
+                          //                 selectedOrder.resetDefault();
+                          //               });
 
-                                        log('UI has been updated after resetting the data.');
-                                      } catch (e) {
-                                        log('An error occurred while clearing Hive data: $e');
-                                      }
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.cancel, size: 20),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            'Clear',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
-                          const SizedBox(width: 10),
+                          //               log('UI has been updated after resetting the data.');
+                          //             } catch (e) {
+                          //               log('An error occurred while clearing Hive data: $e');
+                          //             }
+                          //           },
+                          //           child: const Padding(
+                          //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          //             child: Row(
+                          //               mainAxisAlignment: MainAxisAlignment.center,
+                          //               children: [
+                          //                 Icon(Icons.cancel, size: 20),
+                          //                 SizedBox(width: 10),
+                          //                 Text(
+                          //                   'Clear',
+                          //                   style: TextStyle(
+                          //                     fontSize: 16,
+                          //                     fontWeight: FontWeight.bold,
+                          //                     color: Colors.white,
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       )
+                          //     : const SizedBox(),
+                          // const SizedBox(width: 10),
                           // Cancel and Remove and Delete Selected Order
                           (isTableSelected && selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true)
                               ? Expanded(
