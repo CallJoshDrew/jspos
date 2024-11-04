@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:developer';
+import 'dart:ui';
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
@@ -1951,12 +1952,25 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     if (item.selection == false || item.selectedChoice != null)
-                                      Text(
-                                        '${index + 1}.${item.originalName} ${item.tapao ? '( Tapao )' : ''}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            '${index + 1}.${item.originalName}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          if (item.tapao != false)
+                                            const Text(
+                                              '( Tapao )',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.yellow,
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     if (item.selectedChoice != null)
                                       Text(
@@ -1972,39 +1986,62 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      item.selectedDrink?['name'] != item.originalName
-                                          ? Text(
-                                              '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} ${item.tapao ? '( Tapao )' : ''}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.white,
-                                              ),
-                                            )
-                                          : Text(
-                                              '${index + 1}.${item.originalName}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                      const SizedBox(width: 5),
-                                      item.selection
-                                          ? item.selectedTemp != null
-                                              ? Text(
-                                                  '- ${item.selectedTemp?["name"]}',
-                                                  style: TextStyle(
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              if (item.selectedDrink?['name'].isNotEmpty)
+                                                Text(
+                                                  '${index + 1}.${item.originalName} ',
+                                                  style: const TextStyle(
                                                     fontSize: 14,
-                                                    color: item.selectedTemp?['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[400],
+                                                    color: Colors.white,
                                                   ),
                                                 )
-                                              : const SizedBox.shrink()
-                                          : Text(
-                                              '${index + 1}. ${item.selectedTemp?["name"]}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.white,
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              if (item.originalName != item.selectedDrink!['name'])
+                                              Text(
+                                                '${item.selectedDrink?['name']}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.yellow,
+                                                ),
                                               ),
-                                            ),
+                                              if (item.originalName != item.selectedDrink!['name']) const SizedBox(width: 5),
+                                              item.selection
+                                                  ? item.selectedTemp != null
+                                                      ? Text(
+                                                          '- ${item.selectedTemp?["name"]}',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: item.selectedTemp?['name'] == 'Hot' ? Colors.orangeAccent : Colors.green[400],
+                                                          ),
+                                                        )
+                                                      : const SizedBox.shrink()
+                                                  : Text(
+                                                      '${index + 1}. ${item.selectedTemp?["name"]}',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                              const SizedBox(width: 4),
+                                              if (item.tapao != false)
+                                                const Text(
+                                                  '( Tapao )',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.yellow,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                               ],
@@ -2022,7 +2059,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         Text(
                                           'x ${item.quantity}',
                                           style: const TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
@@ -2042,8 +2079,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             });
                                           },
                                           child: Container(
-                                            width: 20,
-                                            height: 20,
+                                            width: 30,
+                                            height: 30,
                                             decoration: BoxDecoration(
                                               color: item.tapao ? Colors.red : const Color.fromARGB(255, 12, 120, 202), // Background color
                                               borderRadius: BorderRadius.circular(5), // Border radius
@@ -2092,8 +2129,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             // ).show(context);
                                           },
                                           child: Container(
-                                            width: 20, // Adjust this value to change the width of the rectangle
-                                            height: 20, // Adjust this value to change the height of the rectangle
+                                            width: 30, // Adjust this value to change the width of the rectangle
+                                            height: 30, // Adjust this value to change the height of the rectangle
                                             decoration: BoxDecoration(
                                               color: Colors.green[700],
                                               borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners
@@ -2105,16 +2142,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 6),
+                                        const SizedBox(width: 8),
                                         Text(
                                           '${item.quantity}',
                                           style: const TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
                                         ),
-                                        const SizedBox(width: 6),
+                                        const SizedBox(width: 8),
                                         InkWell(
                                           onTap: () {
                                             setState(() {
@@ -2180,8 +2217,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             });
                                           },
                                           child: Container(
-                                            width: 20, // Adjust this value to change the width of the rectangle
-                                            height: 20, // Adjust this value to change the height of the rectangle
+                                            width: 30, // Adjust this value to change the width of the rectangle
+                                            height: 30, // Adjust this value to change the height of the rectangle
                                             decoration: BoxDecoration(
                                               color: const Color.fromRGBO(239, 108, 0, 1),
                                               borderRadius: BorderRadius.circular(5), // Adjust this value to change the roundness of the rectangle corners

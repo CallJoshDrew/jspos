@@ -902,7 +902,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                           ),
                           itemBuilder: (context, index) {
                             // Get the matching order for the current table
-                            final matchingOrder = ref.read(ordersProvider.notifier).getOrder(tables[index]['orderNumber']);
+                            // final matchingOrder = ref.read(ordersProvider.notifier).getOrder(tables[index]['orderNumber']);
 
                             return ElevatedButton(
                               onPressed: () {

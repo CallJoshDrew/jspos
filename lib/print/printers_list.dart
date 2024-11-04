@@ -5,7 +5,7 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/print/create_printer.dart';
-import 'package:jspos/print/edit_printer.dart';
+// import 'package:jspos/print/edit_printer.dart';
 import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/providers/printer_provider.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
@@ -41,15 +41,15 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                 return ListTile(
                   title: Text(
                     '${printer.assignedArea} Area',
-                    style: const TextStyle(fontSize: 18, color: Colors.green, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 17, color: Colors.green, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(printer.name, style: const TextStyle(fontSize: 16)),
-                      Text(printer.macAddress, style: const TextStyle(fontSize: 16)),
-                      Text('Paper: ${printer.paperWidth}', style: const TextStyle(fontSize: 16, color: Colors.blueGrey, fontWeight: FontWeight.bold)),
-                      Text('Interface: ${printer.interface}', style: const TextStyle(fontSize: 16)),
+                      Text(printer.name, style: const TextStyle(fontSize: 15)),
+                      Text(printer.macAddress, style: const TextStyle(fontSize: 15)),
+                      Text('Paper: ${printer.paperWidth}', style: const TextStyle(fontSize: 15, color: Colors.blueGrey, fontWeight: FontWeight.bold)),
+                      Text('Interface: ${printer.interface}', style: const TextStyle(fontSize: 15)),
                       // Row(
                       //   crossAxisAlignment: CrossAxisAlignment.center,
                       //   children: [
@@ -145,7 +145,7 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                         },
                         child: const Text(
                           'Print Test Receipt',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          // style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -307,7 +307,7 @@ class ListOfPrintersState extends ConsumerState<ListOfPrinters> {
                         ),
                         child: const Text(
                           'Delete',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          // style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
