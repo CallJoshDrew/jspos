@@ -15,8 +15,8 @@ import 'package:jspos/providers/order_counter_provider.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
-import 'package:jspos/data/menu1_data.dart';
-// import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu1_data.dart';
+import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 
 import 'package:cherry_toast/cherry_toast.dart';

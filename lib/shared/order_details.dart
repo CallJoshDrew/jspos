@@ -10,8 +10,8 @@ import 'package:jspos/data/remarks.dart';
 // import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
-// import 'package:jspos/data/menu_data.dart';
-import 'package:jspos/data/menu1_data.dart';
+import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu1_data.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedOrder selectedOrder;

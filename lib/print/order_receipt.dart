@@ -131,33 +131,31 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
     for (var item in selectedOrder.items) {
       // Only print the item if its category is "Drinks"
       if (categories.contains(item.category)) {
-        // Determine the item name and drink based on conditions
         String itemName = '';
         String itemDrinkName = '';
 
-        // If the item has a selection and selected choice
+        // Determine prefix based on itemIndex
+        String prefix = itemIndex > 9 ? "   - " : "  - ";
+
         if (item.selection && item.selectedChoice != null) {
-          // Print the originalName first, but do not add a newline if the selectedChoice is also printed
           list.add(LineText(
             type: LineText.TYPE_TEXT,
             content: formatTwoTextLine('$itemIndex.${item.originalName}', "x${item.quantity}"),
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
-            linefeed: item.originalName != item.selectedChoice!['name'] ? 0 : 1, // New line only if no selectedChoice
+            linefeed: 1,
           ));
 
-          // Only print the selectedChoice if it’s different from the originalName
           if (item.originalName != item.selectedChoice!['name']) {
             list.add(LineText(
               type: LineText.TYPE_TEXT,
-              content: "  - ${item.selectedChoice!['name']}",
+              content: "$prefix${item.selectedChoice!['name']}",
               align: LineText.ALIGN_LEFT,
               fontZoom: 1,
-              linefeed: 1, // Ensure new line after the selectedChoice
+              linefeed: 1,
             ));
           }
         } else if (item.selection && item.selectedDrink != null && item.selectedTemp != null) {
-          // Check if originalName is the same as selectedDrink's name
           if (item.originalName == item.selectedDrink?['name']) {
             itemDrinkName = '${item.selectedDrink?['name']} (${item.selectedTemp?['name']})';
           } else {
@@ -172,10 +170,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
             linefeed: 1,
           ));
         } else {
-          // Default case for items without selection and selected choice
           itemName = formatTwoTextLine("$itemIndex.${item.originalName}", "x${item.quantity}");
-
-          // Add the item name with linefeed set to 1 to ensure a new line after each item
           list.add(LineText(
             type: LineText.TYPE_TEXT,
             content: itemName,
@@ -188,29 +183,25 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         if (item.selection && item.selectedSoupOrKonLou != null) {
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '  - ${item.selectedSoupOrKonLou!["name"]}',
+            content: '$prefix${item.selectedSoupOrKonLou!["name"]}',
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1,
           ));
         }
-        String noodlesTypeText = '';
 
+        String noodlesTypeText = '';
         if (item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty) {
           for (int i = 0; i < item.selectedNoodlesType!.length; i++) {
             var noodleType = item.selectedNoodlesType!.elementAt(i);
             noodlesTypeText += noodleType['name'];
-
-            // Add a comma and space except for the last noodle type
             if (i != item.selectedNoodlesType!.length - 1) {
               noodlesTypeText += ', ';
             }
           }
-
-          // Add the fully built noodlesTypeText to the list, outside of the loop
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '  - $noodlesTypeText',
+            content: '$prefix$noodlesTypeText',
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1,
@@ -218,30 +209,24 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         }
 
         String formatMeeAndMeatPortion(item) {
-          // Conditionally include selectedMeePortion if it's not "Normal Mee"
           String meePortionText = '';
           if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
             meePortionText = item.selectedMeePortion!["name"];
           }
 
-          // Conditionally include selectedMeatPortion if it's not "Normal Meat"
           String meatPortionText = '';
           if (item.selectedMeatPortion != null && item.selectedMeatPortion!["name"] != "Normal Meat") {
             meatPortionText = item.selectedMeatPortion!["name"];
           }
 
-          // Combine meePortionText and meatPortionText if they are not empty
           List<String> portions = [];
           if (meePortionText.isNotEmpty) portions.add(meePortionText);
           if (meatPortionText.isNotEmpty) portions.add(meatPortionText);
 
-          // Return combined text if any are available, else return an empty string
-          return portions.isNotEmpty ? '  - ${portions.join(', ')}' : '';
+          return portions.isNotEmpty ? '$prefix${portions.join(', ')}' : '';
         }
 
-        // Now use this function to generate the line content for Mee and Meat portions
         String lineMeeAndMeatPortion = formatMeeAndMeatPortion(item);
-
         if (lineMeeAndMeatPortion.isNotEmpty) {
           list.add(LineText(
             type: LineText.TYPE_TEXT,
@@ -252,48 +237,44 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           ));
         }
 
-        // Check and add remarks to the receipt
         if (item.selection && filterRemarks(item.itemRemarks).isNotEmpty) {
           String remarks = getFilteredRemarks(item.itemRemarks);
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '  - $remarks', // Dynamic remarks with 'Remarks:' prefix
+            content: '$prefix$remarks',
             align: LineText.ALIGN_LEFT,
             linefeed: 1,
             fontZoom: 1,
           ));
         }
+
         String sidesText = '';
-        // Check and calculate total sides to the receipt
         if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
           for (int i = 0; i < item.selectedSide!.length; i++) {
             var side = item.selectedSide!.elementAt(i);
             sidesText += side['name'];
-
-            // Add a comma and space except for the last add-on
             if (i != item.selectedSide!.length - 1) {
               sidesText += ', ';
             }
           }
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '  - ${item.selectedSide!.length} Sides: $sidesText', // Print meat portion if not "Normal"
+            content: '$prefix${item.selectedSide!.length} Sides: $sidesText',
             align: LineText.ALIGN_LEFT,
             linefeed: 1,
             fontZoom: 1,
           ));
-          // Check and display Tapao if it is true
+
           if (item.tapao != false) {
             list.add(LineText(
               type: LineText.TYPE_TEXT,
-              content: '(Take Away / Tapao)',
+              content: prefix + 'Tapao',
               align: LineText.ALIGN_LEFT,
               linefeed: 1,
               fontZoom: 1,
             ));
           }
         }
-        // Increment the index for the next item across all categories
         itemIndex++;
       }
     }
