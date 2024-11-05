@@ -672,9 +672,19 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                         color: Colors.white,
                                                                       ),
                                                                     ),
-                                                              // item.selectedDrink != null
-                                                              //         ? '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}'
-                                                              //         : '${index + 1}.${item.originalName}',
+                                                              item.tapao != false
+                                                                  ? const Row(
+                                                                      children: [
+                                                                        Text(
+                                                                          " (Tapao)",
+                                                                          style: TextStyle(
+                                                                            fontSize: 14,
+                                                                            color: Colors.yellow,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  : const SizedBox.shrink(),
                                                             ],
                                                           ),
                                                           Padding(
@@ -722,18 +732,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                             ],
                                                                           )
                                                                         : const SizedBox.shrink(),
-                                                                    // item.selection &&
-                                                                    //         item.selectedNoodlesType != null &&
-                                                                    //         item.selectedNoodlesType!['name'] != 'None'
-                                                                    //     ? Row(
-                                                                    //         children: [
-                                                                    //           Text(
-                                                                    //             "${item.selectedNoodlesType!['name']} ",
-                                                                    //             style: const TextStyle(fontSize: 14, color: Colors.white),
-                                                                    //           ),
-                                                                    //         ],
-                                                                    //       )
-                                                                    //     : const SizedBox.shrink(),
                                                                   ],
                                                                 ),
                                                                 item.selection &&

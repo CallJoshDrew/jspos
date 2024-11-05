@@ -2004,13 +2004,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           Row(
                                             children: [
                                               if (item.originalName != item.selectedDrink!['name'])
-                                              Text(
-                                                '${item.selectedDrink?['name']}',
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.yellow,
+                                                Text(
+                                                  '${item.selectedDrink?['name']}',
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.yellow,
+                                                  ),
                                                 ),
-                                              ),
                                               if (item.originalName != item.selectedDrink!['name']) const SizedBox(width: 5),
                                               item.selection
                                                   ? item.selectedTemp != null
@@ -2105,7 +2105,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               'check_circle',
                                               '${item.name} (RM ${item.price.toStringAsFixed(2)})',
                                               2000, // Toast duration in milliseconds
-                                              200, // Animation duration in milliseconds
+                                              500, // Animation duration in milliseconds
                                             );
                                             // CherryToast(
                                             //   icon: Icons.check_circle,
@@ -2164,7 +2164,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   'remove_circle',
                                                   '${item.name} (RM ${item.price.toStringAsFixed(2)})',
                                                   2000, // Toast duration in milliseconds
-                                                  200, // Animation duration in milliseconds
+                                                  500, // Animation duration in milliseconds
                                                 );
                                                 // CherryToast(
                                                 //   icon: Icons.remove_circle,
@@ -2191,7 +2191,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   'info',
                                                   "Swipe left/right to remove the item",
                                                   2000, // Toast duration in milliseconds
-                                                  200, // Animation duration in milliseconds
+                                                  500, // Animation duration in milliseconds
                                                 );
                                                 // CherryToast(
                                                 //   icon: Icons.info,
@@ -2312,21 +2312,102 @@ class _OrderDetailsState extends State<OrderDetails> {
       return child;
     } else {
       return Dismissible(
-        // Each Dismissible must contain a Key. Keys allow Flutter to
-        // uniquely identify widgets.
+        // Each Dismissible must contain a Key. Keys allow Flutter to uniquely identify widgets.
         key: Key(item.id.toString()),
-        confirmDismiss: (direction) {
+        confirmDismiss: (direction) async {
+          // Check if showEditBtn is true; if so, prevent dismiss
           if (showEditBtn) {
-            // If showEditBtn is true, do not allow the dismiss action
             return Future.value(false);
           }
-          // Otherwise, allow the dismiss action
-          return Future.value(true);
+
+          // Otherwise, show the custom confirmation dialog
+          final bool? shouldDelete = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                insetPadding: EdgeInsets.zero, // Makes dialog full-screen if needed
+                backgroundColor: Colors.black87,
+                child: AlertDialog(
+                  backgroundColor: const Color(0xff1f2029),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(color: Colors.deepOrange, width: 1),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  content: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: 400,
+                      maxHeight: 160,
+                    ),
+                    child: Column(
+                      // alignment: WrapAlignment.center,
+                      children: [
+                        const Text(
+                          'Are you sure?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 30,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const Text(
+                          'Please note, once cancelled, the action is irreversible.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(true); // Return true if confirmed
+                              },
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                backgroundColor: Colors.deepOrange,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              child: const Text(
+                                'Confirm',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false); // Return false if canceled
+                              },
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5), // Set the desired border radius here
+                                ),
+                              ),
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(color: Colors.deepOrange),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+
+          // Allow or prevent dismiss based on the confirmation dialog result
+          return shouldDelete == true;
         },
-        // Provide a function that tells the app
-        // what to do after an item has been swiped away.
         onDismissed: (direction) {
-          // Remove the item from the data source.
+          // Remove the item from the data source
           setState(() {
             widget.selectedOrder.items.remove(item);
             widget.selectedOrder.updateTotalCost(0);
@@ -2334,63 +2415,15 @@ class _OrderDetailsState extends State<OrderDetails> {
             widget.updateOrderStatus!();
           });
 
-          // Then show a notifications
+          // Show a notification
           _showCherryToast(
             'remove_circle',
-            name,
+            'Removed $name',
             1000, // Toast duration in milliseconds
-            200, // Animation duration in milliseconds
+            500, // Animation duration in milliseconds
           );
-          // CherryToast(
-          //   icon: Icons.remove_circle,
-          //   iconColor: Colors.red,
-          //   themeColor: Colors.red,
-          //   backgroundColor: Colors.white,
-          //   title: Text(
-          //     name,
-          //     style: const TextStyle(
-          //       fontSize: 14,
-          //       color: Colors.black,
-          //       fontWeight: FontWeight.bold,
-          //     ),
-          //   ),
-          //   toastPosition: Position.top,
-          //   toastDuration: const Duration(milliseconds: 1000),
-          //   animationType: AnimationType.fromTop,
-          //   animationDuration: const Duration(milliseconds: 200),
-          //   autoDismiss: true,
-          //   displayCloseButton: false,
-          // ).show(context);
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     backgroundColor: Colors.red,
-          //     duration: const Duration(milliseconds: 300),
-          //     content: Container(
-          //       alignment: Alignment.centerRight,
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: <Widget>[
-          //           const Icon(
-          //             Icons.cancel,
-          //             color: Colors.white,
-          //             size: 20,
-          //           ),
-          //           const SizedBox(width: 5),
-          //           Text(
-          //             name,
-          //             style: const TextStyle(
-          //               fontSize: 14,
-          //               color: Colors.white,
-          //               fontWeight: FontWeight.bold,
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // );
         },
-        // Show a red background as the item is swiped away.
+        // Show a red background as the item is swiped away
         background: Container(
           color: Colors.red,
           child: const Padding(
@@ -2410,7 +2443,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                )
+                ),
               ],
             ),
           ),

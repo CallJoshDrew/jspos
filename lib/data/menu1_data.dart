@@ -854,9 +854,9 @@ final List<Map<String, dynamic>> menu1 = [
     "selection": true,
     "choices": [
       {"name": "Half Thigh Only", "price": 6.00},
-      {"name": "Half Thigh with Rice/Mee", "price": 8.00},
+      {"name": "Half Thigh w Rice/Mee", "price": 8.00},
       {"name": "Whole Thigh Only", "price": 12.00},
-      {"name": "Whole Thigh with Rice/Mee", "price": 14.00},
+      {"name": "Whole Thigh w Rice/Mee", "price": 14.00},
     ],
     "noodlesTypes": [
       {"name": "None", "price": 0.00},
@@ -1126,9 +1126,9 @@ final List<Map<String, dynamic>> menu1 = [
     "selection": true,
     "drinks": [
       {"name": "Wheatgrass", "Cold": 4.50},
-      {"name": "with Lemon", "Cold": 5.00},
-      {"name": "with Kit Zai", "Cold": 5.00},
-      {"name": "with Milk", "Cold": 5.00},
+      {"name": "w Lemon", "Cold": 5.00},
+      {"name": "w Kit Zai", "Cold": 5.00},
+      {"name": "w Milk", "Cold": 5.00},
     ],
     "temp": [
       {"name": "Cold"}
@@ -1179,7 +1179,7 @@ final List<Map<String, dynamic>> menu1 = [
     "selection": true,
     "drinks": [
       {"name": "Gui Ling Gao", "Cold": 2.50},
-      {"name": "with Milk", "Cold": 3.00},
+      {"name": "w Milk", "Cold": 3.00},
     ],
     "temp": [
       {"name": "Cold"}

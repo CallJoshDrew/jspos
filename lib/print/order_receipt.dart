@@ -65,12 +65,21 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
       return totalQuantity;
     })();
 
+    String formatRightAlignedText(String text) {
+      int lineLength = paperWidth == '58 mm' ? 32 : 48;
+      // Calculate the required spaces to place text at the far right with one trailing space
+      int spaces = lineLength - text.length - 1;
+
+      // Ensure spaces are non-negative
+      if (spaces < 0) spaces = 0;
+
+      return '${' ' * spaces}$text '; // Add one space after the text
+    }
+
     String formatTwoTextLine(String text1, String text2) {
       int lineLength = paperWidth == '58 mm' ? 32 : 48;
       String quantityStr = text2.toString();
-
-      // Calculate remaining space for itemName by subtracting the quantity and space between them
-      int spaces = lineLength - text1.length - quantityStr.length;
+      int spaces = lineLength - text1.length - quantityStr.length - 1;
 
       // Ensure spaces are non-negative
       if (spaces < 1) spaces = 1;
@@ -122,66 +131,64 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
     for (var item in selectedOrder.items) {
       // Only print the item if its category is "Drinks"
       if (categories.contains(item.category)) {
-        // Determine the item name and linefeed based on conditions
-        String itemName;
-        int linefeed;
+        // Determine the item name and drink based on conditions
+        String itemName = '';
+        String itemDrinkName = '';
 
         // If the item has a selection and selected choice
         if (item.selection && item.selectedChoice != null) {
-          // Print the originalName first
+          // Print the originalName first, but do not add a newline if the selectedChoice is also printed
           list.add(LineText(
             type: LineText.TYPE_TEXT,
             content: formatTwoTextLine('$itemIndex.${item.originalName}', "x${item.quantity}"),
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
-            linefeed: 1, // Move to the next line after printing originalName
+            linefeed: item.originalName != item.selectedChoice!['name'] ? 0 : 1, // New line only if no selectedChoice
           ));
 
-          // Then print selectedChoice name and quantity on the same line
-          itemName = itemName = "- ${item.selectedChoice!['name']}";
-          linefeed = 0;
+          // Only print the selectedChoice if it’s different from the originalName
+          if (item.originalName != item.selectedChoice!['name']) {
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: "  - ${item.selectedChoice!['name']}",
+              align: LineText.ALIGN_LEFT,
+              fontZoom: 1,
+              linefeed: 1, // Ensure new line after the selectedChoice
+            ));
+          }
+        } else if (item.selection && item.selectedDrink != null && item.selectedTemp != null) {
+          // Check if originalName is the same as selectedDrink's name
+          if (item.originalName == item.selectedDrink?['name']) {
+            itemDrinkName = '${item.selectedDrink?['name']} (${item.selectedTemp?['name']})';
+          } else {
+            itemDrinkName = '${item.originalName} ${item.selectedDrink?['name']}(${item.selectedTemp?['name']})';
+          }
+
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: formatTwoTextLine('$itemIndex.$itemDrinkName', "x${item.quantity}"),
+            align: LineText.ALIGN_LEFT,
+            fontZoom: 1,
+            linefeed: 1,
+          ));
+        } else {
+          // Default case for items without selection and selected choice
+          itemName = formatTwoTextLine("$itemIndex.${item.originalName}", "x${item.quantity}");
+
+          // Add the item name with linefeed set to 1 to ensure a new line after each item
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: itemName,
+            align: LineText.ALIGN_LEFT,
+            fontZoom: 1,
+            linefeed: 1,
+          ));
         }
-        // If the item has a selected drink and temperature
-        else if (item.selectedDrink != null && item.selectedTemp != null) {
-          itemName = item.originalName == item.selectedDrink!['name']
-              ? item.originalName
-              : '${item.originalName} ${item.selectedDrink?['name']}(${item.selectedTemp?['name']})';
-          // Format itemName and quantity with formatTwoTextLine
-          itemName = formatTwoTextLine("$itemIndex.$itemName", "x${item.quantity}");
-          linefeed = 1;
-        }
-        // Default case with just the item name
-        else {
-          itemName = formatTwoTextLine("$itemIndex.${item.name}", "x${item.quantity}");
-          linefeed = 1;
-        }
-
-        // Add the item name to the list with dynamic linefeed value
-        list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: itemName,
-          align: LineText.ALIGN_LEFT,
-          fontZoom: 1,
-          linefeed: linefeed,
-        ));
-
-        // // Adjust X position based on the paper width
-        // int quantityXPosition = itemQtyWidth + 40; // Default
-
-        // // Further adjustments based on quantity length
-        // if (item.quantity.toString().length == 1) {
-        //   quantityXPosition = itemQtyWidth + 50; // Adjust for 1 digit
-        // } else if (item.quantity.toString().length == 3) {
-        //   quantityXPosition = itemQtyWidth + 30; // Adjust for 3 digits
-        // }
-
-        // // Add the quantity line
-        // list.add(LineText(type: LineText.TYPE_TEXT, content: '${item.quantity}', x: quantityXPosition, linefeed: 1));
 
         if (item.selection && item.selectedSoupOrKonLou != null) {
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '- ${item.selectedSoupOrKonLou!["name"]}',
+            content: '  - ${item.selectedSoupOrKonLou!["name"]}',
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1,
@@ -203,7 +210,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           // Add the fully built noodlesTypeText to the list, outside of the loop
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '- $noodlesTypeText',
+            content: '  - $noodlesTypeText',
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1,
@@ -229,7 +236,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           if (meatPortionText.isNotEmpty) portions.add(meatPortionText);
 
           // Return combined text if any are available, else return an empty string
-          return portions.isNotEmpty ? '- ${portions.join(', ')}' : '';
+          return portions.isNotEmpty ? '  - ${portions.join(', ')}' : '';
         }
 
         // Now use this function to generate the line content for Mee and Meat portions
@@ -250,27 +257,15 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           String remarks = getFilteredRemarks(item.itemRemarks);
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '- $remarks', // Dynamic remarks with 'Remarks:' prefix
+            content: '  - $remarks', // Dynamic remarks with 'Remarks:' prefix
             align: LineText.ALIGN_LEFT,
             linefeed: 1,
             fontZoom: 1,
           ));
         }
+        String sidesText = '';
         // Check and calculate total sides to the receipt
         if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: 'Total Sides: ${item.selectedSide!.length}', // Print meat portion if not "Normal"
-            align: LineText.ALIGN_LEFT,
-            linefeed: 1,
-            fontZoom: 1,
-          ));
-        }
-        // Check and add selected sides to the receipt
-        String sidesText = '';
-
-        if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
-          // Build the add-on names string with commas between them
           for (int i = 0; i < item.selectedSide!.length; i++) {
             var side = item.selectedSide!.elementAt(i);
             sidesText += side['name'];
@@ -280,25 +275,23 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
               sidesText += ', ';
             }
           }
-
-          // Use the addFormattedLines function for sides
-          addFormattedLines(
-              text: sidesText,
-              list: list,
-              maxLength: 26,
-              firstLinePrefix: '- ', // Start the first line with " - "
-              subsequentLinePrefix: '  ' // Start subsequent lines with two spaces
-              );
-        }
-        // Check and display Tapao if it is true
-        if (item.tapao != false) {
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '(Take Away / Tapao)',
+            content: '  - ${item.selectedSide!.length} Sides: $sidesText', // Print meat portion if not "Normal"
             align: LineText.ALIGN_LEFT,
             linefeed: 1,
             fontZoom: 1,
           ));
+          // Check and display Tapao if it is true
+          if (item.tapao != false) {
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: '(Take Away / Tapao)',
+              align: LineText.ALIGN_LEFT,
+              linefeed: 1,
+              fontZoom: 1,
+            ));
+          }
         }
         // Increment the index for the next item across all categories
         itemIndex++;
@@ -311,8 +304,12 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         align: LineText.ALIGN_CENTER,
         fontZoom: 1,
         linefeed: 1));
-    list.add(
-        LineText(type: LineText.TYPE_TEXT, content: 'Total: ${totalQuantityByCategory.toString()}', align: LineText.ALIGN_RIGHT, fontZoom: 1, linefeed: 1));
+    list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: formatRightAlignedText('Total: ${totalQuantityByCategory.toString()}'),
+        align: LineText.ALIGN_RIGHT,
+        fontZoom: 1,
+        linefeed: 1));
     // // Determine the relativeX position based on the totalQuantity's number of digits
     // int totalQuantityXPosition = totalQtyWidth + 40; // Default for 2 digits
     // if (selectedOrder.totalQuantity.toString().length == 1) {
@@ -323,16 +320,19 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
 
     list.add(LineText(
         type: LineText.TYPE_TEXT,
-        content: '-------------',
+        content: '-----------',
         // content: paperWidth == '58 mm' ? '-------------' : '-------------',
         weight: 1,
         align: LineText.ALIGN_RIGHT,
         fontZoom: 1,
         linefeed: 1));
-    if (paperWidth == '58 mm') {
-      list.add(LineText(linefeed: 1));
-      list.add(LineText(linefeed: 1));
-    }
+    list.add(LineText(linefeed: 1));
+    list.add(LineText(linefeed: 1));
+    list.add(LineText(linefeed: 1));
+    // if (paperWidth == '58 mm') {
+    //   list.add(LineText(linefeed: 1));
+    //   list.add(LineText(linefeed: 1));
+    // }
 
     return list;
   }
