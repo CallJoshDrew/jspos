@@ -1963,12 +1963,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           ),
                                           const SizedBox(width: 4),
                                           if (item.tapao != false)
-                                            const Text(
-                                              '( Tapao )',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.yellow,
-                                              ),
+                                            const Icon(
+                                              Icons.takeout_dining_sharp,
+                                              color: Colors.yellow,
+                                              size: 16,
                                             ),
                                         ],
                                       ),
@@ -1998,18 +1996,29 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     fontSize: 14,
                                                     color: Colors.white,
                                                   ),
-                                                )
+                                                ),
+                                              const SizedBox(width: 4),
+                                              if (item.tapao != false)
+                                                const Icon(
+                                                  Icons.takeout_dining_sharp,
+                                                  color: Colors.yellow,
+                                                  size: 16,
+                                                ),
                                             ],
                                           ),
                                           Row(
                                             children: [
                                               if (item.originalName != item.selectedDrink!['name'])
-                                                Text(
-                                                  '${item.selectedDrink?['name']}',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.yellow,
-                                                  ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${item.selectedDrink?['name']}',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.yellow,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               if (item.originalName != item.selectedDrink!['name']) const SizedBox(width: 5),
                                               item.selection
@@ -2029,15 +2038,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         color: Colors.white,
                                                       ),
                                                     ),
-                                              const SizedBox(width: 4),
-                                              if (item.tapao != false)
-                                                const Text(
-                                                  '( Tapao )',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.yellow,
-                                                  ),
-                                                ),
                                             ],
                                           ),
                                         ],
