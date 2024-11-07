@@ -88,7 +88,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
     }
 
     list.add(
-        LineText(type: LineText.TYPE_TEXT, content: 'Table ${selectedOrder.tableName}', weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
+        LineText(type: LineText.TYPE_TEXT, content: selectedOrder.tableName, weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: formatTwoTextLine(selectedOrder.orderNumber, selectedOrder.orderType),

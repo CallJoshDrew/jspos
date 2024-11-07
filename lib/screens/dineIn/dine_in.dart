@@ -106,7 +106,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     final tableNameWithoutSpace = tableName.replaceAll(RegExp(r'\s+'), '');
 
     // Construct the order number correctly
-    final orderNumber = '#Table$tableNameWithoutSpace-$paddedCounter';
+    final orderNumber = '#$tableNameWithoutSpace-$paddedCounter';
 
     // Increment the counter
     final updatedOrderCounter = currentOrderCounter + 1;
@@ -162,7 +162,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   // Open Menu after set table number
   // Update in _handleSetTables function when a new order is created
   void _handleSetTables(String tableName, int index) {
-    log('Entering _handleSetTables with table: $tableName, index: $index');
+    log('Entering _handleSetTables with $tableName at index: $index');
     try {
       setState(() {
         // Set the selected table and its index
@@ -935,7 +935,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Table ${tables[index]['name']}',
+                                        '${tables[index]['name']}',
                                         style: TextStyle(
                                             fontSize: pressedButtonIndex == index ? 14 : 12,
                                             fontWeight: FontWeight.bold,

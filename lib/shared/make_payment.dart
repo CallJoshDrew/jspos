@@ -160,7 +160,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
         ),
       ),
       description: Text(
-        'The payment for the table ${widget.tables[widget.selectedTableIndex]['name']} has been successfully processed.',
+        'The payment for the ${widget.tables[widget.selectedTableIndex]['name']} has been successfully processed.',
         style: const TextStyle(fontSize: 14),
       ),
       toastPosition: Position.top,

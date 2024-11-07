@@ -140,7 +140,7 @@ Future<void> handlePrintingJobs(
               await bluetoothInstance.printReceipt(config, receiptContent);
               log('Successfully printed receipt for $area area.');
 
-              await Future.delayed(const Duration(seconds: 3));
+              await Future.delayed(const Duration(seconds: 5));
               await bluetoothInstance.disconnect();
               log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
 
