@@ -18,7 +18,6 @@ void main() async {
 
     // Register all Hive adapters
     Hive.registerAdapter(OrdersAdapter());
-    Hive.registerAdapter(SelectedOrderAdapter());
     Hive.registerAdapter(ItemAdapter());
     Hive.registerAdapter(PrinterAdapter());
     Hive.registerAdapter(DailySalesAdapter());

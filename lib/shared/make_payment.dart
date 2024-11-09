@@ -9,9 +9,9 @@ import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/providers/orders_provider.dart';
+import 'package:jspos/providers/selected_order_provider.dart';
 
 class MakePaymentPage extends ConsumerStatefulWidget {
-  final SelectedOrder selectedOrder;
   final VoidCallback? updateOrderStatus;
 
   final List<Map<String, dynamic>> tables;
@@ -21,7 +21,6 @@ class MakePaymentPage extends ConsumerStatefulWidget {
 
   const MakePaymentPage({
     super.key,
-    required this.selectedOrder,
     required this.updateOrderStatus,
     required this.tables,
     required this.selectedTableIndex,
@@ -48,11 +47,13 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   late bool isTableSelected;
 
   void _calculateTotalWithDiscount() {
+    final selectedOrder = ref.read(selectedOrderProvider);
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     // Calculate the discount amount
-    double discountAmount = widget.selectedOrder.subTotal * (widget.selectedOrder.discount / 100);
+    double discountAmount = selectedOrder.subTotal * (selectedOrder.discount / 100);
 
     // Calculate the original and adjusted bill
-    originalBill = widget.selectedOrder.subTotal - discountAmount;
+    originalBill = selectedOrder.subTotal - discountAmount;
     adjustedBill = isRoundingApplied ? roundBill(originalBill) : originalBill;
   }
 
@@ -181,7 +182,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   void initState() {
     super.initState();
     orders = ref.read(ordersProvider);
-    originalBill = widget.selectedOrder.totalPrice; // Initialize originalBill here
+    originalBill = ref.read(selectedOrderProvider).totalPrice; // Initialize originalBill here
     adjustedBill = originalBill; // Initialize adjustedBill here
     // log('initState called, adjustedBill is now $adjustedBill');
     isTableSelected = widget.isTableInitiallySelected;
@@ -189,11 +190,13 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedOrder = ref.read(selectedOrderProvider);
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-    double fractionAmount = widget.selectedOrder.totalPrice - widget.selectedOrder.totalPrice.floor();
+    double fractionAmount = selectedOrder.totalPrice - selectedOrder.totalPrice.floor();
     // // Assuming 'items' is a List<Item>
-    // for (Item item in widget.selectedOrder.items) {
+    // for (Item item in selectedOrder.items) {
     //   log('side: ${item.selectedSide}');
     // }
     _calculateTotalWithDiscount();
@@ -225,7 +228,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.selectedOrder.orderNumber,
+                          selectedOrder.orderNumber,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.white,
@@ -241,7 +244,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                         Row(
                           children: [
                             Text(
-                              '${widget.selectedOrder.orderTime} -',
+                              '${selectedOrder.orderTime} -',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -249,7 +252,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              widget.selectedOrder.orderDate,
+                              selectedOrder.orderDate,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -272,7 +275,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: () {
-                                Map<String, List<Item>> categorizedItems = categorizeItems(widget.selectedOrder.items);
+                                Map<String, List<Item>> categorizedItems = categorizeItems(selectedOrder.items);
                                 Map<String, int> totalQuantities = calculateTotalQuantities(categorizedItems);
                                 Map<String, double> totalPrices = calculateTotalPrices(categorizedItems);
                                 List<Widget> categoryWidgets = [];
@@ -679,7 +682,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          widget.selectedOrder.subTotal.toStringAsFixed(2),
+                                          selectedOrder.subTotal.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -692,7 +695,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                     //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                     //     ),
                                     //     Text(
-                                    //       widget.selectedOrder.serviceCharge.toStringAsFixed(2),
+                                    //       selectedOrder.serviceCharge.toStringAsFixed(2),
                                     //       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                     //     ),
                                     //   ],
@@ -701,11 +704,11 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Discount (${widget.selectedOrder.discount}%)',
+                                          'Discount (${selectedOrder.discount}%)',
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          (widget.selectedOrder.subTotal * (widget.selectedOrder.discount / 100)).toStringAsFixed(2),
+                                          (selectedOrder.subTotal * (selectedOrder.discount / 100)).toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -906,7 +909,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                           onPressed: () {
                                             setState(() {
                                               selectedPaymentMethod = value;
-                                              widget.selectedOrder.paymentMethod = value;
+                                              selectedOrder.paymentMethod = value;
                                             });
                                           },
                                           child: Text(
@@ -953,9 +956,9 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                     enteredDiscount = int.tryParse(value) ?? 0;
                                                     // Ensure discount is between 1 and 100, otherwise reset to 0
                                                     if (enteredDiscount >= 1 && enteredDiscount <= 100) {
-                                                      widget.selectedOrder.discount = enteredDiscount;
+                                                      selectedOrder.discount = enteredDiscount;
                                                     } else {
-                                                      widget.selectedOrder.discount = 0;
+                                                      selectedOrder.discount = 0;
                                                     }
                                                   });
                                                 },
@@ -1003,17 +1006,17 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                         value.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill) : double.tryParse(value) ?? 0.0;
 
                                                     // Update the selected order with the amount received
-                                                    widget.selectedOrder.amountReceived = amountReceived;
+                                                    selectedOrder.amountReceived = amountReceived;
 
                                                     // Trigger the change calculation
                                                     _calculateChange();
 
                                                     // Ensure totalPrice defaults to the original bill if no valid input is provided
-                                                    widget.selectedOrder.totalPrice =
+                                                    selectedOrder.totalPrice =
                                                         value.isEmpty ? originalBill : double.parse((amountReceived - amountChanged).toStringAsFixed(2));
 
                                                     // Update the amount changed in the selected order
-                                                    widget.selectedOrder.amountChanged = amountChanged;
+                                                    selectedOrder.amountChanged = amountChanged;
                                                   });
                                                 },
                                               ),
@@ -1178,19 +1181,16 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
 
                                                                   // Perform operations related to the order
                                                                   _calculateChange();
-                                                                  widget.selectedOrder
+                                                                  selectedOrder
                                                                     ..roundingAdjustment = roundingAdjustment
                                                                     ..paymentMethod = selectedPaymentMethod
                                                                     ..status = 'Paid'
-                                                                    ..cancelledTime = 'None'
-                                                                    ..addPaymentDateTime();
-
-                                                                  // Call updateOrderStatus if available
-                                                                  widget.updateOrderStatus?.call();
+                                                                    ..cancelledTime = 'None';
+                                                                    selectedOrderNotifier.addPaymentDateTime();
 
                                                                   // Add or update the order and save it in Hive
-                                                                  orders.addOrUpdateOrder(widget.selectedOrder);
-                                                                  await ordersBox.put('orders', orders);
+                                                                  widget.updateOrderStatus?.call();
+                                                                  ref.read(ordersProvider.notifier).addOrUpdateOrder(selectedOrder);
 
                                                                   // Clear table data for the selected table
                                                                   var emptyOrderNumber = '';
@@ -1204,7 +1204,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                     false,
                                                                   );
                                                                   isTableSelected = !isTableSelected; // Update the state
-                                                                  log('Order saved with discount: ${widget.selectedOrder.discount}');
+                                                                  log('Order saved with discount: ${selectedOrder.discount}');
 
                                                                   // Log updated orders from Hive for debugging
                                                                   var storedOrders = ordersBox.get('orders') as Orders;
@@ -1271,7 +1271,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                             padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                           ),
                                           onPressed: () {
-                                            widget.selectedOrder.discount = 0;
+                                            selectedOrder.discount = 0;
                                             Navigator.of(context).pop();
                                           },
                                           child: const Text(

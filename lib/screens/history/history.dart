@@ -29,7 +29,7 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
     orders = ref.read(ordersProvider);
     // Access OrdersNotifier and log payment times
-    ref.read(ordersProvider.notifier).logPaymentTimes();
+    // ref.read(ordersProvider.notifier).logPaymentTimes();
     _sortByTransactionDate(ascending: false);
     // loadOrders();
   }

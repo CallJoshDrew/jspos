@@ -1,73 +1,83 @@
 import 'dart:developer';
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 
-// OrdersNotifier manages state using Orders
 class OrdersNotifier extends StateNotifier<Orders> {
   final Box<Orders> _ordersBox;
 
   OrdersNotifier(this._ordersBox) : super(_ordersBox.get('orders', defaultValue: Orders(data: [])) ?? Orders());
+  
+  // Method to get an order by order number
+  SelectedOrder? getOrder(String orderNumber) {
+    return state.data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
+  }
 
-  // Method to log payment times for all orders
-  void logPaymentTimes() {
-    final paymentTimes = state.data.map((order) => order.paymentTime).toList();
-    log('Payment Times: $paymentTimes');
+  // Get all orders (immutable copy)
+  List<SelectedOrder> getAllOrders() {
+    return List.unmodifiable(state.data); // Prevents external modifications
+  }
+
+  // Group orders by date
+  Map<String, List<SelectedOrder>> get ordersGroupedByDate {
+    Map<String, List<SelectedOrder>> groupedOrders = {};
+    for (var order in state.data) {
+      if (groupedOrders.containsKey(order.orderDate)) {
+        groupedOrders[order.orderDate]!.add(order);
+      } else {
+        groupedOrders[order.orderDate] = [order];
+      }
+    }
+    return groupedOrders;
   }
 
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
-    await state.addOrUpdateOrder(order);
-    state = Orders(data: state.data); // Notify listeners
-    await _ordersBox.put('orders', state); // Save to Hive
-    log('Order added/updated: ${order.orderNumber}');
-  }
+    final existingOrderIndex = state.data.indexWhere((o) => o.orderNumber == order.orderNumber);
 
-  // Method to find and update an existing order
-  Future<void> updateOrder(SelectedOrder updatedOrder) async {
-    final indexToUpdate = state.data.indexWhere((order) => order.orderNumber == updatedOrder.orderNumber);
-
-    if (indexToUpdate != -1) {
-      // Update the order in the list
-      final updatedOrders = List<SelectedOrder>.from(state.data);
-      updatedOrders[indexToUpdate] = updatedOrder;
-
-      // Update the state and Hive box
-      state = Orders(data: updatedOrders);
-      await _ordersBox.put('orders', state); // Save the updated orders list to Hive
-      log('Order updated: ${updatedOrder.orderNumber}');
+    final updatedOrders = List<SelectedOrder>.from(state.data);
+    if (existingOrderIndex != -1) {
+      updatedOrders[existingOrderIndex] = order; // Update existing order
+      log('Order updated: ${order.orderNumber}');
     } else {
-      log('Order not found: ${updatedOrder.orderNumber}');
+      updatedOrders.add(order); // Add new order
+      log('New order added: ${order.orderNumber}');
     }
+
+    // Update state and save to Hive
+    state = Orders(data: updatedOrders);
+    await _saveToHive();
   }
 
-  // Method to get an order by orderNumber
-  SelectedOrder? getOrder(String orderNumber) {
-    try {
-      return state.data.firstWhere((order) => order.orderNumber == orderNumber);
-    } catch (e) {
-      return null; // Return null if no matching order is found
+  // Delete an order
+  Future<void> deleteOrder(String orderNumber) async {
+    final updatedOrders = state.data.where((order) => order.orderNumber != orderNumber).toList();
+
+    if (updatedOrders.length == state.data.length) {
+      log('Order not found for deletion: $orderNumber');
+      return;
     }
+
+    // Update state and save to Hive
+    state = Orders(data: updatedOrders);
+    await _saveToHive();
+    log('Order deleted: $orderNumber');
   }
 
-  // Getter to calculate the total of totalPrices from orders with status "Placed Order"
+  // Total price of orders with status "Placed Order"
   double get totalOrdersPrice {
-    return state.data
-        .where((order) => order.status == "Placed Order") // Filter for "Placed Order"
-        .fold(0.0, (sum, order) => sum + order.totalPrice); // Sum totalPrice of filtered orders
+    return state.data.where((order) => order.status == "Placed Order").fold(0.0, (sum, order) => sum + order.totalPrice);
   }
 
   // Method to cancel an order
-  Future<void> cancelOrder(String orderNumber, List<String> categories) async {
+  Future<void> cancelOrder(String orderNumber) async {
     final indexToUpdate = state.data.indexWhere((order) => order.orderNumber == orderNumber);
 
     if (indexToUpdate != -1) {
-      var orderCopy = state.data[indexToUpdate].copyWith();
-
-      // Set cancellation details
-      orderCopy = orderCopy.copyWith(
+      var orderCopy = state.data[indexToUpdate].copyWith(
         status: "Cancelled",
         cancelledTime: DateFormat('h:mm a, d MMMM yyyy').format(DateTime.now()),
         paymentTime: "None",
@@ -77,10 +87,9 @@ class OrdersNotifier extends StateNotifier<Orders> {
       final updatedOrders = List<SelectedOrder>.from(state.data);
       updatedOrders[indexToUpdate] = orderCopy;
 
-      // Update the state and Hive box
+      // Update state and save to Hive
       state = Orders(data: updatedOrders);
-      await _ordersBox.put('orders', state);
-
+      await _saveToHive();
       log('Order cancelled: ${orderCopy.orderNumber}');
     } else {
       log('Order not found for cancellation: $orderNumber');
@@ -89,9 +98,15 @@ class OrdersNotifier extends StateNotifier<Orders> {
 
   // Clear all orders
   Future<void> clearOrders() async {
-    state = Orders(data: []); // Reset state
+    state = Orders(data: []);
     await _ordersBox.clear(); // Clear the Hive box
     log('All orders cleared.');
+  }
+
+  // Helper method to save current state to Hive
+  Future<void> _saveToHive() async {
+    await _ordersBox.put('orders', state);
+    log('Orders saved to Hive.');
   }
 }
 

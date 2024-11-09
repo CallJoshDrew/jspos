@@ -1,48 +1,233 @@
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:jspos/models/selected_table_order.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu1_data.dart';
+import 'package:jspos/models/selected_order.dart';
+import 'package:jspos/models/item.dart';
+import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
+import 'package:uuid/uuid.dart';
 
-// final selectedOrderProvider =
-//     StateNotifierProvider<SelectedOrderNotifier, SelectedTableOrder>((ref) {
-//   return SelectedOrderNotifier();
-// });
+// Define SelectedOrderNotifier with StateNotifier
+class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
+  SelectedOrderNotifier()
+      : super(SelectedOrder(
+          orderNumber: "Order Number", // Provide a default or dynamic value
+          tableName: "Table Name", // Provide a default or dynamic value
+          orderType: "Dine-In", // Provide a default or dynamic value
+          orderDate: "Today", // Provide a default or dynamic value
+          orderTime: "Now", // Provide a default or dynamic value
+          status: "Start Your Order", // Provide a default or dynamic value
+          items: [], // Empty list or provide an initial list of items
+          subTotal: 0.0, // Provide a default value
+          totalPrice: 0.0, // Provide a default value
+          paymentMethod: "Cash", // Default value for paymentMethod
+          showEditBtn: false, // Default value for showEditBtn
+          categoryList: [], // Pass an empty list or an initial list of categories
+          amountReceived: 0.0, // Default value for amountReceived
+          amountChanged: 0.0, // Default value for amountChanged
+          roundingAdjustment: 0.0, // Default value for roundingAdjustment
+          totalQuantity: 0, // Default value for totalQuantity
+          paymentTime: "Today", // Default value for paymentTime
+          cancelledTime: "Today", // Default value for cancelledTime
+          discount: 0, // Default value for discount
+        ));
 
-// class SelectedOrderNotifier extends StateNotifier<SelectedTableOrder> {
-//   SelectedOrderNotifier() : super(_initialValue());
+  // Helper Methods
+  void addItem(Item item) {
+    final items = List<Item>.from(state.items);
 
-//   static SelectedTableOrder _initialValue() {
-//     // Provide an initial value for your SelectedTableOrder
-//     return SelectedTableOrder(
-//       orderNumber: "Order Number",
-//       tableName: "Table Name",
-//       orderType: "Dine-In",
-//       status: "Start Your Order",
-//       items: [],
-//       subTotal: 0.0,
-//       serviceCharge: 0.0,
-//       totalPrice: 0.0,
-//       quantity: 0,
-//       paymentMethod: "Cash",
-//       remarks: "No Remarks",
-//       showEditBtn: false,
-//     );
-//   }
+    if (item.selection) {
+      var existingItem = items.firstWhereOrNull((i) {
+        bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
+        bool areSidesEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedSide, item.selectedSide);
+        bool areNoodlesTypeEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedNoodlesType, item.selectedNoodlesType);
 
-//   void addItem(Item item) {
-//     state = SelectedTableOrder(
-//       orderNumber: state.orderNumber,
-//       tableName: state.tableName,
-//       orderType: state.orderType,
-//       orderTime: state.orderTime,
-//       orderDate: state.orderDate,
-//       status: state.status,
-//       items: [...state.items, item],
-//       subTotal: state.subTotal,
-//       serviceCharge: state.serviceCharge,
-//       totalPrice: state.totalPrice,
-//       quantity: state.quantity,
-//       paymentMethod: state.paymentMethod,
-//       remarks: state.remarks,
-//       showEditBtn: state.showEditBtn,
-//     );
-//   }
-// }
+        return i.name == item.name &&
+            i.selectedDrink?['name'] == item.selectedDrink?['name'] &&
+            i.selectedTemp?['name'] == item.selectedTemp?['name'] &&
+            i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
+            areNoodlesTypeEqual &&
+            i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
+            i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
+            areRemarksEqual &&
+            areSidesEqual;
+      });
+
+      if (existingItem != null) {
+        existingItem.quantity += 1;
+      } else {
+        item.id = const Uuid().v4();
+        items.add(item);
+      }
+    } else {
+      var existingItem = items.firstWhereOrNull((i) => i.name == item.name);
+      if (existingItem != null) {
+        existingItem.quantity += 1;
+      } else {
+        items.add(item);
+      }
+    }
+
+    _updateStateWithNewItems(items);
+  }
+
+  // In selected_order_provider.dart
+  void initializeNewOrder(List<String> categories) {
+    state = SelectedOrder(
+      orderNumber: "Order Number",
+      tableName: "Table Name",
+      orderType: "Dine-In",
+      orderTime: "Order Time",
+      orderDate: "Order Date",
+      status: "Start Your Order",
+      items: [],
+      subTotal: 0,
+      totalPrice: 0,
+      paymentMethod: "Cash",
+      showEditBtn: false,
+      categoryList: categories,
+      amountReceived: 0,
+      amountChanged: 0,
+      roundingAdjustment: 0,
+      totalQuantity: 0,
+    );
+  }
+
+  void setNewOrderInstance(SelectedOrder newOrder) {
+    state = newOrder; // This updates the notifier’s state
+  }
+
+  void updateItem(Item item) {
+    final items = List<Item>.from(state.items);
+    var existingIndex = items.indexWhere((i) {
+      bool areRemarksEqual = const MapEquality().equals(i.itemRemarks, item.itemRemarks);
+      bool areSidesEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedSide, item.selectedSide);
+      bool areNoodlesTypeEqual = const SetEquality<Map<String, dynamic>>(MapEquality()).equals(i.selectedNoodlesType, item.selectedNoodlesType);
+
+      return i.id == item.id &&
+          i.name == item.name &&
+          i.selectedChoice?['name'] == item.selectedChoice?['name'] &&
+          areNoodlesTypeEqual &&
+          i.selectedMeatPortion?['name'] == item.selectedMeatPortion?['name'] &&
+          i.selectedMeePortion?['name'] == item.selectedMeePortion?['name'] &&
+          areRemarksEqual &&
+          areSidesEqual &&
+          i.tapao == item.tapao;
+    });
+
+    if (existingIndex != -1) {
+      items[existingIndex] = item;
+    } else {
+      items.add(item);
+    }
+
+    _updateStateWithNewItems(items);
+  }
+
+  void resetDefault() {
+    state = SelectedOrder(
+      orderNumber: "Order Number",
+      tableName: "Table Name",
+      orderType: "DineIn",
+      orderDate: "Order Date",
+      orderTime: "Order Time",
+      status: "Start Your Order",
+      items: [],
+      subTotal: 0,
+      totalPrice: 0,
+      paymentMethod: "Cash",
+      showEditBtn: false,
+      categoryList: categories,
+      amountReceived: 0,
+      amountChanged: 0,
+      roundingAdjustment: 0,
+      totalQuantity: 0,
+      paymentTime: "Today",
+    );
+  }
+
+  void handleCancelOrder() {
+    state = state.copyWith(
+      status: "Cancelled",
+      paymentMethod: "None",
+      paymentTime: "None",
+      showEditBtn: true,
+    );
+  }
+
+  void updateSubTotal() {
+    double total = state.items.fold(0, (total, item) => total + item.price * item.quantity);
+    state = state.copyWith(subTotal: double.parse(total.toStringAsFixed(2)));
+  }
+
+  void updateTotalPrice() {
+    double total = state.subTotal;
+    state = state.copyWith(totalPrice: double.parse(total.toStringAsFixed(2)));
+  }
+
+  void updateTotalCost(double serviceChargeRate) {
+    updateSubTotal();
+    updateTotalPrice();
+  }
+
+  void updateStatus(String newStatus) {
+    state = state.copyWith(status: newStatus);
+  }
+
+  void updateOrderDateTime() {
+    DateTime now = DateTime.now();
+    state = state.copyWith(
+      orderDate: DateFormat('d MMMM yyyy').format(now),
+      orderTime: DateFormat('h:mm a').format(now),
+    );
+  }
+
+  void addPaymentDateTime() {
+    DateTime now = DateTime.now();
+    state = state.copyWith(paymentTime: DateFormat('h:mm a, d MMMM yyyy').format(now));
+  }
+
+  void addCancelDateTime() {
+    DateTime now = DateTime.now();
+    state = state.copyWith(cancelledTime: DateFormat('h:mm a, d MMMM yyyy').format(now));
+  }
+
+  void updateShowEditBtn(bool editBtn) {
+    state = state.copyWith(showEditBtn: editBtn);
+  }
+
+  void placeOrder() {
+    updateSubTotal();
+    updateTotalPrice();
+    updateStatus('Placed Order');
+    updateShowEditBtn(true);
+    updateOrderDateTime();
+  }
+
+  void calculateItemsAndQuantities() {
+    final updatedCategories = {
+      for (var category in state.categories.keys) category: {'itemCount': 0, 'itemQuantity': 0}
+    };
+    int totalQuantity = 0;
+
+    for (var item in state.items) {
+      if (updatedCategories.containsKey(item.category)) {
+        updatedCategories[item.category]?['itemCount'] = (updatedCategories[item.category]?['itemCount'] ?? 0) + 1;
+        updatedCategories[item.category]?['itemQuantity'] = (updatedCategories[item.category]?['itemQuantity'] ?? 0) + item.quantity;
+        totalQuantity += item.quantity;
+      }
+    }
+
+    state = state.copyWith(categories: updatedCategories, totalQuantity: totalQuantity);
+  }
+
+  void _updateStateWithNewItems(List<Item> items) {
+    calculateItemsAndQuantities();
+    state = state.copyWith(items: items);
+  }
+}
+
+// Provider for SelectedOrderNotifier
+final selectedOrderProvider = StateNotifierProvider<SelectedOrderNotifier, SelectedOrder>((ref) {
+  return SelectedOrderNotifier();
+});

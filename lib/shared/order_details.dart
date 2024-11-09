@@ -1,9 +1,9 @@
 import 'dart:collection';
 import 'dart:developer';
-import 'dart:ui';
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:intl/intl.dart';
 import 'package:jspos/data/remarks.dart';
@@ -11,6 +11,7 @@ import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/providers/selected_order_provider.dart';
 // import 'package:jspos/data/menu1_data.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -183,123 +184,129 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   @override
   Widget build(BuildContext context) {
-    // Create a map where each key is a category and the value is a list of items in that category
-    Map<String, List<Item>> itemsByCategory = {};
-    for (var item in widget.selectedOrder.items) {
-      if (!itemsByCategory.containsKey(item.category)) {
-        itemsByCategory[item.category] = [];
+    return Consumer(builder: (context, ref, child) {
+      final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
+
+      // Organize items by category
+      Map<String, List<Item>> itemsByCategory = {};
+      for (var item in widget.selectedOrder.items) {
+        if (!itemsByCategory.containsKey(item.category)) {
+          itemsByCategory[item.category] = [];
+        }
+        itemsByCategory[item.category]!.add(item);
       }
-      itemsByCategory[item.category]!.add(item);
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _orderNumber(
-          title: widget.selectedOrder.orderNumber,
-          status: widget.selectedOrder.status,
-          showEditBtn: widget.selectedOrder.showEditBtn,
-          timeStamp: (widget.selectedOrder.orderTime.toString()),
-          date: (widget.selectedOrder.orderDate.toString()),
-          // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
-          handlefreezeMenu: widget.handlefreezeMenu,
-          updateOrderStatus: widget.updateOrderStatus,
-          action: Container(),
-        ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            child: ListView.builder(
-              itemCount: itemsByCategory.keys.length,
-              itemBuilder: (context, index) {
-                String category = itemsByCategory.keys.elementAt(index);
-                List<Item> items = itemsByCategory[category]!;
-                // Categories Title before item image, name, quantity,
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(category,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                        )),
-                    // Category title
-                    Column(
-                      children: items
-                          .map((item) => _itemOrder(
-                                image: item.image,
-                                name: item.name,
-                                item: item,
-                                price: item.price,
-                                index: items.indexOf(item),
-                                category: item.category,
-                                showEditBtn: widget.selectedOrder.showEditBtn,
-                              ))
-                          .toList(),
-                    ),
-                  ],
-                );
-              },
-            ),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _orderNumber(
+            title: widget.selectedOrder.orderNumber,
+            status: widget.selectedOrder.status,
+            showEditBtn: widget.selectedOrder.showEditBtn,
+            timeStamp: (widget.selectedOrder.orderTime.toString()),
+            date: (widget.selectedOrder.orderDate.toString()),
+            // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
+            handlefreezeMenu: widget.handlefreezeMenu,
+            updateOrderStatus: widget.updateOrderStatus,
+            selectedOrderNotifier: selectedOrderNotifier,
+            action: Container(),
           ),
-        ),
-        // Total quantity of items under the category UI and handle method status
-        Container(
-          padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: const Color(0xff1f2029),
-            border: Border.all(
-              color: Colors.white10,
-              width: 1,
-            ),
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: categories.map((category) {
-                    return Column(
-                      children: [
-                        Text(
-                          '$category: ${widget.selectedOrder.categories[category]?['itemQuantity'].toString()}',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              child: ListView.builder(
+                itemCount: itemsByCategory.keys.length,
+                itemBuilder: (context, index) {
+                  String category = itemsByCategory.keys.elementAt(index);
+                  List<Item> items = itemsByCategory[category]!;
+                  // Categories Title before item image, name, quantity,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(category,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          )),
+                      // Category title
+                      Column(
+                        children: items
+                            .map((item) => _itemOrder(
+                                  image: item.image,
+                                  name: item.name,
+                                  item: item,
+                                  price: item.price,
+                                  index: items.indexOf(item),
+                                  category: item.category,
+                                  selectedOrderNotifier: selectedOrderNotifier,
+                                  showEditBtn: widget.selectedOrder.showEditBtn,
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  );
+                },
               ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: widget.orderStatusColor,
-                  padding: const EdgeInsets.symmetric(vertical: 0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          // Total quantity of items under the category UI and handle method status
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: const Color(0xff1f2029),
+              border: Border.all(
+                color: Colors.white10,
+                width: 1,
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: categories.map((category) {
+                      return Column(
+                        children: [
+                          Text(
+                            '$category: ${widget.selectedOrder.categories[category]?['itemQuantity'].toString()}',
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
                 ),
-                onPressed: widget.handleMethod,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(widget.orderStatusIcon, size: 22),
-                    const SizedBox(width: 10),
-                    Text(
-                      widget.orderStatus,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: widget.orderStatusColor,
+                    padding: const EdgeInsets.symmetric(vertical: 0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
                     ),
-                  ],
+                  ),
+                  onPressed: widget.handleMethod,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(widget.orderStatusIcon, size: 22),
+                      const SizedBox(width: 10),
+                      Text(
+                        widget.orderStatus,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget _orderNumber({
@@ -311,6 +318,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     required Widget action,
     VoidCallback? handlefreezeMenu,
     VoidCallback? updateOrderStatus,
+    required SelectedOrderNotifier selectedOrderNotifier,
     // required ValueNotifier<bool> isVisible,
   }) {
     return Container(
@@ -538,7 +546,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ? ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          widget.selectedOrder.updateShowEditBtn(false);
+                          selectedOrderNotifier.updateShowEditBtn(false);
                           // log('Order Details Start Page: --------------------------');
                           // log('selectedOrder.status: ${widget.selectedOrder.status}');
                           // log('selectedChoice from Order Details: ${widget.selectedOrder.items}');
@@ -596,7 +604,8 @@ class _OrderDetailsState extends State<OrderDetails> {
     required double price,
     required int index,
     required bool showEditBtn,
-    required String category,
+    required String category, 
+    required SelectedOrderNotifier selectedOrderNotifier,
   }) {
     Widget child = Container(
       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
@@ -1849,8 +1858,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                     calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                 item.price = subTotalPrice;
-                                                widget.selectedOrder.updateTotalCost(0);
-                                                widget.selectedOrder.updateItem(item);
+                                                selectedOrderNotifier.updateTotalCost(0);
+                                                selectedOrderNotifier.updateItem(item);
                                                 // // Update tempCartItems with the modified item
                                                 // int itemIndex = widget.tempCartItems.indexWhere((tempItem) => tempItem.id == item.id);
                                                 // if (itemIndex != -1) {
@@ -2097,8 +2106,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           onTap: () {
                                             setState(() {
                                               item.quantity++;
-                                              widget.selectedOrder.updateTotalCost(0);
-                                              widget.selectedOrder.calculateItemsAndQuantities();
+                                              selectedOrderNotifier.updateTotalCost(0);
+                                              selectedOrderNotifier.calculateItemsAndQuantities();
                                               widget.updateOrderStatus!();
                                             });
                                             _showCherryToast(
@@ -2157,8 +2166,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             setState(() {
                                               if (item.quantity > 1) {
                                                 item.quantity--;
-                                                widget.selectedOrder.updateTotalCost(0);
-                                                widget.selectedOrder.calculateItemsAndQuantities();
+                                                selectedOrderNotifier.updateTotalCost(0);
+                                                selectedOrderNotifier.calculateItemsAndQuantities();
                                                 widget.updateOrderStatus!();
                                                 _showCherryToast(
                                                   'remove_circle',
@@ -2410,8 +2419,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           // Remove the item from the data source
           setState(() {
             widget.selectedOrder.items.remove(item);
-            widget.selectedOrder.updateTotalCost(0);
-            widget.selectedOrder.calculateItemsAndQuantities();
+            selectedOrderNotifier.updateTotalCost(0);
+            selectedOrderNotifier.calculateItemsAndQuantities();
             widget.updateOrderStatus!();
           });
 

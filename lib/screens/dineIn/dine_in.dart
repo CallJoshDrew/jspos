@@ -12,6 +12,7 @@ import 'package:jspos/print/print_jobs.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/tables_provider.dart';
 import 'package:jspos/providers/order_counter_provider.dart';
+import 'package:jspos/providers/selected_order_provider.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
@@ -53,7 +54,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
     orders = ref.read(ordersProvider);
     tables = ref.read(tablesProvider); // Directly read initial tables data
     orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
-
+    Future.microtask(() {
+      ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
+    });
     // log('Initial Orders: ${orders.getAllOrders()}');
     // log('Loaded tables: $tables');
     // log('Loaded orderCounter: $orderCounter');
@@ -71,30 +74,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
   String orderNumber = "";
   List<Item> tempCartItems = [];
 
-  SelectedOrder selectedOrder = SelectedOrder(
-    orderNumber: "Order Number",
-    tableName: "Table Name",
-    orderType: "Dine-In",
-    orderTime: "Order Time",
-    orderDate: "Order Date",
-    status: "Start Your Order",
-    items: [], // Add your items here
-    subTotal: 0,
-    serviceCharge: 0,
-    totalPrice: 0,
-    paymentMethod: "Cash",
-    showEditBtn: false,
-    categoryList: categories,
-    amountReceived: 0,
-    amountChanged: 0,
-    roundingAdjustment: 0,
-    totalQuantity: 0,
-  );
-  // quantity: 0,
-  // remarks: "No Remarks",
-  // itemCounts: {},
-  // itemQuantities: {},
-  // totalItems: 0,
   String generateID(String tableName, WidgetRef ref) {
     // Access the current orderCounter from the provider
     final currentOrderCounter = ref.read(orderCounterProvider);
@@ -120,16 +99,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
     return orderNumber;
   }
-
-  // void printTables() {
-  //   // Get the 'tables' box
-  //   var tablesBox = Hive.box('tables');
-
-  //   List<Map<String, dynamic>> tables = (tablesBox.get('tables') as List).map((item) => Map<String, dynamic>.from(item)).toList();
-
-  //   // Print the tables list to the console
-  //   log('Tables: $tables');
-  // }
 
   void updateTables(int index, String orderNumber, bool isOccupied) async {
     try {
@@ -175,20 +144,19 @@ class DineInPageState extends ConsumerState<DineInPage> {
         log('Current table data: $currentTable');
 
         selectedTableIndex = index;
-
         log('Selected index: $index');
+        final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
 
         // If the table is not occupied, generate a new orderNumber
         if (!currentTable['occupied']) {
-          log('Occupied field type: ${currentTable['occupied'].runtimeType}');
+          // log('Occupied field type: ${currentTable['occupied'].runtimeType}');
           bool isOccupied = currentTable['occupied'] == true;
           if (!isOccupied) {
             log('Table is not occupied, creating new order.');
           }
           handlefreezeMenu();
-          // Generate a new instance of selectedOrder first, and then only assign it's fields and details to the selectedOrder
-          selectedOrder = selectedOrder.newInstance(categories);
-          selectedOrder.updateStatus("Ordering");
+
+          selectedOrderNotifier.updateStatus("Ordering");
           tempCartItems = [];
           // below these are important updates for the UI, have to manually update it to cause rerender in orderDetails page.
           orderStatus = "Empty Cart";
@@ -200,7 +168,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
           isTableSelected = true;
           // If the table is occupied, use the existing orderNumber
           var orderNumber = currentTable['orderNumber'].toString();
-          var order = orders.getOrder(orderNumber);
+          final ordersNotifier = ref.read(ordersProvider.notifier);
+          var order = ordersNotifier.getOrder(orderNumber);
 
           // log('The selected Order Number is: $orderNumber');
           // log('Exisiting order number is $orderNumber');
@@ -209,9 +178,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
           if (order != null) {
             log('Order Found is: $orderNumber');
             order.showEditBtn = true;
-            selectedOrder = order;
-            tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-            selectedOrder.calculateItemsAndQuantities();
+            // Update selectedOrder in the provider with the existing order data
+            selectedOrderNotifier.setNewOrderInstance(order);
+            tempCartItems = order.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+            // Recalculate quantities or other properties if needed
+            selectedOrderNotifier.calculateItemsAndQuantities();
             // log('The selected Order is: $selectedOrder');
             // _showCherryToast(
             //   'info', // Pass the icon key as a string
@@ -305,8 +276,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void addItemtoCart(item) {
-    selectedOrder.addItem(item);
-    selectedOrder.updateTotalCost(0);
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
+    // Add the item and update the total cost
+    selectedOrderNotifier.addItem(item);
+    selectedOrderNotifier.updateTotalCost(0);
+    // Access the current state of selectedOrder
+    final selectedOrder = ref.read(selectedOrderProvider);
     if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
       handleMethod = handleUpdateOrderBtn;
@@ -347,7 +322,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
       if (sortedList1[i].name != sortedList2[i].name ||
           sortedList1[i].quantity != sortedList2[i].quantity ||
-          sortedList1[i].tapao != sortedList2[i].tapao || 
+          sortedList1[i].tapao != sortedList2[i].tapao ||
           !const MapEquality().equals(remarks1, remarks2) ||
           !const MapEquality().equals(sortedList1[i].selectedDrink, sortedList2[i].selectedDrink) ||
           !const MapEquality().equals(sortedList1[i].selectedTemp, sortedList2[i].selectedTemp) ||
@@ -366,6 +341,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void _handleCloseMenu() {
+    final selectedOrder = ref.read(selectedOrderProvider);
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     // log('_handleCloseMenu called');
     // log('selectedOrder.status before: ${selectedOrder.status}');
     // log('selectedOrder.items before: ${selectedOrder.items}');
@@ -373,7 +350,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     if (selectedOrder.status == "Ordering" && selectedOrder.items.isEmpty) {
       setState(() {
         resetSelectedTable(ref);
-        selectedOrder.resetDefault();
+        selectedOrderNotifier.resetDefault();
         updateOrderStatus();
         handlefreezeMenu();
       });
@@ -381,7 +358,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
       _showConfirmationCancelDialog();
     } else if (selectedOrder.status == "Placed Order" && areItemListsEqual(tempCartItems, selectedOrder.items)) {
       handlefreezeMenu();
-      selectedOrder.updateShowEditBtn(true);
+      selectedOrderNotifier.updateShowEditBtn(true);
       orderStatus = "Make Payment";
       orderStatusColor = const Color.fromRGBO(46, 125, 50, 1);
       orderStatusIcon = Icons.monetization_on;
@@ -397,6 +374,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handleCancelBtn() {
+    final selectedOrder = ref.read(selectedOrderProvider);
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     // log('handleCancelBtn called');
     // log('selectedOrder.status before: ${selectedOrder.status}');
     // log('selectedOrder.items before: ${selectedOrder.items}');
@@ -409,7 +388,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
       setState(() {
         // reset selected table and the selected order
         resetSelectedTable(ref);
-        selectedOrder.resetDefault();
+        selectedOrderNotifier.resetDefault();
       });
       // log('Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
@@ -417,12 +396,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
         final currentCounterValue = ref.read(orderCounterProvider); // gives the current state value
         log('Order Counter when status is Placed Order but cancel update: $currentCounterValue');
 
-        selectedOrder.updateShowEditBtn(true);
+        selectedOrderNotifier.updateShowEditBtn(true);
         selectedOrder.items = tempCartItems.map((item) => item.copyWith()).toList();
       });
     } else if (selectedOrder.status == "Placed Order") {
       setState(() {
-        selectedOrder.updateShowEditBtn(true);
+        selectedOrderNotifier.updateShowEditBtn(true);
       });
       // log('Menu closed. Current selectedOrder status: ${selectedOrder.status}');
     }
@@ -454,12 +433,14 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handleUpdateOrderBtn() {
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     try {
       setState(() {
-        selectedOrder.placeOrder();
-        tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-        // Add a new SelectedOrder object to the orders list
-        orders.addOrUpdateOrder(selectedOrder.copyWith()); // this already include saving to hive
+        // Use SelectedOrderNotifier to update status, items, and showEditBtn
+        selectedOrderNotifier.placeOrder();
+        tempCartItems = ref.read(selectedOrderProvider).items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+        // Add or update order in OrdersNotifier
+        ref.read(ordersProvider.notifier).addOrUpdateOrder(ref.read(selectedOrderProvider).copyWith());
         updateOrderStatus();
         handlefreezeMenu();
       });
@@ -484,7 +465,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
       context,
       MaterialPageRoute(
         builder: (context) => MakePaymentPage(
-          selectedOrder: selectedOrder,
           updateOrderStatus: updateOrderStatus,
           tables: tables,
           selectedTableIndex: selectedTableIndex,
@@ -496,6 +476,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handlePrintItems(BuildContext context, WidgetRef ref) {
+    final selectedOrder = ref.read(selectedOrderProvider);
     // Navigate to the Print Items page
     Navigator.push(
       context,
@@ -521,6 +502,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   Future<void> _showConfirmationCancelDialog() async {
+    final selectedOrder = ref.read(selectedOrderProvider);
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -608,6 +590,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   Future<void> _showComfirmPlaceOrdersDialog() async {
+    final selectedOrder = ref.read(selectedOrderProvider);
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -705,13 +689,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
                     // Step 3: Update the selected order details with the correct order number.
                     selectedOrder.orderNumber = orderNumber;
                     selectedOrder.tableName = tables[selectedTableIndex]['name'];
-                    selectedOrder.placeOrder();
+                    selectedOrderNotifier.placeOrder();
 
                     // Store the current items in the temporary cart.
                     tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-
                     // Add or update the order in the orders list.
-                    orders.addOrUpdateOrder(selectedOrder.copyWith());
+                    ref.read(ordersProvider.notifier).addOrUpdateOrder(selectedOrder.copyWith());
                     // Check if the selectedOrder's orderNumber exists in the orders list and log it if found.
                     final matchingOrder = ref.read(ordersProvider.notifier).getOrder(selectedOrder.orderNumber);
                     if (matchingOrder != null) {
@@ -768,6 +751,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   IconData orderStatusIcon = Icons.shopping_cart;
 
   void updateOrderStatus() {
+    final selectedOrder = ref.read(selectedOrderProvider);
     setState(() {
       if (selectedOrder.status == "Start Your Order") {
         orderStatus = "Empty Cart";
@@ -806,6 +790,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   Widget buildPrintButton(String label, String area, BuildContext context, WidgetRef ref) {
+    final selectedOrder = ref.read(selectedOrderProvider);
     return TextButton(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
@@ -864,7 +849,19 @@ class DineInPageState extends ConsumerState<DineInPage> {
   Widget build(BuildContext context) {
     // Use ref.watch() to listen to tablesProvider for changes
     final tables = ref.watch(tablesProvider);
-    final totalOrdersPrice = ref.watch(ordersProvider.notifier).totalOrdersPrice;
+    // Future need to display the price of each table
+    // final totalOrdersPrice = ref.watch(ordersProvider.notifier).totalOrdersPrice;
+
+    // final groupedOrders = ref.watch(ordersProvider.notifier).ordersGroupedByDate;
+
+    // for (var date in groupedOrders.keys) {
+    //   log('Orders for $date:');
+    //   for (var order in groupedOrders[date]!) {
+    //     log(order.toString());
+    //   }
+    // }
+    final selectedOrder = ref.watch(selectedOrderProvider);
+    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     // Display a loading indicator if data is still being fetched
     if (isLoading && tables.isEmpty) {
       // log('Show info: $tables');
@@ -951,7 +948,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                           child: Row(
                                             children: [
                                               Text(
-                                                // Show Seated 
+                                                // Show Seated
                                                 'SEATED',
                                                 style: TextStyle(
                                                   fontSize: 10,
@@ -1157,12 +1154,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                                         resetSelectedTable(ref);
 
                                                         // Cancel the order through ordersProvider
-                                                        ref.read(ordersProvider.notifier).cancelOrder(selectedOrder.orderNumber, categories);
+                                                        ref.read(ordersProvider.notifier).cancelOrder(selectedOrder.orderNumber);
 
                                                         log('Order from order details page cancelled: ${selectedOrder.orderNumber}');
 
                                                         setState(() {
-                                                          selectedOrder.handleCancelOrder();
+                                                          selectedOrderNotifier.handleCancelOrder();
                                                           updateOrderStatus();
                                                         });
                                                         _showCherryToast(
