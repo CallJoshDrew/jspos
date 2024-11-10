@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/screens/history/history.dart';
-import 'package:jspos/screens/recommendation/recommend.dart';
+// import 'package:jspos/screens/recommendation/recommend.dart';
 // import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';

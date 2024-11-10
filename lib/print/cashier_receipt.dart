@@ -1,7 +1,7 @@
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/client_profile.dart';
 import 'package:jspos/models/selected_order.dart';
-import 'package:jspos/print/split_text_into_lines.dart';
+// import 'package:jspos/print/split_text_into_lines.dart';
 
 class CashierReceiptGenerator {
   Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {

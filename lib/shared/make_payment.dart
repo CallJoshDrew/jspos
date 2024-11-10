@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
-import 'package:jspos/models/selected_order.dart';
+// import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
 import 'package:jspos/providers/tables_provider.dart';
@@ -47,7 +47,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
 
   void _calculateTotalWithDiscount() {
     final selectedOrder = ref.read(selectedOrderProvider);
-    final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
+    // final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     // Calculate the discount amount
     double discountAmount = selectedOrder.subTotal * (selectedOrder.discount / 100);
 

@@ -1,9 +1,9 @@
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/paper_size_config.dart';
 import 'package:jspos/models/selected_order.dart';
-import 'package:jspos/print/split_text_into_lines.dart';
+// import 'package:jspos/print/split_text_into_lines.dart';
 import 'package:jspos/print/total_quantity_calculator.dart';
 
 class OrderReceiptGenerator with TotalQuantityCalculator {
