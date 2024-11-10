@@ -100,136 +100,78 @@ class DineInPageState extends ConsumerState<DineInPage> {
     return orderNumber;
   }
 
-  void updateTables(int index, String orderNumber, bool isOccupied) async {
-    try {
-      // Step 1: Update the 'tables' box in Hive
-      var tablesBox = Hive.box('tables');
-      var rawTables = tablesBox.get('tables');
-
-      if (rawTables != null) {
-        List<Map<String, dynamic>> tables = (rawTables as List).map((item) => Map<String, dynamic>.from(item)).toList();
-
-        // Update the table data in Hive
-        tables[index]['orderNumber'] = orderNumber;
-        tables[index]['occupied'] = isOccupied;
-        tablesBox.put('tables', tables);
-        // log('DINEIN Page: Updated tables in Hive.');
-      } else {
-        log('DINEIN Page: Tables data is null in Hive.');
-      }
-
-      // Step 2: Update the provider state
-      ref.read(tablesProvider.notifier).updateSelectedTable(index, orderNumber, isOccupied);
-      // log('DINEIN Page: Updated tables in Provider.');
-    } catch (e) {
-      log('DINEIN Page: Failed to update tables: $e');
-      // Handle the exception as appropriate for your app
-    }
-  }
-
   int pressedButtonIndex = -1;
-  // Open Menu after set table number
-  // Update in _handleSetTables function when a new order is created
   void _handleSetTables(String tableName, int index) {
-    log('Entering _handleSetTables with $tableName at index: $index');
+    // Log the entry into the function with the table name and index
+    // log('Entering _handleSetTables with $tableName at index: $index');
     try {
       setState(() {
-        // Set the selected table and its index
-        // log('The table is table $tableName at index $index');
-        // Filter and log only the tables that are occupied
-        // log('tables from DINE IN now is $tables');
+        // Retrieve the latest tables data from the provider
         final tablesData = ref.read(tablesProvider);
-        // var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
         var currentTable = tablesData[index];
         log('Current table data: $currentTable');
-
+        
+        // Update the selected table index
         selectedTableIndex = index;
-        // log('Selected index: $index');
+        
+        // Access the selected order provider to manage the current order status
         final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
         final selectedOrder = ref.read(selectedOrderProvider);
-        // If the table is not occupied, generate a new orderNumber
+        
+        // Check if the selected table is unoccupied
         if (!currentTable['occupied']) {
-          log('selectedOrder from setTable is: $selectedOrder');
-          // log('Occupied field type: ${currentTable['occupied'].runtimeType}');
+          log('current selectedOrder is: $selectedOrder');
+          // Determine if the 'occupied' field is false (table is unoccupied)
           bool isOccupied = currentTable['occupied'] == true;
           if (!isOccupied) {
             log('Table is not occupied, creating new order.');
           }
           handlefreezeMenu();
+          // Initialize a new order instance for the table
           selectedOrderNotifier.initializeNewOrder(categories);
+          // Set order status to 'Ordering' as no items are yet selected
           selectedOrderNotifier.updateStatus("Ordering");
+          // Clear any existing items in the temporary cart
           tempCartItems = [];
-          // below these are important updates for the UI, have to manually update it to cause rerender in orderDetails page.
+          // Update UI elements related to order status for an empty cart
           orderStatus = "Empty Cart";
           orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
           orderStatusIcon = Icons.shopping_cart;
           handleMethod = defaultMethod;
           isTableSelected = false;
         } else {
+          // If the table is already occupied, retrieve the list of occupied tables
+          var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
+          log('Occupied Tables are : $occupiedTables');
           isTableSelected = true;
-          // If the table is occupied, use the existing orderNumber
+          // Retrieve the current table's order number and use it to locate the existing order
           var orderNumber = currentTable['orderNumber'].toString();
           final ordersNotifier = ref.read(ordersProvider.notifier);
           var order = ordersNotifier.getOrder(orderNumber);
 
-          // log('The selected Order Number is: $orderNumber');
-          // log('Exisiting order number is $orderNumber');
-          // log('Current orders: ${orders.getAllOrders}');
-          // If an order with the same orderNumber exists, update selectedOrder with its details
+          // If an existing order is found with the same order number
           if (order != null) {
-            log('Order Number Found is: $orderNumber');
             order.showEditBtn = true;
-            // Update selectedOrder in the provider with the existing order data
+            // Log the selectedOrder data and the found order
             log('selectedOrder data and time are: ${selectedOrderProvider}');
             log('Order Found is: $order');
+            // Set the found order as the current order instance in the provider
             selectedOrderNotifier.setNewOrderInstance(order);
+            // Clone the existing order's items into tempCartItems, preserving item remarks
             tempCartItems = order.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-            // Recalculate quantities or other properties if needed
+            // Recalculate quantities or other item properties if necessary
             selectedOrderNotifier.calculateItemsAndQuantities();
-            // log('The selected Order is: $selectedOrder');
-            // _showCherryToast(
-            //   'info', // Pass the icon key as a string
-            //   'You have selected TABLE ${tables[index]['name']}.', // Interpolated title text
-            //   1000, // Toast duration in milliseconds
-            //   200, // Animation duration in milliseconds
-            // );
           } else {
             log('Order not found for order number: $orderNumber');
           }
         }
       });
     } catch (e, stack) {
+      // Log any errors that occur within the try block, along with the stack trace for debugging
       log('Error in _handleSetTables: $e\n$stack');
     }
-    // printTables();
-    // saveSelectedOrderToHive();
     updateOrderStatus();
   }
-
-  // // log Hive for selectedOrder
-  // void logSelectedOrders() async {
-  //   try {
-  //     if (Hive.isBoxOpen('tables')) {
-  //       var selectedOrderBox = await Hive.openBox('selectedOrder');
-  //       var selectedOrder = selectedOrderBox.get('selectedOrder');
-  //       log('selectedOrder: $selectedOrder');
-  //     }
-  //   } catch (e) {
-  //     log('An error occurred at DineIn Page void logSelectedOrders: $e');
-  //   }
-  // }
-
-  // void saveSelectedOrderToHive() async {
-  //   try {
-  //     if (Hive.isBoxOpen('tables')) {
-  //       var selectedOrderBox = Hive.box('selectedOrder');
-  //       await selectedOrderBox.put('selectedOrder', selectedOrder);
-  //       // logSelectedOrders();
-  //     }
-  //   } catch (e) {
-  //     log('DineIn Page: Failed to save selectedOrder to Hive: $e');
-  //   }
-  // }
 
   void onItemAdded(Item item) {
     setState(() {
@@ -298,9 +240,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
     if (selectedTableIndex != -1 && selectedTableIndex < tables.length) {
       // Reset the table's orderNumber and occupied status in the provider
       ref.read(tablesProvider.notifier).updateSelectedTable(selectedTableIndex, resetOrderNumber, false);
-
-      // Optionally, save the updated tables state to Hive (not needed if updateTable handles it)
-      // ref.read(tablesProvider.notifier).updateTables(tables);
 
       log('Table ${tables[selectedTableIndex]['name']} has been reset.');
     } else {
@@ -379,12 +318,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   void handleCancelBtn() {
     final selectedOrder = ref.read(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
-    // log('handleCancelBtn called');
-    // log('selectedOrder.status before: ${selectedOrder.status}');
-    // log('selectedOrder.items before: ${selectedOrder.items}');
-    // log('tempCartItems before: $tempCartItems');
     final currentOrderCounter = ref.read(orderCounterProvider);
-    // log('selectedOrder.items before copyWith: ${selectedOrder.items}');
     log('handel Cancel: $currentOrderCounter');
     // yes to cancel orders or cancel changes
     if (selectedOrder.status == "Ordering") {
@@ -393,23 +327,20 @@ class DineInPageState extends ConsumerState<DineInPage> {
         resetSelectedTable(ref);
         selectedOrderNotifier.resetDefault();
       });
-      // log('Reset selected table and order. New selectedOrder status: ${selectedOrder.status}');
     } else if (selectedOrder.status == "Placed Order" && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
       setState(() {
         final currentCounterValue = ref.read(orderCounterProvider); // gives the current state value
         log('Order Counter when status is Placed Order but cancel update: $currentCounterValue');
 
         selectedOrderNotifier.updateShowEditBtn(true);
-        selectedOrder.items = tempCartItems.map((item) => item.copyWith()).toList();
+        // Use the new method to update items safely
+        selectedOrderNotifier.updateItemsFromTempCart(tempCartItems);
       });
     } else if (selectedOrder.status == "Placed Order") {
       setState(() {
         selectedOrderNotifier.updateShowEditBtn(true);
       });
-      // log('Menu closed. Current selectedOrder status: ${selectedOrder.status}');
     }
-    // log('selectedOrder.items after copyWith: ${selectedOrder.items}');
-    // log('tempCartItems copyWith: $tempCartItems');
     handlefreezeMenu();
     updateOrderStatus();
   }
@@ -472,7 +403,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
           updateOrderStatus: updateOrderStatus,
           tables: tables,
           selectedTableIndex: selectedTableIndex,
-          updateTables: updateTables,
           isTableInitiallySelected: isTableSelected,
         ),
       ),
@@ -490,7 +420,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
           updateOrderStatus: updateOrderStatus,
           tables: tables,
           selectedTableIndex: selectedTableIndex,
-          updateTables: updateTables,
           isTableInitiallySelected: isTableSelected,
         ),
       ),
@@ -1291,7 +1220,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
             handleMethod: handleMethod,
             handlefreezeMenu: handlefreezeMenu,
             updateOrderStatus: updateOrderStatus,
-            onItemAdded: onItemAdded,
             resetSelectedTable: () => resetSelectedTable(ref),
             tempCartItems: tempCartItems,
             areItemListsEqual: areItemListsEqual,

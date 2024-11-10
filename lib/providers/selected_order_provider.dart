@@ -178,7 +178,16 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
 
   void addPaymentDateTime() {
     DateTime now = DateTime.now();
-    state = state.copyWith(paymentTime: DateFormat('h:mm a, d MMMM yyyy').format(now));
+    // Attempt to format and log the payment time
+    try {
+      String formattedDate = DateFormat('h:mm a, d MMMM yyyy').format(now);
+      log('Formatted Payment Date: $formattedDate');
+      state = state.copyWith(paymentTime: formattedDate);
+    } catch (e) {
+      log('Date formatting failed: $e');
+      // Use a default or fallback format in case of error
+      state = state.copyWith(paymentTime: now.toIso8601String());
+    }
   }
 
   void addCancelDateTime() {
@@ -198,7 +207,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     return _calculateSubTotal(); // Assuming totalPrice is same as subTotal here
   }
 
-  Future <void> placeOrder(String orderNumber, String tableName) async {
+  Future<void> placeOrder(String orderNumber, String tableName) async {
     DateTime now = DateTime.now();
     state = state.copyWith(
       orderNumber: orderNumber,
@@ -233,6 +242,30 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
   void _updateStateWithNewItems(List<Item> items) {
     calculateItemsAndQuantities();
     state = state.copyWith(items: items);
+  }
+
+  void updateItemsFromTempCart(List<Item> tempCartItems) {
+    // Copy items from tempCartItems to prevent direct state mutation
+    final updatedItems = tempCartItems.map((item) => item.copyWith()).toList();
+
+    // Update the state with the new list of items
+    state = state.copyWith(items: updatedItems);
+
+    // Recalculate items and quantities as needed
+    calculateItemsAndQuantities();
+  }
+
+  void removeItem(Item item) {
+    // Create a new list of items excluding the specified item
+    final updatedItems = List<Item>.from(state.items)..remove(item);
+
+    // Update the state with the modified items list
+    _updateStateWithNewItems(updatedItems);
+
+    // Update the subtotal and total price if needed
+    updateTotalCost();
+    // calculate items & quantities
+    calculateItemsAndQuantities();
   }
 }
 

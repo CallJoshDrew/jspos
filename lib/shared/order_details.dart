@@ -23,7 +23,6 @@ class OrderDetails extends StatefulWidget {
   final VoidCallback? handlefreezeMenu;
   final VoidCallback? updateOrderStatus;
   final VoidCallback? resetSelectedTable;
-  final Function(Item item) onItemAdded;
   final List<Item> tempCartItems;
   final bool Function(List<Item> list1, List<Item> list2) areItemListsEqual;
 
@@ -36,7 +35,6 @@ class OrderDetails extends StatefulWidget {
     this.handleMethod,
     this.handlefreezeMenu,
     this.updateOrderStatus,
-    required this.onItemAdded,
     this.resetSelectedTable,
     required this.tempCartItems,
     required this.areItemListsEqual,
@@ -2418,10 +2416,8 @@ class _OrderDetailsState extends State<OrderDetails> {
         onDismissed: (direction) {
           // Remove the item from the data source
           setState(() {
-            widget.selectedOrder.items.remove(item);
-            selectedOrderNotifier.updateTotalCost();
-            selectedOrderNotifier.calculateItemsAndQuantities();
-            widget.updateOrderStatus!();
+            selectedOrderNotifier.removeItem(item);
+            widget.updateOrderStatus!(); //confirm it is never null
           });
 
           // Show a notification

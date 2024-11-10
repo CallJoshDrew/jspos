@@ -10,13 +10,13 @@ import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
+import 'package:jspos/providers/tables_provider.dart';
 
 class MakePaymentPage extends ConsumerStatefulWidget {
   final VoidCallback? updateOrderStatus;
 
   final List<Map<String, dynamic>> tables;
   final int selectedTableIndex;
-  final void Function(int index, String orderNumber, bool isOccupied) updateTables;
   final bool isTableInitiallySelected;
 
   const MakePaymentPage({
@@ -24,7 +24,6 @@ class MakePaymentPage extends ConsumerStatefulWidget {
     required this.updateOrderStatus,
     required this.tables,
     required this.selectedTableIndex,
-    required this.updateTables,
     required this.isTableInitiallySelected,
   });
 
@@ -1187,10 +1186,12 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                     ..status = 'Paid'
                                                                     ..cancelledTime = 'None';
                                                                     selectedOrderNotifier.addPaymentDateTime();
+                                                                  
+                                                                  final updatedSelectedOrder = ref.read(selectedOrderProvider);
 
                                                                   // Add or update the order and save it in Hive
                                                                   widget.updateOrderStatus?.call();
-                                                                  ref.read(ordersProvider.notifier).addOrUpdateOrder(selectedOrder);
+                                                                  ref.read(ordersProvider.notifier).addOrUpdateOrder(updatedSelectedOrder);
 
                                                                   // Clear table data for the selected table
                                                                   var emptyOrderNumber = '';
@@ -1198,11 +1199,8 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                   widget.tables[widget.selectedTableIndex]['occupied'] = false;
 
                                                                   // Update the tables state
-                                                                  widget.updateTables(
-                                                                    widget.selectedTableIndex,
-                                                                    emptyOrderNumber,
-                                                                    false,
-                                                                  );
+                                                                  ref.read(tablesProvider.notifier).updateSelectedTable(widget.selectedTableIndex, emptyOrderNumber, false);
+
                                                                   isTableSelected = !isTableSelected; // Update the state
                                                                   log('Order saved with discount: ${selectedOrder.discount}');
 

@@ -16,7 +16,6 @@ class PrintItemsPage extends ConsumerStatefulWidget {
 
   final List<Map<String, dynamic>> tables;
   final int selectedTableIndex;
-  final void Function(int index, String orderNumber, bool isOccupied) updateTables;
   final bool isTableInitiallySelected;
 
   const PrintItemsPage({
@@ -25,7 +24,6 @@ class PrintItemsPage extends ConsumerStatefulWidget {
     required this.updateOrderStatus,
     required this.tables,
     required this.selectedTableIndex,
-    required this.updateTables,
     required this.isTableInitiallySelected,
   });
 
