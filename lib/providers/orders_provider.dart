@@ -10,7 +10,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
   final Box<Orders> _ordersBox;
 
   OrdersNotifier(this._ordersBox) : super(_ordersBox.get('orders', defaultValue: Orders(data: [])) ?? Orders());
-  
+
   // Method to get an order by order number
   SelectedOrder? getOrder(String orderNumber) {
     return state.data.firstWhereOrNull((order) => order.orderNumber == orderNumber);
@@ -36,6 +36,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
 
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
+    log('pass in of order: $order');
     final existingOrderIndex = state.data.indexWhere((o) => o.orderNumber == order.orderNumber);
 
     final updatedOrders = List<SelectedOrder>.from(state.data);
@@ -50,6 +51,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
     // Update state and save to Hive
     state = Orders(data: updatedOrders);
     await _saveToHive();
+    log('Orders saved to Hive: $updatedOrders');
   }
 
   // Delete an order

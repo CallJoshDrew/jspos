@@ -54,9 +54,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
     orders = ref.read(ordersProvider);
     tables = ref.read(tablesProvider); // Directly read initial tables data
     orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
-    Future.microtask(() {
-      ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
-    });
+    // Future.microtask(() {
+    //   ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
+    // });
     // log('Initial Orders: ${orders.getAllOrders()}');
     // log('Loaded tables: $tables');
     // log('Loaded orderCounter: $orderCounter');
@@ -113,14 +113,14 @@ class DineInPageState extends ConsumerState<DineInPage> {
         tables[index]['orderNumber'] = orderNumber;
         tables[index]['occupied'] = isOccupied;
         tablesBox.put('tables', tables);
-        log('DINEIN Page: Updated tables in Hive.');
+        // log('DINEIN Page: Updated tables in Hive.');
       } else {
         log('DINEIN Page: Tables data is null in Hive.');
       }
 
       // Step 2: Update the provider state
       ref.read(tablesProvider.notifier).updateSelectedTable(index, orderNumber, isOccupied);
-      log('DINEIN Page: Updated tables in Provider.');
+      // log('DINEIN Page: Updated tables in Provider.');
     } catch (e) {
       log('DINEIN Page: Failed to update tables: $e');
       // Handle the exception as appropriate for your app
@@ -144,18 +144,19 @@ class DineInPageState extends ConsumerState<DineInPage> {
         log('Current table data: $currentTable');
 
         selectedTableIndex = index;
-        log('Selected index: $index');
+        // log('Selected index: $index');
         final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
-
+        final selectedOrder = ref.read(selectedOrderProvider);
         // If the table is not occupied, generate a new orderNumber
         if (!currentTable['occupied']) {
+          log('selectedOrder from setTable is: $selectedOrder');
           // log('Occupied field type: ${currentTable['occupied'].runtimeType}');
           bool isOccupied = currentTable['occupied'] == true;
           if (!isOccupied) {
             log('Table is not occupied, creating new order.');
           }
           handlefreezeMenu();
-
+          selectedOrderNotifier.initializeNewOrder(categories);
           selectedOrderNotifier.updateStatus("Ordering");
           tempCartItems = [];
           // below these are important updates for the UI, have to manually update it to cause rerender in orderDetails page.
@@ -176,9 +177,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
           // log('Current orders: ${orders.getAllOrders}');
           // If an order with the same orderNumber exists, update selectedOrder with its details
           if (order != null) {
-            log('Order Found is: $orderNumber');
+            log('Order Number Found is: $orderNumber');
             order.showEditBtn = true;
             // Update selectedOrder in the provider with the existing order data
+            log('selectedOrder data and time are: ${selectedOrderProvider}');
+            log('Order Found is: $order');
             selectedOrderNotifier.setNewOrderInstance(order);
             tempCartItems = order.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             // Recalculate quantities or other properties if needed
@@ -279,7 +282,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     // Add the item and update the total cost
     selectedOrderNotifier.addItem(item);
-    selectedOrderNotifier.updateTotalCost(0);
+    selectedOrderNotifier.updateTotalCost();
     // Access the current state of selectedOrder
     final selectedOrder = ref.read(selectedOrderProvider);
     if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false && !areItemListsEqual(tempCartItems, selectedOrder.items)) {
@@ -433,11 +436,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   void handleUpdateOrderBtn() {
+    final selectedOrder = ref.read(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     try {
       setState(() {
         // Use SelectedOrderNotifier to update status, items, and showEditBtn
-        selectedOrderNotifier.placeOrder();
+        selectedOrderNotifier.placeOrder(selectedOrder.orderNumber, selectedOrder.tableName);
         tempCartItems = ref.read(selectedOrderProvider).items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
         // Add or update order in OrdersNotifier
         ref.read(ordersProvider.notifier).addOrUpdateOrder(ref.read(selectedOrderProvider).copyWith());
@@ -649,7 +653,6 @@ class DineInPageState extends ConsumerState<DineInPage> {
               ),
               onPressed: () async {
                 // Show CherryToast before any navigation or other tasks
-                // log('$selectedTableIndex');
                 _showCherryToast(
                   'info', // Pass the icon key as a string
                   'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
@@ -657,62 +660,54 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   1500, // Animation duration in milliseconds
                 );
 
-                // log('Table is table ${tables[selectedTableIndex]['name']}');
-
                 try {
-                  // Place the order and update UI state inside setState.
+                  // Step 1: Fetch updated tables data
+                  final updatedTables = ref.read(tablesProvider);
+
+                  // Check if the current table already has an order number
+                  final currentOrderNumber = updatedTables[selectedTableIndex]['orderNumber'];
+                  if (currentOrderNumber == null || currentOrderNumber.isEmpty) {
+                    // Generate a new order number if it doesn't exist
+                    orderNumber = generateID(updatedTables[selectedTableIndex]['name'], ref);
+                    log('Generated orderNumber: $orderNumber');
+
+                    // Update the table provider and Hive with the new order number
+                    ref.read(tablesProvider.notifier).updateSelectedTable(selectedTableIndex, orderNumber, true);
+                  } else {
+                    // Use the existing order number from the provider
+                    orderNumber = currentOrderNumber;
+                  }
+
+                  // Step 2: Place the order with the updated order number
+                  await selectedOrderNotifier.placeOrder(orderNumber, tables[selectedTableIndex]['name']);
+
+                  // Log and prepare the updated selected order
+                  final updatedSelectedOrder = ref.read(selectedOrderProvider); // Read the updated state
+                  log('Updated selectedOrder after placeOrder: $updatedSelectedOrder');
+
+                  // Step 3: Add or update the order in ordersProvider
+                  ref.read(ordersProvider.notifier).addOrUpdateOrder(updatedSelectedOrder);
+
+                  // Store the current items in the temporary cart
+                  tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
+                  // Check if the selectedOrder's orderNumber exists in the orders list and log it if found.
+                    // final matchingOrder = ref.read(ordersProvider.notifier).getOrder(selectedOrder.orderNumber);
+                    // if (matchingOrder != null) {
+                    //   log('Matching orderNumber found: ${matchingOrder.orderNumber}');
+                    // } else {
+                    //   log('No matching order found.');
+                    // }
+                  // Update UI state in a separate setState call
                   setState(() {
-                    // log('Tables data: $tables');
-                    // log('Selected table index: $selectedTableIndex');
-                    final updatedTables = ref.read(tablesProvider);
-                    // log('Updated tables: $updatedTables');
-                    // log('Selected table: ${updatedTables[selectedTableIndex]}');
-
-                    // Step 1: Check if the current table already has an order number from the provider.
-                    final currentOrderNumber = updatedTables[selectedTableIndex]['orderNumber'];
-                    // log('Current orderNumber: ${tables[selectedTableIndex]['orderNumber']}');
-                    // log('Current orderNumber: $currentOrderNumber');
-
-                    if (currentOrderNumber == null || currentOrderNumber.isEmpty) {
-                      // Step 2: Generate a new order number if it doesn't exist.
-                      orderNumber = generateID(updatedTables[selectedTableIndex]['name'], ref);
-                      // log('Generated orderNumber: $orderNumber');
-
-                      // Update the table provider and Hive with the new order number.
-                      updateTables(selectedTableIndex, orderNumber, true);
-                    } else {
-                      // Use the existing order number from the provider.
-                      orderNumber = currentOrderNumber;
-                      // log('Using existing orderNumber: $orderNumber');
-                    }
-
-                    // Step 3: Update the selected order details with the correct order number.
-                    selectedOrder.orderNumber = orderNumber;
-                    selectedOrder.tableName = tables[selectedTableIndex]['name'];
-                    selectedOrderNotifier.placeOrder();
-
-                    // Store the current items in the temporary cart.
-                    tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
-                    // Add or update the order in the orders list.
-                    ref.read(ordersProvider.notifier).addOrUpdateOrder(selectedOrder.copyWith());
-                    // Check if the selectedOrder's orderNumber exists in the orders list and log it if found.
-                    final matchingOrder = ref.read(ordersProvider.notifier).getOrder(selectedOrder.orderNumber);
-                    if (matchingOrder != null) {
-                      log('Matching orderNumber found: ${matchingOrder.orderNumber}');
-                    } else {
-                      log('No matching order found.');
-                    }
+                    isTableSelected = true;
                   });
 
-                  isTableSelected = true;
-
-                  // Update UI elements and order status
+                  // Additional UI updates
                   updateOrderStatus();
                   handlefreezeMenu();
 
-                  // Close the dialog after a delay to allow toast display
+                  // Close the dialog after a delay
                   Navigator.of(context).pop();
-                  await Future.delayed(const Duration(seconds: 10));
                 } catch (e) {
                   log('An error occurred while placing order & printing: $e');
                 }
@@ -1020,67 +1015,67 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       Row(
                         children: [
                           // Clear Local Data
-                          // isTableSelected
-                          //     ? Expanded(
-                          //         flex: 1,
-                          //         child: ElevatedButton(
-                          //           style: ElevatedButton.styleFrom(
-                          //             foregroundColor: Colors.white,
-                          //             backgroundColor: Colors.redAccent,
-                          //             padding: const EdgeInsets.symmetric(vertical: 0),
-                          //             shape: RoundedRectangleBorder(
-                          //               borderRadius: BorderRadius.circular(5),
-                          //             ),
-                          //           ),
-                          //           onPressed: () async {
-                          //             try {
-                          //               final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
-                          //               // final printersBox =
-                          //               //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
+                          isTableSelected
+                              ? Expanded(
+                                  flex: 1,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Colors.redAccent,
+                                      padding: const EdgeInsets.symmetric(vertical: 0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
+                                        // final printersBox =
+                                        //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
 
-                          //               // Step 1: Reset providers
-                          //               await ref.read(tablesProvider.notifier).resetTables();
-                          //               await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
-                          //               await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
-                          //               log('Providers have been reset.');
+                                        // Step 1: Reset providers
+                                        await ref.read(tablesProvider.notifier).resetTables();
+                                        await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
+                                        await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
+                                        log('Providers have been reset.');
 
-                          //               // Step 2: Clear Hive boxes
-                          //               await categoriesBox.clear();
-                          //               // await printersBox.clear();
-                          //               log('Hive boxes have been cleared.');
+                                        // Step 2: Clear Hive boxes
+                                        await categoriesBox.clear();
+                                        // await printersBox.clear();
+                                        log('Hive boxes have been cleared.');
 
-                          //               // Step 3: Update UI after clearing and resetting
-                          //               setState(() {
-                          //                 selectedOrder.resetDefault();
-                          //               });
+                                        // Step 3: Update UI after clearing and resetting
+                                        setState(() {
+                                          selectedOrderNotifier.resetDefault();
+                                        });
 
-                          //               log('UI has been updated after resetting the data.');
-                          //             } catch (e) {
-                          //               log('An error occurred while clearing Hive data: $e');
-                          //             }
-                          //           },
-                          //           child: const Padding(
-                          //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          //             child: Row(
-                          //               mainAxisAlignment: MainAxisAlignment.center,
-                          //               children: [
-                          //                 Icon(Icons.cancel, size: 20),
-                          //                 SizedBox(width: 10),
-                          //                 Text(
-                          //                   'Clear',
-                          //                   style: TextStyle(
-                          //                     fontSize: 16,
-                          //                     fontWeight: FontWeight.bold,
-                          //                     color: Colors.white,
-                          //                   ),
-                          //                 ),
-                          //               ],
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       )
-                          //     : const SizedBox(),
-                          // const SizedBox(width: 10),
+                                        log('UI has been updated after resetting the data.');
+                                      } catch (e) {
+                                        log('An error occurred while clearing Hive data: $e');
+                                      }
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.cancel, size: 20),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Clear',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          const SizedBox(width: 10),
                           // Cancel and Remove and Delete Selected Order
                           (isTableSelected && selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true)
                               ? Expanded(

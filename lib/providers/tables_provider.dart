@@ -33,8 +33,8 @@ class TablesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
 
   // Method to update a specific table and save to Hive
   Future<void> updateSelectedTable(int index, String orderNumber, bool isOccupied) async {
-    var beforeUpdateTables = state.where((table) => table['occupied'] == true).toList();
-    log('From Tables Provider - Before updating tables: $beforeUpdateTables');
+    // var beforeUpdateTables = state.where((table) => table['occupied'] == true).toList();
+    // log('From Tables Provider - Before updating tables: $beforeUpdateTables');
     if (index >= 0 && index < state.length) {
       // Update the table in state
       state = [
@@ -44,9 +44,9 @@ class TablesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
       // Save the updated state to Hive
       await _tablesBox.put('tables', state);
 
-      var afterUpdatedTables = state.where((table) => table['occupied'] == true).toList();
-      log('From Tables Provider - After updating tables: $afterUpdatedTables');
-      log('Table ${index + 1} has been updated and saved to Hive.');
+      // var afterUpdatedTables = state.where((table) => table['occupied'] == true).toList();
+      // log('From Tables Provider - After updating tables: $afterUpdatedTables');
+      // log('Table ${index + 1} has been updated and saved to Hive.');
     }
   }
 
@@ -56,14 +56,14 @@ class TablesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   // }
 
   Future<void> resetTables() async {
-    log('Resetting tables to default state.');
+    // log('Resetting tables to default state.');
 
     final defaultState = defaultTables.map((item) => Map<String, dynamic>.from(item)).toList();
 
     state = defaultState;
     await _tablesBox.put('tables', defaultState);
 
-    log('Tables have been reset and saved to Hive.');
+    // log('Tables have been reset and saved to Hive.');
   }
 }
 

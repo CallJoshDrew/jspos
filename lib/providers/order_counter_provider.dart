@@ -51,7 +51,7 @@ class OrderCounterNotifier extends StateNotifier<int> {
   Future<void> updateOrderCounter(int newCounter) async {
     state = newCounter;
     await _counterBox.put('orderCounter', newCounter);
-    log('Updated orderCounter: $newCounter');
+    // log('Updated orderCounter: $newCounter');
   }
 }
 

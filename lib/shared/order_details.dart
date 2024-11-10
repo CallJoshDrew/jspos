@@ -1858,7 +1858,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                     calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
                                                 item.price = subTotalPrice;
-                                                selectedOrderNotifier.updateTotalCost(0);
+                                                selectedOrderNotifier.updateTotalCost();
                                                 selectedOrderNotifier.updateItem(item);
                                                 // // Update tempCartItems with the modified item
                                                 // int itemIndex = widget.tempCartItems.indexWhere((tempItem) => tempItem.id == item.id);
@@ -2106,7 +2106,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           onTap: () {
                                             setState(() {
                                               item.quantity++;
-                                              selectedOrderNotifier.updateTotalCost(0);
+                                              selectedOrderNotifier.updateTotalCost();
                                               selectedOrderNotifier.calculateItemsAndQuantities();
                                               widget.updateOrderStatus!();
                                             });
@@ -2166,7 +2166,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             setState(() {
                                               if (item.quantity > 1) {
                                                 item.quantity--;
-                                                selectedOrderNotifier.updateTotalCost(0);
+                                                selectedOrderNotifier.updateTotalCost();
                                                 selectedOrderNotifier.calculateItemsAndQuantities();
                                                 widget.updateOrderStatus!();
                                                 _showCherryToast(
@@ -2419,7 +2419,7 @@ class _OrderDetailsState extends State<OrderDetails> {
           // Remove the item from the data source
           setState(() {
             widget.selectedOrder.items.remove(item);
-            selectedOrderNotifier.updateTotalCost(0);
+            selectedOrderNotifier.updateTotalCost();
             selectedOrderNotifier.calculateItemsAndQuantities();
             widget.updateOrderStatus!();
           });

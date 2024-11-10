@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/data/menu_data.dart';
 // import 'package:jspos/data/menu1_data.dart';
@@ -165,21 +167,13 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     state = state.copyWith(totalPrice: double.parse(total.toStringAsFixed(2)));
   }
 
-  void updateTotalCost(double serviceChargeRate) {
-    updateSubTotal();
-    updateTotalPrice();
-  }
-
   void updateStatus(String newStatus) {
     state = state.copyWith(status: newStatus);
   }
 
-  void updateOrderDateTime() {
-    DateTime now = DateTime.now();
-    state = state.copyWith(
-      orderDate: DateFormat('d MMMM yyyy').format(now),
-      orderTime: DateFormat('h:mm a').format(now),
-    );
+  void updateTotalCost() {
+    updateSubTotal();
+    updateTotalPrice();
   }
 
   void addPaymentDateTime() {
@@ -196,12 +190,27 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     state = state.copyWith(showEditBtn: editBtn);
   }
 
-  void placeOrder() {
-    updateSubTotal();
-    updateTotalPrice();
-    updateStatus('Placed Order');
-    updateShowEditBtn(true);
-    updateOrderDateTime();
+  double _calculateSubTotal() {
+    return state.items.fold(0, (total, item) => total + item.price * item.quantity);
+  }
+
+  double _calculateTotalPrice() {
+    return _calculateSubTotal(); // Assuming totalPrice is same as subTotal here
+  }
+
+  Future <void> placeOrder(String orderNumber, String tableName) async {
+    DateTime now = DateTime.now();
+    state = state.copyWith(
+      orderNumber: orderNumber,
+      tableName: tableName,
+      subTotal: _calculateSubTotal(),
+      totalPrice: _calculateTotalPrice(),
+      status: 'Placed Order',
+      showEditBtn: true,
+      orderDate: DateFormat('d MMMM yyyy').format(now),
+      orderTime: DateFormat('h:mm a').format(now),
+    );
+    log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}');
   }
 
   void calculateItemsAndQuantities() {
