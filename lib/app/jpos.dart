@@ -5,6 +5,7 @@ import 'package:jspos/screens/history/history.dart';
 import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';
 import 'package:jspos/screens/dineIn/dine_in.dart';
+import 'package:jspos/user/check_in.dart';
 // import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
@@ -59,6 +60,8 @@ class _MainPageState extends State<MainPage> {
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return const HistoryPage();
+        case 'CheckIn':
+        return const CheckInPage();
       // case 'Reports':
       //   return const ReportsPage();
       // case 'Recommend':
@@ -123,6 +126,7 @@ class _MainPageState extends State<MainPage> {
             _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
+            _itemMenu(menu: 'CheckIn', icon: Icons.login_rounded),
             // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
             // _itemMenu(menu: 'Recommend', icon: Icons.recommend),
             _itemMenu(menu: 'Settings', icon: Icons.tune),

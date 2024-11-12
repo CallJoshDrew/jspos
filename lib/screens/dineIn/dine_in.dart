@@ -54,9 +54,9 @@ class DineInPageState extends ConsumerState<DineInPage> {
     orders = ref.read(ordersProvider);
     tables = ref.read(tablesProvider); // Directly read initial tables data
     orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
-    // Future.microtask(() {
-    //   ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
-    // });
+    Future.microtask(() {
+      ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
+    });
     // log('Initial Orders: ${orders.getAllOrders()}');
     // log('Loaded tables: $tables');
     // log('Loaded orderCounter: $orderCounter');
