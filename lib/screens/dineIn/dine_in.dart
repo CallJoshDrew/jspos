@@ -16,8 +16,8 @@ import 'package:jspos/providers/selected_order_provider.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
-// import 'package:jspos/data/menu1_data.dart';
-import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 
 import 'package:cherry_toast/cherry_toast.dart';
@@ -52,14 +52,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
     super.initState();
     // Initialize orders and other data synchronously
     orders = ref.read(ordersProvider);
-    tables = ref.read(tablesProvider); // Directly read initial tables data
     orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
+
+    tables = ref.read(tablesProvider); // Directly read initial tables data
     Future.microtask(() {
       ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
     });
-    // log('Initial Orders: ${orders.getAllOrders()}');
-    // log('Loaded tables: $tables');
-    // log('Loaded orderCounter: $orderCounter');
 
     isLoading = false; // Set loading flag to false if needed
     handleMethod = defaultMethod;
@@ -110,14 +108,15 @@ class DineInPageState extends ConsumerState<DineInPage> {
         final tablesData = ref.read(tablesProvider);
         var currentTable = tablesData[index];
         log('Current table data: $currentTable');
-        
+
         // Update the selected table index
         selectedTableIndex = index;
-        
+        log('the index is $index and selectedtableIndex is $selectedTableIndex');
+
         // Access the selected order provider to manage the current order status
         final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
         final selectedOrder = ref.read(selectedOrderProvider);
-        
+
         // Check if the selected table is unoccupied
         if (!currentTable['occupied']) {
           log('current selectedOrder is: $selectedOrder');
@@ -525,6 +524,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   Future<void> _showComfirmPlaceOrdersDialog() async {
     final selectedOrder = ref.read(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
+    final tables = ref.read(tablesProvider);
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -582,12 +582,23 @@ class DineInPageState extends ConsumerState<DineInPage> {
               ),
               onPressed: () async {
                 // Show CherryToast before any navigation or other tasks
-                _showCherryToast(
-                  'info', // Pass the icon key as a string
-                  'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
-                  2000, // Toast duration in milliseconds
-                  1500, // Animation duration in milliseconds
-                );
+                if (selectedTableIndex >= 0 && selectedTableIndex < tables.length) {
+                  _showCherryToast(
+                    'info', // Pass the icon key as a string
+                    'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
+                    2000, // Toast duration in milliseconds
+                    1500, // Animation duration in milliseconds
+                  );
+                } else {
+                  log('Invalid selectedTableIndex: $selectedTableIndex or tables list is empty.');
+                  // Handle the invalid state (e.g., show a default message or an error)
+                  _showCherryToast(
+                    'error',
+                    'No table selected or table list is empty.',
+                    2000,
+                    1500,
+                  );
+                }
 
                 try {
                   // Step 1: Fetch updated tables data
@@ -620,12 +631,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   // Store the current items in the temporary cart
                   tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
                   // Check if the selectedOrder's orderNumber exists in the orders list and log it if found.
-                    // final matchingOrder = ref.read(ordersProvider.notifier).getOrder(selectedOrder.orderNumber);
-                    // if (matchingOrder != null) {
-                    //   log('Matching orderNumber found: ${matchingOrder.orderNumber}');
-                    // } else {
-                    //   log('No matching order found.');
-                    // }
+                  // final matchingOrder = ref.read(ordersProvider.notifier).getOrder(selectedOrder.orderNumber);
+                  // if (matchingOrder != null) {
+                  //   log('Matching orderNumber found: ${matchingOrder.orderNumber}');
+                  // } else {
+                  //   log('No matching order found.');
+                  // }
                   // Update UI state in a separate setState call
                   setState(() {
                     isTableSelected = true;
@@ -773,6 +784,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   Widget build(BuildContext context) {
     // Use ref.watch() to listen to tablesProvider for changes
     final tables = ref.watch(tablesProvider);
+    log('The tables from widget build are :$tables');
     // Future need to display the price of each table
     // final totalOrdersPrice = ref.watch(ordersProvider.notifier).totalOrdersPrice;
 

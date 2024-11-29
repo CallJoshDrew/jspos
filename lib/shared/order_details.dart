@@ -10,9 +10,9 @@ import 'package:jspos/data/remarks.dart';
 // import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
-import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
-// import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/data/menu1_data.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedOrder selectedOrder;
@@ -1620,7 +1620,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     const Text(
-                                                      'Select Meat Portion',
+                                                      'Select Mee Portion',
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14,
@@ -1634,13 +1634,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           onPressed: () {
                                                             setState(() {
                                                               selectedMeePortion = meePortion;
-                                                              meatPrice = meePortion['price'];
+                                                              meePrice = meePortion['price'];
                                                               calculateTotalPrice(
                                                                   drinkPrice(),
                                                                   choicePrice,
                                                                   calculateNoodlesPrice(),
-                                                                  meatPrice, // Correctly updated meat price
-                                                                  meePrice, // Ensure meePrice is properly updated before
+                                                                  meatPrice,
+                                                                  meePrice,
                                                                   calculateSidesPrice(),
                                                                   addOnsPrice,
                                                                   soupOrKonlouPrice);

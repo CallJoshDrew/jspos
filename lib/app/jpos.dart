@@ -41,8 +41,9 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   String pageActive = "Dine In";
+  // String pageActive = "Check In";
   bool isSideMenuEnabled = true;
-  
+
   void freezeSideMenu() {
     setState(() {
       isSideMenuEnabled = !isSideMenuEnabled;
@@ -51,6 +52,8 @@ class _MainPageState extends State<MainPage> {
 
   _pageView() {
     switch (pageActive) {
+      case 'Check In':
+        return const CheckInPage();
       case 'Dine In':
         return DineInPage(
           freezeSideMenu: freezeSideMenu,
@@ -60,8 +63,6 @@ class _MainPageState extends State<MainPage> {
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return const HistoryPage();
-        case 'CheckIn':
-        return const CheckInPage();
       // case 'Reports':
       //   return const ReportsPage();
       // case 'Recommend':
@@ -100,13 +101,10 @@ class _MainPageState extends State<MainPage> {
             child: Container(
               margin: const EdgeInsets.only(top: 30),
               padding: const EdgeInsets.only(top: 20, bottom: 5), // control the pageView width (dineIn + OrderDetails)
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    bottomLeft: Radius.circular(5)),
-                color: Color(0xff17181f)
-                // Colors.blueGrey, can try this for next color theme
-              ),
+              decoration:
+                  const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)), color: Color(0xff17181f)
+                      // Colors.blueGrey, can try this for next color theme
+                      ),
               child: _pageView(),
             ),
           )
@@ -123,10 +121,10 @@ class _MainPageState extends State<MainPage> {
         const SizedBox(height: 10),
         Expanded(
           child: ListView(children: [
+            _itemMenu(menu: 'Check In', icon: Icons.login_rounded),
             _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),
-            _itemMenu(menu: 'CheckIn', icon: Icons.login_rounded),
             // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
             // _itemMenu(menu: 'Recommend', icon: Icons.recommend),
             _itemMenu(menu: 'Settings', icon: Icons.tune),
@@ -154,7 +152,8 @@ class _MainPageState extends State<MainPage> {
         ),
         Text(
           'POS SYSTEM',
-          style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         )
       ],
     );

@@ -1140,7 +1140,7 @@ class ProductItemState extends State<ProductItem> {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 const Text(
-                                                  'Select Meat Portion',
+                                                  'Select Mee Portion',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 14,
@@ -1154,13 +1154,13 @@ class ProductItemState extends State<ProductItem> {
                                                       onPressed: () {
                                                         setState(() {
                                                           selectedMeePortion = meePortion;
-                                                          meatPrice = meePortion['price'];
+                                                          meePrice = meePortion['price'];
                                                           calculateTotalPrice(
                                                               drinkPrice(),
                                                               choicePrice,
                                                               calculateNoodlesPrice(),
-                                                              meatPrice, // Correctly updated meat price
-                                                              meePrice, // Ensure meePrice is properly updated before
+                                                              meatPrice,
+                                                              meePrice,
                                                               calculateSidesPrice(),
                                                               addOnsPrice,
                                                               soupOrKonlouPrice);
