@@ -18,6 +18,7 @@ class ProductItem extends StatefulWidget {
   final List<Map<String, dynamic>> meatPortion;
   final List<Map<String, dynamic>> meePortion;
   final List<Map<String, dynamic>> sides;
+  final List<Map<String, dynamic>> addMilk;
   final List<Map<String, dynamic>> addOns;
   final Map<String, dynamic>? selectedDrink;
   final List<Map<String, String>> temp;
@@ -27,6 +28,7 @@ class ProductItem extends StatefulWidget {
   final Map<String, dynamic>? selectedMeatPortion;
   final Map<String, dynamic>? selectedMeePortion;
   final Map<String, dynamic>? selectedSide;
+  final Map<String, dynamic>? selectedAddMilk;
   final Map<String, dynamic>? selectedAddOn;
   final bool tapao;
   final List<Map<String, dynamic>> soupOrKonLou;
@@ -47,6 +49,7 @@ class ProductItem extends StatefulWidget {
     required this.meatPortion,
     required this.meePortion,
     required this.sides,
+    required this.addMilk,
     required this.addOns,
     this.selectedDrink,
     required this.temp,
@@ -56,6 +59,7 @@ class ProductItem extends StatefulWidget {
     this.selectedMeatPortion,
     this.selectedMeePortion,
     this.selectedSide,
+    this.selectedAddMilk,
     this.selectedAddOn,
     this.tapao = false,
     required this.soupOrKonLou,
@@ -90,6 +94,7 @@ class ProductItemState extends State<ProductItem> {
           meatPortion: widget.meatPortion,
           meePortion: widget.meePortion,
           sides: widget.sides,
+          addMilk: widget.addMilk,
           addOns: widget.addOns,
           selectedDrink: widget.drinks.isNotEmpty ? widget.drinks[0] : null,
           temp: widget.temp,
@@ -98,6 +103,7 @@ class ProductItemState extends State<ProductItem> {
           selectedNoodlesType: {},
           selectedMeatPortion: widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null,
           selectedMeePortion: widget.meePortion.isNotEmpty ? widget.meePortion[0] : null,
+          selectedAddMilk: widget.addMilk.isNotEmpty ? widget.addMilk[0] : null,
           selectedSide: {},
           selectedAddOn: widget.addOns.isNotEmpty ? widget.addOns[0] : null,
           tapao: widget.tapao,
@@ -111,6 +117,7 @@ class ProductItemState extends State<ProductItem> {
         Map<String, dynamic>? selectedMeatPortion = widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null;
         Map<String, dynamic>? selectedMeePortion = widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
         Set<Map<String, dynamic>> selectedSide = {};
+        Map<String, dynamic>? selectedAddMilk = widget.addMilk.isNotEmpty ? widget.addMilk[0] : null;
         Map<String, dynamic>? selectedAddOn = widget.addOns.isNotEmpty ? widget.addOns[0] : null;
         Map<String, dynamic>? selectedSoupOrKonLou = widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null;
         double drinkPrice() {
@@ -129,6 +136,7 @@ class ProductItemState extends State<ProductItem> {
         double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
         double noodlesTypePrice = 0.00;
         double sidesPrice = 0.00;
+        double addMilkPrice = widget.addMilk.isNotEmpty && widget.addMilk[0]['price'] != null ? widget.addMilk[0]['price']! : 0.00;
         double addOnsPrice = widget.addOns.isNotEmpty && widget.addOns[0]['price'] != null ? widget.addOns[0]['price']! : 0.00;
         double soupOrKonlouPrice = widget.soupOrKonLou.isNotEmpty && widget.soupOrKonLou[0]['price'] != null ? widget.soupOrKonLou[0]['price']! : 0.00;
         double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice + soupOrKonlouPrice;
@@ -167,7 +175,7 @@ class ProductItemState extends State<ProductItem> {
         }
 
         void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
-            double addOnsPrice, double soupOrKonlouPrice) {
+            double addMilkPrice, double addOnsPrice, double soupOrKonlouPrice) {
           // Log each value to ensure they're being passed correctly
           // log("Drink Price: $drinkPrice");
           // log("Choice Price: $choicePrice");
@@ -177,7 +185,7 @@ class ProductItemState extends State<ProductItem> {
           // log("Sides Price: $sidesPrice");
           // log("Add-Ons Price: $addOnsPrice");
 
-          double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice + soupOrKonlouPrice;
+          double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
 
           // log("Total Price: $totalPrice");
 
@@ -317,6 +325,24 @@ class ProductItemState extends State<ProductItem> {
           );
         }
 
+        Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
+          Map<String, dynamic> filteredRemarks = {};
+          if (itemRemarks != null) {
+            itemRemarks.forEach((key, value) {
+              // Add your conditions here
+              if (key != '98' && key != '99') {
+                filteredRemarks[key] = value;
+              }
+            });
+          }
+          return filteredRemarks;
+        }
+
+        String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
+          final filteredRemarks = filterRemarks(itemRemarks);
+          return filteredRemarks.values.join(', ');
+        }
+
         // item selection
         if (item.selection) {
           showDialog(
@@ -434,7 +460,7 @@ class ProductItemState extends State<ProductItem> {
                                                             // Display price only if it is greater than 0.00
                                                             if (selectedSoupOrKonLou!['price'] != 0.00)
                                                               Text(
-                                                                "( + ${selectedSoupOrKonLou!['price'].toStringAsFixed(2)} )",
+                                                                "( + ${selectedSoupOrKonLou!['price'].toStringAsFixed(2)} ) ",
                                                                 style: const TextStyle(
                                                                   fontSize: 14,
                                                                   color: Color.fromARGB(255, 114, 226, 118),
@@ -545,63 +571,107 @@ class ProductItemState extends State<ProductItem> {
                                                       ],
                                                     )
                                                   : const SizedBox.shrink(),
+                                              item.selection && selectedAddMilk != null && selectedAddMilk!['name'] != "No Milk"
+                                                  ? Row(
+                                                      children: [
+                                                        Text(
+                                                          "Add ${selectedAddMilk!['name']} ",
+                                                          style: const TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        if (selectedAddMilk!['price'] != 0.00)
+                                                          Text(
+                                                            "( + ${selectedAddMilk!['price'].toStringAsFixed(2)} )",
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                            ),
+                                                          )
+                                                      ],
+                                                    )
+                                                  : const SizedBox.shrink(),
                                               // Product Details after select side, noodles, choices, etc
                                               item.selection
-                                                      ? Row(
-                                                          children: [
-                                                            Text(
-                                                              "Total Sides: ${selectedSide.length}",
+                                                  ? Row(
+                                                      children: [
+                                                        Text(
+                                                          "Total Sides: ${selectedSide.length}",
+                                                          style: const TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.yellow,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(width: 5),
+                                                        if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
+                                                          Text(
+                                                            "( ${selectedAddOn!['name']} Extra Sides ",
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                            ),
+                                                          ),
+                                                        const SizedBox(width: 5),
+                                                        if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
+                                                          Text(
+                                                            "+ ${(selectedAddOn!['price'] as double).toStringAsFixed(2)})",
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              color: Color.fromARGB(255, 114, 226, 118),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox.shrink(),
+                                              item.selection && selectedSide.isNotEmpty
+                                                  ? Wrap(
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 500, // Adjust the width as needed
+                                                          child: RichText(
+                                                            text: TextSpan(
                                                               style: const TextStyle(
                                                                 fontSize: 14,
-                                                                color: Colors.yellow,
+                                                                color: Colors.white,
                                                               ),
+                                                              // Convert Set to List here
+                                                              children: selectedSide.toList().asMap().entries.map((entry) {
+                                                                int idx = entry.key;
+                                                                Map<String, dynamic> side = entry.value;
+                                                                bool isLast = idx == selectedSide.length - 1;
+                                                                return generateSidesOnTextSpan(side, isLast);
+                                                              }).toList(),
                                                             ),
-                                                            const SizedBox(width: 5),
-                                                            if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
-                                                              Text(
-                                                                "( ${selectedAddOn!['name']} Extra Sides ",
-                                                                style: const TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                ),
-                                                              ),
-                                                            const SizedBox(width: 5),
-                                                            if (selectedAddOn != null && selectedAddOn!['price'] > 0.00)
-                                                              Text(
-                                                                "+ ${(selectedAddOn!['price'] as double).toStringAsFixed(2)})",
-                                                                style: const TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                ),
-                                                              ),
-                                                          ],
-                                                        )
-                                                      : const SizedBox.shrink(),
-                                                  item.selection && selectedSide.isNotEmpty
-                                                      ? Wrap(
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 500, // Adjust the width as needed
-                                                              child: RichText(
-                                                                text: TextSpan(
-                                                                  style: const TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors.white,
-                                                                  ),
-                                                                  // Convert Set to List here
-                                                                  children: selectedSide.toList().asMap().entries.map((entry) {
-                                                                    int idx = entry.key;
-                                                                    Map<String, dynamic> side = entry.value;
-                                                                    bool isLast = idx == selectedSide.length - 1;
-                                                                    return generateSidesOnTextSpan(side, isLast);
-                                                                  }).toList(),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : const SizedBox.shrink(),
-                                             
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox.shrink(),
+                                              // Wrap(
+                                              //   children: [
+                                              //     item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
+                                              //         ? Row(
+                                              //             children: [
+                                              //               const Text(
+                                              //                 'Remarks: ',
+                                              //                 style: TextStyle(
+                                              //                   fontSize: 14,
+                                              //                   color: Colors.white,
+                                              //                 ),
+                                              //               ),
+                                              //               Text(
+                                              //                 getFilteredRemarks(item.itemRemarks),
+                                              //                 style: const TextStyle(
+                                              //                   fontSize: 14,
+                                              //                   color: Colors.orangeAccent,
+                                              //                 ),
+                                              //               )
+                                              //             ],
+                                              //           )
+                                              //         : const SizedBox.shrink(),
+                                              //   ],
+                                              // ),
                                             ],
                                           ),
                                         ],
@@ -656,7 +726,7 @@ class ProductItemState extends State<ProductItem> {
                                                               setState(() {
                                                                 selectedDrink = drink;
                                                                 calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
+                                                                    calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -722,7 +792,7 @@ class ProductItemState extends State<ProductItem> {
                                                               setState(() {
                                                                 selectedTemp = item;
                                                                 calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
+                                                                    calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -788,7 +858,7 @@ class ProductItemState extends State<ProductItem> {
                                                                 selectedChoice = choice;
                                                                 choicePrice = choice['price'];
                                                                 calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
+                                                                    calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
                                                             style: ButtonStyle(
@@ -856,7 +926,7 @@ class ProductItemState extends State<ProductItem> {
                                                           }
                                                           sortSelectedNoodlesAlphabetically();
                                                           calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                              calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
+                                                              calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
                                                       style: ButtonStyle(
@@ -931,7 +1001,7 @@ class ProductItemState extends State<ProductItem> {
                                                           }
                                                           sortSelectedSidesAlphabetically();
                                                           calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                              calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
+                                                              calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
                                                       style: ButtonStyle(
@@ -998,7 +1068,7 @@ class ProductItemState extends State<ProductItem> {
                                                                     selectedSoupOrKonLou = soup;
                                                                     soupOrKonlouPrice = soup['price'];
                                                                     calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                                        calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
+                                                                        calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                                   });
                                                                 },
                                                                 style: ButtonStyle(
@@ -1049,76 +1119,149 @@ class ProductItemState extends State<ProductItem> {
                                     ],
                                   ),
                                 ),
-                                // Third Row for selection of add On
+                                // Third Row for selection of add On and Add Milk
 
-                                Row(
-                                  children: [
-                                    if (widget.addOns.isNotEmpty)
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(10),
-                                          margin: const EdgeInsets.only(top: 10),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xff1f2029),
-                                            borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'Add-On Extra Sides',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
+                                IntrinsicHeight(
+                                  child: Row(
+                                    children: [
+                                      if (widget.addOns.isNotEmpty)
+                                        Expanded(
+                                          flex: 8,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            margin: const EdgeInsets.only(top: 10),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff1f2029),
+                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      'Add-On Extra Sides',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Wrap(
-                                                    spacing: 6, // space between buttons horizontally
-                                                    runSpacing: 0, // space between buttons vertically
-                                                    children: widget.addOns.map((addOn) {
-                                                      return ElevatedButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            selectedAddOn = addOn;
-                                                            addOnsPrice = addOn['price'];
-                                                            calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                                calculateSidesPrice(), addOnsPrice, soupOrKonlouPrice);
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                          backgroundColor: WidgetStateProperty.all<Color>(
-                                                            selectedAddOn == addOn ? Colors.orange : Colors.white,
+                                                    Wrap(
+                                                      spacing: 6, // space between buttons horizontally
+                                                      runSpacing: 0, // space between buttons vertically
+                                                      children: widget.addOns.map((addOn) {
+                                                        return ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedAddOn = addOn;
+                                                              addOnsPrice = addOn['price'];
+                                                              calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                  calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
+                                                            });
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor: WidgetStateProperty.all<Color>(
+                                                              selectedAddOn == addOn ? Colors.orange : Colors.white,
+                                                            ),
+                                                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(5),
+                                                              ),
+                                                            ),
+                                                            padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
                                                           ),
-                                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(5),
+                                                          child: Text(
+                                                            '+ ${addOn['name']}',
+                                                            style: TextStyle(
+                                                              color: selectedAddOn == addOn
+                                                                  ? Colors.white
+                                                                  : Colors.black, // Change the text color based on the selected button
+                                                              fontSize: 12,
                                                             ),
                                                           ),
-                                                          padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                        ),
-                                                        child: Text(
-                                                          '+ ${addOn['name']}',
-                                                          style: TextStyle(
-                                                            color: selectedAddOn == addOn
-                                                                ? Colors.white
-                                                                : Colors.black, // Change the text color based on the selected button
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                  )
-                                                ],
-                                              ),
-                                            ],
+                                                        );
+                                                      }).toList(),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                  ],
+                                      // add milk
+                                      if (widget.addMilk.isNotEmpty) const SizedBox(width: 10),
+                                      if (widget.addMilk.isNotEmpty)
+                                        Expanded(
+                                          flex: 4,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            margin: const EdgeInsets.only(top: 10),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff1f2029),
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Add-On Milk',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                Wrap(
+                                                  spacing: 6,
+                                                  runSpacing: 0,
+                                                  children: widget.addMilk.map((addMilk) {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          selectedAddMilk = addMilk;
+                                                          addMilkPrice = addMilk['price'];
+                                                          calculateTotalPrice(
+                                                              drinkPrice(),
+                                                              choicePrice,
+                                                              calculateNoodlesPrice(),
+                                                              meatPrice, // Correctly updated meat price
+                                                              meePrice, // Ensure meePrice is properly updated before
+                                                              calculateSidesPrice(),
+                                                              addMilkPrice,
+                                                              addOnsPrice,
+                                                              soupOrKonlouPrice);
+                                                        });
+                                                      },
+                                                      style: ButtonStyle(
+                                                        backgroundColor: WidgetStateProperty.all<Color>(
+                                                          selectedAddMilk == addMilk ? Colors.orange : Colors.white,
+                                                        ),
+                                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                        ),
+                                                        padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                      ),
+                                                      child: Text(
+                                                        '${addMilk['name']}',
+                                                        style: TextStyle(
+                                                          color: selectedAddMilk == addMilk
+                                                              ? Colors.white
+                                                              : Colors.black, // Change the text color based on the selected button
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                                 // Forth Row for selection of meePortion, meePortion, write remarks
                                 IntrinsicHeight(
@@ -1155,15 +1298,8 @@ class ProductItemState extends State<ProductItem> {
                                                         setState(() {
                                                           selectedMeePortion = meePortion;
                                                           meePrice = meePortion['price'];
-                                                          calculateTotalPrice(
-                                                              drinkPrice(),
-                                                              choicePrice,
-                                                              calculateNoodlesPrice(),
-                                                              meatPrice,
-                                                              meePrice,
-                                                              calculateSidesPrice(),
-                                                              addOnsPrice,
-                                                              soupOrKonlouPrice);
+                                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                              calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
                                                       style: ButtonStyle(
@@ -1233,6 +1369,7 @@ class ProductItemState extends State<ProductItem> {
                                                               meatPrice, // Correctly updated meat price
                                                               meePrice, // Ensure meePrice is properly updated before
                                                               calculateSidesPrice(),
+                                                              addMilkPrice,
                                                               addOnsPrice,
                                                               soupOrKonlouPrice);
                                                         });
@@ -1352,15 +1489,17 @@ class ProductItemState extends State<ProductItem> {
                                           item.selectedMeatPortion = selectedMeatPortion;
                                           item.selectedMeePortion = selectedMeePortion;
                                           item.selectedSide = selectedSide;
+                                          item.selectedAddMilk = selectedAddMilk;
                                           item.selectedAddOn = selectedAddOn;
                                           item.selectedDrink = selectedDrink;
                                           item.selectedTemp = selectedTemp;
                                           item.selectedSoupOrKonLou = selectedSoupOrKonLou;
+                                          item.itemRemarks = itemRemarks;
 
                                           updateItemRemarks();
 
                                           calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice, calculateSidesPrice(),
-                                              addOnsPrice, soupOrKonlouPrice);
+                                              addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                           item.price = subTotalPrice;
                                           // log('item Price: ${item.price}');
                                           // log('subTotal Price: $subTotalPrice');

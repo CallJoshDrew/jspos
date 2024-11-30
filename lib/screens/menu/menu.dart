@@ -65,8 +65,8 @@ class _MenuPageState extends State<MenuPage> {
           Padding(
             padding: const EdgeInsets.only(left: 5),
             child: _topMenu(
-              title: 'SMH Restaurant',
-              // title: 'TryMee IJM',
+              // title: 'SMH Restaurant',
+              title: 'TryMee IJM',
               subTitle: 'today date',
               action: _closedButtton(),
             ),
@@ -129,6 +129,7 @@ class _MenuPageState extends State<MenuPage> {
                     meatPortion: item['meat portion'] ?? [],
                     meePortion: item['mee portion'] ?? [],
                     sides: item['sides'] ?? [],
+                    addMilk: item['add milk'] ?? [],
                     addOns: item['add on'] ?? [],
                     tapao: item['tapao'] ?? false,
                     soupOrKonLou: item['soupOrKonLou'] ?? [],

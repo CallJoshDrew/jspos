@@ -87,8 +87,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
       return text1 + ' ' * spaces + quantityStr;
     }
 
-    list.add(
-        LineText(type: LineText.TYPE_TEXT, content: selectedOrder.tableName, weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
+    list.add(LineText(type: LineText.TYPE_TEXT, content: selectedOrder.tableName, weight: 1, align: LineText.ALIGN_CENTER, fontZoom: 2, linefeed: 1));
     list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: formatTwoTextLine(selectedOrder.orderNumber, selectedOrder.orderType),
@@ -181,9 +180,16 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
         }
 
         if (item.selection && item.selectedSoupOrKonLou != null) {
+          String addMilkText = '';
+
+          // Check if selectedAddMilk is not null and its name is not 'No Milk'
+          if (item.selectedAddMilk != null && item.selectedAddMilk!['name'] != 'No Milk') {
+            addMilkText = ' + ${item.selectedAddMilk!['name']}';
+          }
+
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: '$prefix${item.selectedSoupOrKonLou!["name"]}',
+            content: '$prefix${item.selectedSoupOrKonLou!["name"]}$addMilkText',
             align: LineText.ALIGN_LEFT,
             fontZoom: 1,
             linefeed: 1,
@@ -192,20 +198,26 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
 
         String noodlesTypeText = '';
         if (item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty) {
-          for (int i = 0; i < item.selectedNoodlesType!.length; i++) {
-            var noodleType = item.selectedNoodlesType!.elementAt(i);
+          // Filter out entries with "None" as the name
+          var filteredNoodlesType = item.selectedNoodlesType!.where((noodleType) => noodleType['name'] != 'None');
+
+          for (int i = 0; i < filteredNoodlesType.length; i++) {
+            var noodleType = filteredNoodlesType.elementAt(i);
             noodlesTypeText += noodleType['name'];
-            if (i != item.selectedNoodlesType!.length - 1) {
+            if (i != filteredNoodlesType.length - 1) {
               noodlesTypeText += ', ';
             }
           }
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: '$prefix$noodlesTypeText',
-            align: LineText.ALIGN_LEFT,
-            fontZoom: 1,
-            linefeed: 1,
-          ));
+
+          if (noodlesTypeText.isNotEmpty) {
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: '$prefix$noodlesTypeText',
+              align: LineText.ALIGN_LEFT,
+              fontZoom: 1,
+              linefeed: 1,
+            ));
+          }
         }
 
         String formatMeeAndMeatPortion(item) {

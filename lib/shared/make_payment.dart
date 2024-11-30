@@ -486,6 +486,27 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
+                                                                  item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk"
+                                                                      ? Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              "Add ${item.selectedAddMilk!['name']} ",
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                            ),
+                                                                            if (item.selectedAddMilk!['price'] != 0.00)
+                                                                              Text(
+                                                                                "( + ${item.selectedAddMilk!['price'].toStringAsFixed(2)} )",
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 14,
+                                                                                  color: Color.fromARGB(255, 114, 226, 118),
+                                                                                ),
+                                                                              )
+                                                                          ],
+                                                                        )
+                                                                      : const SizedBox.shrink(),
                                                                   item.selection && item.selectedSide!.isNotEmpty
                                                                       ? Row(
                                                                           children: [
@@ -1185,8 +1206,8 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                     ..paymentMethod = selectedPaymentMethod
                                                                     ..status = 'Paid'
                                                                     ..cancelledTime = 'None';
-                                                                    selectedOrderNotifier.addPaymentDateTime();
-                                                                  
+                                                                  selectedOrderNotifier.addPaymentDateTime();
+
                                                                   final updatedSelectedOrder = ref.read(selectedOrderProvider);
 
                                                                   // Add or update the order and save it in Hive
@@ -1199,7 +1220,9 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                   widget.tables[widget.selectedTableIndex]['occupied'] = false;
 
                                                                   // Update the tables state
-                                                                  ref.read(tablesProvider.notifier).updateSelectedTable(widget.selectedTableIndex, emptyOrderNumber, false);
+                                                                  ref
+                                                                      .read(tablesProvider.notifier)
+                                                                      .updateSelectedTable(widget.selectedTableIndex, emptyOrderNumber, false);
 
                                                                   isTableSelected = !isTableSelected; // Update the state
                                                                   log('Order saved with discount: ${selectedOrder.discount}');

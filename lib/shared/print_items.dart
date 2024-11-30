@@ -762,6 +762,19 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
+                                                                item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk"
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "Add ${item.selectedAddMilk!['name']} ",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
                                                                 item.selection && item.selectedSide!.isNotEmpty
                                                                     ? Row(
                                                                         children: [

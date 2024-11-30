@@ -68,12 +68,12 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00}, //1.3
       {"name": "7", "price": 9.00}, //1.29
       {"name": "8", "price": 10.00}, //1.25
-      {"name": "9", "price": 11.00}, //1.22
-      {"name": "10", "price": 12.00}, //1.2
-      {"name": "11", "price": 13.00}, //1.18
-      {"name": "12", "price": 14.00}, //1.16
-      {"name": "13", "price": 15.00}, //1.15
-      {"name": "14", "price": 16.00}, //1.14
+      // {"name": "9", "price": 11.00}, //1.22
+      // {"name": "10", "price": 12.00}, //1.2
+      // {"name": "11", "price": 13.00}, //1.18
+      // {"name": "12", "price": 14.00}, //1.16
+      // {"name": "13", "price": 15.00}, //1.15
+      // {"name": "14", "price": 16.00}, //1.14
     ],
   },
   {
@@ -144,12 +144,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -210,6 +204,10 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "R", "price": 0.00},
       {"name": "S", "price": 0.00},
     ],
+    "add milk": [
+      {"name": "No Milk", "price": 0.00},
+      {"name": "Milk", "price": 1.00},
+    ],
     "add on": [
       {"name": "0", "price": 0.00},
       {"name": "1", "price": 2.00},
@@ -220,12 +218,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -286,6 +278,10 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "R", "price": 0.00},
       {"name": "S", "price": 0.00},
     ],
+    "add milk": [
+      {"name": "No Milk", "price": 0.00},
+      {"name": "Milk", "price": 1.00},
+    ],
     "add on": [
       {"name": "0", "price": 0.00},
       {"name": "1", "price": 2.00},
@@ -296,12 +292,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -367,12 +357,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -443,12 +427,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -519,12 +497,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -595,12 +567,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -661,6 +627,10 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "R", "price": 0.00},
       {"name": "S", "price": 0.00},
     ],
+    "add milk": [
+      {"name": "No Milk", "price": 0.00},
+      {"name": "Milk", "price": 1.00},
+    ],
     "add on": [
       {"name": "0", "price": 0.00},
       {"name": "1", "price": 2.00},
@@ -671,12 +641,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -747,12 +711,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -818,12 +776,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -1359,12 +1311,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -1435,12 +1381,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -1511,12 +1451,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
@@ -1587,16 +1521,27 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
     "id": "206",
+    "name": "Curry Chicken Rice",
+    "category": "Special",
+    "price": 10.00,
+    "image": "assets/special/curryChickenRice.png",
+    "selection": true,
+    "choices": [
+      {"name": "Curry Chicken Rice", "price": 10.00},
+      {"name": "Curry Chicken Only", "price": 8.00},
+    ],
+    "meat portion": [
+      {"name": "Normal Meat", "price": 0.00},
+      {"name": "Extra Meat", "price": 2.00},
+      {"name": "Less Meat", "price": 0.00}
+    ],
+  },
+  {
+    "id": "207",
     "name": "Special Menu",
     "category": "Special",
     "price": 12.00,
@@ -1663,16 +1608,10 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
   {
-    "id": "207",
+    "id": "208",
     "name": "Special Menu",
     "category": "Special",
     "price": 13.00,
@@ -1739,12 +1678,6 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "6", "price": 8.00},
       {"name": "7", "price": 9.00},
       {"name": "8", "price": 10.00},
-      {"name": "9", "price": 11.00},
-      {"name": "10", "price": 12.00},
-      {"name": "11", "price": 13.00},
-      {"name": "12", "price": 14.00},
-      {"name": "13", "price": 15.00},
-      {"name": "14", "price": 16.00},
     ],
   },
 ];

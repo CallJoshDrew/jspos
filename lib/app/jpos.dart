@@ -52,8 +52,8 @@ class _MainPageState extends State<MainPage> {
 
   _pageView() {
     switch (pageActive) {
-      case 'Check In':
-        return const CheckInPage();
+      // case 'Check In':
+      //   return const CheckInPage();
       case 'Dine In':
         return DineInPage(
           freezeSideMenu: freezeSideMenu,
@@ -121,7 +121,7 @@ class _MainPageState extends State<MainPage> {
         const SizedBox(height: 10),
         Expanded(
           child: ListView(children: [
-            _itemMenu(menu: 'Check In', icon: Icons.login_rounded),
+            // _itemMenu(menu: 'Check In', icon: Icons.login_rounded),
             _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
             // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
             _itemMenu(menu: 'History', icon: Icons.history_sharp),

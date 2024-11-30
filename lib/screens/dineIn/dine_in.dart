@@ -271,6 +271,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
           !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
           !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
+          !const MapEquality().equals(sortedList1[i].selectedAddMilk, sortedList2[i].selectedAddMilk) ||
           !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedSide, sortedList2[i].selectedSide)) {
         log('Lists are not equal: Item difference found');
         return false;
@@ -956,66 +957,66 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       Row(
                         children: [
                           // Clear Local Data
-                          isTableSelected
-                              ? Expanded(
-                                  flex: 1,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: Colors.redAccent,
-                                      padding: const EdgeInsets.symmetric(vertical: 0),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      try {
-                                        final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
-                                        // final printersBox =
-                                        //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
+                          // isTableSelected
+                          //     ? Expanded(
+                          //         flex: 1,
+                          //         child: ElevatedButton(
+                          //           style: ElevatedButton.styleFrom(
+                          //             foregroundColor: Colors.white,
+                          //             backgroundColor: Colors.redAccent,
+                          //             padding: const EdgeInsets.symmetric(vertical: 0),
+                          //             shape: RoundedRectangleBorder(
+                          //               borderRadius: BorderRadius.circular(5),
+                          //             ),
+                          //           ),
+                          //           onPressed: () async {
+                          //             try {
+                          //               final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
+                          //               // final printersBox =
+                          //               //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
 
-                                        // Step 1: Reset providers
-                                        await ref.read(tablesProvider.notifier).resetTables();
-                                        await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
-                                        await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
-                                        log('Providers have been reset.');
+                          //               // Step 1: Reset providers
+                          //               await ref.read(tablesProvider.notifier).resetTables();
+                          //               await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
+                          //               await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
+                          //               log('Providers have been reset.');
 
-                                        // Step 2: Clear Hive boxes
-                                        await categoriesBox.clear();
-                                        // await printersBox.clear();
-                                        log('Hive boxes have been cleared.');
+                          //               // Step 2: Clear Hive boxes
+                          //               await categoriesBox.clear();
+                          //               // await printersBox.clear();
+                          //               log('Hive boxes have been cleared.');
 
-                                        // Step 3: Update UI after clearing and resetting
-                                        setState(() {
-                                          selectedOrderNotifier.resetDefault();
-                                        });
+                          //               // Step 3: Update UI after clearing and resetting
+                          //               setState(() {
+                          //                 selectedOrderNotifier.resetDefault();
+                          //               });
 
-                                        log('UI has been updated after resetting the data.');
-                                      } catch (e) {
-                                        log('An error occurred while clearing Hive data: $e');
-                                      }
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.cancel, size: 20),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            'Clear',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
+                          //               log('UI has been updated after resetting the data.');
+                          //             } catch (e) {
+                          //               log('An error occurred while clearing Hive data: $e');
+                          //             }
+                          //           },
+                          //           child: const Padding(
+                          //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          //             child: Row(
+                          //               mainAxisAlignment: MainAxisAlignment.center,
+                          //               children: [
+                          //                 Icon(Icons.cancel, size: 20),
+                          //                 SizedBox(width: 10),
+                          //                 Text(
+                          //                   'Clear',
+                          //                   style: TextStyle(
+                          //                     fontSize: 16,
+                          //                     fontWeight: FontWeight.bold,
+                          //                     color: Colors.white,
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       )
+                          //     : const SizedBox(),
                           const SizedBox(width: 10),
                           // Cancel and Remove and Delete Selected Order
                           (isTableSelected && selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true)
