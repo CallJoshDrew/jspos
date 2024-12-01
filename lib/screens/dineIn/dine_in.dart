@@ -42,17 +42,17 @@ class DineInPage extends ConsumerStatefulWidget {
 }
 
 class DineInPageState extends ConsumerState<DineInPage> {
-  late Orders orders;
+  // late Orders orders;
   // List<Map<String, dynamic>> tables = [];
-  late int orderCounter;
+  // late int orderCounter;
   bool isLoading = true; // Track loading state
 
   @override
   void initState() {
     super.initState();
     // Initialize orders and other data synchronously
-    orders = ref.read(ordersProvider);
-    orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
+    // orders = ref.read(ordersProvider);
+    // orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
 
     // tables = ref.read(tablesProvider); // Directly read initial tables data
     Future.microtask(() {
@@ -784,6 +784,64 @@ class DineInPageState extends ConsumerState<DineInPage> {
     );
   }
 
+  String formatTodayDateShort() {
+    final now = DateTime.now();
+
+    // Helper to get the abbreviated day name
+    String shortDayName(int weekday) {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      return days[weekday - 1];
+    }
+
+    // Helper to get abbreviated month name
+    String shortMonthName(int month) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return months[month - 1];
+    }
+
+    String formattedDate = '${shortDayName(now.weekday)}, ${shortMonthName(now.month)} ${now.day}';
+
+    return formattedDate;
+  }
+
+  String formatTodayDate() {
+    final now = DateTime.now();
+
+    // Get day suffix (st, nd, rd, th)
+    String getDaySuffix(int day) {
+      if (day >= 11 && day <= 13) {
+        return 'th';
+      }
+      switch (day % 10) {
+        case 1:
+          return 'st';
+        case 2:
+          return 'nd';
+        case 3:
+          return 'rd';
+        default:
+          return 'th';
+      }
+    }
+
+    // Helper to get month name
+    String monthName(int month) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return months[month - 1];
+    }
+
+    // Helper to get day name
+    String dayName(int weekday) {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      return days[weekday - 1];
+    }
+
+    String daySuffix = getDaySuffix(now.day);
+    String formattedDate = '${now.day}$daySuffix ${monthName(now.month)} ${now.year} (${dayName(now.weekday)})';
+
+    return formattedDate;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Use ref.watch() to listen to tablesProvider for changes
@@ -815,18 +873,32 @@ class DineInPageState extends ConsumerState<DineInPage> {
             ? Expanded(
                 flex: 12,
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 16, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                        child: Text("Please Select Table",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            )),
+                      Container(
+                        height: 45, // Set the desired height
+                        decoration: BoxDecoration(
+                          color: Colors.white10, // Set the background color
+                          borderRadius: BorderRadius.circular(5), // Optional: Rounded corners
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 14,), // Add padding inside the container
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Try Mee IJM',
+                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              formatTodayDateShort(), // Use the formatted date here
+                              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
+
                       //Table UI
                       Expanded(
                         child: GridView.builder(

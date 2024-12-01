@@ -18,7 +18,7 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   String selectedCategory = categories[0];
-  Widget _closedButtton() {
+  Widget _closedButton() {
     return Container(
       margin: const EdgeInsets.only(right: 0),
       child: ElevatedButton(
@@ -62,41 +62,49 @@ class _MenuPageState extends State<MenuPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 5),
-            child: _topMenu(
-              // title: 'SMH Restaurant',
-              title: 'TryMee IJM',
-              subTitle: 'today date',
-              action: _closedButtton(),
-            ),
-          ), // Add spacing between _topMenu and ListView
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 5),
+          //   child: _topMenu(
+          //     // title: 'SMH Restaurant',
+          //     title: 'TryMee IJM',
+          //     subTitle: 'today date',
+          //     action: _closedButtton(),
+          //   ),
+          // ),
+          // Add spacing between _topMenu and ListView
           // Categories of Menu
           Padding(
             padding: const EdgeInsets.only(bottom: 0),
             child: SizedBox(
               height: 45,
-              // padding: const EdgeInsets.symmetric(vertical: 0),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
+              child: Row(
                 children: [
-                  ...categories.map((category) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedCategory = category;
-                        });
-                      },
-                      child: _itemTab(
-                        title: category,
-                        isActive: selectedCategory == category,
-                      ),
-                    );
-                  }),
+                  Expanded(
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        ...categories.map((category) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedCategory = category;
+                              });
+                            },
+                            child: _itemTab(
+                              title: category,
+                              isActive: selectedCategory == category,
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                  _closedButton(), // Add the close button here
                 ],
               ),
             ),
           ),
+
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(bottom: 10),
@@ -170,30 +178,5 @@ class _MenuPageState extends State<MenuPage> {
         ],
       ),
     );
-  }
-
-  Widget _topMenu({
-    required String title,
-    required String subTitle,
-    required action,
-  }) {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            subTitle,
-            style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-      Expanded(flex: 1, child: Container(width: double.infinity)),
-      Container(child: action)
-    ]);
   }
 }
