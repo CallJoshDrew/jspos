@@ -397,14 +397,14 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
     // // Log the current orders state (via Riverpod, instead of direct Hive access)
     // log('Stored orders from provider: ${orders.getAllOrders()}');
-    final tables = ref.read(tablesProvider);
+    // final tables = ref.read(tablesProvider);
     // Navigate to the payment page
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MakePaymentPage(
           updateOrderStatus: updateOrderStatus,
-          tables: tables,
+          // tables: tables,
           selectedTableIndex: selectedTableIndex,
           isTableInitiallySelected: isTableSelected,
         ),

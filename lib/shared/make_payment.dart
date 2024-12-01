@@ -15,14 +15,14 @@ import 'package:jspos/providers/tables_provider.dart';
 class MakePaymentPage extends ConsumerStatefulWidget {
   final VoidCallback? updateOrderStatus;
 
-  final List<Map<String, dynamic>> tables;
+  // final List<Map<String, dynamic>> tables;
   final int selectedTableIndex;
   final bool isTableInitiallySelected;
 
   const MakePaymentPage({
     super.key,
     required this.updateOrderStatus,
-    required this.tables,
+    // required this.tables,
     required this.selectedTableIndex,
     required this.isTableInitiallySelected,
   });
@@ -147,6 +147,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   //       : '${index + 1}.${item.originalName}';
   // }
   void _showSuccessToast() {
+    final tables = ref.read(tablesProvider);
     CherryToast(
       icon: Icons.verified_rounded,
       iconColor: Colors.green,
@@ -161,7 +162,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
         ),
       ),
       description: Text(
-        'The payment for the ${widget.tables[widget.selectedTableIndex]['name']} has been successfully processed.',
+        'The payment for the ${tables[widget.selectedTableIndex]['name']} has been successfully processed.',
         style: const TextStyle(fontSize: 14),
       ),
       toastPosition: Position.top,
@@ -192,6 +193,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   Widget build(BuildContext context) {
     final selectedOrder = ref.read(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
+    //
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
     double fractionAmount = selectedOrder.totalPrice - selectedOrder.totalPrice.floor();
@@ -1202,12 +1204,24 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
 
                                                                   // Perform operations related to the order
                                                                   _calculateChange();
-                                                                  selectedOrder
-                                                                    ..roundingAdjustment = roundingAdjustment
-                                                                    ..paymentMethod = selectedPaymentMethod
-                                                                    ..status = 'Paid'
-                                                                    ..cancelledTime = 'None';
-                                                                  selectedOrderNotifier.addPaymentDateTime();
+                                                                  // selectedOrderNotifier.makePayment(
+                                                                  //   roundingAdjustment: roundingAdjustment,
+                                                                  //   paymentMethod: selectedPaymentMethod,
+                                                                  //   status: 'Paid',
+                                                                  //   cancelledTime: 'None',
+                                                                  // );
+                                                                  // selectedOrder
+                                                                  //   ..roundingAdjustment = roundingAdjustment
+                                                                  //   ..paymentMethod = selectedPaymentMethod
+                                                                  //   ..status = 'Paid'
+                                                                  //   ..cancelledTime = 'None';
+                                                                  // selectedOrderNotifier.addPaymentDateTime();
+                                                                  selectedOrderNotifier.processPayment(
+                                                                    roundingAdjustment: roundingAdjustment,
+                                                                    paymentMethod: selectedPaymentMethod,
+                                                                    status: 'Paid',
+                                                                    cancelledTime: 'None',
+                                                                  );
 
                                                                   final updatedSelectedOrder = ref.read(selectedOrderProvider);
 
@@ -1217,8 +1231,8 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
 
                                                                   // Clear table data for the selected table
                                                                   var emptyOrderNumber = '';
-                                                                  widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
-                                                                  widget.tables[widget.selectedTableIndex]['occupied'] = false;
+                                                                  // widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
+                                                                  // widget.tables[widget.selectedTableIndex]['occupied'] = false;
 
                                                                   // Update the tables state
                                                                   ref

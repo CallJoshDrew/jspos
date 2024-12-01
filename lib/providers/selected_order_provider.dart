@@ -176,19 +176,61 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     updateTotalPrice();
   }
 
-  void addPaymentDateTime() {
+  // void makePayment({
+  //   required double roundingAdjustment,
+  //   required String paymentMethod,
+  //   required String status,
+  //   required String cancelledTime,
+  // }) {
+  //   state = state.copyWith(
+  //     roundingAdjustment: roundingAdjustment,
+  //     paymentMethod: paymentMethod,
+  //     status: status,
+  //     cancelledTime: cancelledTime,
+  //   );
+  // }
+
+  void processPayment({
+    required double roundingAdjustment,
+    required String paymentMethod,
+    required String status,
+    required String cancelledTime,
+  }) {
     DateTime now = DateTime.now();
-    // Attempt to format and log the payment time
+    String? formattedDate;
+
+    // Attempt to format the current date-time
     try {
-      String formattedDate = DateFormat('h:mm a, d MMMM yyyy').format(now);
+      formattedDate = DateFormat('h:mm a, d MMMM yyyy').format(now);
       log('Formatted Payment Date: $formattedDate');
-      state = state.copyWith(paymentTime: formattedDate);
     } catch (e) {
       log('Date formatting failed: $e');
-      // Use a default or fallback format in case of error
-      state = state.copyWith(paymentTime: now.toIso8601String());
+      formattedDate = now.toIso8601String(); // Fallback to ISO format
     }
+
+    // Update the state with all values
+    state = state.copyWith(
+      roundingAdjustment: roundingAdjustment,
+      paymentMethod: paymentMethod,
+      status: status,
+      cancelledTime: cancelledTime,
+      paymentTime: formattedDate,
+    );
   }
+
+  // void addPaymentDateTime() {
+  //   DateTime now = DateTime.now();
+  //   // Attempt to format and log the payment time
+  //   try {
+  //     String formattedDate = DateFormat('h:mm a, d MMMM yyyy').format(now);
+  //     log('Formatted Payment Date: $formattedDate');
+  //     state = state.copyWith(paymentTime: formattedDate);
+  //   } catch (e) {
+  //     log('Date formatting failed: $e');
+  //     // Use a default or fallback format in case of error
+  //     state = state.copyWith(paymentTime: now.toIso8601String());
+  //   }
+  // }
 
   void addCancelDateTime() {
     DateTime now = DateTime.now();
@@ -221,7 +263,6 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     );
     log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}');
   }
-  
 
   void calculateItemsAndQuantities() {
     final updatedCategories = {
