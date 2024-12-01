@@ -69,12 +69,13 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     Map<String, dynamic> filteredRemarks = {};
     if (itemRemarks != null) {
       itemRemarks.forEach((key, value) {
-        // Add your conditions here
-        if (key != '98' && key != '99') {
+        // Add your conditions here: exclude keys '98', '99', and empty values.
+        if (key != '98' && key != '99' && value != null && value.toString().trim().isNotEmpty) {
           filteredRemarks[key] = value;
         }
       });
     }
+    log('Filtered Remarks: $filteredRemarks');
     return filteredRemarks;
   }
 
@@ -824,7 +825,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                     : const SizedBox.shrink(),
                                                                 Wrap(
                                                                   children: [
-                                                                    item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
+                                                                    item.selection && filterRemarks(item.itemRemarks).isNotEmpty
                                                                         ? Row(
                                                                             children: [
                                                                               const Text(

@@ -221,6 +221,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     );
     log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}');
   }
+  
 
   void calculateItemsAndQuantities() {
     final updatedCategories = {
@@ -235,7 +236,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
         totalQuantity += item.quantity;
       }
     }
-
+    log('Updated Categories: $updatedCategories');
     state = state.copyWith(categories: updatedCategories, totalQuantity: totalQuantity);
   }
 

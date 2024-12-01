@@ -132,11 +132,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
           selectedOrderNotifier.updateStatus("Ordering");
           // Clear any existing items in the temporary cart
           tempCartItems = [];
-          // Update UI elements related to order status for an empty cart
-          orderStatus = "Empty Cart";
-          orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
-          orderStatusIcon = Icons.shopping_cart;
-          handleMethod = defaultMethod;
+          // // Update UI elements related to order status for an empty cart
+          // orderStatus = "Empty Cart";
+          // orderStatusColor = Colors.white10;
+          // // orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+          // orderStatusIcon = Icons.shopping_cart;
+          // handleMethod = defaultMethod;  
           isTableSelected = false;
         } else {
           // If the table is already occupied, retrieve the list of occupied tables
@@ -686,7 +687,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
   }
 
   String orderStatus = "Empty Cart";
-  Color orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+  // Color orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+  Color orderStatusColor = Colors.white10;
   IconData orderStatusIcon = Icons.shopping_cart;
 
   void updateOrderStatus() {
@@ -694,7 +696,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     setState(() {
       if (selectedOrder.status == "Start Your Order") {
         orderStatus = "Empty Cart";
-        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+        orderStatusColor = Colors.white10;
         handleMethod = defaultMethod; // Disabled
         orderStatusIcon = Icons.shopping_cart;
       } else if (selectedOrder.status == "Ordering" && selectedOrder.items.isNotEmpty) {
@@ -704,7 +706,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == false) {
         orderStatus = "Update Orders";
-        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? const Color.fromRGBO(97, 97, 97, 1) : const Color.fromRGBO(46, 125, 50, 1);
+        orderStatusColor = areItemListsEqual(tempCartItems, selectedOrder.items) ? Colors.white10 : const Color.fromRGBO(46, 125, 50, 1);
         handleMethod = areItemListsEqual(tempCartItems, selectedOrder.items) ? defaultMethod : handlePlaceOrderBtn; // Disabled
         orderStatusIcon = Icons.print;
       } else if (selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true) {
@@ -716,12 +718,12 @@ class DineInPageState extends ConsumerState<DineInPage> {
         orderStatusIcon = Icons.monetization_on;
       } else if (selectedOrder.status == "Paid") {
         orderStatus = "COMPLETED (PAID)";
-        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+        orderStatusColor = Colors.white10;
         handleMethod = defaultMethod;
         orderStatusIcon = Icons.check_circle;
       } else if (selectedOrder.status == "Cancelled") {
         orderStatus = "Cancelled";
-        orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+        orderStatusColor = Colors.white10;
         orderStatusIcon = Icons.cancel;
         handleMethod = defaultMethod; // Disabled
       }
@@ -1092,7 +1094,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                           //         ),
                           //       )
                           //     : const SizedBox(),
-                          const SizedBox(width: 10),
+                          // const SizedBox(width: 10),
                           // Cancel and Remove and Delete Selected Order
                           (isTableSelected && selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true)
                               ? Expanded(

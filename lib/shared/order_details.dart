@@ -180,14 +180,23 @@ class _OrderDetailsState extends State<OrderDetails> {
     ).show(context);
   }
 
+  int _getItemQuantityForCategory(String category, List<Item> items) {
+    return items.where((item) => item.category == category).fold(0, (total, item) => total + item.quantity);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
+      // Used to modify the state via methods in SelectedOrderNotifier.
       final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
+      
+      // Used to read the state of the selectedOrderProvider
+      final selectedOrder = ref.watch(selectedOrderProvider);
+      // Any widget that needs to display or react to changes in the SelectedOrder state will use ref.watch(selectedOrderProvider).
 
       // Organize items by category
       Map<String, List<Item>> itemsByCategory = {};
-      for (var item in widget.selectedOrder.items) {
+      for (var item in selectedOrder.items) {
         if (!itemsByCategory.containsKey(item.category)) {
           itemsByCategory[item.category] = [];
         }
@@ -197,11 +206,11 @@ class _OrderDetailsState extends State<OrderDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _orderNumber(
-            title: widget.selectedOrder.orderNumber,
-            status: widget.selectedOrder.status,
-            showEditBtn: widget.selectedOrder.showEditBtn,
-            timeStamp: (widget.selectedOrder.orderTime.toString()),
-            date: (widget.selectedOrder.orderDate.toString()),
+            title: selectedOrder.orderNumber,
+            status: selectedOrder.status,
+            showEditBtn: selectedOrder.showEditBtn,
+            timeStamp: (selectedOrder.orderTime.toString()),
+            date: (selectedOrder.orderDate.toString()),
             // timeStamp: '04:21 PM, Sun, Mar 31, 2024',
             handlefreezeMenu: widget.handlefreezeMenu,
             updateOrderStatus: widget.updateOrderStatus,
@@ -236,7 +245,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   index: items.indexOf(item),
                                   category: item.category,
                                   selectedOrderNotifier: selectedOrderNotifier,
-                                  showEditBtn: widget.selectedOrder.showEditBtn,
+                                  showEditBtn: selectedOrder.showEditBtn,
                                 ))
                             .toList(),
                       ),
@@ -263,18 +272,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: categories.map((category) {
-                      return Column(
-                        children: [
-                          Text(
-                            '$category: ${widget.selectedOrder.categories[category]?['itemQuantity'].toString()}',
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: categories.map((category) {
+                        return Column(
+                          children: [
+                            Text(
+                              '$category: ${_getItemQuantityForCategory(category, selectedOrder.items)}',
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                            ),
+                          ],
+                        );
+                      }).toList()),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
@@ -797,7 +805,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             if (itemRemarks != null) {
               itemRemarks.forEach((key, value) {
                 // Add your conditions here
-                if (key != '98' && key != '99') {
+                if (key != '98' && key != '99' && value != null && value.toString().trim().isNotEmpty) {
                   filteredRemarks[key] = value;
                 }
               });
@@ -1714,7 +1722,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                           },
                                                           style: ButtonStyle(
                                                             backgroundColor: WidgetStateProperty.all<Color>(
-                                                              selectedAddMilk != null && selectedAddMilk!['name'] == addMilk['name']? Colors.orange : Colors.white,
+                                                              selectedAddMilk != null && selectedAddMilk!['name'] == addMilk['name']
+                                                                  ? Colors.orange
+                                                                  : Colors.white,
                                                             ),
                                                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                                               RoundedRectangleBorder(
@@ -2418,7 +2428,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     color: Colors.white,
                                   ),
                                 ),
-                                if (item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk")
+                              if (item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk")
                                 Text(
                                   ' + ${item.selectedAddMilk!['name']} ',
                                   style: const TextStyle(
