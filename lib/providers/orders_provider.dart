@@ -36,7 +36,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
 
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
-    log('pass in of order: $order');
+    // log('pass in of order: $order');
     final existingOrderIndex = state.data.indexWhere((o) => o.orderNumber == order.orderNumber);
 
     final updatedOrders = List<SelectedOrder>.from(state.data);
@@ -51,7 +51,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
     // Update state and save to Hive
     state = Orders(data: updatedOrders);
     await _saveToHive();
-    log('Orders saved to Hive: $updatedOrders');
+    // log('Orders saved to Hive: $updatedOrders');
   }
 
   // Delete an order

@@ -47,11 +47,11 @@ class TablesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
       // Save the updated state to Hive
       await _tablesBox.put('tables', state);
 
+    }
+  }
       // var afterUpdatedTables = state.where((table) => table['occupied'] == true).toList();
       // log('From Tables Provider - After updating tables: $afterUpdatedTables');
       // log('Table ${index + 1} has been updated and saved to Hive.');
-    }
-  }
 
   // Future<void> updateTables(List<Map<String, dynamic>> newTables) async {
   //   await _tablesBox.put('tables', newTables);

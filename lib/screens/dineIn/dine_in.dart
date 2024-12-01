@@ -43,7 +43,7 @@ class DineInPage extends ConsumerStatefulWidget {
 
 class DineInPageState extends ConsumerState<DineInPage> {
   late Orders orders;
-  List<Map<String, dynamic>> tables = [];
+  // List<Map<String, dynamic>> tables = [];
   late int orderCounter;
   bool isLoading = true; // Track loading state
 
@@ -54,7 +54,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     orders = ref.read(ordersProvider);
     orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
 
-    tables = ref.read(tablesProvider); // Directly read initial tables data
+    // tables = ref.read(tablesProvider); // Directly read initial tables data
     Future.microtask(() {
       ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
     });
@@ -115,11 +115,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
         // Access the selected order provider to manage the current order status
         final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
-        final selectedOrder = ref.read(selectedOrderProvider);
+        // final selectedOrder = ref.read(selectedOrderProvider);
 
         // Check if the selected table is unoccupied
         if (!currentTable['occupied']) {
-          log('current selectedOrder is: $selectedOrder');
+          // log('current selectedOrder is: $selectedOrder');
           // Determine if the 'occupied' field is false (table is unoccupied)
           bool isOccupied = currentTable['occupied'] == true;
           if (!isOccupied) {
@@ -233,8 +233,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
     updateOrderStatus();
   }
 
-  void resetSelectedTable(WidgetRef ref) {
+  Future<void> resetSelectedTable(WidgetRef ref) async {
     var resetOrderNumber = "";
+    final tables = ref.read(tablesProvider); // use final instead because i just need to read the latest and current values
+    log('The tables length is ${tables.length}');
     // Check if the selected table index is valid
     if (selectedTableIndex != -1 && selectedTableIndex < tables.length) {
       // Reset the table's orderNumber and occupied status in the provider
@@ -394,7 +396,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
     // // Log the current orders state (via Riverpod, instead of direct Hive access)
     // log('Stored orders from provider: ${orders.getAllOrders()}');
-
+    final tables = ref.read(tablesProvider);
     // Navigate to the payment page
     Navigator.push(
       context,
@@ -411,6 +413,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
   void handlePrintItems(BuildContext context, WidgetRef ref) {
     final selectedOrder = ref.read(selectedOrderProvider);
+    final tables = ref.read(tablesProvider);
     // Navigate to the Print Items page
     Navigator.push(
       context,
@@ -624,7 +627,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
                   // Log and prepare the updated selected order
                   final updatedSelectedOrder = ref.read(selectedOrderProvider); // Read the updated state
-                  log('Updated selectedOrder after placeOrder: $updatedSelectedOrder');
+                  // log('Updated selectedOrder after placeOrder: $updatedSelectedOrder');
 
                   // Step 3: Add or update the order in ordersProvider
                   ref.read(ordersProvider.notifier).addOrUpdateOrder(updatedSelectedOrder);
@@ -1087,8 +1090,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                                         ),
                                                         padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.fromLTRB(12, 2, 12, 2)),
                                                       ),
-                                                      onPressed: () {
-                                                        resetSelectedTable(ref);
+                                                      onPressed: () async {
+                                                        await resetSelectedTable(ref);
 
                                                         // Cancel the order through ordersProvider
                                                         ref.read(ordersProvider.notifier).cancelOrder(selectedOrder.orderNumber);
