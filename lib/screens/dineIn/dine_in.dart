@@ -107,11 +107,11 @@ class DineInPageState extends ConsumerState<DineInPage> {
         // Retrieve the latest tables data from the provider
         final tablesData = ref.read(tablesProvider);
         var currentTable = tablesData[index];
-        log('Current table data: $currentTable');
+        // log('Current table data: $currentTable');
 
         // Update the selected table index
         selectedTableIndex = index;
-        log('the index is $index and selectedtableIndex is $selectedTableIndex');
+        // log('the index is $index and selectedtableIndex is $selectedTableIndex');
 
         // Access the selected order provider to manage the current order status
         final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
@@ -153,8 +153,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
           if (order != null) {
             order.showEditBtn = true;
             // Log the selectedOrder data and the found order
-            log('selectedOrder data and time are: ${selectedOrderProvider}');
-            log('Order Found is: $order');
+            // log('selectedOrder data and time are: $selectedOrderProvider');
+            // log('Order Found is: $order');
             // Set the found order as the current order instance in the provider
             selectedOrderNotifier.setNewOrderInstance(order);
             // Clone the existing order's items into tempCartItems, preserving item remarks
@@ -848,7 +848,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   Widget build(BuildContext context) {
     // Use ref.watch() to listen to tablesProvider for changes
     final tables = ref.watch(tablesProvider);
-    log('The tables from widget build are :$tables');
+    // log('The tables from widget build are :$tables');
     // Future need to display the price of each table
     // final totalOrdersPrice = ref.watch(ordersProvider.notifier).totalOrdersPrice;
 

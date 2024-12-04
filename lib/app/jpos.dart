@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/screens/history/history.dart';
-// import 'package:jspos/screens/recommendation/recommend.dart';
+import 'package:jspos/screens/recommendation/recommend.dart';
 // import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';
 import 'package:jspos/screens/dineIn/dine_in.dart';
 import 'package:jspos/user/check_in.dart';
+import 'package:jspos/user/check_out.dart';
 // import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
@@ -41,8 +42,18 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   String pageActive = "Dine In";
-  // String pageActive = "Check In";
   bool isSideMenuEnabled = true;
+  bool isCheckIn = true;
+  void toggleCheckInState() {
+    setState(() {
+      isCheckIn = !isCheckIn;
+      if (!isCheckIn) {
+        pageActive = 'Check In'; // Force pageActive to Check In
+      } else if (pageActive == 'Check In') {
+        pageActive = 'Dine In'; // Reset to default if returning to isCheckIn
+      }
+    });
+  }
 
   void freezeSideMenu() {
     setState(() {
@@ -51,28 +62,31 @@ class _MainPageState extends State<MainPage> {
   }
 
   _pageView() {
+    if (!isCheckIn) {
+      // Show only the Check In page when isCheckIn is false
+      return CheckInPage(toggleCheckInState: toggleCheckInState);
+    }
+
+    // Show the rest of the pages when isCheckIn is true
     switch (pageActive) {
-      // case 'Check In':
-      //   return const CheckInPage();
       case 'Dine In':
         return DineInPage(
           freezeSideMenu: freezeSideMenu,
         );
-      // bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return const HistoryPage();
       // case 'Reports':
       //   return const ReportsPage();
-      // case 'Recommend':
-      //   return const RecommendPage();
+      case 'Recommend':
+        return const RecommendPage();
       case 'Settings':
         return SettingsPage(
           categories: widget.categories,
         );
-      // bluetoothPrint: widget.bluetoothPrint, printerDevices: widget.printerDevices, printersConnected: widget.printersConnected
-
+      case 'Check Out':
+        return CheckOutPage(toggleCheckInState: toggleCheckInState);
       default:
         return const HomePage();
     }
@@ -114,29 +128,37 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _sideMenu() {
-    return IgnorePointer(
-      ignoring: !isSideMenuEnabled,
-      child: Column(children: [
-        _logo(),
-        const SizedBox(height: 10),
-        Expanded(
-          child: ListView(children: [
-            // _itemMenu(menu: 'Check In', icon: Icons.login_rounded),
-            _itemMenu(menu: 'Dine In', icon: Icons.dinner_dining),
-            // _itemMenu(menu: 'Take Out', icon: Icons.shopping_bag),
-            _itemMenu(menu: 'History', icon: Icons.history_sharp),
-            // _itemMenu(menu: 'Reports', icon: Icons.bar_chart),
-            // _itemMenu(menu: 'Recommend', icon: Icons.recommend),
-            _itemMenu(menu: 'Settings', icon: Icons.tune),
-          ]),
-        )
-      ]),
-    );
-  }
+  return IgnorePointer(
+    ignoring: !isSideMenuEnabled,
+    child: Column(children: [
+      _logo(),
+      const SizedBox(height: 10),
+      Expanded(
+        child: ListView(
+          children: [
+            if (!isCheckIn)
+              _itemMenu(page: 'Check In', icon: Icons.login_rounded),
+            if (isCheckIn) ...[
+              _itemMenu(page: 'Dine In', icon: Icons.dinner_dining),
+              // _itemMenu(page: 'Take Out', icon: Icons.shopping_bag),
+              _itemMenu(page: 'History', icon: Icons.history_sharp),
+              // _itemMenu(page: 'Reports', icon: Icons.bar_chart),
+              _itemMenu(page: 'Recommend', icon: Icons.thumb_up),
+              _itemMenu(page: 'Settings', icon: Icons.tune),
+              _itemMenu(page: 'Check Out', icon: Icons.logout_rounded),
+            ]
+          ],
+        ),
+      )
+    ]),
+  );
+}
+
 
   Widget _logo() {
     return const Column(
       children: [
+        // Add Company Logo if necessary
         // Container(
         //   padding: const EdgeInsets.all(10), //this is the circle size
         //   decoration: BoxDecoration(
@@ -159,18 +181,18 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _itemMenu({required String menu, required IconData icon}) {
+  Widget _itemMenu({required String page, required IconData icon}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: GestureDetector(
-        onTap: () => _setPage(menu),
+        onTap: () => _setPage(page),
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: AnimatedContainer(
               padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: pageActive == menu ? const Color.fromRGBO(46, 125, 50, 1) : Colors.transparent,
+                color: pageActive == page ? const Color.fromRGBO(46, 125, 50, 1) : Colors.transparent,
               ),
               duration: const Duration(milliseconds: 200),
               curve: Curves.slowMiddle,
@@ -183,7 +205,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    menu,
+                    page,
                     style: TextStyle(
                       color: isSideMenuEnabled == true ? Colors.white : Colors.grey[600],
                       fontSize: 12,

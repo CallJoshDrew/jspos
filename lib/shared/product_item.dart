@@ -1503,6 +1503,11 @@ class ProductItemState extends State<ProductItem> {
                                           item.price = subTotalPrice;
                                           // log('item Price: ${item.price}');
                                           // log('subTotal Price: $subTotalPrice');
+                                          
+                                          // Reason we didn't save the latest order to the selectedOrder provider or Hive because this order has not being place yet. We only do that after it is confirmed with orderNumber. 
+                                          // selectedOrderNotifier.updateTotalCost();
+                                          // selectedOrderNotifier.updateItem(item);
+                                          
                                           widget.onItemAdded(item);
                                           Navigator.of(context).pop();
                                         },

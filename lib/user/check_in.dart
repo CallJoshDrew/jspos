@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 final cashProvider = StateProvider<double>((ref) => 0.0);
 
 class CheckInPage extends ConsumerStatefulWidget {
-  const CheckInPage({super.key});
+  final void Function() toggleCheckInState;
+  const CheckInPage({super.key, required this.toggleCheckInState});
 
   @override
   CheckInPageState createState() => CheckInPageState();
@@ -55,174 +56,149 @@ class CheckInPageState extends ConsumerState<CheckInPage> {
 
     return Scaffold(
       body: Center(
-        child: Container(
-          width: screenWidth * 0.5,
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color.fromRGBO(46, 125, 50, 1), width: 2),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Center content vertically
+            children: [
+              const Text(
+                'Check In Session',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(46, 125, 50, 1),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: screenWidth * 0.5,
+                padding: const EdgeInsets.fromLTRB(30, 30, 30, 20),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color.fromRGBO(46, 125, 50, 1), width: 2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Date: $currentDate',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Time: $currentTime',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Padding(
                           padding: EdgeInsets.only(left: 6),
                           child: Text(
-                            "Today's Date",
+                            "Your Password",
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: Colors.black12), // Set border color here
+                        TextField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Key in Your Password',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5), // Add border radius if desired
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color.fromRGBO(46, 125, 50, 1), width: 2.0), // Border color when focused
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black26, width: 1.0), // Border color when enabled (unfocused)
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
-                          child: Text(
-                            currentDate,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
+                          onChanged: (value) {
+                            ref.read(cashProvider.notifier).state = double.tryParse(value) ?? 0.0;
+                          },
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Padding(
                           padding: EdgeInsets.only(left: 6),
                           child: Text(
-                            "Current Time",
+                            "Today's Cash",
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(30, 8, 30, 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: Colors.black12), // Set border color here
+                        TextField(
+                          controller: _cashController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Enter Cash Amount',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5), // Add border radius if desired
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color.fromRGBO(46, 125, 50, 1), width: 2.0), // Border color when focused
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black26, width: 1.0), // Border color when enabled (unfocused)
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
-                          child: Text(
-                            currentTime,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          onChanged: (value) {
+                            ref.read(cashProvider.notifier).state = double.tryParse(value) ?? 0.0;
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                            backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
+                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            padding: WidgetStateProperty.all(
+                              const EdgeInsets.fromLTRB(14, 6, 14, 6),
+                            ),
                           ),
+                          onPressed: () {
+                            final password = _passwordController.text;
+                            widget.toggleCheckInState();
+                
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Password: $password, Cash: \$${cashAmount.toStringAsFixed(2)}',
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text('Check In'),
                         ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 30),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 6),
-                      child: Text(
-                        "Your Password",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    TextField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'Key in Your Password',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5), // Add border radius if desired
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color.fromRGBO(46, 125, 50, 1), width: 2.0), // Border color when focused
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.black26, width: 1.0), // Border color when enabled (unfocused)
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        ref.read(cashProvider.notifier).state = double.tryParse(value) ?? 0.0;
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 6),
-                      child: Text(
-                        "Today's Cash",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    TextField(
-                      controller: _cashController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Enter Cash Amount',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5), // Add border radius if desired
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color.fromRGBO(46, 125, 50, 1), width: 2.0), // Border color when focused
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.black26, width: 1.0), // Border color when enabled (unfocused)
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        ref.read(cashProvider.notifier).state = double.tryParse(value) ?? 0.0;
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                        backgroundColor: WidgetStateProperty.all<Color>(const Color.fromRGBO(46, 125, 50, 1)),
-                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        padding: WidgetStateProperty.all(
-                          const EdgeInsets.fromLTRB(14, 6, 14, 6),
-                        ),
-                      ),
-                      onPressed: () {
-                        final password = _passwordController.text;
-            
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Password: $password, Cash: \$${cashAmount.toStringAsFixed(2)}',
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Text('Check In'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

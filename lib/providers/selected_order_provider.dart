@@ -277,8 +277,8 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
         totalQuantity += item.quantity;
       }
     }
-    log('Updated Categories: $updatedCategories');
     state = state.copyWith(categories: updatedCategories, totalQuantity: totalQuantity);
+    log('Updated Categories (From selectedOrder Provider Page): $updatedCategories');
   }
 
   void _updateStateWithNewItems(List<Item> items) {

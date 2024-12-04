@@ -14,7 +14,7 @@ class TablesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
 
   Future<void> _initializeTables() async {
   try {
-    log('Initializing tables...');
+    // log('Initializing tables...');
     // Check if tables data exists, otherwise set the default tables
     final data = _tablesBox.get('tables');
     if (data != null) {
@@ -22,12 +22,12 @@ class TablesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
       state = List<Map<String, dynamic>>.from(
         (data as List).map((item) => Map<String, dynamic>.from(item)),
       );
-      log('Loaded tables from Hive: $state');
+      // log('Loaded tables from Hive: $state');
     } else {
       // Save default tables to Hive and update state
       await _tablesBox.put('tables', defaultTables);
       state = defaultTables;
-      log('Initialized default tables: $state');
+      // log('Initialized default tables: $state');
     }
   } catch (e) {
     log('Error initializing tables: $e');
