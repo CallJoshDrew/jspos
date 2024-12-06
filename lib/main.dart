@@ -10,6 +10,7 @@ import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/daily_sales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jspos/models/user.dart';
 
 void main() async {
   try {
@@ -24,6 +25,7 @@ void main() async {
     Hive.registerAdapter(PrinterAdapter());
     Hive.registerAdapter(DailySalesAdapter());
     Hive.registerAdapter(ClientProfileAdapter());
+    Hive.registerAdapter(UserAdapter()); 
 
     // Open required Hive boxes
     await Hive.openBox<Orders>('orders');
@@ -31,6 +33,7 @@ void main() async {
     var orderCounterBox = await Hive.openBox('orderCounter');
     await Hive.openBox<DailySales>('dailySalesBox');
     await Hive.openBox('tables');
+    await Hive.openBox<User>('currentUser');
 
     // Initialize the order counter if not present
     if (orderCounterBox.get('orderCounter') == null) {

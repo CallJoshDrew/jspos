@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jspos/screens/history/history.dart';
-import 'package:jspos/screens/recommendation/recommend.dart';
+// import 'package:jspos/screens/recommendation/recommend.dart';
 // import 'package:jspos/screens/reports/reports.dart';
 import 'package:jspos/screens/settings/settings.dart';
 import 'package:jspos/screens/home/home.dart';
@@ -43,7 +43,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String pageActive = "Dine In";
   bool isSideMenuEnabled = true;
-  bool isCheckIn = true;
+  bool isCheckIn = false;
   void toggleCheckInState() {
     setState(() {
       isCheckIn = !isCheckIn;
@@ -79,8 +79,8 @@ class _MainPageState extends State<MainPage> {
         return const HistoryPage();
       // case 'Reports':
       //   return const ReportsPage();
-      case 'Recommend':
-        return const RecommendPage();
+      // case 'Recommend':
+      //   return const RecommendPage();
       case 'Settings':
         return SettingsPage(
           categories: widget.categories,
@@ -143,7 +143,7 @@ class _MainPageState extends State<MainPage> {
               // _itemMenu(page: 'Take Out', icon: Icons.shopping_bag),
               _itemMenu(page: 'History', icon: Icons.history_sharp),
               // _itemMenu(page: 'Reports', icon: Icons.bar_chart),
-              _itemMenu(page: 'Recommend', icon: Icons.thumb_up),
+              // _itemMenu(page: 'Recommend', icon: Icons.thumb_up),
               _itemMenu(page: 'Settings', icon: Icons.tune),
               _itemMenu(page: 'Check Out', icon: Icons.logout_rounded),
             ]

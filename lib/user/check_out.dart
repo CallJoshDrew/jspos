@@ -1,6 +1,12 @@
+import 'dart:developer';
+
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:jspos/data/users_data.dart';
+import 'package:jspos/providers/current_user_provider.dart';
 
 final cashProvider = StateProvider<double>((ref) => 0.0);
 
@@ -42,6 +48,41 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
     currentTime = DateFormat('h:mm a').format(now).replaceAll("AM", "A.M.").replaceAll("PM", "P.M.");
   }
 
+  IconData _getIconData(String iconText) {
+    const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
+
+    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
+  }
+
+  void _showCherryToast(
+    String iconText,
+    iconColor,
+    String titleText,
+    int toastDu, // Changed to int for duration
+    int animateDu,
+  ) {
+    CherryToast(
+      icon: _getIconData(iconText), // Retrieve the corresponding icon
+      iconColor: iconColor,
+      themeColor: const Color.fromRGBO(46, 125, 50, 1),
+      backgroundColor: Colors.white,
+      title: Text(
+        titleText,
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      toastPosition: Position.top,
+      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
+      animationType: AnimationType.fromTop,
+      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
+      autoDismiss: true,
+      displayCloseButton: false,
+    ).show(context);
+  }
+
   @override
   void dispose() {
     _cashController.dispose();
@@ -53,6 +94,8 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
   Widget build(BuildContext context) {
     final cashAmount = ref.watch(cashProvider);
     final screenWidth = MediaQuery.of(context).size.width;
+
+    final currentUser = ref.watch(currentUserProvider);
 
     return Scaffold(
       body: Center(
@@ -181,16 +224,45 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
                               ),
                             ),
                             onPressed: () {
+                              log('Current User name is: ${currentUser?.name}');
                               final password = _passwordController.text;
-                              widget.toggleCheckInState();
+                              final cashValue = _cashController.text;
+                              // Validation: Check if password and cash are entered
+                              if (password.isEmpty || cashValue.isEmpty || double.tryParse(cashValue) == null) {
+                                _showCherryToast(
+                                  'cancel', // Icon for error
+                                  Colors.deepOrange,
+                                  'Please enter both a valid password and cash amount.',
+                                  3000, // Duration in milliseconds
+                                  1000, // Animation duration
+                                );
+                                return; // Exit the function if validation fails
+                              }
+                              // Validate the password
+                              if (currentUser?.password == password) {
+                                // Password is valid, proceed with check-out logic
+                                widget.toggleCheckInState();
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Password: $password, Cash: \$${cashAmount.toStringAsFixed(2)}',
-                                  ),
-                                ),
-                              );
+                                // Update the provider to clear the current user
+                                ref.read(currentUserProvider.notifier).clearUser();
+
+                                _showCherryToast(
+                                  'check_circle',
+                                  Colors.green,
+                                  'Goodbye ${currentUser?.name}!',
+                                  3000,
+                                  1000,
+                                );
+                              } else {  
+                                // Password is incorrect
+                                _showCherryToast(
+                                  'cancel',
+                                  Colors.deepOrange,
+                                  'Please enter the correct password.',
+                                  3000,
+                                  1000,
+                                );
+                              }
                             },
                             child: const Text('Check Out'),
                           ),
