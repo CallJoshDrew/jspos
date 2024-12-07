@@ -67,6 +67,18 @@ class _MainPageState extends State<MainPage> {
       return CheckInPage(toggleCheckInState: toggleCheckInState);
     }
 
+    // if (!isCheckIn) {
+    //   // Show only the Check In page when isCheckIn is false
+    //   switch (pageActive) {
+    //     case 'Check In':
+    //       return CheckInPage(toggleCheckInState: toggleCheckInState);
+    //     case 'Shift':
+    //       return ShiftPage();
+    //     default:
+    //       return const HomePage();
+    //   }
+    // }
+
     // Show the rest of the pages when isCheckIn is true
     switch (pageActive) {
       case 'Dine In':

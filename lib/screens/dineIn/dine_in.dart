@@ -590,7 +590,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
                 if (selectedTableIndex >= 0 && selectedTableIndex < tables.length) {
                   _showCherryToast(
                     'info', // Pass the icon key as a string
-                    'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
+                    'Success! The order has been placed!',
+                    // 'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
                     2000, // Toast duration in milliseconds
                     1500, // Animation duration in milliseconds
                   );

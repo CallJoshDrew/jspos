@@ -356,6 +356,15 @@ class CashierReceiptGenerator {
       fontZoom: 1,
       linefeed: 1,
     ));
+    if (selectedOrder.discount > 0) {
+      list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: formatRightAlignedText('Discount ${(selectedOrder.subTotal * (selectedOrder.discount / 100)).toStringAsFixed(2)}'),
+        align: LineText.ALIGN_RIGHT,
+        fontZoom: 1,
+        linefeed: 1,
+      ));
+    }
     list.add(LineText(
       type: LineText.TYPE_TEXT,
       content: formatRightAlignedText('Total ${selectedOrder.totalPrice.toStringAsFixed(2)}'),

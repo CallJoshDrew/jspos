@@ -563,19 +563,6 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                         ),
                                       ],
                                     ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Rounding Adjustment',
-                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                        Text(
-                                          '- ${(widget.historyOrder.roundingAdjustment).toStringAsFixed(2)}',
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                        ),
-                                      ],
-                                    ),
                                     // custom doted line.
                                     Container(
                                       margin: const EdgeInsets.symmetric(vertical: 12),

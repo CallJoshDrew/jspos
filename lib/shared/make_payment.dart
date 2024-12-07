@@ -15,14 +15,12 @@ import 'package:jspos/providers/tables_provider.dart';
 class MakePaymentPage extends ConsumerStatefulWidget {
   final VoidCallback? updateOrderStatus;
 
-  // final List<Map<String, dynamic>> tables;
   final int selectedTableIndex;
   final bool isTableInitiallySelected;
 
   const MakePaymentPage({
     super.key,
     required this.updateOrderStatus,
-    // required this.tables,
     required this.selectedTableIndex,
     required this.isTableInitiallySelected,
   });
@@ -35,42 +33,52 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   late Orders orders; // No need to reinitialize here directly.
   String selectedPaymentMethod = "Cash";
   final TextEditingController _controller = TextEditingController();
-  late double originalBill; // Declare originalBill
-  late double adjustedBill;
-  bool isRoundingApplied = false;
-  List<bool> isSelected = [false, true];
+  late double subTotalBill;
+  late double totalBill;
   double amountReceived = 0.0;
+  double adjustedAmountReceived = 0.0;
   double amountChanged = 0.0;
-  double roundingAdjustment = 0.0;
+  double totalAmountAfterDiscount = 0.00;
   int enteredDiscount = 0;
+  List<bool> isSelected = [false, true];
   late bool isTableSelected;
 
-  void _calculateTotalWithDiscount() {
-    final selectedOrder = ref.read(selectedOrderProvider);
-    // final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
-    // Calculate the discount amount
-    double discountAmount = selectedOrder.subTotal * (selectedOrder.discount / 100);
+  void _applyDiscount() {
+    // Calculate the discounted total amount
+    double discountAmount = subTotalBill * (enteredDiscount / 100);
+    totalAmountAfterDiscount = subTotalBill - discountAmount;
 
-    // Calculate the original and adjusted bill
-    originalBill = selectedOrder.subTotal - discountAmount;
-    adjustedBill = isRoundingApplied ? roundBill(originalBill) : originalBill;
-  }
-
-  void _calculateChange() {
-    // Ensure amountReceived is properly handled
-    amountReceived = double.parse(amountReceived.toStringAsFixed(2));
-
-    // If rounding is applied, adjust the bill accordingly
-    if (isRoundingApplied) {
-      adjustedBill = roundBill(originalBill);
+    // Update adjustedAmountReceived and totalBill based on discount
+    if (enteredDiscount > 0 && enteredDiscount < 100) {
+      adjustedAmountReceived = totalAmountAfterDiscount;
+      totalBill = adjustedAmountReceived;
+    } else {
+      totalBill = subTotalBill;
     }
 
-    // Calculate the change
-    double calculatedChange = amountReceived - (isRoundingApplied ? adjustedBill : originalBill);
+    // Ensure values are rounded to 2 decimal places
+    totalAmountAfterDiscount = double.parse(totalAmountAfterDiscount.toStringAsFixed(2));
+    // Debug: Log the discount calculation
+    log("SubTotal: $subTotalBill, Discount: $enteredDiscount, Total After Discount: $totalAmountAfterDiscount");
+  }
+
+  void _calculateAmountReceived() {
+    // If no value is entered, amountReceived should remain as-is
+    if (amountReceived == 0.0) {
+      amountReceived = totalBill;
+    }
+
+    // Calculate change based on the entered amount
+    double calculatedChange = amountReceived - totalBill;
     amountChanged = calculatedChange < 0 ? 0.0 : calculatedChange;
 
-    // Round the result to two decimal places
+    // Round to 2 decimal places for display consistency
+    amountReceived = double.parse(amountReceived.toStringAsFixed(2));
     amountChanged = double.parse(amountChanged.toStringAsFixed(2));
+
+    // Debugging logs
+    log("Amount Received: $amountReceived");
+    log("Amount Changed: $amountChanged");
   }
 
   // Example of your categories list
@@ -106,15 +114,6 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
     }
 
     return totalPrices;
-  }
-
-  double roundBill(double bill) {
-    double fractionalPart = bill - bill.floor();
-    if (fractionalPart <= 0.50) {
-      return bill.floorToDouble();
-    } else {
-      return bill;
-    }
   }
 
   Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
@@ -183,9 +182,8 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   void initState() {
     super.initState();
     orders = ref.read(ordersProvider);
-    originalBill = ref.read(selectedOrderProvider).totalPrice; // Initialize originalBill here
-    adjustedBill = originalBill; // Initialize adjustedBill here
-    // log('initState called, adjustedBill is now $adjustedBill');
+    subTotalBill = ref.read(selectedOrderProvider).subTotal;
+    totalBill = ref.read(selectedOrderProvider).totalPrice;
     isTableSelected = widget.isTableInitiallySelected;
   }
 
@@ -193,15 +191,9 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   Widget build(BuildContext context) {
     final selectedOrder = ref.read(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
-    //
+
     var screenSize = MediaQuery.of(context).size; // Get the screen size
     var statusBarHeight = MediaQuery.of(context).padding.top; // Get the status bar height
-    double fractionAmount = selectedOrder.totalPrice - selectedOrder.totalPrice.floor();
-    // // Assuming 'items' is a List<Item>
-    // for (Item item in selectedOrder.items) {
-    //   log('side: ${item.selectedSide}');
-    // }
-    _calculateTotalWithDiscount();
 
     return Scaffold(
       backgroundColor: const Color(0xff1f2029),
@@ -574,28 +566,6 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
-                                                                  // item.selection && item.selectedAddOn != null
-                                                                  //     ? Row(
-                                                                  //         children: [
-                                                                  //           Text(
-                                                                  //             "Extra Sides Charges: ${item.selectedAddOn?['name']}",
-                                                                  //             style: const TextStyle(
-                                                                  //               fontSize: 14,
-                                                                  //               color: Colors.yellow,
-                                                                  //             ),
-                                                                  //           ),
-                                                                  //           const SizedBox(width: 5),
-                                                                  //           if (item.selectedAddOn!['price'] > 0.00)
-                                                                  //             Text(
-                                                                  //               "( + ${(item.selectedAddOn?['price'].toStringAsFixed(2))})",
-                                                                  //               style: const TextStyle(
-                                                                  //                 fontSize: 14,
-                                                                  //                 color: Color.fromARGB(255, 114, 226, 118),
-                                                                  //               ),
-                                                                  //             ),
-                                                                  //         ],
-                                                                  //       )
-                                                                  //     : const SizedBox.shrink(),
                                                                   Wrap(
                                                                     children: [
                                                                       item.selection && filterRemarks(item.itemRemarks).isNotEmpty
@@ -705,52 +675,24 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          selectedOrder.subTotal.toStringAsFixed(2),
+                                          subTotalBill.toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
-                                    // Row(
-                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    //   children: [
-                                    //     const Text(
-                                    //       'Service Charges',
-                                    //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                    //     ),
-                                    //     Text(
-                                    //       selectedOrder.serviceCharge.toStringAsFixed(2),
-                                    //       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                    //     ),
-                                    //   ],
-                                    // ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Discount (${selectedOrder.discount}%)',
+                                          'Discount ($enteredDiscount%)',
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          (selectedOrder.subTotal * (selectedOrder.discount / 100)).toStringAsFixed(2),
+                                          (subTotalBill * (enteredDiscount / 100)).toStringAsFixed(2),
                                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
                                     ),
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
-                                        ? Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                'Rounding Adjustment',
-                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                              ),
-                                              Text(
-                                                '- ${(roundingAdjustment).toStringAsFixed(2)}',
-                                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                                              ),
-                                            ],
-                                          )
-                                        : const SizedBox.shrink(),
                                     // custom doted line.
                                     Container(
                                       margin: const EdgeInsets.symmetric(vertical: 12),
@@ -781,7 +723,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                         Text(
-                                          (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
+                                          (totalBill.toStringAsFixed(2)),
                                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
                                         ),
                                       ],
@@ -842,70 +784,8 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    (fractionAmount < 0.50 && fractionAmount > 0.00)
-                                        ? Row(
-                                            children: [
-                                              const Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Allow Rounding Adjustment?",
-                                                      style: TextStyle(fontSize: 14, color: Colors.white),
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                    Text(
-                                                      "- Less than 0.50",
-                                                      style: TextStyle(fontSize: 12, color: Colors.white),
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 40,
-                                                child: ToggleButtons(
-                                                  onPressed: (int index) {
-                                                    setState(() {
-                                                      for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                                        if (buttonIndex == index) {
-                                                          isSelected[buttonIndex] = true;
-                                                          // index 0 is Yes, index 1 is No.
-                                                          if (index == 0) {
-                                                            adjustedBill = roundBill(originalBill);
-                                                            roundingAdjustment = double.parse((originalBill - adjustedBill).toStringAsFixed(2));
-                                                            isRoundingApplied = true;
-                                                          } else {
-                                                            adjustedBill = originalBill;
-                                                            roundingAdjustment = 0.0;
-                                                            isRoundingApplied = false;
-                                                          }
-                                                          // Call _calculateChange after updating adjustedBill and isRoundingApplied
-                                                          _calculateChange();
-                                                        } else {
-                                                          isSelected[buttonIndex] = false;
-                                                        }
-                                                      }
-                                                    });
-                                                  },
-                                                  isSelected: isSelected,
-                                                  fillColor: isSelected.contains(true) ? Colors.green : Colors.white,
-                                                  selectedBorderColor: Colors.green,
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderWidth: 1.0,
-                                                  borderColor: Colors.white,
-                                                  children: const <Widget>[
-                                                    Text('Yes', style: TextStyle(fontSize: 14, color: Colors.white)),
-                                                    Text('No', style: TextStyle(fontSize: 14, color: Colors.white)),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : const SizedBox.shrink(),
-                                    const SizedBox(height: 10),
                                     const Text(
-                                      "Payment Method",
+                                      "1.Select Payment Method",
                                       style: TextStyle(fontSize: 14, color: Colors.white),
                                       textAlign: TextAlign.start,
                                     ),
@@ -955,17 +835,26 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                "Enter Discount (%)",
+                                                "2.Enter Discount (%)",
                                                 style: TextStyle(fontSize: 14, color: Colors.white),
                                                 textAlign: TextAlign.start,
                                               ),
                                               const SizedBox(height: 5), // Add spacing between label and input
                                               TextField(
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                                 keyboardType: TextInputType.number,
                                                 textAlign: TextAlign.center,
                                                 decoration: const InputDecoration(
                                                   hintText: "0",
-                                                  hintStyle: TextStyle(color: Colors.grey),
+                                                  hintStyle: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                   contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                   fillColor: Colors.white,
                                                   filled: true,
@@ -976,13 +865,15 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                 ),
                                                 onChanged: (value) {
                                                   setState(() {
+                                                    // Parse the entered discount and ensure it's between 0 and 100
                                                     enteredDiscount = int.tryParse(value) ?? 0;
-                                                    // Ensure discount is between 1 and 100, otherwise reset to 0
-                                                    if (enteredDiscount >= 1 && enteredDiscount <= 100) {
-                                                      selectedOrder.discount = enteredDiscount;
-                                                    } else {
-                                                      selectedOrder.discount = 0;
+                                                    // Ensure discount is not between 1 and 100, set the discount in _calculateChange()
+                                                    if (enteredDiscount < 0 || enteredDiscount > 100) {
+                                                      enteredDiscount = 0;
                                                     }
+
+                                                    // Trigger change calculation and set it
+                                                    _applyDiscount();
                                                   });
                                                 },
                                               ),
@@ -997,52 +888,46 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                "Enter Amount Received (RM)",
+                                                "3.Enter Amount Received (RM)",
                                                 style: TextStyle(fontSize: 14, color: Colors.white),
                                                 textAlign: TextAlign.start,
                                               ),
                                               const SizedBox(height: 5), // Add spacing between label and input
                                               TextField(
-                                                controller: _controller,
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                keyboardType: TextInputType.number,
-                                                textAlign: TextAlign.center,
-                                                decoration: InputDecoration(
-                                                  hintText: (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2),
-                                                  hintStyle: const TextStyle(color: Colors.green),
-                                                  contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                  fillColor: Colors.white,
-                                                  filled: true,
-                                                  border: const OutlineInputBorder(),
-                                                  focusedBorder: const OutlineInputBorder(
-                                                    borderSide: BorderSide(color: Colors.grey),
+                                                  controller: _controller,
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                ),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    // Determine the amount received based on user input or fallback to the bill amount
-                                                    amountReceived =
-                                                        value.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill) : double.tryParse(value) ?? 0.0;
+                                                  keyboardType: TextInputType.number,
+                                                  textAlign: TextAlign.center,
+                                                  decoration: InputDecoration(
+                                                    hintText: (adjustedAmountReceived == 0.0
+                                                        ? subTotalBill.toStringAsFixed(2)
+                                                        : adjustedAmountReceived.toStringAsFixed(2)),
+                                                    hintStyle: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                    contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                    fillColor: Colors.white,
+                                                    filled: true,
+                                                    border: const OutlineInputBorder(),
+                                                    focusedBorder: const OutlineInputBorder(
+                                                      borderSide: BorderSide(color: Colors.grey), //
+                                                    ),
+                                                  ),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      // Parse input or fallback to 0.0 if empty
+                                                      amountReceived = double.tryParse(value) ?? 0.0;
 
-                                                    // Update the selected order with the amount received
-                                                    selectedOrder.amountReceived = amountReceived;
-
-                                                    // Trigger the change calculation
-                                                    _calculateChange();
-
-                                                    // Ensure totalPrice defaults to the original bill if no valid input is provided
-                                                    selectedOrder.totalPrice =
-                                                        value.isEmpty ? originalBill : double.parse((amountReceived - amountChanged).toStringAsFixed(2));
-
-                                                    // Update the amount changed in the selected order
-                                                    selectedOrder.amountChanged = amountChanged;
-                                                  });
-                                                },
-                                              ),
+                                                      // Trigger recalculation with the updated amountReceived
+                                                      _calculateAmountReceived();
+                                                    });
+                                                  }),
                                             ],
                                           ),
                                         ),
@@ -1102,7 +987,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                 ),
                                                               ),
                                                               Text(
-                                                                '‘RM${_controller.text.isEmpty ? (isRoundingApplied ? adjustedBill : originalBill).toStringAsFixed(2) : _controller.text}‘ ',
+                                                                '‘RM${_controller.text.isEmpty ? totalBill.toStringAsFixed(2) : _controller.text}‘ ',
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontSize: 18,
@@ -1201,23 +1086,14 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                   var ordersBox = Hive.isBoxOpen('orders')
                                                                       ? Hive.box<Orders>('orders')
                                                                       : await Hive.openBox<Orders>('orders');
-
-                                                                  // Perform operations related to the order
-                                                                  _calculateChange();
-                                                                  // selectedOrderNotifier.makePayment(
-                                                                  //   roundingAdjustment: roundingAdjustment,
-                                                                  //   paymentMethod: selectedPaymentMethod,
-                                                                  //   status: 'Paid',
-                                                                  //   cancelledTime: 'None',
-                                                                  // );
-                                                                  // selectedOrder
-                                                                  //   ..roundingAdjustment = roundingAdjustment
-                                                                  //   ..paymentMethod = selectedPaymentMethod
-                                                                  //   ..status = 'Paid'
-                                                                  //   ..cancelledTime = 'None';
-                                                                  // selectedOrderNotifier.addPaymentDateTime();
+                                                                  _applyDiscount();
+                                                                  _calculateAmountReceived();
                                                                   selectedOrderNotifier.processPayment(
-                                                                    roundingAdjustment: roundingAdjustment,
+                                                                    amountReceived: amountReceived,
+                                                                    amountChanged: amountChanged,
+                                                                    discount: enteredDiscount,
+                                                                    total: totalBill,
+                                                                    subTotal: subTotalBill,
                                                                     paymentMethod: selectedPaymentMethod,
                                                                     status: 'Paid',
                                                                     cancelledTime: 'None',
@@ -1231,8 +1107,6 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
 
                                                                   // Clear table data for the selected table
                                                                   var emptyOrderNumber = '';
-                                                                  // widget.tables[widget.selectedTableIndex]['orderNumber'] = emptyOrderNumber;
-                                                                  // widget.tables[widget.selectedTableIndex]['occupied'] = false;
 
                                                                   // Update the tables state
                                                                   ref

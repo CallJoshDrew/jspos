@@ -27,7 +27,6 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
           categoryList: [], // Pass an empty list or an initial list of categories
           amountReceived: 0.0, // Default value for amountReceived
           amountChanged: 0.0, // Default value for amountChanged
-          roundingAdjustment: 0.0, // Default value for roundingAdjustment
           totalQuantity: 0, // Default value for totalQuantity
           paymentTime: "Today", // Default value for paymentTime
           cancelledTime: "Today", // Default value for cancelledTime
@@ -90,7 +89,6 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       categoryList: categories,
       amountReceived: 0,
       amountChanged: 0,
-      roundingAdjustment: 0,
       totalQuantity: 0,
     );
   }
@@ -142,7 +140,6 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       categoryList: categories,
       amountReceived: 0,
       amountChanged: 0,
-      roundingAdjustment: 0,
       totalQuantity: 0,
       paymentTime: "Today",
     );
@@ -176,22 +173,12 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     updateTotalPrice();
   }
 
-  // void makePayment({
-  //   required double roundingAdjustment,
-  //   required String paymentMethod,
-  //   required String status,
-  //   required String cancelledTime,
-  // }) {
-  //   state = state.copyWith(
-  //     roundingAdjustment: roundingAdjustment,
-  //     paymentMethod: paymentMethod,
-  //     status: status,
-  //     cancelledTime: cancelledTime,
-  //   );
-  // }
-
   void processPayment({
-    required double roundingAdjustment,
+    required double amountReceived,
+    required double amountChanged,
+    required int discount,
+    required double total,
+    required double subTotal,
     required String paymentMethod,
     required String status,
     required String cancelledTime,
@@ -210,7 +197,11 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
 
     // Update the state with all values
     state = state.copyWith(
-      roundingAdjustment: roundingAdjustment,
+      amountReceived: amountReceived,
+      amountChanged: amountChanged,
+      discount: discount,
+      totalPrice: total,
+      subTotal: subTotal,
       paymentMethod: paymentMethod,
       status: status,
       cancelledTime: cancelledTime,

@@ -28,14 +28,13 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
       totalPrice: fields[8] as double,
       paymentMethod: fields[9] as String,
       showEditBtn: fields[10] as bool,
-      categoryList: (fields[18] as List).cast<String>(),
+      categoryList: (fields[17] as List).cast<String>(),
       amountReceived: fields[12] as double,
       amountChanged: fields[13] as double,
-      roundingAdjustment: fields[14] as double,
-      totalQuantity: fields[15] as int,
-      paymentTime: fields[16] as String,
-      cancelledTime: fields[17] as String,
-      discount: fields[19] as int,
+      totalQuantity: fields[14] as int,
+      paymentTime: fields[15] as String,
+      cancelledTime: fields[16] as String,
+      discount: fields[18] as int,
     )..categories = (fields[11] as Map).map((dynamic k, dynamic v) =>
         MapEntry(k as String, (v as Map).cast<String, int>()));
   }
@@ -43,7 +42,7 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
   @override
   void write(BinaryWriter writer, SelectedOrder obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.orderNumber)
       ..writeByte(1)
@@ -73,16 +72,14 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
       ..writeByte(13)
       ..write(obj.amountChanged)
       ..writeByte(14)
-      ..write(obj.roundingAdjustment)
-      ..writeByte(15)
       ..write(obj.totalQuantity)
-      ..writeByte(16)
+      ..writeByte(15)
       ..write(obj.paymentTime)
-      ..writeByte(17)
+      ..writeByte(16)
       ..write(obj.cancelledTime)
-      ..writeByte(18)
+      ..writeByte(17)
       ..write(obj.categoryList)
-      ..writeByte(19)
+      ..writeByte(18)
       ..write(obj.discount);
   }
 

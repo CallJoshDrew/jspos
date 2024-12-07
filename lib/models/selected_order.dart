@@ -39,16 +39,14 @@ class SelectedOrder with ChangeNotifier {
   @HiveField(13)
   double amountChanged = 0;
   @HiveField(14)
-  double roundingAdjustment = 0;
-  @HiveField(15)
   int totalQuantity = 0;
-  @HiveField(16)
+  @HiveField(15)
   String paymentTime = "Today";
-  @HiveField(17)
+  @HiveField(16)
   String cancelledTime = "Today";
-  @HiveField(18)
+  @HiveField(17)
   List<String> categoryList;
-  @HiveField(19)
+  @HiveField(18)
   int discount = 0; // Default to 0% discount
 
   SelectedOrder({
@@ -66,7 +64,6 @@ class SelectedOrder with ChangeNotifier {
     required this.categoryList,  // Modify constructor to accept categoryList
     this.amountReceived = 0,
     this.amountChanged = 0,
-    this.roundingAdjustment = 0,
     this.totalQuantity = 0,
     this.paymentTime = "Today",
     this.cancelledTime = "Today",
@@ -94,7 +91,6 @@ class SelectedOrder with ChangeNotifier {
         '\tshowEditBtn: $showEditBtn,\n'
         '\tamountReceived: $amountReceived,\n'
         '\tamountChanged: $amountChanged,\n'
-        '\troundingAdjustment: $roundingAdjustment\n'
         '\ttotalQuantity: $totalQuantity,\n'
         '\tpaymentTime: $paymentTime,\n'
         '\tcancelledTime: $cancelledTime,\n'
@@ -119,7 +115,6 @@ class SelectedOrder with ChangeNotifier {
       categoryList: categoryList,
       amountReceived: 0,
       amountChanged: 0,
-      roundingAdjustment: 0,
       totalQuantity: 0,
       paymentTime: "Payment Time",
       cancelledTime: "Cancelled Time",
@@ -142,7 +137,6 @@ class SelectedOrder with ChangeNotifier {
     Map<String, Map<String, int>>? categories,
     double? amountReceived,
     double? amountChanged,
-    double? roundingAdjustment,
     int? totalQuantity,
     String? paymentTime,
     String? cancelledTime,
@@ -164,7 +158,6 @@ class SelectedOrder with ChangeNotifier {
       categoryList: categoryList ?? this.categoryList,
       amountReceived: amountReceived ?? this.amountReceived,
       amountChanged: amountChanged ?? this.amountChanged,
-      roundingAdjustment: roundingAdjustment ?? this.roundingAdjustment,
       totalQuantity: totalQuantity ?? this.totalQuantity,
       paymentTime: paymentTime ?? this.paymentTime,
       cancelledTime: cancelledTime ?? this.cancelledTime,
@@ -186,7 +179,6 @@ class SelectedOrder with ChangeNotifier {
       'paymentMethod': paymentMethod,
       'amountReceived': amountReceived,
       'amountChanged': amountChanged,
-      'roundingAdjustment': roundingAdjustment,
       'totalQuantity': totalQuantity,
       'paymentTime': paymentTime,
       'cancelledTime': cancelledTime,

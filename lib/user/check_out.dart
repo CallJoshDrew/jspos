@@ -5,7 +5,6 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:jspos/data/users_data.dart';
 import 'package:jspos/providers/current_user_provider.dart';
 
 final cashProvider = StateProvider<double>((ref) => 0.0);
@@ -92,7 +91,7 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
 
   @override
   Widget build(BuildContext context) {
-    final cashAmount = ref.watch(cashProvider);
+    // final cashAmount = ref.watch(cashProvider);
     final screenWidth = MediaQuery.of(context).size.width;
 
     final currentUser = ref.watch(currentUserProvider);
@@ -249,7 +248,7 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
                                 _showCherryToast(
                                   'check_circle',
                                   Colors.green,
-                                  'Goodbye ${currentUser?.name}!',
+                                  'Goodbye ${currentUser?.name}! Cash increased to RM${double.parse(cashValue).toStringAsFixed(2)}',
                                   3000,
                                   1000,
                                 );
