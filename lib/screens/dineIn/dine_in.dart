@@ -9,6 +9,7 @@ import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 // import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/print_jobs.dart';
+import 'package:jspos/providers/client_profile_provider.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/tables_provider.dart';
 import 'package:jspos/providers/order_counter_provider.dart';
@@ -16,8 +17,8 @@ import 'package:jspos/providers/selected_order_provider.dart';
 import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
-import 'package:jspos/data/menu1_data.dart';
-// import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu1_data.dart';
+import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 
 import 'package:cherry_toast/cherry_toast.dart';
@@ -58,6 +59,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
     Future.microtask(() {
       ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
     });
+    Future.microtask(() => ref.read(clientProfileProvider.notifier).loadProfile());
 
     isLoading = false; // Set loading flag to false if needed
     handleMethod = defaultMethod;
@@ -102,6 +104,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
   void _handleSetTables(String tableName, int index) {
     // Log the entry into the function with the table name and index
     // log('Entering _handleSetTables with $tableName at index: $index');
+    // final ordersNotifier = ref.read(ordersProvider);
+    // log('Total Orders details: $ordersNotifier');
     try {
       setState(() {
         // Retrieve the latest tables data from the provider
@@ -137,7 +141,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           // orderStatusColor = Colors.white10;
           // // orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
           // orderStatusIcon = Icons.shopping_cart;
-          // handleMethod = defaultMethod;  
+          // handleMethod = defaultMethod;
           isTableSelected = false;
         } else {
           // If the table is already occupied, retrieve the list of occupied tables
@@ -389,7 +393,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
   void handlePaymentBtn(BuildContext context, WidgetRef ref) {
     // // Use the provider to access the current orders state
-    // final orders = ref.read(ordersProvider);
+    final ordersNotifier = ref.read(ordersProvider);
+    log('Total Orders details: $ordersNotifier');
 
     // // Log the selectedOrder with pretty-printed JSON
     // var encoder = const JsonEncoder.withIndent('  ');
@@ -625,14 +630,24 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   }
 
                   // Step 2: Place the order with the updated order number
-                  await selectedOrderNotifier.placeOrder(orderNumber, tables[selectedTableIndex]['name']);
+                  selectedOrderNotifier.placeOrder(orderNumber, tables[selectedTableIndex]['name']);
+                  // Log total quantity in `selectedOrder`
 
                   // Log and prepare the updated selected order
                   final updatedSelectedOrder = ref.read(selectedOrderProvider); // Read the updated state
-                  // log('Updated selectedOrder after placeOrder: $updatedSelectedOrder');
+                  final selectedOrderTotalQty = updatedSelectedOrder.items.fold(0, (sum, item) => sum + item.quantity);
+                  log('Total quantity in selectedOrder: $selectedOrderTotalQty');
 
                   // Step 3: Add or update the order in ordersProvider
                   ref.read(ordersProvider.notifier).addOrUpdateOrder(updatedSelectedOrder);
+                  // Log total quantities from all orders in `ordersProvider`
+                  final ordersState = ref.read(ordersProvider);
+                  final ordersTotalQty = ordersState.data.fold(0, (sum, order) {
+                    final orderTotalQty = order.items.fold(0, (sum, item) => sum + item.quantity);
+                    log('Order Number: ${order.orderNumber}, Total Quantity: $orderTotalQty');
+                    return sum + orderTotalQty;
+                  });
+                  log('Total quantity across all orders: $ordersTotalQty');
 
                   // Store the current items in the temporary cart
                   tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
@@ -847,22 +862,14 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Use ref.watch() to listen to tablesProvider for changes
     final tables = ref.watch(tablesProvider);
-    // log('The tables from widget build are :$tables');
-    // Future need to display the price of each table
-    // final totalOrdersPrice = ref.watch(ordersProvider.notifier).totalOrdersPrice;
-
-    // final groupedOrders = ref.watch(ordersProvider.notifier).ordersGroupedByDate;
-
-    // for (var date in groupedOrders.keys) {
-    //   log('Orders for $date:');
-    //   for (var order in groupedOrders[date]!) {
-    //     log(order.toString());
-    //   }
     // }
     final selectedOrder = ref.watch(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
+    final clientProfile = ref.watch(clientProfileProvider);
+    // ref.watch observes the provider and rebuilds the widget when the provider's state changes.
+    // ref.read is a one-time read of the provider's state and does not trigger a rebuild on changes.
+
     // Display a loading indicator if data is still being fetched
     if (isLoading && tables.isEmpty) {
       // log('Show info: $tables');
@@ -886,14 +893,22 @@ class DineInPageState extends ConsumerState<DineInPage> {
                           color: Colors.white10, // Set the background color
                           borderRadius: BorderRadius.circular(5), // Optional: Rounded corners
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 14,), // Add padding inside the container
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                        ), // Add padding inside the container
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Try Mee IJM',
-                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
+                            // Check if clientProfile is null
+                            clientProfile == null
+                                ? const Text(
+                                    'Loading Client Profile...',
+                                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                  )
+                                : Text(
+                                    clientProfile.name,
+                                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
                             Text(
                               formatTodayDateShort(), // Use the formatted date here
                               style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
@@ -1035,67 +1050,67 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       Row(
                         children: [
                           // Clear Local Data
-                          // isTableSelected
-                          //     ? Expanded(
-                          //         flex: 1,
-                          //         child: ElevatedButton(
-                          //           style: ElevatedButton.styleFrom(
-                          //             foregroundColor: Colors.white,
-                          //             backgroundColor: Colors.redAccent,
-                          //             padding: const EdgeInsets.symmetric(vertical: 0),
-                          //             shape: RoundedRectangleBorder(
-                          //               borderRadius: BorderRadius.circular(5),
-                          //             ),
-                          //           ),
-                          //           onPressed: () async {
-                          //             try {
-                          //               final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
-                          //               // final printersBox =
-                          //               //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
+                          isTableSelected
+                              ? Expanded(
+                                  flex: 1,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Colors.redAccent,
+                                      padding: const EdgeInsets.symmetric(vertical: 0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        final categoriesBox = Hive.isBoxOpen('categories') ? Hive.box('categories') : await Hive.openBox('categories');
+                                        // final printersBox =
+                                        //     Hive.isBoxOpen('printersBox') ? Hive.box<Printer>('printersBox') : await Hive.openBox<Printer>('printersBox');
 
-                          //               // Step 1: Reset providers
-                          //               await ref.read(tablesProvider.notifier).resetTables();
-                          //               await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
-                          //               await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
-                          //               log('Providers have been reset.');
+                                        // Step 1: Reset providers
+                                        await ref.read(tablesProvider.notifier).resetTables();
+                                        await ref.read(orderCounterProvider.notifier).resetOrderCounter(); // Reset orderCounter to 1
+                                        await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
+                                        log('Providers have been reset.');
 
-                          //               // Step 2: Clear Hive boxes
-                          //               await categoriesBox.clear();
-                          //               // await printersBox.clear();
-                          //               log('Hive boxes have been cleared.');
+                                        // Step 2: Clear Hive boxes
+                                        await categoriesBox.clear();
+                                        // await printersBox.clear();
+                                        log('Hive boxes have been cleared.');
 
-                          //               // Step 3: Update UI after clearing and resetting
-                          //               setState(() {
-                          //                 selectedOrderNotifier.resetDefault();
-                          //               });
+                                        // Step 3: Update UI after clearing and resetting
+                                        setState(() {
+                                          selectedOrderNotifier.resetDefault();
+                                        });
 
-                          //               log('UI has been updated after resetting the data.');
-                          //             } catch (e) {
-                          //               log('An error occurred while clearing Hive data: $e');
-                          //             }
-                          //           },
-                          //           child: const Padding(
-                          //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          //             child: Row(
-                          //               mainAxisAlignment: MainAxisAlignment.center,
-                          //               children: [
-                          //                 Icon(Icons.cancel, size: 20),
-                          //                 SizedBox(width: 10),
-                          //                 Text(
-                          //                   'Clear',
-                          //                   style: TextStyle(
-                          //                     fontSize: 16,
-                          //                     fontWeight: FontWeight.bold,
-                          //                     color: Colors.white,
-                          //                   ),
-                          //                 ),
-                          //               ],
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       )
-                          //     : const SizedBox(),
-                          // const SizedBox(width: 10),
+                                        log('UI has been updated after resetting the data.');
+                                      } catch (e) {
+                                        log('An error occurred while clearing Hive data: $e');
+                                      }
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.cancel, size: 20),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Clear',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          const SizedBox(width: 10),
                           // Cancel and Remove and Delete Selected Order
                           (isTableSelected && selectedOrder.status == "Placed Order" && selectedOrder.showEditBtn == true)
                               ? Expanded(

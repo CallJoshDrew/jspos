@@ -1,5 +1,3 @@
-// import 'dart:convert';
-
 import 'package:hive/hive.dart';
 
 part 'client_profile.g.dart'; // Import the generated part file

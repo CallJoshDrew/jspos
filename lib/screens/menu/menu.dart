@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/data/menu1_data.dart';
-// import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu1_data.dart';
+import 'package:jspos/data/menu_data.dart';
 import 'package:jspos/shared/product_item.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
@@ -58,20 +58,10 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 5),
-          //   child: _topMenu(
-          //     // title: 'SMH Restaurant',
-          //     title: 'TryMee IJM',
-          //     subTitle: 'today date',
-          //     action: _closedButtton(),
-          //   ),
-          // ),
-          // Add spacing between _topMenu and ListView
           // Categories of Menu
           Padding(
             padding: const EdgeInsets.only(bottom: 0),
@@ -116,8 +106,8 @@ class _MenuPageState extends State<MenuPage> {
                 childAspectRatio: (1 / 1.3), // width 1 / height 1.3
                 crossAxisSpacing: 20, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
-                // children: menu
-                children: menu1
+                children: menu
+                // children: menu1
                     .where((item) =>
                         // selectedCategory == 'All' ||
                         item['category'] == selectedCategory)
@@ -157,8 +147,8 @@ class _MenuPageState extends State<MenuPage> {
     required bool isActive,
   }) {
     return Container(
-      width: 100,
-      margin: const EdgeInsets.only(right: 15),
+      width: 90,
+      margin: const EdgeInsets.only(right: 10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: const Color(0xff1f2029),
@@ -166,17 +156,15 @@ class _MenuPageState extends State<MenuPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Image.asset(
-          //   icon,
-          //   width: 55,
-          // ),
-          // const SizedBox(width: 15),
           Text(
             title,
-            style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: isActive ? FontWeight.bold : FontWeight.normal),
+            style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: isActive ? FontWeight.bold : FontWeight.normal),
           )
         ],
       ),
     );
   }
 }
+
+
+//menu page, dine in page, order details

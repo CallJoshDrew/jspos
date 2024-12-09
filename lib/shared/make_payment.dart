@@ -812,7 +812,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                           onPressed: () {
                                             setState(() {
                                               selectedPaymentMethod = value;
-                                              selectedOrder.paymentMethod = value;
+                                              // selectedOrder.paymentMethod = value;
                                             });
                                           },
                                           child: Text(
@@ -888,7 +888,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                "3.Enter Amount Received (RM)",
+                                                "3.Amount Received (RM)",
                                                 style: TextStyle(fontSize: 14, color: Colors.white),
                                                 textAlign: TextAlign.start,
                                               ),
@@ -1119,7 +1119,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                   // Log updated orders from Hive for debugging
                                                                   var storedOrders = ordersBox.get('orders') as Orders;
                                                                   for (var order in storedOrders.data) {
-                                                                    log('Order Number: ${order.orderNumber}, Status: ${order.status}');
+                                                                    log('Order Number: ${order.orderNumber}, Status: ${order.status}, Total Qty: ${order.totalQuantity}');
                                                                   }
 
                                                                   // Safely interact with UI if the widget is still in the tree

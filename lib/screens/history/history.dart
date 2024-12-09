@@ -28,6 +28,9 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
     orders = ref.read(ordersProvider);
+    for (var order in orders!.data) {
+      log('InitState - Order Number: ${order.orderNumber}, Total Quantity: ${order.totalQuantity}');
+    }
     // Access OrdersNotifier and log payment times
     // ref.read(ordersProvider.notifier).logPaymentTimes();
     _sortByTransactionDate(ascending: false);
@@ -69,6 +72,7 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
     // Group orders by formatted date (e.g., "10 October 2023")
     Map<String, List<SelectedOrder>> groupedOrders = {};
     for (var order in orders!.data) {
+      log('Before Grouping - Order Number: ${order.orderNumber}, Total Quantity: ${order.totalQuantity}');
       if (order.status == "Paid" || order.status == "Cancelled") {
         String dateKey = formatDateOnly(order.paymentTime != "None" ? order.paymentTime : order.cancelledTime);
         if (groupedOrders[dateKey] == null) {
@@ -348,6 +352,7 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
   }
 
   List<DataCell> _buildDataCells(SelectedOrder order, int index) {
+    // log('Order Number: ${order.orderNumber}, Total Quantity: ${order.totalQuantity}');
     return [
       // This will handle each order's cell data, formatting as per your original build orders table
       DataCell(Center(

@@ -36,22 +36,23 @@ class OrdersNotifier extends StateNotifier<Orders> {
 
   // Add or update an order
   Future<void> addOrUpdateOrder(SelectedOrder order) async {
-    // log('pass in of order: $order');
-    final existingOrderIndex = state.data.indexWhere((o) => o.orderNumber == order.orderNumber);
-
     final updatedOrders = List<SelectedOrder>.from(state.data);
+
+    final existingOrderIndex = updatedOrders.indexWhere((o) => o.orderNumber == order.orderNumber);
     if (existingOrderIndex != -1) {
-      updatedOrders[existingOrderIndex] = order; // Update existing order
-      log('Order updated: ${order.orderNumber}');
+      updatedOrders[existingOrderIndex] = order;
+      log('Order updated before Hive save: ${order.orderNumber}, Total Quantity: ${order.items.fold(0, (sum, item) => sum + item.quantity)}');
     } else {
-      updatedOrders.add(order); // Add new order
-      log('New order added: ${order.orderNumber}');
+      updatedOrders.add(order);
+      log('New order added before Hive save: ${order.orderNumber}, Total Quantity: ${order.items.fold(0, (sum, item) => sum + item.quantity)}');
     }
 
-    // Update state and save to Hive
+    // Update state
     state = Orders(data: updatedOrders);
+
+    // Persist changes to Hive
     await _saveToHive();
-    // log('Orders saved to Hive: $updatedOrders');
+    log('Orders saved to Hive: ${state.data}');
   }
 
   // Delete an order

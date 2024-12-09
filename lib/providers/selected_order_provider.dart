@@ -13,24 +13,24 @@ import 'package:uuid/uuid.dart';
 class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
   SelectedOrderNotifier()
       : super(SelectedOrder(
-          orderNumber: "Order Number", // Provide a default or dynamic value
-          tableName: "Table Name", // Provide a default or dynamic value
-          orderType: "Dine-In", // Provide a default or dynamic value
-          orderDate: "Today", // Provide a default or dynamic value
-          orderTime: "Now", // Provide a default or dynamic value
-          status: "Start Your Order", // Provide a default or dynamic value
+          orderNumber: "Order Number", 
+          tableName: "Table Name", 
+          orderType: "Dine-In",
+          orderDate: "Today",
+          orderTime: "Now",
+          status: "Start Your Order",
           items: [], // Empty list or provide an initial list of items
-          subTotal: 0.0, // Provide a default value
-          totalPrice: 0.0, // Provide a default value
-          paymentMethod: "Cash", // Default value for paymentMethod
-          showEditBtn: false, // Default value for showEditBtn
+          subTotal: 0.0, 
+          totalPrice: 0.0, 
+          paymentMethod: "Cash",
+          showEditBtn: false,
           categoryList: [], // Pass an empty list or an initial list of categories
-          amountReceived: 0.0, // Default value for amountReceived
-          amountChanged: 0.0, // Default value for amountChanged
-          totalQuantity: 0, // Default value for totalQuantity
-          paymentTime: "Today", // Default value for paymentTime
-          cancelledTime: "Today", // Default value for cancelledTime
-          discount: 0, // Default value for discount
+          amountReceived: 0.0,
+          amountChanged: 0.0,
+          totalQuantity: 0,
+          paymentTime: "Today",
+          cancelledTime: "Today",
+          discount: 0,
         ));
 
   // Helper Methods
@@ -185,6 +185,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
   }) {
     DateTime now = DateTime.now();
     String? formattedDate;
+    // log('Payment Method is $paymentMethod');
 
     // Attempt to format the current date-time
     try {
@@ -209,20 +210,6 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     );
   }
 
-  // void addPaymentDateTime() {
-  //   DateTime now = DateTime.now();
-  //   // Attempt to format and log the payment time
-  //   try {
-  //     String formattedDate = DateFormat('h:mm a, d MMMM yyyy').format(now);
-  //     log('Formatted Payment Date: $formattedDate');
-  //     state = state.copyWith(paymentTime: formattedDate);
-  //   } catch (e) {
-  //     log('Date formatting failed: $e');
-  //     // Use a default or fallback format in case of error
-  //     state = state.copyWith(paymentTime: now.toIso8601String());
-  //   }
-  // }
-
   void addCancelDateTime() {
     DateTime now = DateTime.now();
     state = state.copyWith(cancelledTime: DateFormat('h:mm a, d MMMM yyyy').format(now));
@@ -233,15 +220,17 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
   }
 
   double _calculateSubTotal() {
-    return state.items.fold(0, (total, item) => total + item.price * item.quantity);
+    return double.parse(state.items.fold(0.0, (total, item) => total + item.price * item.quantity).toStringAsFixed(2));
   }
 
   double _calculateTotalPrice() {
-    return _calculateSubTotal(); // Assuming totalPrice is same as subTotal here
+    return _calculateSubTotal();
   }
 
   Future<void> placeOrder(String orderNumber, String tableName) async {
     DateTime now = DateTime.now();
+    calculateItemsAndQuantities();
+    final updatedCategories = _calculateCategories(state.items);
     state = state.copyWith(
       orderNumber: orderNumber,
       tableName: tableName,
@@ -251,25 +240,87 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       showEditBtn: true,
       orderDate: DateFormat('d MMMM yyyy').format(now),
       orderTime: DateFormat('h:mm a').format(now),
+      categories: {
+        ...state.categories,
+        ...updatedCategories,
+      },
     );
-    log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}');
+    log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}, total Quantity: ${state.totalQuantity}');
   }
 
+  Map<String, Map<String, int>> _calculateCategories(List<Item> items) {
+  log('Calculating categories for items: ${items.map((e) => e.toJson()).toList()}');
+
+  final Map<String, Map<String, int>> categoryData = {};
+
+  for (final item in items) {
+    final category = item.category; // Ensure `Item` has a `category` field.
+    if (!categoryData.containsKey(category)) {
+      categoryData[category] = {'itemCount': 0, 'itemQuantity': 0};
+    }
+    categoryData[category]!['itemCount'] = categoryData[category]!['itemCount']! + 1;
+    categoryData[category]!['itemQuantity'] = categoryData[category]!['itemQuantity']! + item.quantity; // Ensure `Item` has a `quantity` field.
+  }
+
+  log('Updated categories: $categoryData');
+  return categoryData;
+}
+
+
   void calculateItemsAndQuantities() {
-    final updatedCategories = {
+    // Create a new categories map with zeroed values
+    var updatedCategories = {
       for (var category in state.categories.keys) category: {'itemCount': 0, 'itemQuantity': 0}
     };
+
+    // Initialize a map to track unique items per category
+    final Map<String, Set<String>> uniqueItemsPerCategory = {for (var category in state.categories.keys) category: <String>{}};
+
+    // Initialize total quantity
     int totalQuantity = 0;
 
+    // Iterate over items in the state
     for (var item in state.items) {
       if (updatedCategories.containsKey(item.category)) {
-        updatedCategories[item.category]?['itemCount'] = (updatedCategories[item.category]?['itemCount'] ?? 0) + 1;
-        updatedCategories[item.category]?['itemQuantity'] = (updatedCategories[item.category]?['itemQuantity'] ?? 0) + item.quantity;
+        // Check if this is a unique item for the category
+        final isUniqueItem = uniqueItemsPerCategory[item.category]?.add(item.id) ?? false;
+
+        // Create a new map instance for the category with updated values
+        updatedCategories = {
+          ...updatedCategories,
+          item.category: {
+            'itemCount': isUniqueItem ? (updatedCategories[item.category]?['itemCount'] ?? 0) + 1 : (updatedCategories[item.category]?['itemCount'] ?? 0),
+            'itemQuantity': (updatedCategories[item.category]?['itemQuantity'] ?? 0) + item.quantity,
+          },
+        };
+
+        // Increment overall total quantity
+        totalQuantity += item.quantity;
+      } else {
+        // Handle the case where a new category is introduced dynamically
+        updatedCategories = {
+          ...updatedCategories,
+          item.category: {
+            'itemCount': 1,
+            'itemQuantity': item.quantity,
+          },
+        };
+
+        // Track this item as unique in the newly introduced category
+        uniqueItemsPerCategory[item.category] = {item.id};
         totalQuantity += item.quantity;
       }
     }
-    state = state.copyWith(categories: updatedCategories, totalQuantity: totalQuantity);
-    log('Updated Categories (From selectedOrder Provider Page): $updatedCategories');
+
+    // Update the state with the new categories and total quantity
+    state = state.copyWith(
+      categories: updatedCategories,
+      totalQuantity: totalQuantity,
+    );
+
+    // Log updated categories and total quantity for debugging
+    log('Final Updated Categories (From selectedOrder Provider Page): $updatedCategories');
+    log('Final Total Quantity (From selectedOrder Provider Page): $totalQuantity');
   }
 
   void _updateStateWithNewItems(List<Item> items) {

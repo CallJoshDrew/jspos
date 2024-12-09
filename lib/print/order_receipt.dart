@@ -1,5 +1,7 @@
 // import 'dart:developer';
 
+import 'dart:developer';
+
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/paper_size_config.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -185,6 +187,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           // Check if selectedAddMilk is not null and its name is not 'No Milk'
           if (item.selectedAddMilk != null && item.selectedAddMilk!['name'] != 'No Milk') {
             addMilkText = ' + ${item.selectedAddMilk!['name']}';
+            log ('Milk: $addMilkText');
           }
 
           list.add(LineText(

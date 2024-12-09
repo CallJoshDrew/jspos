@@ -381,6 +381,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     // Log each item's selectedDrink for debugging
     widget.selectedOrder.items.asMap().forEach((index, item) {
       log('Item $index: ${item.originalName}, selectedDrink: ${item.selectedDrink}');
+      log('Item $index: ${item.selectedAddMilk} from ${item.addMilk}');
     });
 
 // Log the map to see the index and originalName of each item
