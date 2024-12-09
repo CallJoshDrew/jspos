@@ -10,8 +10,7 @@ import 'package:jspos/user/check_out.dart';
 // import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
-  final List<String> categories;
-  const JPOSApp({super.key, required this.categories});
+  const JPOSApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -23,17 +22,14 @@ class JPOSApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MainPage(
-        categories: categories,
       ),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  final List<String> categories;
   const MainPage({
     super.key,
-    required this.categories,
   });
 // required this.bluetoothPrint, required this.printerDevices, required this.printersConnected
   @override
@@ -94,8 +90,7 @@ class _MainPageState extends State<MainPage> {
       // case 'Recommend':
       //   return const RecommendPage();
       case 'Settings':
-        return SettingsPage(
-          categories: widget.categories,
+        return const SettingsPage(
         );
       case 'Check Out':
         return CheckOutPage(toggleCheckInState: toggleCheckInState);

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/print/create_printer.dart';
 // import 'package:jspos/print/edit_printer.dart';
-import 'package:jspos/print/print_jobs.dart';
+import 'package:jspos/print/handle_print_jobs.dart';
 import 'package:jspos/providers/printer_provider.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
 

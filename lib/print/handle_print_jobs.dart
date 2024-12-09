@@ -8,11 +8,11 @@ import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
-import 'package:jspos/print/order_receipt.dart';
+import 'package:jspos/print/get_order_receipt.dart';
 import 'package:jspos/print/sample_cashier.dart';
 import 'package:jspos/print/sample_receipt.dart';
 import 'package:jspos/providers/printer_provider.dart';
-import 'package:jspos/print/cashier_receipt.dart';
+import 'package:jspos/print/get_cashier_receipt.dart';
 
 import 'package:jspos/models/client_profile.dart';
 import 'package:jspos/providers/client_profile_provider.dart'; // Import the provider

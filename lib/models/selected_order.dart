@@ -32,8 +32,6 @@ class SelectedOrder with ChangeNotifier {
   String paymentMethod;
   @HiveField(10)
   bool showEditBtn;
-  @HiveField(11)
-  Map<String, Map<String, int>> categories;
   @HiveField(12)
   double amountReceived = 0;
   @HiveField(13)
@@ -44,8 +42,6 @@ class SelectedOrder with ChangeNotifier {
   String paymentTime = "Today";
   @HiveField(16)
   String cancelledTime = "Today";
-  @HiveField(17)
-  List<String> categoryList;
   @HiveField(18)
   int discount = 0; // Default to 0% discount
 
@@ -60,17 +56,14 @@ class SelectedOrder with ChangeNotifier {
     required this.subTotal,
     required this.totalPrice,
     this.paymentMethod = "Cash",
-    this.showEditBtn = false,
-    required this.categoryList,  // Modify constructor to accept categoryList
+    this.showEditBtn = false, // Modify constructor to accept categoryList
     this.amountReceived = 0,
     this.amountChanged = 0,
     this.totalQuantity = 0,
     this.paymentTime = "Today",
     this.cancelledTime = "Today",
     this.discount = 0,
-  }) : categories = {
-          for (var category in categoryList) category: {'itemCount': 0, 'itemQuantity': 0}
-        };
+  });
 
   @override
   String toString() {
@@ -95,7 +88,6 @@ class SelectedOrder with ChangeNotifier {
         '\tpaymentTime: $paymentTime,\n'
         '\tcancelledTime: $cancelledTime,\n'
         '\tdiscount: $discount,\n'
-        '\tcategories: {\n\t\t${categories.entries.map((e) => '${e.key}: ${e.value}').join(',\n\t\t')}\n\t},\n'
         ')';
   }
 
@@ -112,7 +104,6 @@ class SelectedOrder with ChangeNotifier {
       totalPrice: 0,
       paymentMethod: "Cash",
       showEditBtn: false,
-      categoryList: categoryList,
       amountReceived: 0,
       amountChanged: 0,
       totalQuantity: 0,
@@ -134,13 +125,11 @@ class SelectedOrder with ChangeNotifier {
     double? totalPrice,
     String? paymentMethod,
     bool? showEditBtn,
-    Map<String, Map<String, int>>? categories,
     double? amountReceived,
     double? amountChanged,
     int? totalQuantity,
     String? paymentTime,
     String? cancelledTime,
-    List<String>? categoryList,
     int? discount,
   }) {
     return SelectedOrder(
@@ -155,7 +144,6 @@ class SelectedOrder with ChangeNotifier {
       totalPrice: totalPrice ?? this.totalPrice,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       showEditBtn: showEditBtn ?? this.showEditBtn,
-      categoryList: categoryList ?? this.categoryList,
       amountReceived: amountReceived ?? this.amountReceived,
       amountChanged: amountChanged ?? this.amountChanged,
       totalQuantity: totalQuantity ?? this.totalQuantity,
@@ -183,8 +171,6 @@ class SelectedOrder with ChangeNotifier {
       'paymentTime': paymentTime,
       'cancelledTime': cancelledTime,
       'discount': discount,
-      'categories': categories,
-      'categoryList': categoryList,
     };
   }
 }

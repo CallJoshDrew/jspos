@@ -14,10 +14,9 @@ import 'package:jspos/app/jpos.dart';
 void main() {
   testWidgets('Add category test', (WidgetTester tester) async {
    
-    final mockCategories = ['Cakes', 'Dishes', 'Drinks'];
 
     // Build our app and trigger a frame.
-    await tester.pumpWidget(JPOSApp(categories: mockCategories));
+    await tester.pumpWidget(const JPOSApp());
 
     // Find the add category button and tap it
     var addButton = find.byIcon(Icons.add);

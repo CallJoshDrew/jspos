@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:jspos/models/client_profile.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -19,6 +21,9 @@ class CashierReceiptGenerator {
 
   String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
     final filteredRemarks = filterRemarks(itemRemarks);
+    if (filteredRemarks.isEmpty) {
+      return ''; // Return an empty string if no filtered remarks exist
+    }
     return filteredRemarks.values.join(', ');
   }
 
@@ -46,30 +51,23 @@ class CashierReceiptGenerator {
   }
 
   String formatOneTextLine(String text, int itemIndex) {
+    if (text.trim().isEmpty) {
+      return ''; // Immediately return if input text is empty or just whitespace
+    }
+
     const int lineLength = 34;
     List<String> lines = [];
 
     // Determine the prefix based on the itemIndex
     String prefix = itemIndex > 9 ? "     " : "    ";
 
-    // Calculate initial end for the first line
-    int start = 0;
-    int end = start + lineLength < text.length ? start + lineLength : text.length;
-
-    // Extract the first line (no prefix needed)
-    lines.add(text.substring(start, end));
-    start += lineLength;
-
-    // Process additional lines with the prefix
-    while (start < text.length) {
-      end = (start + lineLength < text.length) ? start + lineLength : text.length;
-      String line = prefix + text.substring(start, end);
-      lines.add(line);
-      start += lineLength;
+    // Add lines with proper prefixes
+    for (int i = 0; i < text.length; i += lineLength) {
+      String segment = text.substring(i, (i + lineLength > text.length) ? text.length : i + lineLength);
+      lines.add(i == 0 ? segment : prefix + segment); // Prefix only for subsequent lines
     }
 
-    // Join all lines with a newline separator
-    return lines.join('\n');
+    return lines.join('\n').trim(); // Trim to remove trailing newlines
   }
 
   String formatRightAlignedText(String text) {
@@ -301,16 +299,27 @@ class CashierReceiptGenerator {
           fontZoom: 1,
         ));
       }
-      if (item.selection && filterRemarks(item.itemRemarks).isNotEmpty) {
-        String remarks = getFilteredRemarks(item.itemRemarks);
-        list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: formatOneTextLine('$prefix$remarks', itemIndex),
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          fontZoom: 1,
-        ));
+      if (item.selection) {
+        final filteredRemarks = filterRemarks(item.itemRemarks);
+        if (filteredRemarks.isNotEmpty) {
+          log('Item Remarks are: ${item.itemRemarks}');
+          String remarks = getFilteredRemarks(item.itemRemarks);
+          String content = remarks.isNotEmpty ? '$prefix$remarks' : '';
+          String formattedText = formatOneTextLine(content, itemIndex);
+
+          if (formattedText.trim().isNotEmpty) {
+            // Ensure only non-empty content is added
+            list.add(LineText(
+              type: LineText.TYPE_TEXT,
+              content: formattedText.trim(), // Explicitly trim to avoid blank space
+              align: LineText.ALIGN_LEFT,
+              linefeed: 1,
+              fontZoom: 1,
+            ));
+          }
+        }
       }
+
       String sidesText = '';
       if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
         for (int i = 0; i < item.selectedSide!.length; i++) {

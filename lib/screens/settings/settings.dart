@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jspos/print/printers_list.dart';
 
 class SettingsPage extends StatefulWidget {
-  final List<String> categories;
-  const SettingsPage({super.key, required this.categories, });
+  const SettingsPage({super.key });
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }

@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/app/jpos.dart';
 import 'package:jspos/hive/hive_setup.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,18 +8,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await initializeHive();
-    final categories = await setupCategories();
-    runApp(ProviderScope(child: JPOSApp(categories: categories)));
+    
+    runApp(const ProviderScope(child: JPOSApp()));
   } catch (e) {
     log('An error occurred at Main App: $e');
   }
-}
-
-/// Reads the categories from Hive and ensures they are initialized
-Future<List<String>> setupCategories() async {
-  var categoriesBox = Hive.box('categories');
-  String? categoriesString = categoriesBox.get('categories');
-  return categoriesString?.split(',') ?? [];
 }
 
 

@@ -8,7 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 // import 'package:jspos/models/selected_order.dart';
-import 'package:jspos/print/print_jobs.dart';
+import 'package:jspos/print/handle_print_jobs.dart';
 import 'package:jspos/providers/client_profile_provider.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/tables_provider.dart';
@@ -18,7 +18,7 @@ import 'package:jspos/screens/menu/menu.dart';
 import 'package:jspos/shared/order_details.dart';
 import 'package:jspos/shared/make_payment.dart';
 // import 'package:jspos/data/menu1_data.dart';
-import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 
 import 'package:cherry_toast/cherry_toast.dart';
@@ -57,7 +57,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
     // tables = ref.read(tablesProvider); // Directly read initial tables data
     Future.microtask(() {
-      ref.read(selectedOrderProvider.notifier).initializeNewOrder(categories);
+      ref.read(selectedOrderProvider.notifier).initializeNewOrder();
     });
     Future.microtask(() => ref.read(clientProfileProvider.notifier).loadProfile());
 
@@ -131,7 +131,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           }
           handlefreezeMenu();
           // Initialize a new order instance for the table
-          selectedOrderNotifier.initializeNewOrder(categories);
+          selectedOrderNotifier.initializeNewOrder();
           // Set order status to 'Ordering' as no items are yet selected
           selectedOrderNotifier.updateStatus("Ordering");
           // Clear any existing items in the temporary cart
@@ -164,7 +164,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
             // Clone the existing order's items into tempCartItems, preserving item remarks
             tempCartItems = order.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
             // Recalculate quantities or other item properties if necessary
-            selectedOrderNotifier.calculateItemsAndQuantities();
+            selectedOrderNotifier.calculateTotalQuantities();
           } else {
             log('Order not found for order number: $orderNumber');
           }

@@ -13,18 +13,17 @@ import 'package:uuid/uuid.dart';
 class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
   SelectedOrderNotifier()
       : super(SelectedOrder(
-          orderNumber: "Order Number", 
-          tableName: "Table Name", 
+          orderNumber: "Order Number",
+          tableName: "Table Name",
           orderType: "Dine-In",
           orderDate: "Today",
           orderTime: "Now",
           status: "Start Your Order",
           items: [], // Empty list or provide an initial list of items
-          subTotal: 0.0, 
-          totalPrice: 0.0, 
+          subTotal: 0.0,
+          totalPrice: 0.0,
           paymentMethod: "Cash",
           showEditBtn: false,
-          categoryList: [], // Pass an empty list or an initial list of categories
           amountReceived: 0.0,
           amountChanged: 0.0,
           totalQuantity: 0,
@@ -73,7 +72,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
   }
 
   // In selected_order_provider.dart
-  void initializeNewOrder(List<String> categories) {
+  void initializeNewOrder() {
     state = SelectedOrder(
       orderNumber: "Order Number",
       tableName: "Table Name",
@@ -86,7 +85,6 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       totalPrice: 0,
       paymentMethod: "Cash",
       showEditBtn: false,
-      categoryList: categories,
       amountReceived: 0,
       amountChanged: 0,
       totalQuantity: 0,
@@ -137,7 +135,6 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       totalPrice: 0,
       paymentMethod: "Cash",
       showEditBtn: false,
-      categoryList: categories,
       amountReceived: 0,
       amountChanged: 0,
       totalQuantity: 0,
@@ -229,8 +226,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
 
   Future<void> placeOrder(String orderNumber, String tableName) async {
     DateTime now = DateTime.now();
-    calculateItemsAndQuantities();
-    final updatedCategories = _calculateCategories(state.items);
+    calculateTotalQuantities();
     state = state.copyWith(
       orderNumber: orderNumber,
       tableName: tableName,
@@ -240,91 +236,18 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       showEditBtn: true,
       orderDate: DateFormat('d MMMM yyyy').format(now),
       orderTime: DateFormat('h:mm a').format(now),
-      categories: {
-        ...state.categories,
-        ...updatedCategories,
-      },
+      totalQuantity: calculateTotalQuantities()
     );
     log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}, total Quantity: ${state.totalQuantity}');
   }
 
-  Map<String, Map<String, int>> _calculateCategories(List<Item> items) {
-  log('Calculating categories for items: ${items.map((e) => e.toJson()).toList()}');
-
-  final Map<String, Map<String, int>> categoryData = {};
-
-  for (final item in items) {
-    final category = item.category; // Ensure `Item` has a `category` field.
-    if (!categoryData.containsKey(category)) {
-      categoryData[category] = {'itemCount': 0, 'itemQuantity': 0};
-    }
-    categoryData[category]!['itemCount'] = categoryData[category]!['itemCount']! + 1;
-    categoryData[category]!['itemQuantity'] = categoryData[category]!['itemQuantity']! + item.quantity; // Ensure `Item` has a `quantity` field.
+  int calculateTotalQuantities() {
+    return state.items.fold(0, (total, item) => total + item.quantity);
   }
 
-  log('Updated categories: $categoryData');
-  return categoryData;
-}
-
-
-  void calculateItemsAndQuantities() {
-    // Create a new categories map with zeroed values
-    var updatedCategories = {
-      for (var category in state.categories.keys) category: {'itemCount': 0, 'itemQuantity': 0}
-    };
-
-    // Initialize a map to track unique items per category
-    final Map<String, Set<String>> uniqueItemsPerCategory = {for (var category in state.categories.keys) category: <String>{}};
-
-    // Initialize total quantity
-    int totalQuantity = 0;
-
-    // Iterate over items in the state
-    for (var item in state.items) {
-      if (updatedCategories.containsKey(item.category)) {
-        // Check if this is a unique item for the category
-        final isUniqueItem = uniqueItemsPerCategory[item.category]?.add(item.id) ?? false;
-
-        // Create a new map instance for the category with updated values
-        updatedCategories = {
-          ...updatedCategories,
-          item.category: {
-            'itemCount': isUniqueItem ? (updatedCategories[item.category]?['itemCount'] ?? 0) + 1 : (updatedCategories[item.category]?['itemCount'] ?? 0),
-            'itemQuantity': (updatedCategories[item.category]?['itemQuantity'] ?? 0) + item.quantity,
-          },
-        };
-
-        // Increment overall total quantity
-        totalQuantity += item.quantity;
-      } else {
-        // Handle the case where a new category is introduced dynamically
-        updatedCategories = {
-          ...updatedCategories,
-          item.category: {
-            'itemCount': 1,
-            'itemQuantity': item.quantity,
-          },
-        };
-
-        // Track this item as unique in the newly introduced category
-        uniqueItemsPerCategory[item.category] = {item.id};
-        totalQuantity += item.quantity;
-      }
-    }
-
-    // Update the state with the new categories and total quantity
-    state = state.copyWith(
-      categories: updatedCategories,
-      totalQuantity: totalQuantity,
-    );
-
-    // Log updated categories and total quantity for debugging
-    log('Final Updated Categories (From selectedOrder Provider Page): $updatedCategories');
-    log('Final Total Quantity (From selectedOrder Provider Page): $totalQuantity');
-  }
 
   void _updateStateWithNewItems(List<Item> items) {
-    calculateItemsAndQuantities();
+    calculateTotalQuantities();
     state = state.copyWith(items: items);
   }
 
@@ -336,7 +259,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     state = state.copyWith(items: updatedItems);
 
     // Recalculate items and quantities as needed
-    calculateItemsAndQuantities();
+    calculateTotalQuantities();
   }
 
   void removeItem(Item item) {
@@ -349,7 +272,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     // Update the subtotal and total price if needed
     updateTotalCost();
     // calculate items & quantities
-    calculateItemsAndQuantities();
+    calculateTotalQuantities();
   }
 }
 

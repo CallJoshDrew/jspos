@@ -314,39 +314,71 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                           children: [
                                                             Row(
                                                               children: [
-                                                                item.selection && item.selectedChoice != null
-                                                                    ? Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            item.originalName == item.selectedChoice!['name']
-                                                                                ? '${index + 1}.${item.originalName}'
-                                                                                : '${index + 1}.${item.originalName} ${item.selectedChoice!['name']}',
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Colors.white,
-                                                                            ),
-                                                                          ),
-                                                                          const SizedBox(width: 5),
-                                                                          Text(
-                                                                            "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Color.fromARGB(255, 114, 226, 118),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    : Text(
-                                                                        (item.selectedDrink != null && item.selectedDrink!['name']?.isNotEmpty == true)
-                                                                            ? (item.originalName == item.selectedDrink!['name']
-                                                                                ? '${index + 1}.${item.originalName}  - ${item.selectedTemp?["name"]}'
-                                                                                : '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}')
-                                                                            : '${index + 1}.${item.originalName}', // Display originalName if selectedDrink is null or empty
+                                                                if (item.selection == true &&
+                                                                    item.selectedChoice != null) // Case 1: With selection and selectedChoice
+                                                                  Row(
+                                                                    children: [
+                                                                      Text(
+                                                                        item.originalName == item.selectedChoice!['name']
+                                                                            ? '${index + 1}.${item.originalName}'
+                                                                            : '${index + 1}.${item.originalName} ${item.selectedChoice!['name']}',
                                                                         style: const TextStyle(
                                                                           fontSize: 14,
                                                                           color: Colors.white,
                                                                         ),
                                                                       ),
+                                                                      const SizedBox(width: 5),
+                                                                      Text(
+                                                                        "( ${item.selectedChoice!['price'].toStringAsFixed(2)} ) ",
+                                                                        style: const TextStyle(
+                                                                          fontSize: 14,
+                                                                          color: Color.fromARGB(255, 114, 226, 118),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                else if (item.selectedDrink != null &&
+                                                                    item.selectedDrink!['name']?.isNotEmpty == true) // Case 2: Drinks
+                                                                  Row(
+                                                                    children: [
+                                                                      Text(
+                                                                        item.originalName == item.selectedDrink!['name']
+                                                                            ? '${index + 1}.${item.originalName}  - ${item.selectedTemp?["name"]}'
+                                                                            : '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]} ',
+                                                                        style: const TextStyle(
+                                                                          fontSize: 14,
+                                                                          color: Colors.white,
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        '( ${item.price.toStringAsFixed(2)} )',
+                                                                        style: const TextStyle(
+                                                                          fontSize: 14,
+                                                                          color: Color.fromARGB(255, 114, 226, 118),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                else // Case 3: Fallback for items without selection or selectedDrink
+                                                                  Row(
+                                                                    children: [
+                                                                      Text(
+                                                                        '${index + 1}.${item.originalName}',
+                                                                        style: const TextStyle(
+                                                                          fontSize: 14,
+                                                                          color: Colors.white,
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(width: 5),
+                                                                      Text(
+                                                                        '( ${item.price.toStringAsFixed(2)} )',
+                                                                        style: const TextStyle(
+                                                                          fontSize: 14,
+                                                                          color: Color.fromARGB(255, 114, 226, 118),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                               ],
                                                             ),
                                                             Padding(

@@ -11,8 +11,8 @@ import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
-import 'package:jspos/data/menu_data.dart';
-// import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/data/menu1_data.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedOrder selectedOrder;
@@ -2253,7 +2253,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             setState(() {
                                               item.quantity++;
                                               selectedOrderNotifier.updateTotalCost();
-                                              selectedOrderNotifier.calculateItemsAndQuantities();
+                                              selectedOrderNotifier.calculateTotalQuantities();
                                               widget.updateOrderStatus!();
                                             });
                                             _showCherryToast(
@@ -2313,7 +2313,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               if (item.quantity > 1) {
                                                 item.quantity--;
                                                 selectedOrderNotifier.updateTotalCost();
-                                                selectedOrderNotifier.calculateItemsAndQuantities();
+                                                selectedOrderNotifier.calculateTotalQuantities();
                                                 widget.updateOrderStatus!();
                                                 _showCherryToast(
                                                   'remove_circle',

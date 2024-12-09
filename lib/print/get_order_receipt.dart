@@ -36,6 +36,9 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
 
   String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
     final filteredRemarks = filterRemarks(itemRemarks);
+    if (filteredRemarks.isEmpty) {
+      return ''; // Return an empty string if no filtered remarks exist
+    }
     return filteredRemarks.values.join(', ');
   }
 
@@ -187,7 +190,7 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           // Check if selectedAddMilk is not null and its name is not 'No Milk'
           if (item.selectedAddMilk != null && item.selectedAddMilk!['name'] != 'No Milk') {
             addMilkText = ' + ${item.selectedAddMilk!['name']}';
-            log ('Milk: $addMilkText');
+            log('Milk: $addMilkText');
           }
 
           list.add(LineText(
@@ -252,15 +255,24 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
           ));
         }
 
-        if (item.selection && filterRemarks(item.itemRemarks).isNotEmpty) {
-          String remarks = getFilteredRemarks(item.itemRemarks);
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: '$prefix$remarks',
-            align: LineText.ALIGN_LEFT,
-            linefeed: 1,
-            fontZoom: 1,
-          ));
+        if (item.selection) {
+          final filteredRemarks = filterRemarks(item.itemRemarks);
+          if (filteredRemarks.isNotEmpty) {
+            log('Item Remarks are: ${item.itemRemarks}');
+            String remarks = getFilteredRemarks(item.itemRemarks);
+
+            // Only add LineText if remarks are not empty
+            if (remarks.isNotEmpty) {
+              String content = '$prefix$remarks';
+              list.add(LineText(
+                type: LineText.TYPE_TEXT,
+                content: content,
+                align: LineText.ALIGN_LEFT,
+                linefeed: 1,
+                fontZoom: 1,
+              ));
+            }
+          }
         }
 
         String sidesText = '';
