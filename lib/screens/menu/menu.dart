@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:jspos/data/menu1_data.dart';
-// import 'package:jspos/data/menu_data.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/categories_data.dart';
+import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/providers/menu_items_provider.dart';
 import 'package:jspos/shared/product_item.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 
-class MenuPage extends StatefulWidget {
+class MenuPage extends ConsumerStatefulWidget {
   final SelectedOrder selectedOrder;
   final VoidCallback onClick;
   // final void Function() onClick and final VoidCallback hold a reference to a function that takes no arguments and returns void.
@@ -13,11 +16,19 @@ class MenuPage extends StatefulWidget {
   final Function(Item) onItemAdded;
   const MenuPage({super.key, required this.selectedOrder, required this.onClick, required this.onItemAdded});
   @override
-  State<MenuPage> createState() => _MenuPageState();
+  ConsumerState<MenuPage> createState() => _MenuPageState();
 }
 
-class _MenuPageState extends State<MenuPage> {
+class _MenuPageState extends ConsumerState<MenuPage> {
   String selectedCategory = categories[0];
+
+  @override
+  void initState() {
+    super.initState();
+    // Load the menu when the widget is initialized
+    ref.read(menuProvider.notifier).loadMenu();
+  }
+
   Widget _closedButton() {
     return Container(
       margin: const EdgeInsets.only(right: 0),
@@ -57,6 +68,7 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    // final menuItems = ref.watch(menuProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Column(
@@ -106,11 +118,14 @@ class _MenuPageState extends State<MenuPage> {
                 childAspectRatio: (1 / 1.3), // width 1 / height 1.3
                 crossAxisSpacing: 20, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
-                // children: menu
-                children: menu1
+                // children: menuItems
+                 children: menu
+                    // children: menu1
+
                     .where((item) =>
                         // selectedCategory == 'All' ||
                         item['category'] == selectedCategory)
+                        // item.category == selectedCategory)
                     .map((item) {
                   return ProductItem(
                     onItemAdded: widget.onItemAdded,
@@ -131,6 +146,24 @@ class _MenuPageState extends State<MenuPage> {
                     addOns: item['add on'] ?? [],
                     tapao: item['tapao'] ?? false,
                     soupOrKonLou: item['soupOrKonLou'] ?? [],
+                    // onItemAdded: widget.onItemAdded,
+                    // id: item.id,
+                    // name: item.name,
+                    // image: item.image,
+                    // category: item.category,
+                    // price: item.price,
+                    // selection: item.selection,
+                    // drinks: item.drinks,
+                    // temp: item.temp,
+                    // choices: item.choices,
+                    // noodlesTypes: item.noodlesTypes,
+                    // meatPortion: item.meatPortion,
+                    // meePortion: item.meePortion,
+                    // sides: item.sides,
+                    // addMilk: item.addMilk,
+                    // addOns: item.addOns,
+                    // tapao: item.tapao,
+                    // soupOrKonLou: item.soupOrKonLou,
                   );
                 }).toList(),
               ),
@@ -167,4 +200,4 @@ class _MenuPageState extends State<MenuPage> {
 }
 
 
-//menu page, dine in page, order details
+//menu page, dine in page (no need), order details (no need)

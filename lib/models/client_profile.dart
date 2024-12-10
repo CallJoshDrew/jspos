@@ -9,34 +9,42 @@ class ClientProfile {
 
   @HiveField(1)
   final String businessRegistrationNumber;
-
+  
   @HiveField(2)
-  final String tinNumber;
+  final String tradingLicense;
 
   @HiveField(3)
-  final String address1;
+  final String tinNumber;
 
   @HiveField(4)
-  final String? address2;
+  final String address1;
 
   @HiveField(5)
-  final String postcode;
-
+  final String? address2;
+  
   @HiveField(6)
-  final String state;
+  final String? address3;
 
   @HiveField(7)
-  final String contactNumber;
+  final String postcode;
 
   @HiveField(8)
+  final String state;
+
+  @HiveField(9)
+  final String contactNumber;
+
+  @HiveField(10)
   final String? logoPath; // Local path to PNG logo
 
   ClientProfile({
     required this.name,
     required this.businessRegistrationNumber,
+    required this.tradingLicense,
     required this.tinNumber,
     required this.address1,
     this.address2,
+    this.address3,
     required this.postcode,
     required this.state,
     required this.contactNumber,

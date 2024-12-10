@@ -17,25 +17,25 @@ class MenuItem {
   @HiveField(5)
   final bool selection;
   @HiveField(6)
-  final List<MenuOption> choices;
+  final List<MenuOption>? choices;
   @HiveField(7)
-  final List<MenuOption> drinks;
+  final List<MenuOption>? drinks;
   @HiveField(8)
-  final List<MenuOption> temp;
+  final List<MenuOption>? temp;
   @HiveField(9)
-  final List<MenuOption> soupOrKonLou;
+  final List<MenuOption>? soupOrKonLou;
   @HiveField(10)
-  final List<MenuOption> noodlesTypes;
+  final List<MenuOption>? noodlesTypes;
   @HiveField(11)
-  final List<MenuOption> meatPortion;
+  final List<MenuOption>? meatPortion;
   @HiveField(12)
-  final List<MenuOption> meePortion;
+  final List<MenuOption>? meePortion;
   @HiveField(13)
-  final List<MenuOption> sides;
+  final List<MenuOption>? sides;
   @HiveField(14)
-  final List<MenuOption> addOn;
+  final List<MenuOption>? addOn;
   @HiveField(15)
-  final List<MenuOption> addMilk;
+  final List<MenuOption>? addMilk;
 
   MenuItem({
     required this.id,
@@ -43,17 +43,17 @@ class MenuItem {
     required this.category,
     required this.price,
     required this.image,
-    required this.selection,
-    required this.choices,
-    required this.drinks,
-    required this.temp,
-    required this.soupOrKonLou,
-    required this.noodlesTypes,
-    required this.meatPortion,
-    required this.meePortion,
-    required this.sides,
-    required this.addOn,
-    required this.addMilk,
+    this.selection = false, // Optional with default
+    this.choices,
+    this.drinks,
+    this.temp,
+    this.soupOrKonLou,
+    this.noodlesTypes,
+    this.meatPortion,
+    this.meePortion,
+    this.sides,
+    this.addOn,
+    this.addMilk,
   });
 }
 

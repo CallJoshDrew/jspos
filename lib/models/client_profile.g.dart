@@ -19,37 +19,43 @@ class ClientProfileAdapter extends TypeAdapter<ClientProfile> {
     return ClientProfile(
       name: fields[0] as String,
       businessRegistrationNumber: fields[1] as String,
-      tinNumber: fields[2] as String,
-      address1: fields[3] as String,
-      address2: fields[4] as String?,
-      postcode: fields[5] as String,
-      state: fields[6] as String,
-      contactNumber: fields[7] as String,
-      logoPath: fields[8] as String?,
+      tradingLicense: fields[2] as String,
+      tinNumber: fields[3] as String,
+      address1: fields[4] as String,
+      address2: fields[5] as String?,
+      address3: fields[6] as String?,
+      postcode: fields[7] as String,
+      state: fields[8] as String,
+      contactNumber: fields[9] as String,
+      logoPath: fields[10] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ClientProfile obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.businessRegistrationNumber)
       ..writeByte(2)
-      ..write(obj.tinNumber)
+      ..write(obj.tradingLicense)
       ..writeByte(3)
-      ..write(obj.address1)
+      ..write(obj.tinNumber)
       ..writeByte(4)
-      ..write(obj.address2)
+      ..write(obj.address1)
       ..writeByte(5)
-      ..write(obj.postcode)
+      ..write(obj.address2)
       ..writeByte(6)
-      ..write(obj.state)
+      ..write(obj.address3)
       ..writeByte(7)
-      ..write(obj.contactNumber)
+      ..write(obj.postcode)
       ..writeByte(8)
+      ..write(obj.state)
+      ..writeByte(9)
+      ..write(obj.contactNumber)
+      ..writeByte(10)
       ..write(obj.logoPath);
   }
 

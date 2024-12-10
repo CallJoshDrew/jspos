@@ -27,8 +27,9 @@ class CashierReceiptGenerator {
     return filteredRemarks.values.join(', ');
   }
 
+  // below is the length printing width. This is used for printing restaurant info on top.
   String formatCenterTextLine(String text) {
-    const int lineLength = 34;
+    const int lineLength = 48;
     List<String> lines = [];
 
     int start = 0;
@@ -67,7 +68,7 @@ class CashierReceiptGenerator {
       lines.add(i == 0 ? segment : prefix + segment); // Prefix only for subsequent lines
     }
 
-    return lines.join('\n').trim(); // Trim to remove trailing newlines
+    return lines.join('\n'); // Trim to remove trailing newlines
   }
 
   String formatRightAlignedText(String text) {
@@ -120,7 +121,7 @@ class CashierReceiptGenerator {
         weight: 1,
         align: LineText.ALIGN_CENTER,
         linefeed: 1));
-    list.add(LineText(type: LineText.TYPE_TEXT, content: formatCenterTextLine(profile.address1), weight: 1, align: LineText.ALIGN_CENTER, linefeed: 1));
+    list.add(LineText(type: LineText.TYPE_TEXT, content: profile.address1, weight: 1, align: LineText.ALIGN_CENTER, linefeed: 1));
     if (profile.address2 != null) {
       list.add(LineText(
         type: LineText.TYPE_TEXT,
@@ -130,6 +131,26 @@ class CashierReceiptGenerator {
         linefeed: 1,
       ));
     }
+    // if (profile.tradingLicense != null) {
+    //   list.add(LineText(
+    //     type: LineText.TYPE_TEXT,
+    //     content: profile.address3,
+    //     // content: formatCenterTextLine(profile.address3!), // remove formatCenterText same as address1
+    //     weight: 1,
+    //     align: LineText.ALIGN_CENTER,
+    //     linefeed: 1,
+    //   ));
+    // }
+    
+      list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: 'Trading License: ${profile.tradingLicense}',
+        weight: 1,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1,
+      ));
+    
+
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: 'Contact: ${profile.contactNumber}',
@@ -311,7 +332,7 @@ class CashierReceiptGenerator {
             // Ensure only non-empty content is added
             list.add(LineText(
               type: LineText.TYPE_TEXT,
-              content: formattedText.trim(), // Explicitly trim to avoid blank space
+              content: formattedText,
               align: LineText.ALIGN_LEFT,
               linefeed: 1,
               fontZoom: 1,

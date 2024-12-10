@@ -4,6 +4,7 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jspos/data/categories_data.dart';
 // import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:intl/intl.dart';
 import 'package:jspos/data/remarks.dart';
@@ -12,7 +13,7 @@ import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
 // import 'package:jspos/data/menu_data.dart';
-import 'package:jspos/data/menu1_data.dart';
+// import 'package:jspos/data/menu1_data.dart';
 
 class OrderDetails extends StatefulWidget {
   final SelectedOrder selectedOrder;
