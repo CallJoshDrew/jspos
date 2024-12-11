@@ -75,7 +75,7 @@ class Item with ChangeNotifier {
     required this.category,
     required this.quantity,
     required this.image,
-    this.selection = false,
+    required this.selection,
     required this.drinks,
     required this.choices,
     required this.noodlesTypes,

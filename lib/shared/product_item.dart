@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 // import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:jspos/data/remarks.dart';
@@ -6,8 +7,10 @@ import 'package:jspos/models/item.dart';
 
 class ProductItem extends StatefulWidget {
   final Function(Item) onItemAdded;
+  final Item item;
   final String id;
   final String name;
+  final String originalName;
   final String image;
   final String category;
   final double price;
@@ -37,8 +40,10 @@ class ProductItem extends StatefulWidget {
   const ProductItem({
     super.key,
     required this.onItemAdded,
-    required this.id,
+    required this.item,
+       required this.id,
     required this.name,
+    required this.originalName,
     required this.image,
     required this.category,
     required this.price,
@@ -74,277 +79,287 @@ class ProductItemState extends State<ProductItem> {
   Map<String, dynamic> itemRemarks = {};
   final TextEditingController _controller = TextEditingController();
 
+  Map<String, dynamic>? selectedDrink;
+  Map<String, String>? selectedTemp;
+  Map<String, dynamic>? selectedChoice;
+  Set<Map<String, dynamic>> selectedNoodlesType = {};
+  Map<String, dynamic>? selectedMeatPortion;
+  Map<String, dynamic>? selectedMeePortion;
+  Set<Map<String, dynamic>> selectedSide = {};
+  Map<String, dynamic>? selectedAddMilk;
+  Map<String, dynamic>? selectedAddOn;
+  Map<String, dynamic>? selectedSoupOrKonLou;
+
+  double drinkPrice = 0.00;
+  double choicePrice = 0.00;
+  double meatPrice = 0.00;
+  double meePrice = 0.00;
+  double noodlesTypePrice = 0.00;
+  double sidesPrice = 0.00;
+  double addMilkPrice = 0.00;
+  double addOnsPrice = 0.00;
+  double soupOrKonlouPrice = 0.00;
+  double subTotalPrice = 0.00;
+
   @override
-  Widget build(BuildContext context) {
-    // Get the status bar height
-    return GestureDetector(
-      onTap: () {
-        Item item = Item(
-          id: widget.id,
-          name: widget.name,
-          originalName: widget.name,
-          price: widget.price,
-          category: widget.category,
-          image: widget.image,
-          quantity: 1,
-          selection: widget.selection,
-          drinks: widget.drinks,
-          choices: widget.choices,
-          noodlesTypes: widget.noodlesTypes,
-          meatPortion: widget.meatPortion,
-          meePortion: widget.meePortion,
-          sides: widget.sides,
-          addMilk: widget.addMilk,
-          addOns: widget.addOns,
-          selectedDrink: widget.drinks.isNotEmpty ? widget.drinks[0] : null,
-          temp: widget.temp,
-          selectedTemp: widget.temp.isNotEmpty ? widget.temp[0] : null,
-          selectedChoice: widget.choices.isNotEmpty ? widget.choices[0] : null,
-          selectedNoodlesType: {},
-          selectedMeatPortion: widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null,
-          selectedMeePortion: widget.meePortion.isNotEmpty ? widget.meePortion[0] : null,
-          selectedAddMilk: widget.addMilk.isNotEmpty ? widget.addMilk[0] : null,
-          selectedSide: {},
-          selectedAddOn: widget.addOns.isNotEmpty ? widget.addOns[0] : null,
-          tapao: widget.tapao,
-          soupOrKonLou: widget.soupOrKonLou,
-          selectedSoupOrKonLou: widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null,
-        ); //this is creating a new instance of item with the required field.
-        Map<String, dynamic>? selectedDrink = widget.drinks.isNotEmpty ? widget.drinks[0] : null;
-        Map<String, String>? selectedTemp = widget.temp.isNotEmpty ? widget.temp[0] : null;
-        Map<String, dynamic>? selectedChoice = widget.choices.isNotEmpty ? widget.choices[0] : null;
-        Set<Map<String, dynamic>> selectedNoodlesType = {};
-        Map<String, dynamic>? selectedMeatPortion = widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null;
-        Map<String, dynamic>? selectedMeePortion = widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
-        Set<Map<String, dynamic>> selectedSide = {};
-        Map<String, dynamic>? selectedAddMilk = widget.addMilk.isNotEmpty ? widget.addMilk[0] : null;
-        Map<String, dynamic>? selectedAddOn = widget.addOns.isNotEmpty ? widget.addOns[0] : null;
-        Map<String, dynamic>? selectedSoupOrKonLou = widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null;
-        double drinkPrice() {
-          var drink = widget.drinks.firstWhere(
-            (drink) => drink['name'] == selectedDrink?['name'],
-            orElse: () => {'Hot': 0.00, 'Cold': 0.00} as Map<String, Object>, // Set default values
-          );
+  void initState() {
+    super.initState();
+    // Initialize selections
+    selectedDrink = widget.drinks.isNotEmpty ? widget.drinks[0] : null;
+    selectedTemp = widget.temp.isNotEmpty ? widget.temp[0] : null;
+    selectedChoice = widget.choices.isNotEmpty ? widget.choices[0] : null;
+    selectedMeatPortion = widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null;
+    selectedMeePortion = widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
+    selectedAddMilk = widget.addMilk.isNotEmpty ? widget.addMilk[0] : null;
+    selectedAddOn = widget.addOns.isNotEmpty ? widget.addOns[0] : null;
+    selectedSoupOrKonLou = widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null;
 
-          final selectedTempName = selectedTemp?['name'] ?? ''; // Convert to non-nullable String
+    // Initialize prices
+    drinkPrice = _calculateDrinkPrice();
+    choicePrice = _getPrice(widget.choices);
+    meatPrice = _getPrice(widget.meatPortion);
+    meePrice = _getPrice(widget.meePortion);
+    addMilkPrice = _getPrice(widget.addMilk);
+    addOnsPrice = _getPrice(widget.addOns);
+    soupOrKonlouPrice = _getPrice(widget.soupOrKonLou);
 
-          return (drink[selectedTempName] as double?) ?? 0.00; // Get the price based on the selected temperature
-        }
+    // Calculate subtotal
+    subTotalPrice = drinkPrice + choicePrice + meatPrice + meePrice + noodlesTypePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
+  }
 
-        double choicePrice = widget.choices.isNotEmpty && widget.choices[0]['price'] != null ? widget.choices[0]['price']! : 0.00;
-        double meatPrice = widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null ? widget.meatPortion[0]['price']! : 0.00;
-        double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
-        double noodlesTypePrice = 0.00;
-        double sidesPrice = 0.00;
-        double addMilkPrice = widget.addMilk.isNotEmpty && widget.addMilk[0]['price'] != null ? widget.addMilk[0]['price']! : 0.00;
-        double addOnsPrice = widget.addOns.isNotEmpty && widget.addOns[0]['price'] != null ? widget.addOns[0]['price']! : 0.00;
-        double soupOrKonlouPrice = widget.soupOrKonLou.isNotEmpty && widget.soupOrKonLou[0]['price'] != null ? widget.soupOrKonLou[0]['price']! : 0.00;
-        double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice + soupOrKonlouPrice;
+  // Helper method to calculate drink price
+  double _calculateDrinkPrice() {
+    if (selectedDrink == null || selectedTemp == null) return 0.00;
+    var drink = widget.drinks.firstWhere(
+      (drink) => drink['name'] == selectedDrink?['name'],
+      orElse: () => {'Hot': 0.00, 'Cold': 0.00},
+    );
 
-        double calculateNoodlesPrice() {
-          double noodlesPrice = 0.0;
-          for (var noodle in selectedNoodlesType) {
-            noodlesPrice += noodle['price'];
-          }
-          return noodlesPrice;
-        }
+    final selectedTempName = selectedTemp?['name'] ?? '';
+    return (drink[selectedTempName] as double?) ?? 0.00;
+  }
 
-        double calculateSidesPrice() {
-          double sidesPrice = 0.0;
-          for (var side in selectedSide) {
-            sidesPrice += side['price'];
-          }
-          return sidesPrice;
-        }
+  // Helper method to get price from a list
+  double _getPrice(List<Map<String, dynamic>> items) {
+    if (items.isEmpty || items[0]['price'] == null) return 0.00;
+    return items[0]['price'] as double;
+  }
 
-        void sortSelectedNoodlesAlphabetically() {
-          // Convert the set to a list for sorting
-          List<Map<String, dynamic>> sortedSides = selectedNoodlesType.toList();
+  double calculateNoodlesPrice() {
+    double noodlesPrice = 0.0;
+    for (var noodle in selectedNoodlesType) {
+      noodlesPrice += noodle['price'];
+    }
+    return noodlesPrice;
+  }
 
-          // Sort the list alphabetically by 'name'
-          sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+  double calculateSidesPrice() {
+    double sidesPrice = 0.0;
+    for (var side in selectedSide) {
+      sidesPrice += side['price'];
+    }
+    return sidesPrice;
+  }
 
-          // Update selectedSide to reflect the sorted order
-          selectedNoodlesType = sortedSides.toSet();
-        }
+  void sortSelectedNoodlesAlphabetically() {
+    // Convert the set to a list for sorting
+    List<Map<String, dynamic>> sortedSides = selectedNoodlesType.toList();
 
-        void sortSelectedSidesAlphabetically() {
-          List<Map<String, dynamic>> sortedSides = selectedSide.toList();
-          sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
-          selectedSide = sortedSides.toSet();
-        }
+    // Sort the list alphabetically by 'name'
+    sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
 
-        void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
-            double addMilkPrice, double addOnsPrice, double soupOrKonlouPrice) {
-          // Log each value to ensure they're being passed correctly
-          // log("Drink Price: $drinkPrice");
-          // log("Choice Price: $choicePrice");
-          // log("Noodles Type Price: $noodlesTypePrice");
-          // log("Meat Price: $meatPrice");
-          // log("Mee Price: $meePrice");
-          // log("Sides Price: $sidesPrice");
-          // log("Add-Ons Price: $addOnsPrice");
+    // Update selectedSide to reflect the sorted order
+    selectedNoodlesType = sortedSides.toSet();
+  }
 
-          double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
+  void sortSelectedSidesAlphabetically() {
+    List<Map<String, dynamic>> sortedSides = selectedSide.toList();
+    sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+    selectedSide = sortedSides.toSet();
+  }
 
-          // log("Total Price: $totalPrice");
+  void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
+      double addMilkPrice, double addOnsPrice, double soupOrKonlouPrice) {
+    // Log each value to ensure they're being passed correctly
+    // log("Drink Price: $drinkPrice");
+    // log("Choice Price: $choicePrice");
+    // log("Noodles Type Price: $noodlesTypePrice");
+    // log("Meat Price: $meatPrice");
+    // log("Mee Price: $meePrice");
+    // log("Sides Price: $sidesPrice");
+    // log("Add-Ons Price: $addOnsPrice");
 
-          setState(() {
-            subTotalPrice = totalPrice;
-          });
-        }
+    double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
 
-        TextSpan generateNoodlesOnTextSpan(Map<String, dynamic> noodle, bool isLast) {
-          return TextSpan(
-            text: "${noodle['name']}", // Display the name
-            children: <TextSpan>[
-              if (noodle['price'] != null && noodle['price'] != 0.00)
-                TextSpan(
-                  text: " ( + ${noodle['price'].toStringAsFixed(2)})", // Display price if available
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
-                  ),
-                ),
-              // Add a comma after each item, except for the last one
-              TextSpan(
-                text: isLast ? '' : ', ',
-              ),
-            ],
-          );
-        }
+    // log("Total Price: $totalPrice");
 
-        TextSpan generateSidesOnTextSpan(Map<String, dynamic> side, bool isLast) {
-          return TextSpan(
-            text: "${side['name']}", // Display the name
-            children: <TextSpan>[
-              if (side['price'] != null && side['price'] != 0.00)
-                TextSpan(
-                  text: " ( + ${side['price'].toStringAsFixed(2)})", // Display price if available
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
-                  ),
-                ),
-              // Add a comma after each item, except for the last one
-              TextSpan(
-                text: isLast ? '' : ', ',
-              ),
-            ],
-          );
-        }
+    setState(() {
+      subTotalPrice = totalPrice;
+    });
+  }
 
-        void updateItemRemarks() {
-          if (selectedMeePortion != null && selectedMeatPortion != null) {
-            Map<String, Map<dynamic, dynamic>> portions = {
-              '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
-              '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
-            };
-
-            portions.forEach((key, value) {
-              Map<dynamic, dynamic> portion = value['portion'];
-              String normalName = value['normalName'];
-
-              if (itemRemarks.containsKey(key)) {
-                if (portion['name'] != normalName) {
-                  itemRemarks[key] = portion['name'];
-                } else {
-                  itemRemarks.remove(key);
-                }
-              } else if (portion['name'] != normalName) {
-                itemRemarks[key] = portion['name'];
-              }
-            });
-          }
-
-          // Add the user's comment with a key of '100'
-          if (item.itemRemarks != null) {
-            itemRemarks['100'] = _controller.text;
-          }
-          SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-            (a, b) => int.parse(a).compareTo(int.parse(b)),
-          )..addAll(itemRemarks);
-
-          itemRemarks = sortedItemRemarks;
-          // print('itemRemarks after sorting: $itemRemarks');
-          item.itemRemarks = itemRemarks;
-          itemRemarks = {};
-          // print('itemRemarks after clearing: $itemRemarks');
-          _controller.text = '';
-          // print('_controller.text after clearing: ${_controller.text}');
-        }
-
-        Widget remarkButton(Map<String, dynamic> data) {
-          return ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                (Set<WidgetState> states) {
-                  // Check if the remark has been added to itemRemarks
-                  if (itemRemarks.containsKey(data['id'].toString())) {
-                    // If the button is pressed or the remark has been added, make the background orange
-                    return states.contains(WidgetState.pressed) ? Colors.white : Colors.orange;
-                  } else {
-                    // If the button is pressed or the remark has not been added, make the background black
-                    return states.contains(WidgetState.pressed) ? Colors.orange : Colors.white;
-                  }
-                },
-              ),
-              foregroundColor: WidgetStateProperty.resolveWith<Color>(
-                (Set<WidgetState> states) {
-                  if (itemRemarks.containsKey(data['id'].toString())) {
-                    return states.contains(WidgetState.pressed) ? Colors.black : Colors.white;
-                  } else {
-                    return states.contains(WidgetState.pressed) ? Colors.white : Colors.black;
-                  }
-                },
-              ),
-              shape: WidgetStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), // Add padding inside the button
+  TextSpan generateNoodlesOnTextSpan(Map<String, dynamic> noodle, bool isLast) {
+    return TextSpan(
+      text: "${noodle['name']}", // Display the name
+      children: <TextSpan>[
+        if (noodle['price'] != null && noodle['price'] != 0.00)
+          TextSpan(
+            text: " ( + ${noodle['price'].toStringAsFixed(2)})", // Display price if available
+            style: const TextStyle(
+              color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
             ),
-            onPressed: () {
-              setState(() {
-                String key = data['id'].toString();
-                if (itemRemarks.containsKey(key)) {
-                  // If the remark is already in itemRemarks, remove it
-                  itemRemarks.remove(key);
-                } else {
-                  // If the remark is not in itemRemarks, add it
-                  itemRemarks[key] = data['remarks'];
-                }
-                // print('itemRemarks selection:$itemRemarks');
-              });
-            },
-            child: Text(
-              data['remarks'],
-              style: const TextStyle(
-                fontSize: 12,
-              ),
+          ),
+        // Add a comma after each item, except for the last one
+        TextSpan(
+          text: isLast ? '' : ', ',
+        ),
+      ],
+    );
+  }
+
+  TextSpan generateSidesOnTextSpan(Map<String, dynamic> side, bool isLast) {
+    return TextSpan(
+      text: "${side['name']}", // Display the name
+      children: <TextSpan>[
+        if (side['price'] != null && side['price'] != 0.00)
+          TextSpan(
+            text: " ( + ${side['price'].toStringAsFixed(2)})", // Display price if available
+            style: const TextStyle(
+              color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
             ),
-          );
-        }
+          ),
+        // Add a comma after each item, except for the last one
+        TextSpan(
+          text: isLast ? '' : ', ',
+        ),
+      ],
+    );
+  }
 
-        Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
-          Map<String, dynamic> filteredRemarks = {};
-          if (itemRemarks != null) {
-            itemRemarks.forEach((key, value) {
-              // Add your conditions here
-              if (key != '98' && key != '99') {
-                filteredRemarks[key] = value;
-              }
-            });
+  void updateItemRemarks() {
+    if (selectedMeePortion != null && selectedMeatPortion != null) {
+      Map<String, Map<dynamic, dynamic>> portions = {
+        '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
+        '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
+      };
+
+      portions.forEach((key, value) {
+        Map<dynamic, dynamic> portion = value['portion'];
+        String normalName = value['normalName'];
+
+        if (itemRemarks.containsKey(key)) {
+          if (portion['name'] != normalName) {
+            itemRemarks[key] = portion['name'];
+          } else {
+            itemRemarks.remove(key);
           }
-          return filteredRemarks;
+        } else if (portion['name'] != normalName) {
+          itemRemarks[key] = portion['name'];
         }
+      });
+    }
 
-        String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
-          final filteredRemarks = filterRemarks(itemRemarks);
-          return filteredRemarks.values.join(', ');
+    // Add the user's comment with a key of '100'
+    if (itemRemarks.isNotEmpty) {
+      itemRemarks['100'] = _controller.text;
+    }
+    SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+      (a, b) => int.parse(a).compareTo(int.parse(b)),
+    )..addAll(itemRemarks);
+
+    itemRemarks = sortedItemRemarks;
+    // print('itemRemarks after sorting: $itemRemarks');
+    itemRemarks = itemRemarks;
+    itemRemarks = {};
+    // print('itemRemarks after clearing: $itemRemarks');
+    _controller.text = '';
+    // print('_controller.text after clearing: ${_controller.text}');
+  }
+
+  Widget remarkButton(Map<String, dynamic> data) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
+            // Check if the remark has been added to itemRemarks
+            if (itemRemarks.containsKey(data['id'].toString())) {
+              // If the button is pressed or the remark has been added, make the background orange
+              return states.contains(WidgetState.pressed) ? Colors.white : Colors.orange;
+            } else {
+              // If the button is pressed or the remark has not been added, make the background black
+              return states.contains(WidgetState.pressed) ? Colors.orange : Colors.white;
+            }
+          },
+        ),
+        foregroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
+            if (itemRemarks.containsKey(data['id'].toString())) {
+              return states.contains(WidgetState.pressed) ? Colors.black : Colors.white;
+            } else {
+              return states.contains(WidgetState.pressed) ? Colors.white : Colors.black;
+            }
+          },
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), // Add padding inside the button
+      ),
+      onPressed: () {
+        setState(() {
+          String key = data['id'].toString();
+          if (itemRemarks.containsKey(key)) {
+            // If the remark is already in itemRemarks, remove it
+            itemRemarks.remove(key);
+          } else {
+            // If the remark is not in itemRemarks, add it
+            itemRemarks[key] = data['remarks'];
+          }
+          // print('itemRemarks selection:$itemRemarks');
+        });
+      },
+      child: Text(
+        data['remarks'],
+        style: const TextStyle(
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
+    Map<String, dynamic> filteredRemarks = {};
+    if (itemRemarks != null) {
+      itemRemarks.forEach((key, value) {
+        // Add your conditions here
+        if (key != '98' && key != '99') {
+          filteredRemarks[key] = value;
         }
+      });
+    }
+    return filteredRemarks;
+  }
 
-        // item selection
-        if (item.selection) {
+  String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
+    final filteredRemarks = filterRemarks(itemRemarks);
+    return filteredRemarks.values.join(', ');
+  }
+
+  @override
+Widget build(BuildContext context) {
+  return InkWell(
+    onTap: () {
+       log('Item selection from product Page:');
+       log('- ${widget.id}');
+       log('-${widget.name}');
+       log('- ${widget.originalName}');
+       log('- ${widget.image}');
+       log('- ${widget.category}');
+       log('- ${widget.price}');
+       log('- ${widget.selection}');
+      if (widget.selection) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -383,7 +398,7 @@ class ProductItemState extends State<ProductItem> {
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                                           child: Image.asset(
-                                            item.image,
+                                            widget.image,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -393,13 +408,13 @@ class ProductItemState extends State<ProductItem> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          item.selection && selectedChoice != null
+                                          widget.selection && selectedChoice != null
                                               ? Row(
                                                   children: [
                                                     Text(
-                                                      item.originalName == selectedChoice!['name']
-                                                          ? item.originalName
-                                                          : '${item.originalName} ${selectedChoice!['name']}',
+                                                      widget.originalName == selectedChoice!['name']
+                                                          ? widget.originalName
+                                                          : '${widget.originalName} ${selectedChoice!['name']}',
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -421,9 +436,9 @@ class ProductItemState extends State<ProductItem> {
                                               : Row(
                                                   children: [
                                                     Text(
-                                                      item.originalName == selectedDrink!['name']
-                                                          ? item.originalName
-                                                          : '${item.originalName} ${selectedDrink?['name']} - ${selectedTemp?["name"]}',
+                                                      widget.originalName == selectedDrink?['name']
+                                                          ? widget.originalName
+                                                          : '${widget.originalName} ${selectedDrink?['name']} - ${selectedTemp?["name"]}',
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -432,7 +447,7 @@ class ProductItemState extends State<ProductItem> {
                                                     ),
                                                     const SizedBox(width: 6),
                                                     Text(
-                                                      "( ${drinkPrice().toStringAsFixed(2)} )",
+                                                      "( ${selectedDrink?['price'].toStringAsFixed(2)} )",
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -447,7 +462,7 @@ class ProductItemState extends State<ProductItem> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  item.selection && selectedSoupOrKonLou != null
+                                                  widget.selection && selectedSoupOrKonLou != null
                                                       ? Row(
                                                           children: [
                                                             Text(
@@ -469,7 +484,7 @@ class ProductItemState extends State<ProductItem> {
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
-                                                  item.selection && selectedNoodlesType.isNotEmpty
+                                                  widget.selection && selectedNoodlesType.isNotEmpty
                                                       ? Wrap(
                                                           children: [
                                                             SizedBox(
@@ -493,7 +508,7 @@ class ProductItemState extends State<ProductItem> {
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
-                                                  // item.selection && selectedNoodlesType != null && selectedNoodlesType!['name'] != 'None'
+                                                  // widget.selection && selectedNoodlesType != null && selectedNoodlesType!['name'] != 'None'
                                                   //     ? Row(
                                                   //         children: [
                                                   //           Text(
@@ -526,7 +541,7 @@ class ProductItemState extends State<ProductItem> {
                                               ),
                                               Row(
                                                 children: [
-                                                  item.selection && selectedMeePortion != null && selectedMeePortion!['name'] != "Normal Mee"
+                                                  widget.selection && selectedMeePortion != null && selectedMeePortion!['name'] != "Normal Mee"
                                                       ? Row(
                                                           children: [
                                                             Text(
@@ -550,7 +565,7 @@ class ProductItemState extends State<ProductItem> {
                                                       : const SizedBox.shrink(),
                                                 ],
                                               ),
-                                              item.selection && selectedMeatPortion != null && selectedMeatPortion!['name'] != "Normal Meat"
+                                              widget.selection && selectedMeatPortion != null && selectedMeatPortion!['name'] != "Normal Meat"
                                                   ? Row(
                                                       children: [
                                                         Text(
@@ -571,7 +586,7 @@ class ProductItemState extends State<ProductItem> {
                                                       ],
                                                     )
                                                   : const SizedBox.shrink(),
-                                              item.selection && selectedAddMilk != null && selectedAddMilk!['name'] != "No Milk"
+                                              widget.selection && selectedAddMilk != null && selectedAddMilk!['name'] != "No Milk"
                                                   ? Row(
                                                       children: [
                                                         Text(
@@ -593,7 +608,7 @@ class ProductItemState extends State<ProductItem> {
                                                     )
                                                   : const SizedBox.shrink(),
                                               // Product Details after select side, noodles, choices, etc
-                                              item.selection
+                                              widget.selection
                                                   ? Row(
                                                       children: [
                                                         Text(
@@ -624,7 +639,7 @@ class ProductItemState extends State<ProductItem> {
                                                       ],
                                                     )
                                                   : const SizedBox.shrink(),
-                                              item.selection && selectedSide.isNotEmpty
+                                              widget.selection && selectedSide.isNotEmpty
                                                   ? Wrap(
                                                       children: [
                                                         SizedBox(
@@ -650,7 +665,7 @@ class ProductItemState extends State<ProductItem> {
                                                   : const SizedBox.shrink(),
                                               // Wrap(
                                               //   children: [
-                                              //     item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
+                                              //     widget.selection && filterRemarks(itemRemarks).isNotEmpty == true
                                               //         ? Row(
                                               //             children: [
                                               //               const Text(
@@ -661,7 +676,7 @@ class ProductItemState extends State<ProductItem> {
                                               //                 ),
                                               //               ),
                                               //               Text(
-                                              //                 getFilteredRemarks(item.itemRemarks),
+                                              //                 getFilteredRemarks(itemRemarks),
                                               //                 style: const TextStyle(
                                               //                   fontSize: 14,
                                               //                   color: Colors.orangeAccent,
@@ -695,7 +710,7 @@ class ProductItemState extends State<ProductItem> {
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      item.selection && selectedDrink != null
+                                      widget.selection && selectedDrink != null
                                           ?
                                           // selectedDrink
                                           Expanded(
@@ -725,7 +740,7 @@ class ProductItemState extends State<ProductItem> {
                                                             onPressed: () {
                                                               setState(() {
                                                                 selectedDrink = drink;
-                                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                calculateTotalPrice(drink['price'], choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                     calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
@@ -761,7 +776,7 @@ class ProductItemState extends State<ProductItem> {
                                             )
                                           : const SizedBox.shrink(),
                                       if (widget.temp.isNotEmpty) const SizedBox(width: 10),
-                                      item.selection && selectedTemp != null
+                                      widget.selection && selectedTemp != null
                                           ?
                                           // selectedTemp
                                           Expanded(
@@ -791,7 +806,7 @@ class ProductItemState extends State<ProductItem> {
                                                             onPressed: () {
                                                               setState(() {
                                                                 selectedTemp = item;
-                                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                     calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
@@ -827,7 +842,7 @@ class ProductItemState extends State<ProductItem> {
                                             )
                                           : const SizedBox.shrink(),
                                       // if (widget.choices.isNotEmpty) const SizedBox(width: 10),
-                                      item.selection && selectedChoice != null
+                                      widget.selection && selectedChoice != null
                                           ?
                                           // selectedChoice
                                           Expanded(
@@ -857,7 +872,7 @@ class ProductItemState extends State<ProductItem> {
                                                               setState(() {
                                                                 selectedChoice = choice;
                                                                 choicePrice = choice['price'];
-                                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                     calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
@@ -925,7 +940,7 @@ class ProductItemState extends State<ProductItem> {
                                                             selectedNoodlesType.add(noodleType);
                                                           }
                                                           sortSelectedNoodlesAlphabetically();
-                                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
@@ -1000,7 +1015,7 @@ class ProductItemState extends State<ProductItem> {
                                                             selectedSide.add(side);
                                                           }
                                                           sortSelectedSidesAlphabetically();
-                                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
@@ -1067,7 +1082,7 @@ class ProductItemState extends State<ProductItem> {
                                                                   setState(() {
                                                                     selectedSoupOrKonLou = soup;
                                                                     soupOrKonlouPrice = soup['price'];
-                                                                    calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                    calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                         calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                                   });
                                                                 },
@@ -1105,7 +1120,7 @@ class ProductItemState extends State<ProductItem> {
                                                       spacing: 6.0, // Gap between adjacent chips
                                                       runSpacing: 0.0, // Gap between lines
                                                       children: remarksData
-                                                          .where((data) => data['category'] == item.category)
+                                                          .where((data) => data['category'] == widget.category)
                                                           .map((data) => remarkButton(data))
                                                           .toList(),
                                                     ),
@@ -1157,7 +1172,7 @@ class ProductItemState extends State<ProductItem> {
                                                             setState(() {
                                                               selectedAddOn = addOn;
                                                               addOnsPrice = addOn['price'];
-                                                              calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                              calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                   calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                             });
                                                           },
@@ -1222,7 +1237,7 @@ class ProductItemState extends State<ProductItem> {
                                                           selectedAddMilk = addMilk;
                                                           addMilkPrice = addMilk['price'];
                                                           calculateTotalPrice(
-                                                              drinkPrice(),
+                                                              drinkPrice,
                                                               choicePrice,
                                                               calculateNoodlesPrice(),
                                                               meatPrice, // Correctly updated meat price
@@ -1298,7 +1313,7 @@ class ProductItemState extends State<ProductItem> {
                                                         setState(() {
                                                           selectedMeePortion = meePortion;
                                                           meePrice = meePortion['price'];
-                                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
@@ -1363,7 +1378,7 @@ class ProductItemState extends State<ProductItem> {
                                                           selectedMeatPortion = meatPortion;
                                                           meatPrice = meatPortion['price'];
                                                           calculateTotalPrice(
-                                                              drinkPrice(),
+                                                              drinkPrice,
                                                               choicePrice,
                                                               calculateNoodlesPrice(),
                                                               meatPrice, // Correctly updated meat price
@@ -1447,8 +1462,8 @@ class ProductItemState extends State<ProductItem> {
                                                         (a, b) => int.parse(a).compareTo(int.parse(b)),
                                                       )..addAll(itemRemarks);
                                                       itemRemarks = sortedItemRemarks;
-                                                      item.itemRemarks = itemRemarks;
-                                                      // print(item.itemRemarks);
+                                                      itemRemarks = itemRemarks;
+                                                      // print(itemRemarks);
                                                     });
                                                   },
                                                 ),
@@ -1484,31 +1499,30 @@ class ProductItemState extends State<ProductItem> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          item.selectedChoice = selectedChoice;
-                                          item.selectedNoodlesType = selectedNoodlesType;
-                                          item.selectedMeatPortion = selectedMeatPortion;
-                                          item.selectedMeePortion = selectedMeePortion;
-                                          item.selectedSide = selectedSide;
-                                          item.selectedAddMilk = selectedAddMilk;
-                                          item.selectedAddOn = selectedAddOn;
-                                          item.selectedDrink = selectedDrink;
-                                          item.selectedTemp = selectedTemp;
-                                          item.selectedSoupOrKonLou = selectedSoupOrKonLou;
-                                          item.itemRemarks = itemRemarks;
+                                          selectedChoice = selectedChoice;
+                                          selectedNoodlesType = selectedNoodlesType;
+                                          selectedMeatPortion = selectedMeatPortion;
+                                          selectedMeePortion = selectedMeePortion;
+                                          selectedSide = selectedSide;
+                                          selectedAddMilk = selectedAddMilk;
+                                          selectedAddOn = selectedAddOn;
+                                          selectedDrink = selectedDrink;
+                                          selectedTemp = selectedTemp;
+                                          selectedSoupOrKonLou = selectedSoupOrKonLou;
+                                          itemRemarks = itemRemarks;
 
                                           updateItemRemarks();
 
-                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice, calculateSidesPrice(),
+                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice, calculateSidesPrice(),
                                               addMilkPrice, addOnsPrice, soupOrKonlouPrice);
-                                          item.price = subTotalPrice;
-                                          // log('item Price: ${item.price}');
+                                          // log('item Price: ${price}');
                                           // log('subTotal Price: $subTotalPrice');
                                           
                                           // Reason we didn't save the latest order to the selectedOrder provider or Hive because this order has not being place yet. We only do that after it is confirmed with orderNumber. 
                                           // selectedOrderNotifier.updateTotalCost();
                                           // selectedOrderNotifier.updateItem(item);
                                           
-                                          widget.onItemAdded(item);
+                                          widget.onItemAdded(widget.item);
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -1552,68 +1566,70 @@ class ProductItemState extends State<ProductItem> {
               );
             },
           );
-        } else {
-          widget.onItemAdded(item);
-        }
-      },
-      // individual item container
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: const Color(0xff1f2029),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.grey.withOpacity(0.1), // Change this color to customize your shadow
-          //     spreadRadius: 2,
-          //     blurRadius: 2,
-          //     offset: const Offset(1, 1), // Changes position of shadow
-          //   ),
-          // ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // item image
-            Container(
-              height: 70,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                image: DecorationImage(
-                  image: AssetImage(widget.image),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            // item name price
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Text(
-                widget.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Text(
-                'RM ${widget.price.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ],
-        ),
+      } else {
+        // Call widget.onItemAdded if selection is false
+        widget.onItemAdded(widget.item);
+      }
+    },
+    child: Container(
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: const Color(0xff1f2029),
       ),
-    );
-  }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // item image
+          Container(
+            height: 70,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+              image: DecorationImage(
+                image: AssetImage(widget.image),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          // item name price
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Text(
+              widget.name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Text(
+              'RM ${widget.price.toStringAsFixed(2)}',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
+}
+//         if (item.selection) {
+          
+//         } else {
+//           widget.onItemAdded(item);
+//         }
+//       },
+      
+//     );
+//   }
+// }
 
 // print('Price of Selected Choice: $choicePrice');
 // print('Price of Selected Type: $noodlesTypePrice');

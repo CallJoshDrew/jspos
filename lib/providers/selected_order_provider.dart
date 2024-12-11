@@ -60,10 +60,13 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
         items.add(item);
       }
     } else {
+      // if selection is false
       var existingItem = items.firstWhereOrNull((i) => i.name == item.name);
+      // if item already in the cart
       if (existingItem != null) {
         existingItem.quantity += 1;
       } else {
+        item.quantity = 1;
         items.add(item);
       }
     }

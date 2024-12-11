@@ -1,8 +1,7 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:jspos/data/menu1_data.dart';
-// import 'package:jspos/data/categories_data.dart';
-import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/data/categories_data.dart';
 import 'package:jspos/providers/menu_items_provider.dart';
 import 'package:jspos/shared/product_item.dart';
 import 'package:jspos/models/selected_order.dart';
@@ -26,7 +25,9 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   void initState() {
     super.initState();
     // Load the menu when the widget is initialized
-    ref.read(menuProvider.notifier).loadMenu();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(menuProvider.notifier).loadMenu();
+    });
   }
 
   Widget _closedButton() {
@@ -68,7 +69,15 @@ class _MenuPageState extends ConsumerState<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final menuItems = ref.watch(menuProvider);
+    final menuItems = ref.watch(menuProvider);
+    // log('Menu items count: ${menuItems.length}');
+    var filteredItems = menuItems.where((item) {
+      if (item.category == selectedCategory) {
+        // log('Matched item: ${item.name} ${item.category}, Selected: $selectedCategory');
+        return true;
+      }
+      return false;
+    }).toList();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Column(
@@ -118,53 +127,34 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                 childAspectRatio: (1 / 1.3), // width 1 / height 1.3
                 crossAxisSpacing: 20, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
-                // children: menuItems
-                 children: menu
-                    // children: menu1
-
-                    .where((item) =>
-                        // selectedCategory == 'All' ||
-                        item['category'] == selectedCategory)
-                        // item.category == selectedCategory)
-                    .map((item) {
-                  return ProductItem(
-                    onItemAdded: widget.onItemAdded,
-                    id: item['id'],
-                    name: item['name'],
-                    image: item['image'],
-                    category: item['category'],
-                    price: item['price'],
-                    selection: item['selection'] ?? false,
-                    drinks: item['drinks'] ?? [],
-                    temp: item['temp'] ?? [],
-                    choices: item['choices'] ?? [],
-                    noodlesTypes: item['noodlesTypes'] ?? [],
-                    meatPortion: item['meat portion'] ?? [],
-                    meePortion: item['mee portion'] ?? [],
-                    sides: item['sides'] ?? [],
-                    addMilk: item['add milk'] ?? [],
-                    addOns: item['add on'] ?? [],
-                    tapao: item['tapao'] ?? false,
-                    soupOrKonLou: item['soupOrKonLou'] ?? [],
-                    // onItemAdded: widget.onItemAdded,
-                    // id: item.id,
-                    // name: item.name,
-                    // image: item.image,
-                    // category: item.category,
-                    // price: item.price,
-                    // selection: item.selection,
-                    // drinks: item.drinks,
-                    // temp: item.temp,
-                    // choices: item.choices,
-                    // noodlesTypes: item.noodlesTypes,
-                    // meatPortion: item.meatPortion,
-                    // meePortion: item.meePortion,
-                    // sides: item.sides,
-                    // addMilk: item.addMilk,
-                    // addOns: item.addOns,
-                    // tapao: item.tapao,
-                    // soupOrKonLou: item.soupOrKonLou,
-                  );
+                children: filteredItems.map((item) {
+                  try {
+                    return ProductItem(
+                      onItemAdded: widget.onItemAdded,
+                      item: item,
+                      id: item.id,
+                      name: item.name,
+                      originalName: item.originalName,
+                      image: item.image,
+                      category: item.category,
+                      price: item.price,
+                      selection: item.selection,
+                      drinks: item.drinks,
+                      temp: item.temp,
+                      choices: item.choices,
+                      noodlesTypes: item.noodlesTypes,
+                      meatPortion: item.meatPortion,
+                      meePortion: item.meePortion,
+                      sides: item.sides,
+                      addMilk: item.addMilk,
+                      addOns: item.addOns,
+                      tapao: item.tapao,
+                      soupOrKonLou: item.soupOrKonLou,
+                    );
+                  } catch (e) {
+                    log('Error creating ProductItem: $e');
+                    return Container();
+                  }
                 }).toList(),
               ),
             ),
