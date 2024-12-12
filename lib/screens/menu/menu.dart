@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/data/categories_data.dart';
 import 'package:jspos/providers/menu_items_provider.dart';
-import 'package:jspos/shared/menu_item.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
+import 'package:jspos/shared/product_item.dart';
 
 class MenuPage extends ConsumerStatefulWidget {
   final SelectedOrder selectedOrder;
@@ -70,14 +70,19 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   @override
   Widget build(BuildContext context) {
     final menuItems = ref.watch(menuProvider);
-    // log('Menu items count: ${menuItems.length}');
+    // log('Menu Items: ${menuItems.length}');
+
+    // log('Selected Category: $selectedCategory');
+
     var filteredItems = menuItems.where((item) {
       if (item.category == selectedCategory) {
-        // log('Matched item: ${item.name} ${item.category}, Selected: $selectedCategory');
+        // log('Item matched: ${item.name}');
         return true;
       }
       return false;
     }).toList();
+
+    log('Filtered Items: ${filteredItems.length}');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Column(
@@ -127,44 +132,46 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                 childAspectRatio: (1 / 1.3), // width 1 / height 1.3
                 crossAxisSpacing: 20, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
-                children: filteredItems.map((item) {
-                  try {
-                    return MenuItem(
-                      onItemAdded: widget.onItemAdded,
-                      item: item,
-                      id: item.id,
-                      name: item.name,
-                      originalName: item.originalName,
-                      image: item.image,
-                      category: item.category,
-                      price: item.price,
-                      selection: item.selection,
-                      drinks: item.drinks,
-                      temp: item.temp,
-                      choices: item.choices,
-                      noodlesTypes: item.noodlesTypes,
-                      soupOrKonLou: item.soupOrKonLou,
-                      sides: item.sides,
-                      addMilk: item.addMilk,
-                      addOns: item.addOns,
-                      meePortion: item.meePortion,
-                      meatPortion: item.meatPortion,
-                      tapao: item.tapao,
-                      selectedDrink: item.drinks.isNotEmpty ? item.drinks[0] : null,
-                      selectedTemp: item.temp.isNotEmpty ? item.temp[0] : null,
-                      selectedChoice: item.choices.isNotEmpty ? item.choices[0] : null,
-                      selectedNoodlesType: item.noodlesTypes.isNotEmpty ? item.noodlesTypes[0] : null,
-                      selectedSoupOrKonLou: item.soupOrKonLou.isNotEmpty ? item.soupOrKonLou[0] : null,
-                      selectedSide: item.sides.isNotEmpty ? item.sides[0] : null,
-                      selectedAddMilk: item.addMilk.isNotEmpty ? item.addMilk[0] : null,
-                      selectedAddOn: item.addOns.isNotEmpty ? item.addOns[0] : null,
-                      selectedMeePortion: item.meePortion.isNotEmpty ? item.meePortion[0] : null,
-                      selectedMeatPortion: item.meatPortion.isNotEmpty ? item.meatPortion[0] : null,
-                    );
-                  } catch (e) {
-                    log('Error creating MenuItem: $e');
-                    return Container();
-                  }
+                children:  filteredItems.map((item) {
+                  return ProductItem(
+                    // onItemAdded: widget.onItemAdded,
+                    // id: item['id'],
+                    // name: item['name'],
+                    // image: item['image'],
+                    // category: item['category'],
+                    // price: item['price'],
+                    // selection: item['selection'] ?? false,
+                    // drinks: item['drinks'] ?? [],
+                    // temp: item['temp'] ?? [],
+                    // choices: item['choices'] ?? [],
+                    // noodlesTypes: item['noodlesTypes'] ?? [],
+                    // meatPortion: item['meat portion'] ?? [],
+                    // meePortion: item['mee portion'] ?? [],
+                    // sides: item['sides'] ?? [],
+                    // addMilk: item['add milk'] ?? [],
+                    // addOns: item['add on'] ?? [],
+                    // tapao: item['tapao'] ?? false,
+                    // soupOrKonLou: item['soupOrKonLou'] ?? [],
+                    onItemAdded: widget.onItemAdded,
+                    id: item.id,
+                    name: item.name,
+                    image: item.image,
+                    category: item.category,
+                    price: item.price,
+                    selection: item.selection,
+                    drinks: item.drinks,
+                    temp: item.temp,
+                    choices: item.choices,
+                    noodlesTypes: item.noodlesTypes,
+                    meatPortion: item.meatPortion,
+                    meePortion: item.meePortion,
+                    sides: item.sides,
+                    addMilk: item.addMilk,
+                    addOns: item.addOns,
+                    tapao: item.tapao,
+                    soupOrKonLou: item.soupOrKonLou,
+                  );
+                  
                 }).toList(),
               ),
             ),

@@ -1,386 +1,350 @@
 import 'dart:collection';
-import 'dart:developer';
 // import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/item.dart';
 
-class MenuItem extends StatefulWidget {
+class ProductItem extends StatefulWidget {
   final Function(Item) onItemAdded;
-  final Item item;
   final String id;
   final String name;
-  final String originalName;
   final String image;
   final String category;
   final double price;
   final bool selection;
   final List<Map<String, dynamic>> drinks;
-  final List<Map<String, String>> temp;
   final List<Map<String, dynamic>> choices;
   final List<Map<String, dynamic>> noodlesTypes;
-  final List<Map<String, dynamic>> soupOrKonLou;
+  final List<Map<String, dynamic>> meatPortion;
+  final List<Map<String, dynamic>> meePortion;
   final List<Map<String, dynamic>> sides;
   final List<Map<String, dynamic>> addMilk;
   final List<Map<String, dynamic>> addOns;
-  final List<Map<String, dynamic>> meePortion;
-  final List<Map<String, dynamic>> meatPortion;
-  final bool tapao;
   final Map<String, dynamic>? selectedDrink;
+  final List<Map<String, String>> temp;
   final Map<String, String>? selectedTemp;
   final Map<String, dynamic>? selectedChoice;
   final Map<String, dynamic>? selectedNoodlesType;
-  final Map<String, dynamic>? selectedSoupOrKonLou;
+  final Map<String, dynamic>? selectedMeatPortion;
+  final Map<String, dynamic>? selectedMeePortion;
   final Map<String, dynamic>? selectedSide;
   final Map<String, dynamic>? selectedAddMilk;
   final Map<String, dynamic>? selectedAddOn;
-  final Map<String, dynamic>? selectedMeePortion;
-  final Map<String, dynamic>? selectedMeatPortion;
+  final bool tapao;
+  final List<Map<String, dynamic>> soupOrKonLou;
+  final Map<String, dynamic>? selectedSoupOrKonLou;
 
-  const MenuItem({
+  const ProductItem({
     super.key,
     required this.onItemAdded,
-    required this.item,
     required this.id,
     required this.name,
-    required this.originalName,
     required this.image,
     required this.category,
     required this.price,
-    required this.selection,
+    this.selection = false,
     required this.drinks,
-    required this.temp,
     required this.choices,
     required this.noodlesTypes,
-    required this.soupOrKonLou,
+    required this.meatPortion,
+    required this.meePortion,
     required this.sides,
     required this.addMilk,
     required this.addOns,
-    required this.meePortion,
-    required this.meatPortion,
+    this.selectedDrink,
+    required this.temp,
+    this.selectedTemp,
+    this.selectedChoice,
+    this.selectedNoodlesType,
+    this.selectedMeatPortion,
+    this.selectedMeePortion,
+    this.selectedSide,
+    this.selectedAddMilk,
+    this.selectedAddOn,
     this.tapao = false,
-    required this.selectedDrink,
-    required this.selectedTemp,
-    required this.selectedChoice,
-    required this.selectedNoodlesType,
-    required this.selectedSoupOrKonLou,
-    required this.selectedSide,
-    required this.selectedAddMilk,
-    required this.selectedAddOn,
-    required this.selectedMeePortion,
-    required this.selectedMeatPortion,
+    required this.soupOrKonLou,
+    this.selectedSoupOrKonLou,
   });
 
   @override
-  MenuItemState createState() => MenuItemState();
+  ProductItemState createState() => ProductItemState();
 }
 
-class MenuItemState extends State<MenuItem> {
+class ProductItemState extends State<ProductItem> {
   Map<String, dynamic> itemRemarks = {};
   final TextEditingController _controller = TextEditingController();
 
-  Map<String, dynamic>? selectedDrink;
-  Map<String, String>? selectedTemp;
-  Map<String, dynamic>? selectedChoice;
-  Set<Map<String, dynamic>> selectedNoodlesType = {};
-  Map<String, dynamic>? selectedSoupOrKonLou;
-  Set<Map<String, dynamic>> selectedSide = {};
-  Map<String, dynamic>? selectedAddMilk;
-  Map<String, dynamic>? selectedAddOn;
-  Map<String, dynamic>? selectedMeePortion;
-  Map<String, dynamic>? selectedMeatPortion;
-
-  double drinkPrice = 0.00;
-  double choicePrice = 0.00;
-  double noodlesTypePrice = 0.00;
-  double soupOrKonlouPrice = 0.00;
-  double sidesPrice = 0.00;
-  double addMilkPrice = 0.00;
-  double addOnsPrice = 0.00;
-  double meatPrice = 0.00;
-  double meePrice = 0.00;
-  double subTotalPrice = 0.00;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Initialize prices
-    drinkPrice = _calculateDrinkPrice();
-    choicePrice = _getPrice(widget.choices);
-    meatPrice = _getPrice(widget.meatPortion);
-    meePrice = _getPrice(widget.meePortion);
-    addMilkPrice = _getPrice(widget.addMilk);
-    addOnsPrice = _getPrice(widget.addOns);
-    soupOrKonlouPrice = _getPrice(widget.soupOrKonLou);
-
-    // Calculate subtotal
-    subTotalPrice = drinkPrice + choicePrice + meatPrice + meePrice + noodlesTypePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
-  }
-
-  // @override
-  // void didUpdateWidget(covariant ProductItem oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   if (widget.choices != oldWidget.choices && widget.choices.isNotEmpty) {
-  //     setState(() {
-  //       selectedChoice = widget.choices[0]; // Select the first choice by default
-  //       choicePrice = selectedChoice?['price'] ?? 0.0;
-  //       log('didUpdateWidget: selectedChoice updated to: ${selectedChoice?['name']}');
-  //     });
-  //   }
-  // }
-
-  // Helper method to calculate drink price
-  double _calculateDrinkPrice() {
-    if (selectedDrink == null || selectedTemp == null) return 0.00;
-    var drink = widget.drinks.firstWhere(
-      (drink) => drink['name'] == selectedDrink?['name'],
-      orElse: () => {'Hot': 0.00, 'Cold': 0.00},
-    );
-
-    final selectedTempName = selectedTemp?['name'] ?? '';
-    return (drink[selectedTempName] as double?) ?? 0.00;
-  }
-
-  // Helper method to get price from a list
-  double _getPrice(List<Map<String, dynamic>> items) {
-    if (items.isEmpty || items[0]['price'] == null) return 0.00;
-    return items[0]['price'] as double;
-  }
-
-  double calculateNoodlesPrice() {
-    double noodlesPrice = 0.0;
-    for (var noodle in selectedNoodlesType) {
-      noodlesPrice += noodle['price'];
-    }
-    return noodlesPrice;
-  }
-
-  double calculateSidesPrice() {
-    double sidesPrice = 0.0;
-    for (var side in selectedSide) {
-      sidesPrice += side['price'];
-    }
-    return sidesPrice;
-  }
-
-  void sortSelectedNoodlesAlphabetically() {
-    // Convert the set to a list for sorting
-    List<Map<String, dynamic>> sortedSides = selectedNoodlesType.toList();
-
-    // Sort the list alphabetically by 'name'
-    sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
-
-    // Update selectedSide to reflect the sorted order
-    selectedNoodlesType = sortedSides.toSet();
-  }
-
-  void sortSelectedSidesAlphabetically() {
-    List<Map<String, dynamic>> sortedSides = selectedSide.toList();
-    sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
-    selectedSide = sortedSides.toSet();
-  }
-
-  void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
-      double addMilkPrice, double addOnsPrice, double soupOrKonlouPrice) {
-    // Log each value to ensure they're being passed correctly
-    // log("Drink Price: $drinkPrice");
-    // log("Choice Price: $choicePrice");
-    // log("Noodles Type Price: $noodlesTypePrice");
-    // log("Meat Price: $meatPrice");
-    // log("Mee Price: $meePrice");
-    // log("Sides Price: $sidesPrice");
-    // log("Add-Ons Price: $addOnsPrice");
-
-    double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
-
-    // log("Total Price: $totalPrice");
-
-    setState(() {
-      subTotalPrice = totalPrice;
-    });
-  }
-
-  TextSpan generateNoodlesOnTextSpan(Map<String, dynamic> noodle, bool isLast) {
-    return TextSpan(
-      text: "${noodle['name']}", // Display the name
-      children: <TextSpan>[
-        if (noodle['price'] != null && noodle['price'] != 0.00)
-          TextSpan(
-            text: " ( + ${noodle['price'].toStringAsFixed(2)})", // Display price if available
-            style: const TextStyle(
-              color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
-            ),
-          ),
-        // Add a comma after each item, except for the last one
-        TextSpan(
-          text: isLast ? '' : ', ',
-        ),
-      ],
-    );
-  }
-
-  TextSpan generateSidesOnTextSpan(Map<String, dynamic> side, bool isLast) {
-    return TextSpan(
-      text: "${side['name']}", // Display the name
-      children: <TextSpan>[
-        if (side['price'] != null && side['price'] != 0.00)
-          TextSpan(
-            text: " ( + ${side['price'].toStringAsFixed(2)})", // Display price if available
-            style: const TextStyle(
-              color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
-            ),
-          ),
-        // Add a comma after each item, except for the last one
-        TextSpan(
-          text: isLast ? '' : ', ',
-        ),
-      ],
-    );
-  }
-
-  void updateItemRemarks() {
-    if (selectedMeePortion != null && selectedMeatPortion != null) {
-      Map<String, Map<dynamic, dynamic>> portions = {
-        '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
-        '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
-      };
-
-      portions.forEach((key, value) {
-        Map<dynamic, dynamic> portion = value['portion'];
-        String normalName = value['normalName'];
-
-        if (itemRemarks.containsKey(key)) {
-          if (portion['name'] != normalName) {
-            itemRemarks[key] = portion['name'];
-          } else {
-            itemRemarks.remove(key);
-          }
-        } else if (portion['name'] != normalName) {
-          itemRemarks[key] = portion['name'];
-        }
-      });
-    }
-
-    // Add the user's comment with a key of '100'
-    if (itemRemarks.isNotEmpty) {
-      itemRemarks['100'] = _controller.text;
-    }
-    SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
-      (a, b) => int.parse(a).compareTo(int.parse(b)),
-    )..addAll(itemRemarks);
-
-    itemRemarks = sortedItemRemarks;
-    // print('itemRemarks after sorting: $itemRemarks');
-    itemRemarks = itemRemarks;
-    itemRemarks = {};
-    // print('itemRemarks after clearing: $itemRemarks');
-    _controller.text = '';
-    // print('_controller.text after clearing: ${_controller.text}');
-  }
-
-  Widget remarkButton(Map<String, dynamic> data) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.resolveWith<Color>(
-          (Set<WidgetState> states) {
-            // Check if the remark has been added to itemRemarks
-            if (itemRemarks.containsKey(data['id'].toString())) {
-              // If the button is pressed or the remark has been added, make the background orange
-              return states.contains(WidgetState.pressed) ? Colors.white : Colors.orange;
-            } else {
-              // If the button is pressed or the remark has not been added, make the background black
-              return states.contains(WidgetState.pressed) ? Colors.orange : Colors.white;
-            }
-          },
-        ),
-        foregroundColor: WidgetStateProperty.resolveWith<Color>(
-          (Set<WidgetState> states) {
-            if (itemRemarks.containsKey(data['id'].toString())) {
-              return states.contains(WidgetState.pressed) ? Colors.black : Colors.white;
-            } else {
-              return states.contains(WidgetState.pressed) ? Colors.white : Colors.black;
-            }
-          },
-        ),
-        shape: WidgetStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-        padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), // Add padding inside the button
-      ),
-      onPressed: () {
-        setState(() {
-          String key = data['id'].toString();
-          if (itemRemarks.containsKey(key)) {
-            // If the remark is already in itemRemarks, remove it
-            itemRemarks.remove(key);
-          } else {
-            // If the remark is not in itemRemarks, add it
-            itemRemarks[key] = data['remarks'];
-          }
-          // print('itemRemarks selection:$itemRemarks');
-        });
-      },
-      child: Text(
-        data['remarks'],
-        style: const TextStyle(
-          fontSize: 12,
-        ),
-      ),
-    );
-  }
-
-  Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
-    Map<String, dynamic> filteredRemarks = {};
-    if (itemRemarks != null) {
-      itemRemarks.forEach((key, value) {
-        // Add your conditions here
-        if (key != '98' && key != '99') {
-          filteredRemarks[key] = value;
-        }
-      });
-    }
-    return filteredRemarks;
-  }
-
-  String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
-    final filteredRemarks = filterRemarks(itemRemarks);
-    return filteredRemarks.values.join(', ');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    // Get the status bar height
+    return GestureDetector(
       onTap: () {
-        log('Item selection from product Page:');
-        log('- ${widget.id}');
-        log('-${widget.name}');
-        log('- ${widget.originalName}');
-        log('- ${widget.image}');
-        log('- ${widget.category}');
-        log('- ${widget.price}');
-        log('- ${widget.selection}');
+        Item item = Item(
+          id: widget.id,
+          name: widget.name,
+          originalName: widget.name,
+          price: widget.price,
+          category: widget.category,
+          image: widget.image,
+          quantity: 1,
+          selection: widget.selection,
+          drinks: widget.drinks,
+          choices: widget.choices,
+          noodlesTypes: widget.noodlesTypes,
+          meatPortion: widget.meatPortion,
+          meePortion: widget.meePortion,
+          sides: widget.sides,
+          addMilk: widget.addMilk,
+          addOns: widget.addOns,
+          selectedDrink: widget.drinks.isNotEmpty ? widget.drinks[0] : null,
+          temp: widget.temp,
+          selectedTemp: widget.temp.isNotEmpty ? widget.temp[0] : null,
+          selectedChoice: widget.choices.isNotEmpty ? widget.choices[0] : null,
+          selectedNoodlesType: {},
+          selectedMeatPortion: widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null,
+          selectedMeePortion: widget.meePortion.isNotEmpty ? widget.meePortion[0] : null,
+          selectedAddMilk: widget.addMilk.isNotEmpty ? widget.addMilk[0] : null,
+          selectedSide: {},
+          selectedAddOn: widget.addOns.isNotEmpty ? widget.addOns[0] : null,
+          tapao: widget.tapao,
+          soupOrKonLou: widget.soupOrKonLou,
+          selectedSoupOrKonLou: widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null,
+        ); //this is creating a new instance of item with the required field.
+        Map<String, dynamic>? selectedDrink = widget.drinks.isNotEmpty ? widget.drinks[0] : null;
+        Map<String, String>? selectedTemp = widget.temp.isNotEmpty ? widget.temp[0] : null;
+        Map<String, dynamic>? selectedChoice = widget.choices.isNotEmpty ? widget.choices[0] : null;
+        Set<Map<String, dynamic>> selectedNoodlesType = {};
+        Map<String, dynamic>? selectedMeatPortion = widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null;
+        Map<String, dynamic>? selectedMeePortion = widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
+        Set<Map<String, dynamic>> selectedSide = {};
+        Map<String, dynamic>? selectedAddMilk = widget.addMilk.isNotEmpty ? widget.addMilk[0] : null;
+        Map<String, dynamic>? selectedAddOn = widget.addOns.isNotEmpty ? widget.addOns[0] : null;
+        Map<String, dynamic>? selectedSoupOrKonLou = widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null;
+        double drinkPrice() {
+          var drink = widget.drinks.firstWhere(
+            (drink) => drink['name'] == selectedDrink?['name'],
+            orElse: () => {'Hot': 0.00, 'Cold': 0.00} as Map<String, Object>, // Set default values
+          );
 
-        log('- ${widget.drinks}'); //
-        log('- ${widget.temp}'); //
+          final selectedTempName = selectedTemp?['name'] ?? ''; // Convert to non-nullable String
 
-        log('- ${widget.choices}');
-        log('- ${widget.noodlesTypes}');
+          return (drink[selectedTempName] as double?) ?? 0.00; // Get the price based on the selected temperature
+        }
 
-        log('- ${widget.soupOrKonLou}'); //
+        double choicePrice = widget.choices.isNotEmpty && widget.choices[0]['price'] != null ? widget.choices[0]['price']! : 0.00;
+        double meatPrice = widget.meatPortion.isNotEmpty && widget.meatPortion[0]['price'] != null ? widget.meatPortion[0]['price']! : 0.00;
+        double meePrice = widget.meePortion.isNotEmpty && widget.meePortion[0]['price'] != null ? widget.meePortion[0]['price']! : 0.00;
+        double noodlesTypePrice = 0.00;
+        double sidesPrice = 0.00;
+        double addMilkPrice = widget.addMilk.isNotEmpty && widget.addMilk[0]['price'] != null ? widget.addMilk[0]['price']! : 0.00;
+        double addOnsPrice = widget.addOns.isNotEmpty && widget.addOns[0]['price'] != null ? widget.addOns[0]['price']! : 0.00;
+        double soupOrKonlouPrice = widget.soupOrKonLou.isNotEmpty && widget.soupOrKonLou[0]['price'] != null ? widget.soupOrKonLou[0]['price']! : 0.00;
+        double subTotalPrice = drinkPrice() + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addOnsPrice + soupOrKonlouPrice;
 
-        log('- ${widget.sides}'); //
-        log('- ${widget.addMilk}'); //
-        log('- ${widget.addOns}'); //
+        double calculateNoodlesPrice() {
+          double noodlesPrice = 0.0;
+          for (var noodle in selectedNoodlesType) {
+            noodlesPrice += noodle['price'];
+          }
+          return noodlesPrice;
+        }
 
-        log('- ${widget.meePortion}');
-        log('- ${widget.meatPortion}');
-        log('- ${widget.tapao}');
-        log('- selected Choice is ${selectedChoice?['name']}');
-        log('- selected Mee Portion is ${selectedMeePortion?['name']}');
-        if (widget.selection) {
+        double calculateSidesPrice() {
+          double sidesPrice = 0.0;
+          for (var side in selectedSide) {
+            sidesPrice += side['price'];
+          }
+          return sidesPrice;
+        }
+
+        void sortSelectedNoodlesAlphabetically() {
+          // Convert the set to a list for sorting
+          List<Map<String, dynamic>> sortedSides = selectedNoodlesType.toList();
+
+          // Sort the list alphabetically by 'name'
+          sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+
+          // Update selectedSide to reflect the sorted order
+          selectedNoodlesType = sortedSides.toSet();
+        }
+
+        void sortSelectedSidesAlphabetically() {
+          List<Map<String, dynamic>> sortedSides = selectedSide.toList();
+          sortedSides.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+          selectedSide = sortedSides.toSet();
+        }
+
+        void calculateTotalPrice(double drinkPrice, double choicePrice, double noodlesTypePrice, double meatPrice, double meePrice, double sidesPrice,
+            double addMilkPrice, double addOnsPrice, double soupOrKonlouPrice) {
+          // Log each value to ensure they're being passed correctly
+          // log("Drink Price: $drinkPrice");
+          // log("Choice Price: $choicePrice");
+          // log("Noodles Type Price: $noodlesTypePrice");
+          // log("Meat Price: $meatPrice");
+          // log("Mee Price: $meePrice");
+          // log("Sides Price: $sidesPrice");
+          // log("Add-Ons Price: $addOnsPrice");
+
+          double totalPrice = drinkPrice + choicePrice + noodlesTypePrice + meatPrice + meePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
+
+          // log("Total Price: $totalPrice");
+
+          setState(() {
+            subTotalPrice = totalPrice;
+          });
+        }
+
+        TextSpan generateNoodlesOnTextSpan(Map<String, dynamic> noodle, bool isLast) {
+          return TextSpan(
+            text: "${noodle['name']}", // Display the name
+            children: <TextSpan>[
+              if (noodle['price'] != null && noodle['price'] != 0.00)
+                TextSpan(
+                  text: " ( + ${noodle['price'].toStringAsFixed(2)})", // Display price if available
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
+                  ),
+                ),
+              // Add a comma after each item, except for the last one
+              TextSpan(
+                text: isLast ? '' : ', ',
+              ),
+            ],
+          );
+        }
+
+        TextSpan generateSidesOnTextSpan(Map<String, dynamic> side, bool isLast) {
+          return TextSpan(
+            text: "${side['name']}", // Display the name
+            children: <TextSpan>[
+              if (side['price'] != null && side['price'] != 0.00)
+                TextSpan(
+                  text: " ( + ${side['price'].toStringAsFixed(2)})", // Display price if available
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 114, 226, 118), // Customize the color for the price
+                  ),
+                ),
+              // Add a comma after each item, except for the last one
+              TextSpan(
+                text: isLast ? '' : ', ',
+              ),
+            ],
+          );
+        }
+
+        void updateItemRemarks() {
+          if (selectedMeePortion != null && selectedMeatPortion != null) {
+            Map<String, Map<dynamic, dynamic>> portions = {
+              '98': {'portion': selectedMeePortion ?? {}, 'normalName': "Normal Mee"},
+              '99': {'portion': selectedMeatPortion ?? {}, 'normalName': "Normal Meat"}
+            };
+
+            portions.forEach((key, value) {
+              Map<dynamic, dynamic> portion = value['portion'];
+              String normalName = value['normalName'];
+
+              if (itemRemarks.containsKey(key)) {
+                if (portion['name'] != normalName) {
+                  itemRemarks[key] = portion['name'];
+                } else {
+                  itemRemarks.remove(key);
+                }
+              } else if (portion['name'] != normalName) {
+                itemRemarks[key] = portion['name'];
+              }
+            });
+          }
+
+          // Add the user's comment with a key of '100'
+          if (item.itemRemarks != null) {
+            itemRemarks['100'] = _controller.text;
+          }
+          SplayTreeMap<String, dynamic> sortedItemRemarks = SplayTreeMap<String, dynamic>(
+            (a, b) => int.parse(a).compareTo(int.parse(b)),
+          )..addAll(itemRemarks);
+
+          itemRemarks = sortedItemRemarks;
+          // print('itemRemarks after sorting: $itemRemarks');
+          item.itemRemarks = itemRemarks;
+          itemRemarks = {};
+          // print('itemRemarks after clearing: $itemRemarks');
+          _controller.text = '';
+          // print('_controller.text after clearing: ${_controller.text}');
+        }
+
+        Widget remarkButton(Map<String, dynamic> data) {
+          return ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                (Set<WidgetState> states) {
+                  // Check if the remark has been added to itemRemarks
+                  if (itemRemarks.containsKey(data['id'].toString())) {
+                    // If the button is pressed or the remark has been added, make the background orange
+                    return states.contains(WidgetState.pressed) ? Colors.white : Colors.orange;
+                  } else {
+                    // If the button is pressed or the remark has not been added, make the background black
+                    return states.contains(WidgetState.pressed) ? Colors.orange : Colors.white;
+                  }
+                },
+              ),
+              foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                (Set<WidgetState> states) {
+                  if (itemRemarks.containsKey(data['id'].toString())) {
+                    return states.contains(WidgetState.pressed) ? Colors.black : Colors.white;
+                  } else {
+                    return states.contains(WidgetState.pressed) ? Colors.white : Colors.black;
+                  }
+                },
+              ),
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(10, 6, 10, 6)), // Add padding inside the button
+            ),
+            onPressed: () {
+              setState(() {
+                String key = data['id'].toString();
+                if (itemRemarks.containsKey(key)) {
+                  // If the remark is already in itemRemarks, remove it
+                  itemRemarks.remove(key);
+                } else {
+                  // If the remark is not in itemRemarks, add it
+                  itemRemarks[key] = data['remarks'];
+                }
+                // print('itemRemarks selection:$itemRemarks');
+              });
+            },
+            child: Text(
+              data['remarks'],
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          );
+        }
+
+        Map<String, dynamic> filterRemarks(Map<String, dynamic>? itemRemarks) {
+          Map<String, dynamic> filteredRemarks = {};
+          if (itemRemarks != null) {
+            itemRemarks.forEach((key, value) {
+              // Add your conditions here
+              if (key != '98' && key != '99') {
+                filteredRemarks[key] = value;
+              }
+            });
+          }
+          return filteredRemarks;
+        }
+
+        String getFilteredRemarks(Map<String, dynamic>? itemRemarks) {
+          final filteredRemarks = filterRemarks(itemRemarks);
+          return filteredRemarks.values.join(', ');
+        }
+
+        // item selection
+        if (item.selection) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -419,7 +383,7 @@ class MenuItemState extends State<MenuItem> {
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                                           child: Image.asset(
-                                            widget.image,
+                                            item.image,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -429,13 +393,13 @@ class MenuItemState extends State<MenuItem> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          widget.selection && selectedChoice != null
+                                          item.selection && selectedChoice != null
                                               ? Row(
                                                   children: [
                                                     Text(
-                                                      widget.originalName == selectedChoice!['name']
-                                                          ? widget.originalName
-                                                          : '${widget.originalName} ${selectedChoice!['name']}',
+                                                      item.originalName == selectedChoice!['name']
+                                                          ? item.originalName
+                                                          : '${item.originalName} ${selectedChoice!['name']}',
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -457,9 +421,9 @@ class MenuItemState extends State<MenuItem> {
                                               : Row(
                                                   children: [
                                                     Text(
-                                                      widget.originalName == selectedDrink?['name']
-                                                          ? widget.originalName
-                                                          : '${widget.originalName} ${selectedDrink?['name']} - ${selectedTemp?["name"]}',
+                                                      item.originalName == selectedDrink!['name']
+                                                          ? item.originalName
+                                                          : '${item.originalName} ${selectedDrink?['name']} - ${selectedTemp?["name"]}',
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -468,7 +432,7 @@ class MenuItemState extends State<MenuItem> {
                                                     ),
                                                     const SizedBox(width: 6),
                                                     Text(
-                                                      "( ${selectedDrink?['price'].toStringAsFixed(2)} )",
+                                                      "( ${drinkPrice().toStringAsFixed(2)} )",
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.bold,
@@ -483,7 +447,7 @@ class MenuItemState extends State<MenuItem> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  widget.selection && selectedSoupOrKonLou != null
+                                                  item.selection && selectedSoupOrKonLou != null
                                                       ? Row(
                                                           children: [
                                                             Text(
@@ -505,7 +469,7 @@ class MenuItemState extends State<MenuItem> {
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
-                                                  widget.selection && selectedNoodlesType.isNotEmpty
+                                                  item.selection && selectedNoodlesType.isNotEmpty
                                                       ? Wrap(
                                                           children: [
                                                             SizedBox(
@@ -529,7 +493,7 @@ class MenuItemState extends State<MenuItem> {
                                                           ],
                                                         )
                                                       : const SizedBox.shrink(),
-                                                  // widget.selection && selectedNoodlesType != null && selectedNoodlesType!['name'] != 'None'
+                                                  // item.selection && selectedNoodlesType != null && selectedNoodlesType!['name'] != 'None'
                                                   //     ? Row(
                                                   //         children: [
                                                   //           Text(
@@ -562,7 +526,7 @@ class MenuItemState extends State<MenuItem> {
                                               ),
                                               Row(
                                                 children: [
-                                                  widget.selection && selectedMeePortion != null && selectedMeePortion!['name'] != "Normal Mee"
+                                                  item.selection && selectedMeePortion != null && selectedMeePortion!['name'] != "Normal Mee"
                                                       ? Row(
                                                           children: [
                                                             Text(
@@ -586,7 +550,7 @@ class MenuItemState extends State<MenuItem> {
                                                       : const SizedBox.shrink(),
                                                 ],
                                               ),
-                                              widget.selection && selectedMeatPortion != null && selectedMeatPortion!['name'] != "Normal Meat"
+                                              item.selection && selectedMeatPortion != null && selectedMeatPortion!['name'] != "Normal Meat"
                                                   ? Row(
                                                       children: [
                                                         Text(
@@ -607,7 +571,7 @@ class MenuItemState extends State<MenuItem> {
                                                       ],
                                                     )
                                                   : const SizedBox.shrink(),
-                                              widget.selection && selectedAddMilk != null && selectedAddMilk!['name'] != "No Milk"
+                                              item.selection && selectedAddMilk != null && selectedAddMilk!['name'] != "No Milk"
                                                   ? Row(
                                                       children: [
                                                         Text(
@@ -629,7 +593,7 @@ class MenuItemState extends State<MenuItem> {
                                                     )
                                                   : const SizedBox.shrink(),
                                               // Product Details after select side, noodles, choices, etc
-                                              widget.selection
+                                              item.selection
                                                   ? Row(
                                                       children: [
                                                         Text(
@@ -660,7 +624,7 @@ class MenuItemState extends State<MenuItem> {
                                                       ],
                                                     )
                                                   : const SizedBox.shrink(),
-                                              widget.selection && selectedSide.isNotEmpty
+                                              item.selection && selectedSide.isNotEmpty
                                                   ? Wrap(
                                                       children: [
                                                         SizedBox(
@@ -686,7 +650,7 @@ class MenuItemState extends State<MenuItem> {
                                                   : const SizedBox.shrink(),
                                               // Wrap(
                                               //   children: [
-                                              //     widget.selection && filterRemarks(itemRemarks).isNotEmpty == true
+                                              //     item.selection && filterRemarks(item.itemRemarks).isNotEmpty == true
                                               //         ? Row(
                                               //             children: [
                                               //               const Text(
@@ -697,7 +661,7 @@ class MenuItemState extends State<MenuItem> {
                                               //                 ),
                                               //               ),
                                               //               Text(
-                                              //                 getFilteredRemarks(itemRemarks),
+                                              //                 getFilteredRemarks(item.itemRemarks),
                                               //                 style: const TextStyle(
                                               //                   fontSize: 14,
                                               //                   color: Colors.orangeAccent,
@@ -731,7 +695,8 @@ class MenuItemState extends State<MenuItem> {
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      if (widget.drinks.isNotEmpty) ...[
+                                      item.selection && selectedDrink != null
+                                          ?
                                           // selectedDrink
                                           Expanded(
                                               flex: 8,
@@ -747,7 +712,7 @@ class MenuItemState extends State<MenuItem> {
                                                     if (widget.drinks.isNotEmpty) ...[
                                                       const Text(
                                                         'Select Drink',
-                                                        style: TextStyle( 
+                                                        style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 14,
                                                         ),
@@ -760,7 +725,7 @@ class MenuItemState extends State<MenuItem> {
                                                             onPressed: () {
                                                               setState(() {
                                                                 selectedDrink = drink;
-                                                                calculateTotalPrice(drink['price'], choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                     calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
@@ -787,13 +752,16 @@ class MenuItemState extends State<MenuItem> {
                                                           );
                                                         }).toList(),
                                                       ),
+                                                    ] else ...[
+                                                      const SizedBox.shrink(),
                                                     ],
                                                   ],
                                                 ),
                                               ),
-                                            )],
+                                            )
+                                          : const SizedBox.shrink(),
                                       if (widget.temp.isNotEmpty) const SizedBox(width: 10),
-                                      widget.selection && selectedTemp != null
+                                      item.selection && selectedTemp != null
                                           ?
                                           // selectedTemp
                                           Expanded(
@@ -823,7 +791,7 @@ class MenuItemState extends State<MenuItem> {
                                                             onPressed: () {
                                                               setState(() {
                                                                 selectedTemp = item;
-                                                                calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                     calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                               });
                                                             },
@@ -859,68 +827,71 @@ class MenuItemState extends State<MenuItem> {
                                             )
                                           : const SizedBox.shrink(),
                                       // if (widget.choices.isNotEmpty) const SizedBox(width: 10),
-                                      if (widget.choices.isNotEmpty) ...[
-                                        // selectedChoice
-                                        Expanded(
-                                          child: Container(
-                                            padding: const EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xff1f2029),
-                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                const Text(
-                                                  'Select Choice',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                  ),
+                                      item.selection && selectedChoice != null
+                                          ?
+                                          // selectedChoice
+                                          Expanded(
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xff1f2029),
+                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
                                                 ),
-                                                Wrap(
-                                                  spacing: 6, // space between buttons horizontally
-                                                  runSpacing: 0, // space between buttons vertically
-                                                  children: widget.choices.map((choice) {
-                                                    return ElevatedButton(
-                                                      onPressed: () {
-                                                        log('Selected choice: ${selectedChoice?['name']}');
-
-                                                        setState(() {
-                                                          selectedChoice = choice;
-                                                          choicePrice = choice['price'];
-                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                              calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
-                                                        });
-                                                      },
-                                                      style: ButtonStyle(
-                                                        backgroundColor: WidgetStateProperty.all<Color>(
-                                                          selectedChoice == choice ? Colors.orange : Colors.white,
-                                                        ),
-                                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                          RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(5),
-                                                          ),
-                                                        ),
-                                                        padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                      ),
-                                                      child: Text(
-                                                        '${choice['name']}',
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    if (widget.choices.isNotEmpty) ...[
+                                                      const Text(
+                                                        'Select Choice',
                                                         style: TextStyle(
-                                                          color: selectedChoice == choice
-                                                              ? Colors.white
-                                                              : Colors.black, // Change the text color based on the selected button
-                                                          fontSize: 12,
+                                                          color: Colors.white,
+                                                          fontSize: 14,
                                                         ),
                                                       ),
-                                                    );
-                                                  }).toList(),
+                                                      Wrap(
+                                                        spacing: 6, // space between buttons horizontally
+                                                        runSpacing: 0, // space between buttons vertically
+                                                        children: widget.choices.map((choice) {
+                                                          return ElevatedButton(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                selectedChoice = choice;
+                                                                choicePrice = choice['price'];
+                                                                calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                    calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
+                                                              });
+                                                            },
+                                                            style: ButtonStyle(
+                                                              backgroundColor: WidgetStateProperty.all<Color>(
+                                                                selectedChoice == choice ? Colors.orange : Colors.white,
+                                                              ),
+                                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(5),
+                                                                ),
+                                                              ),
+                                                              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                            ),
+                                                            child: Text(
+                                                              '${choice['name']}',
+                                                              style: TextStyle(
+                                                                color: selectedChoice == choice
+                                                                    ? Colors.white
+                                                                    : Colors.black, // Change the text color based on the selected button
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ] else ...[
+                                                      const SizedBox.shrink(),
+                                                    ],
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      ],
+                                              ),
+                                            )
+                                          : const SizedBox.shrink(),
                                       if (widget.noodlesTypes.isNotEmpty) const SizedBox(width: 10),
                                       //selectedNoodlesType
                                       if (widget.noodlesTypes.isNotEmpty) ...[
@@ -954,7 +925,7 @@ class MenuItemState extends State<MenuItem> {
                                                             selectedNoodlesType.add(noodleType);
                                                           }
                                                           sortSelectedNoodlesAlphabetically();
-                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
@@ -985,7 +956,9 @@ class MenuItemState extends State<MenuItem> {
                                             ),
                                           ),
                                         ),
-                                      ]
+                                      ] else ...[
+                                        const SizedBox.shrink(),
+                                      ],
                                     ],
                                   ),
                                 ),
@@ -1027,7 +1000,7 @@ class MenuItemState extends State<MenuItem> {
                                                             selectedSide.add(side);
                                                           }
                                                           sortSelectedSidesAlphabetically();
-                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
@@ -1056,6 +1029,8 @@ class MenuItemState extends State<MenuItem> {
                                             ),
                                           ),
                                         ),
+                                      ] else ...[
+                                        const SizedBox.shrink(),
                                       ],
                                       if (widget.sides.isNotEmpty) const SizedBox(width: 10),
                                       Expanded(
@@ -1075,7 +1050,7 @@ class MenuItemState extends State<MenuItem> {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    if (widget.soupOrKonLou.isNotEmpty) ...[
+                                                    if (widget.soupOrKonLou.isNotEmpty)
                                                       Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
@@ -1092,7 +1067,7 @@ class MenuItemState extends State<MenuItem> {
                                                                   setState(() {
                                                                     selectedSoupOrKonLou = soup;
                                                                     soupOrKonlouPrice = soup['price'];
-                                                                    calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                                    calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                         calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                                   });
                                                                 },
@@ -1121,8 +1096,7 @@ class MenuItemState extends State<MenuItem> {
                                                           ),
                                                           const SizedBox(height: 10),
                                                         ],
-                                                      )
-                                                    ],
+                                                      ),
                                                     const Text(
                                                       'Add Remarks',
                                                       style: TextStyle(color: Colors.white, fontSize: 14),
@@ -1131,7 +1105,7 @@ class MenuItemState extends State<MenuItem> {
                                                       spacing: 6.0, // Gap between adjacent chips
                                                       runSpacing: 0.0, // Gap between lines
                                                       children: remarksData
-                                                          .where((data) => data['category'] == widget.category)
+                                                          .where((data) => data['category'] == item.category)
                                                           .map((data) => remarkButton(data))
                                                           .toList(),
                                                     ),
@@ -1150,7 +1124,7 @@ class MenuItemState extends State<MenuItem> {
                                 IntrinsicHeight(
                                   child: Row(
                                     children: [
-                                      if (widget.addOns.isNotEmpty) ...[
+                                      if (widget.addOns.isNotEmpty)
                                         Expanded(
                                           flex: 8,
                                           child: Container(
@@ -1183,7 +1157,7 @@ class MenuItemState extends State<MenuItem> {
                                                             setState(() {
                                                               selectedAddOn = addOn;
                                                               addOnsPrice = addOn['price'];
-                                                              calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                              calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                                   calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                             });
                                                           },
@@ -1216,10 +1190,9 @@ class MenuItemState extends State<MenuItem> {
                                             ),
                                           ),
                                         ),
-                                      ],
                                       // add milk
                                       if (widget.addMilk.isNotEmpty) const SizedBox(width: 10),
-                                      if (widget.addMilk.isNotEmpty) ...[
+                                      if (widget.addMilk.isNotEmpty)
                                         Expanded(
                                           flex: 4,
                                           child: Container(
@@ -1249,7 +1222,7 @@ class MenuItemState extends State<MenuItem> {
                                                           selectedAddMilk = addMilk;
                                                           addMilkPrice = addMilk['price'];
                                                           calculateTotalPrice(
-                                                              drinkPrice,
+                                                              drinkPrice(),
                                                               choicePrice,
                                                               calculateNoodlesPrice(),
                                                               meatPrice, // Correctly updated meat price
@@ -1287,7 +1260,6 @@ class MenuItemState extends State<MenuItem> {
                                             ),
                                           ),
                                         ),
-                                      ],
                                     ],
                                   ),
                                 ),
@@ -1326,7 +1298,7 @@ class MenuItemState extends State<MenuItem> {
                                                         setState(() {
                                                           selectedMeePortion = meePortion;
                                                           meePrice = meePortion['price'];
-                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
                                                               calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                                         });
                                                       },
@@ -1357,6 +1329,8 @@ class MenuItemState extends State<MenuItem> {
                                             ),
                                           ),
                                         ),
+                                      ] else ...[
+                                        const SizedBox.shrink(),
                                       ],
                                       if (widget.meePortion.isNotEmpty) const SizedBox(width: 10),
                                       if (widget.meatPortion.isNotEmpty) ...[
@@ -1389,7 +1363,7 @@ class MenuItemState extends State<MenuItem> {
                                                           selectedMeatPortion = meatPortion;
                                                           meatPrice = meatPortion['price'];
                                                           calculateTotalPrice(
-                                                              drinkPrice,
+                                                              drinkPrice(),
                                                               choicePrice,
                                                               calculateNoodlesPrice(),
                                                               meatPrice, // Correctly updated meat price
@@ -1473,8 +1447,8 @@ class MenuItemState extends State<MenuItem> {
                                                         (a, b) => int.parse(a).compareTo(int.parse(b)),
                                                       )..addAll(itemRemarks);
                                                       itemRemarks = sortedItemRemarks;
-                                                      itemRemarks = itemRemarks;
-                                                      // print(itemRemarks);
+                                                      item.itemRemarks = itemRemarks;
+                                                      // print(item.itemRemarks);
                                                     });
                                                   },
                                                 ),
@@ -1510,30 +1484,31 @@ class MenuItemState extends State<MenuItem> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          selectedChoice = selectedChoice;
-                                          selectedNoodlesType = selectedNoodlesType;
-                                          selectedMeatPortion = selectedMeatPortion;
-                                          selectedMeePortion = selectedMeePortion;
-                                          selectedSide = selectedSide;
-                                          selectedAddMilk = selectedAddMilk;
-                                          selectedAddOn = selectedAddOn;
-                                          selectedDrink = selectedDrink;
-                                          selectedTemp = selectedTemp;
-                                          selectedSoupOrKonLou = selectedSoupOrKonLou;
-                                          itemRemarks = itemRemarks;
+                                          item.selectedChoice = selectedChoice;
+                                          item.selectedNoodlesType = selectedNoodlesType;
+                                          item.selectedMeatPortion = selectedMeatPortion;
+                                          item.selectedMeePortion = selectedMeePortion;
+                                          item.selectedSide = selectedSide;
+                                          item.selectedAddMilk = selectedAddMilk;
+                                          item.selectedAddOn = selectedAddOn;
+                                          item.selectedDrink = selectedDrink;
+                                          item.selectedTemp = selectedTemp;
+                                          item.selectedSoupOrKonLou = selectedSoupOrKonLou;
+                                          item.itemRemarks = itemRemarks;
 
                                           updateItemRemarks();
 
-                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice, calculateSidesPrice(),
+                                          calculateTotalPrice(drinkPrice(), choicePrice, calculateNoodlesPrice(), meatPrice, meePrice, calculateSidesPrice(),
                                               addMilkPrice, addOnsPrice, soupOrKonlouPrice);
-                                          // log('item Price: ${price}');
+                                          item.price = subTotalPrice;
+                                          // log('item Price: ${item.price}');
                                           // log('subTotal Price: $subTotalPrice');
-
-                                          // Reason we didn't save the latest order to the selectedOrder provider or Hive because this order has not being place yet. We only do that after it is confirmed with orderNumber.
+                                          
+                                          // Reason we didn't save the latest order to the selectedOrder provider or Hive because this order has not being place yet. We only do that after it is confirmed with orderNumber. 
                                           // selectedOrderNotifier.updateTotalCost();
                                           // selectedOrderNotifier.updateItem(item);
-
-                                          widget.onItemAdded(widget.item);
+                                          
+                                          widget.onItemAdded(item);
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -1578,15 +1553,23 @@ class MenuItemState extends State<MenuItem> {
             },
           );
         } else {
-          // Call widget.onItemAdded if selection is false
-          widget.onItemAdded(widget.item);
+          widget.onItemAdded(item);
         }
       },
+      // individual item container
       child: Container(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: const Color(0xff1f2029),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.grey.withOpacity(0.1), // Change this color to customize your shadow
+          //     spreadRadius: 2,
+          //     blurRadius: 2,
+          //     offset: const Offset(1, 1), // Changes position of shadow
+          //   ),
+          // ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1631,16 +1614,6 @@ class MenuItemState extends State<MenuItem> {
     );
   }
 }
-//         if (item.selection) {
-
-//         } else {
-//           widget.onItemAdded(item);
-//         }
-//       },
-
-//     );
-//   }
-// }
 
 // print('Price of Selected Choice: $choicePrice');
 // print('Price of Selected Type: $noodlesTypePrice');

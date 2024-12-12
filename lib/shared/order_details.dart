@@ -1,7 +1,5 @@
 import 'dart:collection';
 import 'dart:developer';
-import 'package:cherry_toast/cherry_toast.dart';
-import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/data/categories_data.dart';
