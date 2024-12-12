@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/item.dart';
 
-class ProductItem extends StatefulWidget {
+class MenuItem extends StatefulWidget {
   final Function(Item) onItemAdded;
   final Item item;
   final String id;
@@ -16,66 +16,66 @@ class ProductItem extends StatefulWidget {
   final double price;
   final bool selection;
   final List<Map<String, dynamic>> drinks;
+  final List<Map<String, String>> temp;
   final List<Map<String, dynamic>> choices;
   final List<Map<String, dynamic>> noodlesTypes;
-  final List<Map<String, dynamic>> meatPortion;
-  final List<Map<String, dynamic>> meePortion;
+  final List<Map<String, dynamic>> soupOrKonLou;
   final List<Map<String, dynamic>> sides;
   final List<Map<String, dynamic>> addMilk;
   final List<Map<String, dynamic>> addOns;
+  final List<Map<String, dynamic>> meePortion;
+  final List<Map<String, dynamic>> meatPortion;
+  final bool tapao;
   final Map<String, dynamic>? selectedDrink;
-  final List<Map<String, String>> temp;
   final Map<String, String>? selectedTemp;
   final Map<String, dynamic>? selectedChoice;
   final Map<String, dynamic>? selectedNoodlesType;
-  final Map<String, dynamic>? selectedMeatPortion;
-  final Map<String, dynamic>? selectedMeePortion;
+  final Map<String, dynamic>? selectedSoupOrKonLou;
   final Map<String, dynamic>? selectedSide;
   final Map<String, dynamic>? selectedAddMilk;
   final Map<String, dynamic>? selectedAddOn;
-  final bool tapao;
-  final List<Map<String, dynamic>> soupOrKonLou;
-  final Map<String, dynamic>? selectedSoupOrKonLou;
+  final Map<String, dynamic>? selectedMeePortion;
+  final Map<String, dynamic>? selectedMeatPortion;
 
-  const ProductItem({
+  const MenuItem({
     super.key,
     required this.onItemAdded,
     required this.item,
-       required this.id,
+    required this.id,
     required this.name,
     required this.originalName,
     required this.image,
     required this.category,
     required this.price,
-    this.selection = false,
+    required this.selection,
     required this.drinks,
+    required this.temp,
     required this.choices,
     required this.noodlesTypes,
-    required this.meatPortion,
-    required this.meePortion,
+    required this.soupOrKonLou,
     required this.sides,
     required this.addMilk,
     required this.addOns,
-    this.selectedDrink,
-    required this.temp,
-    this.selectedTemp,
-    this.selectedChoice,
-    this.selectedNoodlesType,
-    this.selectedMeatPortion,
-    this.selectedMeePortion,
-    this.selectedSide,
-    this.selectedAddMilk,
-    this.selectedAddOn,
+    required this.meePortion,
+    required this.meatPortion,
     this.tapao = false,
-    required this.soupOrKonLou,
-    this.selectedSoupOrKonLou,
+    required this.selectedDrink,
+    required this.selectedTemp,
+    required this.selectedChoice,
+    required this.selectedNoodlesType,
+    required this.selectedSoupOrKonLou,
+    required this.selectedSide,
+    required this.selectedAddMilk,
+    required this.selectedAddOn,
+    required this.selectedMeePortion,
+    required this.selectedMeatPortion,
   });
 
   @override
-  ProductItemState createState() => ProductItemState();
+  MenuItemState createState() => MenuItemState();
 }
 
-class ProductItemState extends State<ProductItem> {
+class MenuItemState extends State<MenuItem> {
   Map<String, dynamic> itemRemarks = {};
   final TextEditingController _controller = TextEditingController();
 
@@ -83,36 +83,27 @@ class ProductItemState extends State<ProductItem> {
   Map<String, String>? selectedTemp;
   Map<String, dynamic>? selectedChoice;
   Set<Map<String, dynamic>> selectedNoodlesType = {};
-  Map<String, dynamic>? selectedMeatPortion;
-  Map<String, dynamic>? selectedMeePortion;
+  Map<String, dynamic>? selectedSoupOrKonLou;
   Set<Map<String, dynamic>> selectedSide = {};
   Map<String, dynamic>? selectedAddMilk;
   Map<String, dynamic>? selectedAddOn;
-  Map<String, dynamic>? selectedSoupOrKonLou;
+  Map<String, dynamic>? selectedMeePortion;
+  Map<String, dynamic>? selectedMeatPortion;
 
   double drinkPrice = 0.00;
   double choicePrice = 0.00;
-  double meatPrice = 0.00;
-  double meePrice = 0.00;
   double noodlesTypePrice = 0.00;
+  double soupOrKonlouPrice = 0.00;
   double sidesPrice = 0.00;
   double addMilkPrice = 0.00;
   double addOnsPrice = 0.00;
-  double soupOrKonlouPrice = 0.00;
+  double meatPrice = 0.00;
+  double meePrice = 0.00;
   double subTotalPrice = 0.00;
 
   @override
   void initState() {
     super.initState();
-    // Initialize selections
-    selectedDrink = widget.drinks.isNotEmpty ? widget.drinks[0] : null;
-    selectedTemp = widget.temp.isNotEmpty ? widget.temp[0] : null;
-    selectedChoice = widget.choices.isNotEmpty ? widget.choices[0] : null;
-    selectedMeatPortion = widget.meatPortion.isNotEmpty ? widget.meatPortion[0] : null;
-    selectedMeePortion = widget.meePortion.isNotEmpty ? widget.meePortion[0] : null;
-    selectedAddMilk = widget.addMilk.isNotEmpty ? widget.addMilk[0] : null;
-    selectedAddOn = widget.addOns.isNotEmpty ? widget.addOns[0] : null;
-    selectedSoupOrKonLou = widget.soupOrKonLou.isNotEmpty ? widget.soupOrKonLou[0] : null;
 
     // Initialize prices
     drinkPrice = _calculateDrinkPrice();
@@ -126,6 +117,18 @@ class ProductItemState extends State<ProductItem> {
     // Calculate subtotal
     subTotalPrice = drinkPrice + choicePrice + meatPrice + meePrice + noodlesTypePrice + sidesPrice + addMilkPrice + addOnsPrice + soupOrKonlouPrice;
   }
+
+  // @override
+  // void didUpdateWidget(covariant ProductItem oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   if (widget.choices != oldWidget.choices && widget.choices.isNotEmpty) {
+  //     setState(() {
+  //       selectedChoice = widget.choices[0]; // Select the first choice by default
+  //       choicePrice = selectedChoice?['price'] ?? 0.0;
+  //       log('didUpdateWidget: selectedChoice updated to: ${selectedChoice?['name']}');
+  //     });
+  //   }
+  // }
 
   // Helper method to calculate drink price
   double _calculateDrinkPrice() {
@@ -348,18 +351,36 @@ class ProductItemState extends State<ProductItem> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return InkWell(
-    onTap: () {
-       log('Item selection from product Page:');
-       log('- ${widget.id}');
-       log('-${widget.name}');
-       log('- ${widget.originalName}');
-       log('- ${widget.image}');
-       log('- ${widget.category}');
-       log('- ${widget.price}');
-       log('- ${widget.selection}');
-      if (widget.selection) {
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        log('Item selection from product Page:');
+        log('- ${widget.id}');
+        log('-${widget.name}');
+        log('- ${widget.originalName}');
+        log('- ${widget.image}');
+        log('- ${widget.category}');
+        log('- ${widget.price}');
+        log('- ${widget.selection}');
+
+        log('- ${widget.drinks}'); //
+        log('- ${widget.temp}'); //
+
+        log('- ${widget.choices}');
+        log('- ${widget.noodlesTypes}');
+
+        log('- ${widget.soupOrKonLou}'); //
+
+        log('- ${widget.sides}'); //
+        log('- ${widget.addMilk}'); //
+        log('- ${widget.addOns}'); //
+
+        log('- ${widget.meePortion}');
+        log('- ${widget.meatPortion}');
+        log('- ${widget.tapao}');
+        log('- selected Choice is ${selectedChoice?['name']}');
+        log('- selected Mee Portion is ${selectedMeePortion?['name']}');
+        if (widget.selection) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -710,8 +731,7 @@ Widget build(BuildContext context) {
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      widget.selection && selectedDrink != null
-                                          ?
+                                      if (widget.drinks.isNotEmpty) ...[
                                           // selectedDrink
                                           Expanded(
                                               flex: 8,
@@ -727,7 +747,7 @@ Widget build(BuildContext context) {
                                                     if (widget.drinks.isNotEmpty) ...[
                                                       const Text(
                                                         'Select Drink',
-                                                        style: TextStyle(
+                                                        style: TextStyle( 
                                                           color: Colors.white,
                                                           fontSize: 14,
                                                         ),
@@ -767,14 +787,11 @@ Widget build(BuildContext context) {
                                                           );
                                                         }).toList(),
                                                       ),
-                                                    ] else ...[
-                                                      const SizedBox.shrink(),
                                                     ],
                                                   ],
                                                 ),
                                               ),
-                                            )
-                                          : const SizedBox.shrink(),
+                                            )],
                                       if (widget.temp.isNotEmpty) const SizedBox(width: 10),
                                       widget.selection && selectedTemp != null
                                           ?
@@ -842,71 +859,68 @@ Widget build(BuildContext context) {
                                             )
                                           : const SizedBox.shrink(),
                                       // if (widget.choices.isNotEmpty) const SizedBox(width: 10),
-                                      widget.selection && selectedChoice != null
-                                          ?
-                                          // selectedChoice
-                                          Expanded(
-                                              child: Container(
-                                                padding: const EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xff1f2029),
-                                                  borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                      if (widget.choices.isNotEmpty) ...[
+                                        // selectedChoice
+                                        Expanded(
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff1f2029),
+                                              borderRadius: BorderRadius.circular(5), // Set the border radius here.
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Select Choice',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                  ),
                                                 ),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    if (widget.choices.isNotEmpty) ...[
-                                                      const Text(
-                                                        'Select Choice',
+                                                Wrap(
+                                                  spacing: 6, // space between buttons horizontally
+                                                  runSpacing: 0, // space between buttons vertically
+                                                  children: widget.choices.map((choice) {
+                                                    return ElevatedButton(
+                                                      onPressed: () {
+                                                        log('Selected choice: ${selectedChoice?['name']}');
+
+                                                        setState(() {
+                                                          selectedChoice = choice;
+                                                          choicePrice = choice['price'];
+                                                          calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
+                                                              calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
+                                                        });
+                                                      },
+                                                      style: ButtonStyle(
+                                                        backgroundColor: WidgetStateProperty.all<Color>(
+                                                          selectedChoice == choice ? Colors.orange : Colors.white,
+                                                        ),
+                                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                          ),
+                                                        ),
+                                                        padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
+                                                      ),
+                                                      child: Text(
+                                                        '${choice['name']}',
                                                         style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 14,
+                                                          color: selectedChoice == choice
+                                                              ? Colors.white
+                                                              : Colors.black, // Change the text color based on the selected button
+                                                          fontSize: 12,
                                                         ),
                                                       ),
-                                                      Wrap(
-                                                        spacing: 6, // space between buttons horizontally
-                                                        runSpacing: 0, // space between buttons vertically
-                                                        children: widget.choices.map((choice) {
-                                                          return ElevatedButton(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                selectedChoice = choice;
-                                                                choicePrice = choice['price'];
-                                                                calculateTotalPrice(drinkPrice, choicePrice, calculateNoodlesPrice(), meatPrice, meePrice,
-                                                                    calculateSidesPrice(), addMilkPrice, addOnsPrice, soupOrKonlouPrice);
-                                                              });
-                                                            },
-                                                            style: ButtonStyle(
-                                                              backgroundColor: WidgetStateProperty.all<Color>(
-                                                                selectedChoice == choice ? Colors.orange : Colors.white,
-                                                              ),
-                                                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(5),
-                                                                ),
-                                                              ),
-                                                              padding: WidgetStateProperty.all(const EdgeInsets.fromLTRB(12, 5, 12, 5)),
-                                                            ),
-                                                            child: Text(
-                                                              '${choice['name']}',
-                                                              style: TextStyle(
-                                                                color: selectedChoice == choice
-                                                                    ? Colors.white
-                                                                    : Colors.black, // Change the text color based on the selected button
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      ),
-                                                    ] else ...[
-                                                      const SizedBox.shrink(),
-                                                    ],
-                                                  ],
+                                                    );
+                                                  }).toList(),
                                                 ),
-                                              ),
-                                            )
-                                          : const SizedBox.shrink(),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                       if (widget.noodlesTypes.isNotEmpty) const SizedBox(width: 10),
                                       //selectedNoodlesType
                                       if (widget.noodlesTypes.isNotEmpty) ...[
@@ -971,9 +985,7 @@ Widget build(BuildContext context) {
                                             ),
                                           ),
                                         ),
-                                      ] else ...[
-                                        const SizedBox.shrink(),
-                                      ],
+                                      ]
                                     ],
                                   ),
                                 ),
@@ -1044,8 +1056,6 @@ Widget build(BuildContext context) {
                                             ),
                                           ),
                                         ),
-                                      ] else ...[
-                                        const SizedBox.shrink(),
                                       ],
                                       if (widget.sides.isNotEmpty) const SizedBox(width: 10),
                                       Expanded(
@@ -1065,7 +1075,7 @@ Widget build(BuildContext context) {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    if (widget.soupOrKonLou.isNotEmpty)
+                                                    if (widget.soupOrKonLou.isNotEmpty) ...[
                                                       Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
@@ -1111,7 +1121,8 @@ Widget build(BuildContext context) {
                                                           ),
                                                           const SizedBox(height: 10),
                                                         ],
-                                                      ),
+                                                      )
+                                                    ],
                                                     const Text(
                                                       'Add Remarks',
                                                       style: TextStyle(color: Colors.white, fontSize: 14),
@@ -1139,7 +1150,7 @@ Widget build(BuildContext context) {
                                 IntrinsicHeight(
                                   child: Row(
                                     children: [
-                                      if (widget.addOns.isNotEmpty)
+                                      if (widget.addOns.isNotEmpty) ...[
                                         Expanded(
                                           flex: 8,
                                           child: Container(
@@ -1205,9 +1216,10 @@ Widget build(BuildContext context) {
                                             ),
                                           ),
                                         ),
+                                      ],
                                       // add milk
                                       if (widget.addMilk.isNotEmpty) const SizedBox(width: 10),
-                                      if (widget.addMilk.isNotEmpty)
+                                      if (widget.addMilk.isNotEmpty) ...[
                                         Expanded(
                                           flex: 4,
                                           child: Container(
@@ -1275,6 +1287,7 @@ Widget build(BuildContext context) {
                                             ),
                                           ),
                                         ),
+                                      ],
                                     ],
                                   ),
                                 ),
@@ -1344,8 +1357,6 @@ Widget build(BuildContext context) {
                                             ),
                                           ),
                                         ),
-                                      ] else ...[
-                                        const SizedBox.shrink(),
                                       ],
                                       if (widget.meePortion.isNotEmpty) const SizedBox(width: 10),
                                       if (widget.meatPortion.isNotEmpty) ...[
@@ -1517,11 +1528,11 @@ Widget build(BuildContext context) {
                                               addMilkPrice, addOnsPrice, soupOrKonlouPrice);
                                           // log('item Price: ${price}');
                                           // log('subTotal Price: $subTotalPrice');
-                                          
-                                          // Reason we didn't save the latest order to the selectedOrder provider or Hive because this order has not being place yet. We only do that after it is confirmed with orderNumber. 
+
+                                          // Reason we didn't save the latest order to the selectedOrder provider or Hive because this order has not being place yet. We only do that after it is confirmed with orderNumber.
                                           // selectedOrderNotifier.updateTotalCost();
                                           // selectedOrderNotifier.updateItem(item);
-                                          
+
                                           widget.onItemAdded(widget.item);
                                           Navigator.of(context).pop();
                                         },
@@ -1566,67 +1577,67 @@ Widget build(BuildContext context) {
               );
             },
           );
-      } else {
-        // Call widget.onItemAdded if selection is false
-        widget.onItemAdded(widget.item);
-      }
-    },
-    child: Container(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        color: const Color(0xff1f2029),
+        } else {
+          // Call widget.onItemAdded if selection is false
+          widget.onItemAdded(widget.item);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: const Color(0xff1f2029),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // item image
+            Container(
+              height: 70,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                image: DecorationImage(
+                  image: AssetImage(widget.image),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            // item name price
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                widget.name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                'RM ${widget.price.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // item image
-          Container(
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-              image: DecorationImage(
-                image: AssetImage(widget.image),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(height: 6),
-          // item name price
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Text(
-              widget.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 13,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Text(
-              'RM ${widget.price.toStringAsFixed(2)}',
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 13,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+    );
+  }
 }
 //         if (item.selection) {
-          
+
 //         } else {
 //           widget.onItemAdded(item);
 //         }
 //       },
-      
+
 //     );
 //   }
 // }

@@ -36,6 +36,7 @@ Future<void> initializeHive() async {
   await initializeOrderCounter();
   await initializeDailySales();
   await initializeCategories();
+  
 }
 
 /// Initializes the order counter if it is not already set

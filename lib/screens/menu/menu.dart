@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/data/categories_data.dart';
 import 'package:jspos/providers/menu_items_provider.dart';
-import 'package:jspos/shared/product_item.dart';
+import 'package:jspos/shared/menu_item.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 
@@ -129,7 +129,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
                 children: filteredItems.map((item) {
                   try {
-                    return ProductItem(
+                    return MenuItem(
                       onItemAdded: widget.onItemAdded,
                       item: item,
                       id: item.id,
@@ -143,16 +143,26 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                       temp: item.temp,
                       choices: item.choices,
                       noodlesTypes: item.noodlesTypes,
-                      meatPortion: item.meatPortion,
-                      meePortion: item.meePortion,
+                      soupOrKonLou: item.soupOrKonLou,
                       sides: item.sides,
                       addMilk: item.addMilk,
                       addOns: item.addOns,
+                      meePortion: item.meePortion,
+                      meatPortion: item.meatPortion,
                       tapao: item.tapao,
-                      soupOrKonLou: item.soupOrKonLou,
+                      selectedDrink: item.drinks.isNotEmpty ? item.drinks[0] : null,
+                      selectedTemp: item.temp.isNotEmpty ? item.temp[0] : null,
+                      selectedChoice: item.choices.isNotEmpty ? item.choices[0] : null,
+                      selectedNoodlesType: item.noodlesTypes.isNotEmpty ? item.noodlesTypes[0] : null,
+                      selectedSoupOrKonLou: item.soupOrKonLou.isNotEmpty ? item.soupOrKonLou[0] : null,
+                      selectedSide: item.sides.isNotEmpty ? item.sides[0] : null,
+                      selectedAddMilk: item.addMilk.isNotEmpty ? item.addMilk[0] : null,
+                      selectedAddOn: item.addOns.isNotEmpty ? item.addOns[0] : null,
+                      selectedMeePortion: item.meePortion.isNotEmpty ? item.meePortion[0] : null,
+                      selectedMeatPortion: item.meatPortion.isNotEmpty ? item.meatPortion[0] : null,
                     );
                   } catch (e) {
-                    log('Error creating ProductItem: $e');
+                    log('Error creating MenuItem: $e');
                     return Container();
                   }
                 }).toList(),

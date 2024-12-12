@@ -1,8 +1,8 @@
 List<Map<String, dynamic>> remarksData = [
   {'id': '1', 'category': 'Dishes', 'remarks': 'No Vege'},
-  {'id': '2', 'category': 'Dishes', 'remarks': 'No Tauge'},
-  {'id': '3', 'category': 'Dishes', 'remarks': 'No Bawang'},
-  {'id': '4', 'category': 'Dishes', 'remarks': 'No Tauhu'},
+  // {'id': '2', 'category': 'Dishes', 'remarks': 'No Tauge'},
+  // {'id': '3', 'category': 'Dishes', 'remarks': 'No Bawang'},
+  // {'id': '4', 'category': 'Dishes', 'remarks': 'No Tauhu'},
 
   {'id': '11', 'category': 'Drinks', 'remarks': 'Less Ice'},
   {'id': '12', 'category': 'Drinks', 'remarks': 'Kurang Manis'},
@@ -13,9 +13,9 @@ List<Map<String, dynamic>> remarksData = [
   {'id': '17', 'category': 'Drinks', 'remarks': 'Kosong'},
 
   {'id': '21', 'category': 'Special', 'remarks': 'No Vege'},
-  {'id': '22', 'category': 'Special', 'remarks': 'No Tauge'},
-  {'id': '23', 'category': 'Special', 'remarks': 'No Bawang'},
-  {'id': '24', 'category': 'Special', 'remarks': 'No Tauhu'},
+  // {'id': '22', 'category': 'Special', 'remarks': 'No Tauge'},
+  // {'id': '23', 'category': 'Special', 'remarks': 'No Bawang'},
+  // {'id': '24', 'category': 'Special', 'remarks': 'No Tauhu'},
 
   // {'id': '31', 'category': 'Add On', 'remarks': 'No Vege'},
   // {'id': '32', 'category': 'Add On', 'remarks': 'No Tauge'},

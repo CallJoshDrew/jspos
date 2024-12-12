@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
+import 'package:jspos/providers/current_user_provider.dart';
 import 'package:jspos/screens/history/history.dart';
 // import 'package:jspos/screens/recommendation/recommend.dart';
 // import 'package:jspos/screens/reports/reports.dart';
@@ -21,35 +24,74 @@ class JPOSApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(
+      home: const MainPage(
       ),
     );
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({
-    super.key,
-  });
-// required this.bluetoothPrint, required this.printerDevices, required this.printersConnected
+class MainPage extends ConsumerStatefulWidget {
+  const MainPage({super.key});
+
   @override
-  State<MainPage> createState() => _MainPageState();
+  ConsumerState<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends ConsumerState<MainPage> {
   String pageActive = "Dine In";
   bool isSideMenuEnabled = true;
   bool isCheckIn = false;
-  void toggleCheckInState() {
+  
+  @override
+  void initState() {
+    super.initState();
+    _initializeUser();
+  }
+
+  Future<void> _initializeUser() async {
+    // Load the app state from Hive
+    final box = await Hive.openBox('appState');
+
+    // Restore `isCheckIn` and `pageActive` from Hive if they exist
+    setState(() {
+      isCheckIn = box.get('isCheckIn', defaultValue: false);
+      pageActive = box.get('pageActive', defaultValue: "Dine In");
+    });
+
+    // Load the current user from Riverpod
+    final currentUserNotifier = ref.read(currentUserProvider.notifier);
+    await currentUserNotifier.loadUser();
+
+    // Ensure `isCheckIn` reflects the current user's state if applicable
+    final currentUser = ref.read(currentUserProvider);
+    if (currentUser != null && currentUser.isCheckIn) {
+      setState(() {
+        isCheckIn = true;
+        pageActive = "Dine In"; // Ensure pageActive matches the Check-In state
+      });
+    }
+  }
+
+  void toggleCheckInState() async {
+    final box = await Hive.openBox('appState'); // Open a Hive box to store state persistently
+
     setState(() {
       isCheckIn = !isCheckIn;
+
+      // Save the `isCheckIn` state to Hive
+      box.put('isCheckIn', isCheckIn);
+
       if (!isCheckIn) {
         pageActive = 'Check In'; // Force pageActive to Check In
       } else if (pageActive == 'Check In') {
         pageActive = 'Dine In'; // Reset to default if returning to isCheckIn
       }
+
+      // Save the `pageActive` value to Hive
+      box.put('pageActive', pageActive);
     });
   }
+  
 
   void freezeSideMenu() {
     setState(() {
