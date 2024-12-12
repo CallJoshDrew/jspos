@@ -15,13 +15,13 @@ class MenuNotifier extends StateNotifier<List<Item>> {
   Future<void> loadMenu() async {
     try {
       final box = await Hive.openBox<Item>('menuBox');
-      log('Box opened: ${box.isEmpty ? "empty" : "not empty"}');
+      // log('Box opened: ${box.isEmpty ? "empty" : "not empty"}');
       if (box.isEmpty) {
         await initializeMenu();
         log('Menu initialized.');
       } else {
         state = box.values.toList();
-        log('Menu loaded from Hive: ${state.length} items.');
+        // log('Menu loaded from Hive: ${state.length} items.');
       }
     } catch (e) {
       log('Error loading menu: ${e.toString()}');
@@ -38,18 +38,18 @@ class MenuNotifier extends StateNotifier<List<Item>> {
 
   Future<void> addItems(List<Item> items) async {
     final box = await Hive.openBox<Item>('menuBox');
-    log('Opened Hive box for adding items.');
+    // log('Opened Hive box for adding items.');
     for (final item in items) {
       try {
-        log('Adding item to box: ${item.name}');
+        // log('Adding item to box: ${item.name}');
         await box.put(item.id, item);
-        log('Item added: ${item.name}');
+        // log('Item added: ${item.name}');
       } catch (e) {
         log('Error adding item: ${e.toString()}');
       }
     }
     state = [...state, ...items];
-    log('Items added to Hive box. Total items: ${box.length}');
+    // log('Items added to Hive box. Total items: ${box.length}');
   }
 
   Future<void> clearMenu() async {
@@ -61,7 +61,7 @@ class MenuNotifier extends StateNotifier<List<Item>> {
 
   List<Item> convertMenuToItems(List<Map<String, dynamic>> menu) {
     return menu.map((data) {
-      log('Converting item: ${data['name']}');
+      // log('Converting item: ${data['name']}');
       return Item(
         id: data['id'],
         name: data['name'],

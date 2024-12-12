@@ -41,10 +41,10 @@ class OrdersNotifier extends StateNotifier<Orders> {
     final existingOrderIndex = updatedOrders.indexWhere((o) => o.orderNumber == order.orderNumber);
     if (existingOrderIndex != -1) {
       updatedOrders[existingOrderIndex] = order;
-      log('Order updated before Hive save: ${order.orderNumber}, Total Quantity: ${order.items.fold(0, (sum, item) => sum + item.quantity)}');
+      // log('Order updated before Hive save: ${order.orderNumber}, Total Quantity: ${order.items.fold(0, (sum, item) => sum + item.quantity)}');
     } else {
       updatedOrders.add(order);
-      log('New order added before Hive save: ${order.orderNumber}, Total Quantity: ${order.items.fold(0, (sum, item) => sum + item.quantity)}');
+      // log('New order added before Hive save: ${order.orderNumber}, Total Quantity: ${order.items.fold(0, (sum, item) => sum + item.quantity)}');
     }
 
     // Update state
@@ -109,7 +109,7 @@ class OrdersNotifier extends StateNotifier<Orders> {
   // Helper method to save current state to Hive
   Future<void> _saveToHive() async {
     await _ordersBox.put('orders', state);
-    log('Orders saved to Hive.');
+    // log('Orders saved to Hive.');
   }
 }
 

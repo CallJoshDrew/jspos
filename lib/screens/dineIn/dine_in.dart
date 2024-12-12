@@ -10,6 +10,7 @@ import 'package:jspos/models/orders.dart';
 // import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/handle_print_jobs.dart';
 import 'package:jspos/providers/client_profile_provider.dart';
+import 'package:jspos/providers/invoice_provider.dart';
 import 'package:jspos/providers/menu_items_provider.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/tables_provider.dart';
@@ -148,7 +149,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
         } else {
           // If the table is already occupied, retrieve the list of occupied tables
           var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
-          log('Occupied Tables are : $occupiedTables');
+          // log('Occupied Tables are : $occupiedTables');
           isTableSelected = true;
           // Retrieve the current table's order number and use it to locate the existing order
           var orderNumber = currentTable['orderNumber'].toString();
@@ -245,7 +246,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
   Future<void> resetSelectedTable(WidgetRef ref) async {
     var resetOrderNumber = "";
     final tables = ref.read(tablesProvider); // use final instead because i just need to read the latest and current values
-    log('The tables length is ${tables.length}');
+    // log('The tables length is ${tables.length}');
     // Check if the selected table index is valid
     if (selectedTableIndex != -1 && selectedTableIndex < tables.length) {
       // Reset the table's orderNumber and occupied status in the provider
@@ -329,8 +330,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
   void handleCancelBtn() {
     final selectedOrder = ref.read(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
-    final currentOrderCounter = ref.read(orderCounterProvider);
-    log('handel Cancel: $currentOrderCounter');
+    // final currentOrderCounter = ref.read(orderCounterProvider);
+    // log('handel Cancel: $currentOrderCounter');
     // yes to cancel orders or cancel changes
     if (selectedOrder.status == "Ordering") {
       setState(() {
@@ -397,8 +398,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
   void handlePaymentBtn(BuildContext context, WidgetRef ref) {
     // // Use the provider to access the current orders state
-    final ordersNotifier = ref.read(ordersProvider);
-    log('Total Orders details: $ordersNotifier');
+    // final ordersNotifier = ref.read(ordersProvider);
+    // log('Total Orders details: $ordersNotifier');
 
     // // Log the selectedOrder with pretty-printed JSON
     // var encoder = const JsonEncoder.withIndent('  ');
@@ -628,7 +629,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   if (currentOrderNumber == null || currentOrderNumber.isEmpty) {
                     // Generate a new order number if it doesn't exist
                     orderNumber = generateID(updatedTables[selectedTableIndex]['name'], ref);
-                    log('Generated orderNumber: $orderNumber');
+                    // log('Generated orderNumber: $orderNumber');
 
                     // Update the table provider and Hive with the new order number
                     ref.read(tablesProvider.notifier).updateSelectedTable(selectedTableIndex, orderNumber, true);
@@ -644,7 +645,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   // Log and prepare the updated selected order
                   final updatedSelectedOrder = ref.read(selectedOrderProvider); // Read the updated state
                   final selectedOrderTotalQty = updatedSelectedOrder.items.fold(0, (sum, item) => sum + item.quantity);
-                  log('Total quantity in selectedOrder: $selectedOrderTotalQty');
+                  // log('Total quantity in selectedOrder: $selectedOrderTotalQty');
 
                   // Step 3: Add or update the order in ordersProvider
                   ref.read(ordersProvider.notifier).addOrUpdateOrder(updatedSelectedOrder);
@@ -652,10 +653,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
                   final ordersState = ref.read(ordersProvider);
                   final ordersTotalQty = ordersState.data.fold(0, (sum, order) {
                     final orderTotalQty = order.items.fold(0, (sum, item) => sum + item.quantity);
-                    log('Order Number: ${order.orderNumber}, Total Quantity: $orderTotalQty');
+                    // log('Order Number: ${order.orderNumber}, Total Quantity: $orderTotalQty');
                     return sum + orderTotalQty;
                   });
-                  log('Total quantity across all orders: $ordersTotalQty');
+                  // log('Total quantity across all orders: $ordersTotalQty');
 
                   // Store the current items in the temporary cart
                   tempCartItems = selectedOrder.items.map((item) => item.copyWith(itemRemarks: item.itemRemarks)).toList();
@@ -877,6 +878,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
     final selectedOrder = ref.watch(selectedOrderProvider);
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
     final clientProfile = ref.watch(clientProfileProvider);
+
+    // Trigger loading the profile if it is null
+    if (clientProfile == null) {
+      Future.microtask(() async {
+        await ref.read(clientProfileProvider.notifier).loadProfile();
+      });
+    }
     // ref.watch observes the provider and rebuilds the widget when the provider's state changes.
     // ref.read is a one-time read of the provider's state and does not trigger a rebuild on changes.
 
@@ -1084,6 +1092,8 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                         await ref.read(ordersProvider.notifier).clearOrders(); // Clears both state and ordersBox
                                         await ref.read(menuProvider.notifier).clearMenu(); // Clears both state and ordersBox
                                         await ref.read(clientProfileProvider.notifier).clearProfile();
+
+                                        await ref.read(invoiceProvider.notifier).resetInvoiceCounter();
                                         log('Providers have been reset.');
 
                                         // Step 2: Clear Hive boxes

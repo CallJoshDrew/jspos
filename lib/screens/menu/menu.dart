@@ -82,7 +82,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       return false;
     }).toList();
 
-    log('Filtered Items: ${filteredItems.length}');
+    // log('Filtered Items: ${filteredItems.length}');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Column(

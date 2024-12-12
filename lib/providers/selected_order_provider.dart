@@ -182,6 +182,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
     required String paymentMethod,
     required String status,
     required String cancelledTime,
+    required String invoiceNumber,
   }) {
     DateTime now = DateTime.now();
     String? formattedDate;
@@ -207,6 +208,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       status: status,
       cancelledTime: cancelledTime,
       paymentTime: formattedDate,
+      invoiceNumber: invoiceNumber,
     );
   }
 
@@ -241,7 +243,7 @@ class SelectedOrderNotifier extends StateNotifier<SelectedOrder> {
       orderTime: DateFormat('h:mm a').format(now),
       totalQuantity: calculateTotalQuantities()
     );
-    log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}, total Quantity: ${state.totalQuantity}');
+    // log('PlaceOrder called: OrderNumber: $orderNumber, TableName: $tableName, SubTotal: ${state.subTotal}, TotalPrice: ${state.totalPrice}, Status: ${state.status}, total Quantity: ${state.totalQuantity}');
   }
 
   int calculateTotalQuantities() {

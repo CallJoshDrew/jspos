@@ -44,6 +44,8 @@ class SelectedOrder with ChangeNotifier {
   String cancelledTime = "Today";
   @HiveField(18)
   int discount = 0; // Default to 0% discount
+  @HiveField(19)
+  String? invoiceNumber; 
 
   SelectedOrder({
     required this.orderNumber,
@@ -63,6 +65,7 @@ class SelectedOrder with ChangeNotifier {
     this.paymentTime = "Today",
     this.cancelledTime = "Today",
     this.discount = 0,
+    this.invoiceNumber,
   });
 
   @override
@@ -88,6 +91,7 @@ class SelectedOrder with ChangeNotifier {
         '\tpaymentTime: $paymentTime,\n'
         '\tcancelledTime: $cancelledTime,\n'
         '\tdiscount: $discount,\n'
+        '\tinvoiceNumber: $invoiceNumber,\n'
         ')';
   }
 
@@ -131,6 +135,7 @@ class SelectedOrder with ChangeNotifier {
     String? paymentTime,
     String? cancelledTime,
     int? discount,
+    String? invoiceNumber,
   }) {
     return SelectedOrder(
       orderNumber: orderNumber ?? this.orderNumber,
@@ -150,6 +155,7 @@ class SelectedOrder with ChangeNotifier {
       paymentTime: paymentTime ?? this.paymentTime,
       cancelledTime: cancelledTime ?? this.cancelledTime,
       discount: discount ?? this.discount,
+      invoiceNumber: invoiceNumber ?? this.invoiceNumber,
     );
   }
 
@@ -171,6 +177,7 @@ class SelectedOrder with ChangeNotifier {
       'paymentTime': paymentTime,
       'cancelledTime': cancelledTime,
       'discount': discount,
+      'invoiceNumber': invoiceNumber,
     };
   }
 }

@@ -114,6 +114,16 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
     }
   }
 
+  int _resolveInvoiceNumberValue(SelectedOrder order, int Function() nullHandler) {
+    if (order.invoiceNumber == null) {
+      return nullHandler(); // Assign a unique negative value for nulls.
+    }
+
+    // Extract the last 4 digits of the invoiceNumber.
+    final match = RegExp(r'\d{4}$').firstMatch(order.invoiceNumber!);
+    return match != null ? int.parse(match.group(0)!) : 0; // Default to 0 if no digits are found.
+  }
+
   @override
   Widget build(BuildContext context) {
     // Return a loading spinner if orders are not loaded yet
@@ -227,7 +237,7 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
         size: ColumnSize.L,
         label: const Center(
           child: Text(
-            'Order Number',
+            'Invoice Number',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,
@@ -238,11 +248,15 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
           setState(() {
             _sortColumnIndex = columnIndex;
             _sortAscending = ascending;
-            if (ascending) {
-              orders?.data.sort((a, b) => int.parse(a.orderNumber.split('-')[1]).compareTo(int.parse(b.orderNumber.split('-')[1])));
-            } else {
-              orders?.data.sort((a, b) => int.parse(b.orderNumber.split('-')[1]).compareTo(int.parse(a.orderNumber.split('-')[1])));
-            }
+
+            int nullCounter = 0; // Tracks unique negative values for nulls.
+
+            orders?.data.sort((a, b) {
+              final aValue = _resolveInvoiceNumberValue(a, () => --nullCounter);
+              final bValue = _resolveInvoiceNumberValue(b, () => --nullCounter);
+
+              return ascending ? aValue.compareTo(bValue) : bValue.compareTo(aValue);
+            });
           });
         },
       ),
@@ -366,7 +380,7 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
       )),
       DataCell(Center(
         child: Text(
-          order.orderNumber,
+          order.invoiceNumber ?? order.orderNumber,
           style: const TextStyle(
             fontSize: 14,
             color: Colors.white,

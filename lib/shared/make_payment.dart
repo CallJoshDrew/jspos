@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
+import 'package:jspos/providers/invoice_provider.dart';
 // import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
@@ -1102,6 +1103,9 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                       : await Hive.openBox<Orders>('orders');
                                                                   _applyDiscount();
                                                                   _calculateAmountReceived();
+                                                                  await ref.read(invoiceProvider.notifier).initializeInvoiceCounter();
+                                                                  String invoiceNumber = await ref.read(invoiceProvider.notifier).generateInvoiceNumber();
+                                                                  // Update selected order with invoice number
                                                                   selectedOrderNotifier.processPayment(
                                                                     amountReceived: amountReceived,
                                                                     amountChanged: amountChanged,
@@ -1111,9 +1115,15 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                     paymentMethod: selectedPaymentMethod,
                                                                     status: 'Paid',
                                                                     cancelledTime: 'None',
+                                                                    invoiceNumber: invoiceNumber,
                                                                   );
+                                                                  log('Generated Invoice Number: $invoiceNumber');
 
                                                                   final updatedSelectedOrder = ref.read(selectedOrderProvider);
+
+                                                                  if (updatedSelectedOrder.invoiceNumber != invoiceNumber) {
+                                                                    log('Warning: Invoice number not updated in selectedOrderProvider');
+                                                                  }
 
                                                                   // Add or update the order and save it in Hive
                                                                   widget.updateOrderStatus?.call();
@@ -1128,13 +1138,13 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                       .updateSelectedTable(widget.selectedTableIndex, emptyOrderNumber, false);
 
                                                                   isTableSelected = !isTableSelected; // Update the state
-                                                                  log('Order saved with discount: ${selectedOrder.discount}');
+                                                                  // log('Order saved with discount: ${selectedOrder.discount}');
 
-                                                                  // Log updated orders from Hive for debugging
-                                                                  var storedOrders = ordersBox.get('orders') as Orders;
-                                                                  for (var order in storedOrders.data) {
-                                                                    log('Order Number: ${order.orderNumber}, Status: ${order.status}, Total Qty: ${order.totalQuantity}');
-                                                                  }
+                                                                  //// Log updated orders from Hive for debugging
+                                                                  // var storedOrders = ordersBox.get('orders') as Orders;
+                                                                  // for (var order in storedOrders.data) {
+                                                                  //   log('Order Number: ${order.orderNumber}, Status: ${order.status}, Total Qty: ${order.totalQuantity}');
+                                                                  // }
 
                                                                   // Safely interact with UI if the widget is still in the tree
                                                                   if (mounted) {

@@ -20,7 +20,7 @@ final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async 
     log('Hardcoded client profile added to Hive.');
   }
 
-  log('Client profile loaded from Hive.');
+  // log('Client profile loaded from Hive.');
   return box;
 });
 
