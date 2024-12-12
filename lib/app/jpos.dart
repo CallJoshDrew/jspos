@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
@@ -10,6 +12,7 @@ import 'package:jspos/screens/home/home.dart';
 import 'package:jspos/screens/dineIn/dine_in.dart';
 import 'package:jspos/user/check_in.dart';
 import 'package:jspos/user/check_out.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 // import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
@@ -24,8 +27,7 @@ class JPOSApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MainPage(
-      ),
+      home: const MainPage(),
     );
   }
 }
@@ -41,7 +43,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   String pageActive = "Dine In";
   bool isSideMenuEnabled = true;
   bool isCheckIn = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +71,17 @@ class _MainPageState extends ConsumerState<MainPage> {
         isCheckIn = true;
         pageActive = "Dine In"; // Ensure pageActive matches the Check-In state
       });
+    } else if (currentUser == null) {
+      if (mounted) {
+        showCherryToast(
+          context,
+          'check_circle',
+          Colors.green,
+          'Welcome! Please log in with your password!',
+          3000,
+          1000,
+        );
+      }
     }
   }
 
@@ -91,7 +104,6 @@ class _MainPageState extends ConsumerState<MainPage> {
       box.put('pageActive', pageActive);
     });
   }
-  
 
   void freezeSideMenu() {
     setState(() {
@@ -132,8 +144,7 @@ class _MainPageState extends ConsumerState<MainPage> {
       // case 'Recommend':
       //   return const RecommendPage();
       case 'Settings':
-        return const SettingsPage(
-        );
+        return const SettingsPage();
       case 'Check Out':
         return CheckOutPage(toggleCheckInState: toggleCheckInState);
       default:
@@ -177,32 +188,30 @@ class _MainPageState extends ConsumerState<MainPage> {
   }
 
   Widget _sideMenu() {
-  return IgnorePointer(
-    ignoring: !isSideMenuEnabled,
-    child: Column(children: [
-      _logo(),
-      const SizedBox(height: 10),
-      Expanded(
-        child: ListView(
-          children: [
-            if (!isCheckIn)
-              _itemMenu(page: 'Check In', icon: Icons.login_rounded),
-            if (isCheckIn) ...[
-              _itemMenu(page: 'Dine In', icon: Icons.dinner_dining),
-              // _itemMenu(page: 'Take Out', icon: Icons.shopping_bag),
-              _itemMenu(page: 'History', icon: Icons.history_sharp),
-              // _itemMenu(page: 'Reports', icon: Icons.bar_chart),
-              // _itemMenu(page: 'Recommend', icon: Icons.thumb_up),
-              _itemMenu(page: 'Settings', icon: Icons.tune),
-              _itemMenu(page: 'Check Out', icon: Icons.logout_rounded),
-            ]
-          ],
-        ),
-      )
-    ]),
-  );
-}
-
+    return IgnorePointer(
+      ignoring: !isSideMenuEnabled,
+      child: Column(children: [
+        _logo(),
+        const SizedBox(height: 10),
+        Expanded(
+          child: ListView(
+            children: [
+              if (!isCheckIn) _itemMenu(page: 'Check In', icon: Icons.login_rounded),
+              if (isCheckIn) ...[
+                _itemMenu(page: 'Dine In', icon: Icons.dinner_dining),
+                // _itemMenu(page: 'Take Out', icon: Icons.shopping_bag),
+                _itemMenu(page: 'History', icon: Icons.history_sharp),
+                // _itemMenu(page: 'Reports', icon: Icons.bar_chart),
+                // _itemMenu(page: 'Recommend', icon: Icons.thumb_up),
+                _itemMenu(page: 'Settings', icon: Icons.tune),
+                _itemMenu(page: 'Check Out', icon: Icons.logout_rounded),
+              ]
+            ],
+          ),
+        )
+      ]),
+    );
+  }
 
   Widget _logo() {
     return const Column(

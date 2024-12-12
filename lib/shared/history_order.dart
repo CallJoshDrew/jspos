@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/handle_print_jobs.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 
 class HistoryOrderPage extends ConsumerStatefulWidget {
   final SelectedOrder historyOrder;
@@ -705,26 +706,17 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                               isPrinting = true;
                                             });
 
-                                            CherryToast(
-                                              icon: Icons.info,
-                                              iconColor: Colors.green,
-                                              themeColor: Colors.green,
-                                              backgroundColor: Colors.white,
-                                              title: const Text(
+                                            if (mounted) {
+                                              showCherryToast(
+                                                context,
+                                                'check_circle',
+                                                Colors.green,
+                                                // 'Welcome Back! ${matchedUser.name}!',
                                                 'Please wait while printing is in process, do not move away from this page.',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              toastPosition: Position.top,
-                                              toastDuration: const Duration(milliseconds: 3000),
-                                              animationType: AnimationType.fromTop,
-                                              animationDuration: const Duration(milliseconds: 1000),
-                                              autoDismiss: true,
-                                              displayCloseButton: false,
-                                            ).show(context);
+                                                3000,
+                                                1000,
+                                              );
+                                            }
                                             // Perform printing process
                                             await handlePrintingJobs(context, ref, selectedOrder: widget.historyOrder, specificArea: 'Cashier');
 

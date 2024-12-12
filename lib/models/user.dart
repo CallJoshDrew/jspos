@@ -20,7 +20,7 @@ class User {
     required this.name,
     required this.role,
     required this.password,
-    this.isCheckIn = false, // Default to false
+    this.isCheckIn = false,
   });
 
   User copyWith({

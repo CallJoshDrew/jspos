@@ -12,6 +12,7 @@ import 'package:jspos/data/remarks.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 // import 'package:jspos/data/menu_data.dart';
 // import 'package:jspos/data/menu1_data.dart';
 
@@ -138,47 +139,6 @@ class _OrderDetailsState extends State<OrderDetails> {
 
     // Return the length of the constructed string
     return result.length;
-  }
-
-  IconData _getIconData(String iconText) {
-    const iconMap = {
-      'info': Icons.info,
-      'check_circle': Icons.check_circle,
-      'remove_circle': Icons.remove_circle,
-      'cancel': Icons.cancel,
-    };
-
-    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
-  }
-
-  void _showCherryToast(
-    String iconText,
-    String titleText,
-    // String iconClr,
-    // String themeClr,
-    int toastDu, // Changed to int for duration
-    int animateDu,
-  ) {
-    CherryToast(
-      icon: _getIconData(iconText), // Retrieve the corresponding icon
-      iconColor: Colors.green,
-      themeColor: const Color.fromRGBO(46, 125, 50, 1),
-      backgroundColor: Colors.white,
-      title: Text(
-        titleText,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      toastPosition: Position.top,
-      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
-      animationType: AnimationType.fromTop,
-      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
-      autoDismiss: true,
-      displayCloseButton: false,
-    ).show(context);
   }
 
   int _getItemQuantityForCategory(String category, List<Item> items) {
@@ -487,7 +447,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   //                                       updateOrderStatus();
                   //                                     }
                   //                                   });
-                  //                                   _showCherryToast(
+                  // /                                   showCherryToast(
                   //                                     'cancel',
                   //                                     'The order has being cancelled!',
                   //                                     2000, // Toast duration in milliseconds
@@ -2257,8 +2217,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                               selectedOrderNotifier.calculateTotalQuantities();
                                               widget.updateOrderStatus!();
                                             });
-                                            _showCherryToast(
+                                            showCherryToast(
+                                              context,
                                               'check_circle',
+                                              Colors.green,
                                               '${item.name} (RM ${item.price.toStringAsFixed(2)})',
                                               2000, // Toast duration in milliseconds
                                               500, // Animation duration in milliseconds
@@ -2316,8 +2278,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 selectedOrderNotifier.updateTotalCost();
                                                 selectedOrderNotifier.calculateTotalQuantities();
                                                 widget.updateOrderStatus!();
-                                                _showCherryToast(
+                                                showCherryToast(
+                                                  context,
                                                   'remove_circle',
+                                                  Colors.deepOrange,
                                                   '${item.name} (RM ${item.price.toStringAsFixed(2)})',
                                                   2000, // Toast duration in milliseconds
                                                   500, // Animation duration in milliseconds
@@ -2343,8 +2307,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 //   displayCloseButton: false,
                                                 // ).show(context);
                                               } else if (item.quantity == 1) {
-                                                _showCherryToast(
+                                                showCherryToast(
+                                                  context,
                                                   'info',
+                                                  Colors.green,
                                                   "Swipe left/right to remove the item",
                                                   2000, // Toast duration in milliseconds
                                                   500, // Animation duration in milliseconds
@@ -2578,8 +2544,10 @@ class _OrderDetailsState extends State<OrderDetails> {
           });
 
           // Show a notification
-          _showCherryToast(
+          showCherryToast(
+            context,
             'remove_circle',
+            Colors.deepOrange,
             'Removed $name',
             1000, // Toast duration in milliseconds
             500, // Animation duration in milliseconds

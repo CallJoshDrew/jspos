@@ -9,6 +9,7 @@ import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/handle_print_jobs.dart';
 import 'package:jspos/providers/orders_provider.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 
 class PrintItemsPage extends ConsumerStatefulWidget {
   final SelectedOrder selectedOrder;
@@ -317,40 +318,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
         },
       ),
     );
-  }
-
-  IconData _getIconData(String iconText) {
-    const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
-
-    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
-  }
-
-  void _showCherryToast(
-    String iconText,
-    String titleText,
-    int toastDu, // Changed to int for duration
-    int animateDu,
-  ) {
-    CherryToast(
-      icon: _getIconData(iconText), // Retrieve the corresponding icon
-      iconColor: Colors.green,
-      themeColor: const Color.fromRGBO(46, 125, 50, 1),
-      backgroundColor: Colors.white,
-      title: Text(
-        titleText,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      toastPosition: Position.top,
-      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
-      animationType: AnimationType.fromTop,
-      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
-      autoDismiss: true,
-      displayCloseButton: false,
-    ).show(context);
   }
 
   @override
@@ -979,8 +946,10 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                 ),
                                                                 onPressed: () async {
                                                                   if (context.mounted) {
-                                                                    _showCherryToast(
+                                                                    showCherryToast(
+                                                                      context,
                                                                       'info',
+                                                                      Colors.green,
                                                                       'Please wait while printing ${widget.selectedOrder.orderNumber} is in the process',
                                                                       5000, // Toast duration in milliseconds
                                                                       5000, // Animation duration in milliseconds
@@ -1007,8 +976,10 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                     );
                                                                   }
                                                                   if (context.mounted) {
-                                                                    _showCherryToast(
+                                                                    showCherryToast(
+                                                                      context,
                                                                       'info',
+                                                                      Colors.green,
                                                                       'Printing is completed',
                                                                       2000, // Toast duration in milliseconds
                                                                       1000, // Animation duration in milliseconds

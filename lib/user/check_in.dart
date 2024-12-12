@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/data/users_data.dart';
 import 'package:jspos/providers/current_user_provider.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 
 final cashProvider = StateProvider<double>((ref) => 0.0);
 
@@ -59,34 +60,34 @@ class CheckInPageState extends ConsumerState<CheckInPage> {
     return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
   }
 
-  void _showCherryToast(
-    String iconText,
-    iconColor,
-    String titleText,
-    int toastDu, // Changed to int for duration
-    int animateDu,
-  ) {
-    CherryToast(
-      icon: _getIconData(iconText), // Retrieve the corresponding icon
-      iconColor: iconColor,
-      themeColor: const Color.fromRGBO(46, 125, 50, 1),
-      backgroundColor: Colors.white,
-      title: Text(
-        titleText,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      toastPosition: Position.top,
-      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
-      animationType: AnimationType.fromTop,
-      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
-      autoDismiss: true,
-      displayCloseButton: false,
-    ).show(context);
-  }
+  // void _showCherryToast(
+  //   String iconText,
+  //   iconColor,
+  //   String titleText,
+  //   int toastDu, // Changed to int for duration
+  //   int animateDu,
+  // ) {
+  //   CherryToast(
+  //     icon: _getIconData(iconText), // Retrieve the corresponding icon
+  //     iconColor: iconColor,
+  //     themeColor: const Color.fromRGBO(46, 125, 50, 1),
+  //     backgroundColor: Colors.white,
+  //     title: Text(
+  //       titleText,
+  //       style: const TextStyle(
+  //         fontSize: 14,
+  //         color: Colors.black,
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //     ),
+  //     toastPosition: Position.top,
+  //     toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
+  //     animationType: AnimationType.fromTop,
+  //     animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
+  //     autoDismiss: true,
+  //     displayCloseButton: false,
+  //   ).show(context);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +224,8 @@ class CheckInPageState extends ConsumerState<CheckInPage> {
                             final cashValue = _cashController.text;
                             // Validation: Check if password and cash are entered
                             if (password.isEmpty || cashValue.isEmpty || double.tryParse(cashValue) == null) {
-                              _showCherryToast(
+                              showCherryToast(
+                                context,
                                 'cancel', // Icon for error
                                 Colors.deepOrange,
                                 'Please enter both a valid password and cash amount.',
@@ -241,17 +243,20 @@ class CheckInPageState extends ConsumerState<CheckInPage> {
                               await ref.read(currentUserProvider.notifier).setUser(matchedUser);
                               // Password is valid, use matchedUser.name in the toast
                               widget.toggleCheckInState();
-
-                              _showCherryToast(
-                                'check_circle',
-                                Colors.green,
-                                // 'Welcome Back! ${matchedUser.name}!',
-                                'Welcome Back ${matchedUser.name}! Available Cash is: RM${double.parse(cashValue).toStringAsFixed(2)}',
-                                3000,
-                                1000,
-                              );
+                              if (mounted) {
+                                showCherryToast(
+                                  context,
+                                  'check_circle',
+                                  Colors.green,
+                                  // 'Welcome Back! ${matchedUser.name}!',
+                                  'Welcome Back ${matchedUser.name}! Available Cash is: RM${double.parse(cashValue).toStringAsFixed(2)}',
+                                  3000,
+                                  1000,
+                                );
+                              }
                             } else {
-                              _showCherryToast(
+                              showCherryToast(
+                                context,
                                 'cancel', // Icon for error
                                 Colors.deepOrange,
                                 'Please enter correct password.',

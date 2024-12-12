@@ -22,9 +22,8 @@ import 'package:jspos/shared/make_payment.dart';
 // import 'package:jspos/data/menu_data.dart';
 import 'dart:developer';
 
-import 'package:cherry_toast/cherry_toast.dart';
-import 'package:cherry_toast/resources/arrays.dart';
 import 'package:jspos/shared/print_items.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 // SpinningLines, FoldingCube,  DancingSquare
@@ -138,12 +137,13 @@ class DineInPageState extends ConsumerState<DineInPage> {
           selectedOrderNotifier.updateStatus("Ordering");
           // Clear any existing items in the temporary cart
           tempCartItems = [];
-          // // Update UI elements related to order status for an empty cart
-          // orderStatus = "Empty Cart";
-          // orderStatusColor = Colors.white10;
-          // // orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
-          // orderStatusIcon = Icons.shopping_cart;
-          // handleMethod = defaultMethod;
+
+          // Update UI elements related to order status for an empty cart
+          orderStatus = "Empty Cart";
+          orderStatusColor = Colors.white10;
+          // orderStatusColor = const Color.fromRGBO(97, 97, 97, 1);
+          orderStatusIcon = Icons.shopping_cart;
+          handleMethod = defaultMethod;
           isTableSelected = false;
         } else {
           // If the table is already occupied, retrieve the list of occupied tables
@@ -183,8 +183,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
     setState(() {
       // Try to find an item in selectedOrder.items with the same id as the new item
       addItemtoCart(item);
-      _showCherryToast(
+      showCherryToast(
+        context,
         'check_circle', // Pass the icon key as a string
+        Colors.green,
         '${item.name} (RM ${item.price.toStringAsFixed(2)})', // Interpolated title text
         1500, // Toast duration in milliseconds
         200, // Animation duration in milliseconds
@@ -198,33 +200,33 @@ class DineInPageState extends ConsumerState<DineInPage> {
     return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
   }
 
-  void _showCherryToast(
-    String iconText,
-    String titleText,
-    int toastDu, // Changed to int for duration
-    int animateDu,
-  ) {
-    CherryToast(
-      icon: _getIconData(iconText), // Retrieve the corresponding icon
-      iconColor: Colors.green,
-      themeColor: const Color.fromRGBO(46, 125, 50, 1),
-      backgroundColor: Colors.white,
-      title: Text(
-        titleText,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      toastPosition: Position.top,
-      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
-      animationType: AnimationType.fromTop,
-      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
-      autoDismiss: true,
-      displayCloseButton: false,
-    ).show(context);
-  }
+  // void _showCherryToast(
+  //   String iconText,
+  //   String titleText,
+  //   int toastDu, // Changed to int for duration
+  //   int animateDu,
+  // ) {
+  //   CherryToast(
+  //     icon: _getIconData(iconText), // Retrieve the corresponding icon
+  //     iconColor: Colors.green,
+  //     themeColor: const Color.fromRGBO(46, 125, 50, 1),
+  //     backgroundColor: Colors.white,
+  //     title: Text(
+  //       titleText,
+  //       style: const TextStyle(
+  //         fontSize: 14,
+  //         color: Colors.black,
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //     ),
+  //     toastPosition: Position.top,
+  //     toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
+  //     animationType: AnimationType.fromTop,
+  //     animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
+  //     autoDismiss: true,
+  //     displayCloseButton: false,
+  //   ).show(context);
+  // }
 
   void addItemtoCart(item) {
     final selectedOrderNotifier = ref.read(selectedOrderProvider.notifier);
@@ -595,8 +597,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
               onPressed: () async {
                 // Show CherryToast before any navigation or other tasks
                 if (selectedTableIndex >= 0 && selectedTableIndex < tables.length) {
-                  _showCherryToast(
+                  showCherryToast(
+                    context,
                     'info', // Pass the icon key as a string
+                    Colors.green,
                     'Success! The order has been placed!',
                     // 'Please press `Table ${tables[selectedTableIndex]['name']}` for printing.',
                     2000, // Toast duration in milliseconds
@@ -605,8 +609,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
                 } else {
                   log('Invalid selectedTableIndex: $selectedTableIndex or tables list is empty.');
                   // Handle the invalid state (e.g., show a default message or an error)
-                  _showCherryToast(
+                  showCherryToast(
+                    context,
                     'error',
+                    Colors.deepOrange,
                     'No table selected or table list is empty.',
                     2000,
                     1500,
@@ -769,8 +775,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
       ),
       onPressed: () {
         handlePrintingJobs(context, ref, selectedOrder: selectedOrder, specificArea: area);
-        _showCherryToast(
-          'info', // Pass the icon key as a string
+        showCherryToast(
+          context,
+          'info',
+          Colors.green, // Pass the icon key as a string
           'Printing ${selectedOrder.orderNumber} is in the process',
           2000, // Toast duration in milliseconds
           1000, // Animation duration in milliseconds
@@ -1196,8 +1204,10 @@ class DineInPageState extends ConsumerState<DineInPage> {
                                                           selectedOrderNotifier.handleCancelOrder();
                                                           updateOrderStatus();
                                                         });
-                                                        _showCherryToast(
+                                                        showCherryToast(
+                                                          context,
                                                           'cancel',
+                                                          Colors.deepOrange,
                                                           'The order has being cancelled!',
                                                           2000, // Toast duration in milliseconds
                                                           200, // Animation duration in milliseconds

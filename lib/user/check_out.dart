@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/providers/current_user_provider.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 
 final cashProvider = StateProvider<double>((ref) => 0.0);
 
@@ -53,34 +54,34 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
     return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
   }
 
-  void _showCherryToast(
-    String iconText,
-    iconColor,
-    String titleText,
-    int toastDu, // Changed to int for duration
-    int animateDu,
-  ) {
-    CherryToast(
-      icon: _getIconData(iconText), // Retrieve the corresponding icon
-      iconColor: iconColor,
-      themeColor: const Color.fromRGBO(46, 125, 50, 1),
-      backgroundColor: Colors.white,
-      title: Text(
-        titleText,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      toastPosition: Position.top,
-      toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
-      animationType: AnimationType.fromTop,
-      animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
-      autoDismiss: true,
-      displayCloseButton: false,
-    ).show(context);
-  }
+  // void _showCherryToast(
+  //   String iconText,
+  //   iconColor,
+  //   String titleText,
+  //   int toastDu, // Changed to int for duration
+  //   int animateDu,
+  // ) {
+  //   CherryToast(
+  //     icon: _getIconData(iconText), // Retrieve the corresponding icon
+  //     iconColor: iconColor,
+  //     themeColor: const Color.fromRGBO(46, 125, 50, 1),
+  //     backgroundColor: Colors.white,
+  //     title: Text(
+  //       titleText,
+  //       style: const TextStyle(
+  //         fontSize: 14,
+  //         color: Colors.black,
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //     ),
+  //     toastPosition: Position.top,
+  //     toastDuration: Duration(milliseconds: toastDu), // Use the passed duration
+  //     animationType: AnimationType.fromTop,
+  //     animationDuration: Duration(milliseconds: animateDu), // Use the passed animation duration
+  //     autoDismiss: true,
+  //     displayCloseButton: false,
+  //   ).show(context);
+  // }
 
   @override
   void dispose() {
@@ -228,7 +229,8 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
                               final cashValue = _cashController.text;
                               // Validation: Check if password and cash are entered
                               if (password.isEmpty || cashValue.isEmpty || double.tryParse(cashValue) == null) {
-                                _showCherryToast(
+                                showCherryToast(
+                                  context,
                                   'cancel', // Icon for error
                                   Colors.deepOrange,
                                   'Please enter both a valid password and cash amount.',
@@ -245,7 +247,8 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
                                 // Update the provider to clear the current user
                                 ref.read(currentUserProvider.notifier).clearUser();
 
-                                _showCherryToast(
+                                showCherryToast(
+                                  context,
                                   'check_circle',
                                   Colors.green,
                                   'Goodbye ${currentUser?.name}! Cash increased to RM${double.parse(cashValue).toStringAsFixed(2)}',
@@ -254,7 +257,8 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
                                 );
                               } else {  
                                 // Password is incorrect
-                                _showCherryToast(
+                                showCherryToast(
+                                  context,
                                   'cancel',
                                   Colors.deepOrange,
                                   'Please enter the correct password.',

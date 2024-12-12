@@ -11,6 +11,7 @@ import 'package:jspos/models/orders.dart';
 import 'package:jspos/providers/orders_provider.dart';
 import 'package:jspos/providers/selected_order_provider.dart';
 import 'package:jspos/providers/tables_provider.dart';
+import 'package:jspos/utils/cherry_toast_utils.dart';
 
 class MakePaymentPage extends ConsumerStatefulWidget {
   final VoidCallback? updateOrderStatus;
@@ -147,30 +148,14 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   // }
   void _showSuccessToast() {
     final tables = ref.read(tablesProvider);
-    CherryToast(
-      icon: Icons.verified_rounded,
-      iconColor: Colors.green,
-      themeColor: const Color.fromRGBO(46, 125, 50, 1),
-      backgroundColor: Colors.white,
-      title: const Text(
-        'Thank you!',
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      description: Text(
-        'The payment for the ${tables[widget.selectedTableIndex]['name']} has been successfully processed.',
-        style: const TextStyle(fontSize: 14),
-      ),
-      toastPosition: Position.top,
-      toastDuration: const Duration(milliseconds: 3000),
-      animationType: AnimationType.fromTop,
-      animationDuration: const Duration(milliseconds: 200),
-      autoDismiss: true,
-      displayCloseButton: false,
-    ).show(context);
+    showCherryToast(
+      context,
+      'check_circle',
+      Colors.green,
+      'The payment for the ${tables[widget.selectedTableIndex]['name']} has been successfully processed.',
+      3000,
+      200,
+    );
   }
 
   void _navigateBack() {

@@ -145,12 +145,12 @@ Future<void> handlePrintingJobs(
               log('Disconnected from printer: ${printer.name} (${printer.macAddress})');
 
               if (context.mounted && areas != ['Cashier', 'Kitchen', 'Beverage']) {
-                showCherryToast(context, 'Successfully printed for $area area.');
+                _showCherryToast(context, 'Successfully printed for $area area.');
               }
             } else {
               log('Failed to connect to printer: ${printer.name} (${printer.macAddress})');
               if (context.mounted) {
-                showCherryToast(
+                _showCherryToast(
                   context,
                   'Failed to connect to ${printer.name}.',
                   iconColor: Colors.red,
@@ -170,7 +170,7 @@ Future<void> handlePrintingJobs(
     } catch (e) {
       log('Error while handling printer for $area area: $e');
       if (context.mounted) {
-        showCherryToast(
+        _showCherryToast(
           context,
           'Error in printing for $area area: $e',
           iconColor: Colors.red,
@@ -182,7 +182,7 @@ Future<void> handlePrintingJobs(
 
   log('All printing jobs are done.');
   if (context.mounted && areas == ['Cashier', 'Kitchen', 'Beverage']) {
-    showCherryToast(context, 'All printing jobs are done.');
+    _showCherryToast(context, 'All printing jobs are done.');
   }
 }
 
@@ -194,7 +194,7 @@ bool hasItemsInCategories(SelectedOrder selectedOrder, List<String> categories) 
   return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => categories.contains(item.category));
 }
 
-void showCherryToast(BuildContext context, String message, {Color? iconColor, IconData? icon}) {
+void _showCherryToast(BuildContext context, String message, {Color? iconColor, IconData? icon}) {
   CherryToast(
     icon: icon ?? Icons.print, // Default to print icon if none provided
     iconColor: iconColor ?? Colors.green,
