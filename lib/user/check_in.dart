@@ -1,10 +1,12 @@
-import 'package:cherry_toast/cherry_toast.dart';
-import 'package:cherry_toast/resources/arrays.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/data/users_data.dart';
+import 'package:jspos/models/shift.dart';
 import 'package:jspos/providers/current_user_provider.dart';
+import 'package:jspos/providers/shift_provider.dart';
 import 'package:jspos/utils/cherry_toast_utils.dart';
 
 final cashProvider = StateProvider<double>((ref) => 0.0);
@@ -54,11 +56,11 @@ class CheckInPageState extends ConsumerState<CheckInPage> {
     super.dispose();
   }
 
-  IconData _getIconData(String iconText) {
-    const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
+  // IconData _getIconData(String iconText) {
+  //   const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
 
-    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
-  }
+  //   return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
+  // }
 
   // void _showCherryToast(
   //   String iconText,
@@ -243,6 +245,16 @@ class CheckInPageState extends ConsumerState<CheckInPage> {
                               await ref.read(currentUserProvider.notifier).setUser(matchedUser);
                               // Password is valid, use matchedUser.name in the toast
                               widget.toggleCheckInState();
+                              // Add record to the shift
+                              final newShift = Shift(
+                                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                                userId: matchedUser.name,
+                                startTime: DateTime.now(),
+                                cashStartAmount: double.parse(cashValue),
+                                status: 'active',
+                              );
+                              await ref.read(shiftsProvider.notifier).addShift(newShift, ref);
+                              final shift = ref.watch(shiftsProvider);
                               if (mounted) {
                                 showCherryToast(
                                   context,

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/models/client_profile.dart';
+import 'package:jspos/models/shift.dart';
 import 'package:jspos/models/user.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/models/daily_sales.dart';
@@ -18,10 +19,11 @@ Future<void> initializeHive() async {
   Hive.registerAdapter(OrdersAdapter());
   Hive.registerAdapter(DailySalesAdapter());
   Hive.registerAdapter(SelectedOrderAdapter());
-   // Indirect Storage: Orders includes a list of SelectedOrder objects. When you save Orders to Hive, it tries to save all its properties, including SelectedOrder instances. Hive requires that all types it writes to storage have registered adapters, so even if you didn’t intend to save SelectedOrder separately, it’s indirectly required to save it as part of Orders.
+  // Indirect Storage: Orders includes a list of SelectedOrder objects. When you save Orders to Hive, it tries to save all its properties, including SelectedOrder instances. Hive requires that all types it writes to storage have registered adapters, so even if you didn’t intend to save SelectedOrder separately, it’s indirectly required to save it as part of Orders.
   Hive.registerAdapter(ItemAdapter());
   Hive.registerAdapter(PrinterAdapter());
-
+  Hive.registerAdapter(ShiftAdapter());
+  
   // Open required Hive boxes
   await Hive.openBox<User>('currentUser');
   await Hive.openBox<Orders>('orders');
@@ -31,12 +33,12 @@ Future<void> initializeHive() async {
   await Hive.openBox<Printer>('printersBox');
   await Hive.openBox('categories');
   // await Hive.openBox<Item>('menuBox'); Didn't load here but loaded in menu page BECAUSE OF COMPLEXITY
+  await Hive.openBox<Shift>('shifts'); // Open a Hive box for shifts
 
   // Initialize data
   await initializeOrderCounter();
   await initializeDailySales();
   await initializeCategories();
-  
 }
 
 /// Initializes the order counter if it is not already set
@@ -59,6 +61,7 @@ Future<void> initializeDailySales() async {
     log('Initialized empty DailySales for today: $today');
   }
 }
+
 /// Gets today's date in YYYY-MM-DD format
 String getCurrentDate() {
   return DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -74,8 +77,3 @@ Future<void> initializeCategories() async {
     log('Initialized default categories: $defaultCategories');
   }
 }
-
-
-
-
-

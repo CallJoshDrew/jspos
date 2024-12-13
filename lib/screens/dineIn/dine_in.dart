@@ -148,7 +148,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           isTableSelected = false;
         } else {
           // If the table is already occupied, retrieve the list of occupied tables
-          var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
+          // var occupiedTables = tablesData.where((table) => table['occupied'] == true).toList();
           // log('Occupied Tables are : $occupiedTables');
           isTableSelected = true;
           // Retrieve the current table's order number and use it to locate the existing order
@@ -644,18 +644,18 @@ class DineInPageState extends ConsumerState<DineInPage> {
 
                   // Log and prepare the updated selected order
                   final updatedSelectedOrder = ref.read(selectedOrderProvider); // Read the updated state
-                  final selectedOrderTotalQty = updatedSelectedOrder.items.fold(0, (sum, item) => sum + item.quantity);
+                  // final selectedOrderTotalQty = updatedSelectedOrder.items.fold(0, (sum, item) => sum + item.quantity);
                   // log('Total quantity in selectedOrder: $selectedOrderTotalQty');
 
                   // Step 3: Add or update the order in ordersProvider
                   ref.read(ordersProvider.notifier).addOrUpdateOrder(updatedSelectedOrder);
                   // Log total quantities from all orders in `ordersProvider`
-                  final ordersState = ref.read(ordersProvider);
-                  final ordersTotalQty = ordersState.data.fold(0, (sum, order) {
-                    final orderTotalQty = order.items.fold(0, (sum, item) => sum + item.quantity);
-                    // log('Order Number: ${order.orderNumber}, Total Quantity: $orderTotalQty');
-                    return sum + orderTotalQty;
-                  });
+                  // final ordersState = ref.read(ordersProvider);
+                  // final ordersTotalQty = ordersState.data.fold(0, (sum, order) {
+                  //   final orderTotalQty = order.items.fold(0, (sum, item) => sum + item.quantity);
+                  //   // log('Order Number: ${order.orderNumber}, Total Quantity: $orderTotalQty');
+                  //   return sum + orderTotalQty;
+                  // });
                   // log('Total quantity across all orders: $ordersTotalQty');
 
                   // Store the current items in the temporary cart

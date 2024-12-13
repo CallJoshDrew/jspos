@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'client_profile.g.dart'; // Import the generated part file
 
-@HiveType(typeId: 5) // Ensure typeId is unique
+@HiveType(typeId: 5)
 class ClientProfile {
   @HiveField(0)
   final String name;

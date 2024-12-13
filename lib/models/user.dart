@@ -13,6 +13,8 @@ class User {
   @HiveField(3)
   final String password;
   @HiveField(4)
+  final String activeShiftId;
+  @HiveField(5)
   final bool isCheckIn;
 
   User({
@@ -20,6 +22,7 @@ class User {
     required this.name,
     required this.role,
     required this.password,
+    required this.activeShiftId,
     this.isCheckIn = false,
   });
 
@@ -28,6 +31,7 @@ class User {
     String? name,
     String? role,
     String? password,
+    String? activeShiftId,
     bool? isCheckIn,
   }) {
     return User(
@@ -35,6 +39,7 @@ class User {
       name: name ?? this.name,
       role: role ?? this.role,
       password: password ?? this.password,
+      activeShiftId: activeShiftId ?? this.activeShiftId,
       isCheckIn: isCheckIn ?? this.isCheckIn,
     );
   }

@@ -1,11 +1,9 @@
 import 'dart:developer';
-
-import 'package:cherry_toast/cherry_toast.dart';
-import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:jspos/providers/current_user_provider.dart';
+import 'package:jspos/providers/shift_provider.dart';
 import 'package:jspos/utils/cherry_toast_utils.dart';
 
 final cashProvider = StateProvider<double>((ref) => 0.0);
@@ -48,11 +46,11 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
     currentTime = DateFormat('h:mm a').format(now).replaceAll("AM", "A.M.").replaceAll("PM", "P.M.");
   }
 
-  IconData _getIconData(String iconText) {
-    const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
+  // IconData _getIconData(String iconText) {
+  //   const iconMap = {'check_circle': Icons.check_circle, 'info': Icons.info, 'cancel': Icons.cancel};
 
-    return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
-  }
+  //   return iconMap[iconText] ?? Icons.info; // Default to 'help' if not found
+  // }
 
   // void _showCherryToast(
   //   String iconText,
@@ -223,30 +221,52 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
                                 const EdgeInsets.fromLTRB(14, 6, 14, 6),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               log('Current User name is: ${currentUser?.name}');
                               final password = _passwordController.text;
                               final cashValue = _cashController.text;
+
                               // Validation: Check if password and cash are entered
                               if (password.isEmpty || cashValue.isEmpty || double.tryParse(cashValue) == null) {
                                 showCherryToast(
                                   context,
-                                  'cancel', // Icon for error
+                                  'cancel',
                                   Colors.deepOrange,
                                   'Please enter both a valid password and cash amount.',
-                                  3000, // Duration in milliseconds
-                                  1000, // Animation duration
+                                  3000,
+                                  1000,
                                 );
                                 return; // Exit the function if validation fails
                               }
+
                               // Validate the password
                               if (currentUser?.password == password) {
-                                // Password is valid, proceed with check-out logic
-                                widget.toggleCheckInState();
+                                // Fetch the active shift ID (stored when the shift was created)
+                                final activeShiftId = ref.read(currentUserProvider)?.activeShiftId;
 
-                                // Update the provider to clear the current user
+                                if (activeShiftId == null) {
+                                  showCherryToast(
+                                    context,
+                                    'cancel',
+                                    Colors.deepOrange,
+                                    'No active shift found to close.',
+                                    3000,
+                                    1000,
+                                  );
+                                  return;
+                                }
+
+                                // Close the active shift
+                                await ref.read(shiftsProvider.notifier).closeShift(
+                                      activeShiftId,
+                                      double.parse(cashValue), // Cash End Amount
+                                      1000.0, // Total Sales
+                                    );
+
+                                // Clear the current user
                                 ref.read(currentUserProvider.notifier).clearUser();
 
+                                // Show success message
                                 showCherryToast(
                                   context,
                                   'check_circle',
@@ -255,7 +275,9 @@ class CheckOutPageState extends ConsumerState<CheckOutPage> {
                                   3000,
                                   1000,
                                 );
-                              } else {  
+
+                                widget.toggleCheckInState();
+                              } else {
                                 // Password is incorrect
                                 showCherryToast(
                                   context,

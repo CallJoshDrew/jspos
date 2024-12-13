@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
 import 'package:jspos/providers/invoice_provider.dart';
@@ -1098,9 +1098,9 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                               onPressed: () async {
                                                                 try {
                                                                   // Access the 'orders' box safely
-                                                                  var ordersBox = Hive.isBoxOpen('orders')
-                                                                      ? Hive.box<Orders>('orders')
-                                                                      : await Hive.openBox<Orders>('orders');
+                                                                  // var ordersBox = Hive.isBoxOpen('orders')
+                                                                  //     ? Hive.box<Orders>('orders')
+                                                                  //     : await Hive.openBox<Orders>('orders');
                                                                   _applyDiscount();
                                                                   _calculateAmountReceived();
                                                                   await ref.read(invoiceProvider.notifier).initializeInvoiceCounter();

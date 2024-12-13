@@ -34,13 +34,14 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
       paymentTime: fields[15] as String,
       cancelledTime: fields[16] as String,
       discount: fields[18] as int,
+      invoiceNumber: fields[19] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, SelectedOrder obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.orderNumber)
       ..writeByte(1)
@@ -74,7 +75,9 @@ class SelectedOrderAdapter extends TypeAdapter<SelectedOrder> {
       ..writeByte(16)
       ..write(obj.cancelledTime)
       ..writeByte(18)
-      ..write(obj.discount);
+      ..write(obj.discount)
+      ..writeByte(19)
+      ..write(obj.invoiceNumber);
   }
 
   @override

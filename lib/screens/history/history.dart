@@ -237,7 +237,7 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
         size: ColumnSize.L,
         label: const Center(
           child: Text(
-            'Invoice Number',
+            'Invoice',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,

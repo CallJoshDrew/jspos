@@ -13,6 +13,8 @@ import 'package:jspos/screens/dineIn/dine_in.dart';
 import 'package:jspos/user/check_in.dart';
 import 'package:jspos/user/check_out.dart';
 import 'package:jspos/utils/cherry_toast_utils.dart';
+
+import '../screens/shift/shift.dart';
 // import 'package:jspos/screens/takeOut/take_out.dart';
 
 class JPOSApp extends StatelessWidget {
@@ -135,6 +137,9 @@ class _MainPageState extends ConsumerState<MainPage> {
         return DineInPage(
           freezeSideMenu: freezeSideMenu,
         );
+      case 'Shift':
+        return const ShiftPage(
+        );
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
@@ -199,6 +204,7 @@ class _MainPageState extends ConsumerState<MainPage> {
               if (!isCheckIn) _itemMenu(page: 'Check In', icon: Icons.login_rounded),
               if (isCheckIn) ...[
                 _itemMenu(page: 'Dine In', icon: Icons.dinner_dining),
+                _itemMenu(page: 'Shift', icon: Icons.timer),
                 // _itemMenu(page: 'Take Out', icon: Icons.shopping_bag),
                 _itemMenu(page: 'History', icon: Icons.history_sharp),
                 // _itemMenu(page: 'Reports', icon: Icons.bar_chart),

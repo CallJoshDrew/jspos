@@ -34,6 +34,12 @@ class CurrentUserNotifier extends StateNotifier<User?> {
     await box.delete('currentUser');
   }
 
+  void updateActiveShiftId(String shiftId) {
+    if (state != null) {
+      state = state!.copyWith(activeShiftId: shiftId);
+    }
+  }
+
   /// Toggle `isCheckIn` status for the current user.
   Future<void> toggleCheckInState() async {
     if (state != null) {
