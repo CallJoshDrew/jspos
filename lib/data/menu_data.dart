@@ -49,7 +49,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Nai", "Hot": 2.50, "Cold": 3.50},
       {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
       {"name": "Tarik", "Hot": 2.50, "Cold": 3.50},
-      {"name": "C Special", "Cold": 4.50},
+      {"name": "C Special", "Hot": 3.50, "Cold": 4.50},
     ],
     "temp": [
       {"name": "Hot"},
@@ -72,7 +72,7 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Kahwin", "Hot": 2.50, "Cold": 3.50},
       {"name": "Cham C", "Hot": 2.50, "Cold": 3.50},
       {"name": "Tarik", "Hot": 2.50, "Cold": 3.50},
-      {"name": "C Special", "Cold": 4.50},
+      {"name": "C Special", "Hot": 3.50, "Cold": 4.50},
     ],
     "temp": [
       {"name": "Hot"},
@@ -160,8 +160,8 @@ final List<Map<String, dynamic>> menu = [
     "image": "assets/drinks/example.png",
     "selection": true,
     "drinks": [
-      {"name": "Sui", "Hot": 2.80, "Cold": 3.80},
-      {"name": "Lemon Asam", "Hot": 3.00, "Cold": 4.00}
+      {"name": "Sui", "Hot": 2.50, "Cold": 3.50},
+      {"name": "Lemon Asam", "Hot": 2.80, "Cold": 3.80}
     ],
     "temp": [
       {"name": "Hot"},
