@@ -2,7 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:jspos/data/menu_data.dart';
+// import 'package:jspos/data/menu_data.dart';
+import 'package:jspos/data/menu1_data.dart';
 import 'package:jspos/models/item.dart';
 
 final menuProvider = StateNotifierProvider<MenuNotifier, List<Item>>((ref) {
@@ -80,6 +81,7 @@ class MenuNotifier extends StateNotifier<List<Item>> {
         addOns: data['add on'] ?? [],
         temp: data['temp'] ?? [],
         soupOrKonLou: data['soupOrKonLou'] ?? [],
+        setDrinks: data['setDrinks'] ?? [],
         tapao: data['tapao'] ?? false, // Default to false if missing
         originalName: data['name'],
       );

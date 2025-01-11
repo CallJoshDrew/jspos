@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jspos/data/categories_data.dart';
 // import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/orders.dart';
@@ -81,7 +82,6 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
   }
 
   // Example of your categories list
-  final List<String> categories = ["Cakes", "Dishes", "Drinks", "Special", "Add On"];
   Map<String, List<Item>> categorizeItems(List<Item> items) {
     Map<String, List<Item>> categorizedItems = {};
 
@@ -371,7 +371,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                 children: [
                                                                   Row(
                                                                     children: [
-                                                                      item.selection && item.selectedSoupOrKonLou != null
+                                                                      item.selection && item.selectedSoupOrKonLou != null && item.selectedSoupOrKonLou!['name'] != "None"
                                                                           ? Row(
                                                                               children: [
                                                                                 Text(
@@ -393,7 +393,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                               ],
                                                                             )
                                                                           : const SizedBox.shrink(),
-                                                                      item.selection && item.selectedNoodlesType != null
+                                                                      item.selection && item.selectedNoodlesType != null && item.selectedSoupOrKonLou!['name'] != "None"
                                                                           ? Wrap(
                                                                               children: [
                                                                                 for (var noodleType in item.selectedNoodlesType!.toList())
@@ -449,13 +449,39 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                       //     : const SizedBox.shrink(),
                                                                     ],
                                                                   ),
+                                                                  Row(
+                                                                  children: [
+                                                                    item.selection && item.selectedSetDrink != null
+                                                                        ? Row(
+                                                                            children: [
+                                                                              Text(
+                                                                                "${item.selectedSetDrink!['name']}",
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 14,
+                                                                                  color: Colors.yellow,
+                                                                                ),
+                                                                              ),
+                                                                              // Display price only if it is greater than 0.00
+                                                                              if (item.selectedSetDrink!['price'] != 0.00)
+                                                                                Text(
+                                                                                  "( + ${item.selectedSetDrink!['price'].toStringAsFixed(2)} ) ",
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Color.fromARGB(255, 114, 226, 118),
+                                                                                  ),
+                                                                                )
+                                                                            ],
+                                                                          )
+                                                                        : const SizedBox.shrink(),
+                                                                  ],
+                                                                ),
                                                                   item.selection &&
                                                                           item.selectedMeePortion != null &&
-                                                                          item.selectedMeePortion!['name'] != "Normal Mee"
+                                                                          item.selectedMeePortion!['name'] != "Normal"
                                                                       ? Row(
                                                                           children: [
                                                                             Text(
-                                                                              "${item.selectedMeePortion!['name']} ",
+                                                                              "${item.selectedMeePortion!['name']} Mee ",
                                                                               style: const TextStyle(
                                                                                 fontSize: 14,
                                                                                 color: Colors.white,
@@ -475,11 +501,11 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                       : const SizedBox.shrink(),
                                                                   item.selection &&
                                                                           item.selectedMeatPortion != null &&
-                                                                          item.selectedMeatPortion!['name'] != "Normal Meat"
+                                                                          item.selectedMeatPortion!['name'] != "Normal"
                                                                       ? Row(
                                                                           children: [
                                                                             Text(
-                                                                              "${item.selectedMeatPortion!['name']} ",
+                                                                              "${item.selectedMeatPortion!['name']} Meat",
                                                                               style: const TextStyle(
                                                                                 fontSize: 14,
                                                                                 color: Colors.white,

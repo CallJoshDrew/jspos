@@ -7,7 +7,7 @@ List<User> mapToUserList(List<Map<String, dynamic>> rawUsers) {
       name: user['name'] as String,
       role: user['role'] as String,
       password: user['password'] as String,
-      activeShiftId: 'activeID'
+      activeShiftId: 'activeID',
     );
   }).toList();
 }

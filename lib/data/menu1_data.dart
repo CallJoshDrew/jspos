@@ -1,14 +1,66 @@
-final List<String> categories = ["Dishes", "Drinks", "Special", "Add On"];
-final List<Map<String, dynamic>> menu1 = [
+// final List<String> categories = ["Dishes", "Drinks", "Special", "Add On"];
+final List<Map<String, dynamic>> menu = [
+  {
+    "id": "301",
+    "name": "Snack",
+    "category": "Breakfast",
+    "price": 10.00,
+    "image": "assets/breakfast/snack.png",
+    "selection": true,
+    "choices": [
+      {"name": "Cheese Tafu", "price": 10.00},
+      {"name": "Fried Wantan", "price": 10.00},
+      {"name": "French Fries", "price": 10.00},
+      {"name": "Chicken Bites", "price": 10.00},
+      {"name": "ManTou", "price": 10.00},
+    ],
+  },
+  {
+    "id": "302",
+    "name": "Breakfast Set",
+    "category": "Breakfast",
+    "price": 9.50,
+    "image": "assets/breakfast/breakfastSet.png",
+    "selection": true,
+    "choices": [
+      {"name": "A - Chicken Luncheon & Egg Noodles", "price": 9.50},
+      {"name": "B - Egg Mayo Sandwich", "price": 5.00},
+      {"name": "C - Ham & Cheese Sandwich", "price": 5.00},
+      {"name": "D - Cheese Sugar Bread", "price": 5.00},
+    ],
+    "soupOrKonLou": [
+      {"name": "None", "price": 0.00},
+      {"name": "Kon Lou", "price": 0.00},
+      {"name": "Spring Onion", "price": 1.00},
+    ],
+    "noodlesTypes": [
+      {"name": "None", "price": 0.00},
+      {"name": "Knife Cut Noodles", "price": 0.00},
+      {"name": "Kuey Teow", "price": 0.00},
+      {"name": "Mee Hokkien", "price": 0.00},
+      {"name": "Mee Kuning", "price": 0.00},
+      {"name": "Mihun", "price": 0.00},
+      {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
+    ],
+    "setDrinks": [
+      {"name": "Kopi O", "price": 0.00},
+      {"name": "Teh O", "price": 0.00},
+    ],
+  },
+  
+  {"id": "304", "name": "Egg Mayo Sandwich", "category": "Breakfast", "price": 3.50, "image": "assets/breakfast/eggMayo.png"},
+  {"id": "305", "name": "Ham & Cheese Sandwich", "category": "Breakfast", "price": 3.50, "image": "assets/breakfast/hamCheese.png"},
+  {"id": "306", "name": "Cheese Sugar Bread", "category": "Breakfast", "price": 3.50, "image": "assets/breakfast/cheeseSugarBread.png"},
   {
     "id": "1",
     "name": "Curry Laksa",
     "category": "Dishes",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/dishes/curry_laksa.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -28,16 +80,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00},
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -82,11 +135,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "2",
     "name": "Tom Yam Soup",
     "category": "Dishes",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/dishes/tom_yam.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -106,16 +159,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -154,11 +208,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "3",
     "name": "Tomato Soup",
     "category": "Dishes",
-    "price": 9.00,
+    "price": 11.00,
     "image": "assets/dishes/tomato_soup.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 9.00},
+      // {"name": "Only", "price": 9.00},
       {"name": "Fish MIXED Chicken", "price": 11.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 12.00},
       {"name": "Seafood", "price": 13.00},
@@ -178,16 +232,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -230,11 +285,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "4",
     "name": "Salted Vege Soup",
     "category": "Dishes",
-    "price": 9.00,
+    "price": 11.00,
     "image": "assets/dishes/salted_soup.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 9.00},
+      // {"name": "Only", "price": 9.00},
       {"name": "Fish MIXED Chicken", "price": 11.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 12.00},
       {"name": "Seafood", "price": 13.00},
@@ -254,16 +309,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -306,11 +362,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "5",
     "name": "Kon Lou Mee",
     "category": "Dishes",
-    "price": 8.00,
+    "price": 10.00,
     "image": "assets/dishes/kon_lao_mee.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 8.00},
+      // {"name": "Only", "price": 8.00},
       {"name": "Fish MIXED Chicken", "price": 10.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 11.00},
       {"name": "Seafood", "price": 12.00},
@@ -324,16 +380,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -372,11 +429,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "6",
     "name": "Fresh Soup",
     "category": "Dishes",
-    "price": 8.00,
+    "price": 10.00,
     "image": "assets/dishes/fresh_soup.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 8.00},
+      // {"name": "Only", "price": 8.00},
       {"name": "Fish MIXED Chicken", "price": 10.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 11.00},
       {"name": "Seafood", "price": 12.00},
@@ -396,16 +453,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -444,11 +502,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "7",
     "name": "Lor Mee",
     "category": "Dishes",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/dishes/lor_mee.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -468,16 +526,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -516,11 +575,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "8",
     "name": "Bittergourd Soup",
     "category": "Dishes",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/dishes/balia_soup.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -540,16 +599,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -588,11 +648,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "9",
     "name": "Seaweed Soup",
     "category": "Dishes",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/dishes/seaweed_soup.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -612,16 +672,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -664,11 +725,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "10",
     "name": "White Chicken Soup",
     "category": "Dishes",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/dishes/white_soup.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -688,16 +749,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -736,11 +798,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "11",
     "name": "Spring Onion Oil Noodles",
     "category": "Dishes",
-    "price": 9.00,
+    "price": 11.00,
     "image": "assets/dishes/spring_onion_oil_mee.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 9.00},
+      // {"name": "Only", "price": 9.00},
       {"name": "Fish MIXED Chicken", "price": 11.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 12.00},
       {"name": "Seafood", "price": 13.00},
@@ -754,16 +816,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -812,16 +875,16 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Lemon Sauce", "price": 10.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
   },
   {
     "id": "14",
     "name": "Black Soy Sauce Chicken",
     "category": "Dishes",
-    "price": 8.00,
+    "price": 6.00,
     "image": "assets/dishes/black_ayam.png",
     "selection": true,
     "choices": [
@@ -832,26 +895,62 @@ final List<Map<String, dynamic>> menu1 = [
     ],
     "noodlesTypes": [
       {"name": "None", "price": 0.00},
+      {"name": "Rice", "price": 0.00},
       {"name": "Knife Cut Noodles", "price": 0.00},
       {"name": "Kuey Teow", "price": 0.00},
       {"name": "Mee Hokkien", "price": 0.00},
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
-      {"name": "Rice", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "Black Soy Sauce Egg", "price": 1.50},
+    ],
+  },
+  {
+    "id": "15",
+    "name": "Hakka Oyster Sauce Chicken",
+    "category": "Dishes",
+    "price": 6.00,
+    "image": "assets/dishes/hakkaOysterSauceChicken.png",
+    "selection": true,
+    "choices": [
+      {"name": "Half Thigh Only", "price": 6.00},
+      {"name": "Half Thigh w Rice/Mee", "price": 8.50},
+      {"name": "Whole Thigh Only", "price": 13.00},
+      {"name": "Whole Thigh w Rice/Mee", "price": 15.50},
+    ],
+    "noodlesTypes": [
+      {"name": "None", "price": 0.00},
+      {"name": "Rice", "price": 0.00},
+      {"name": "Knife Cut Noodles", "price": 0.00},
+      {"name": "Kuey Teow", "price": 0.00},
+      {"name": "Mee Hokkien", "price": 0.00},
+      {"name": "Mee Kuning", "price": 0.00},
+      {"name": "Mihun", "price": 0.00},
+      {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
+    ],
+    "meat portion": [
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
+    ],
+    "mee portion": [
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
   },
   {
@@ -862,6 +961,7 @@ final List<Map<String, dynamic>> menu1 = [
     "image": "assets/dishes/bubur.png",
     "selection": true,
     "choices": [
+      {"name": "Only", "price": 4.00},
       {"name": "Chicken", "price": 9.00},
       {"name": "Fish", "price": 11.00},
       {"name": "Prawn", "price": 11.00},
@@ -1112,12 +1212,13 @@ final List<Map<String, dynamic>> menu1 = [
     "image": "assets/drinks/wheatgrass.png",
     "selection": true,
     "drinks": [
-      {"name": "Wheatgrass", "Cold": 4.50},
+      {"name": "Wheatgrass", "Hot":3.50, "Cold": 4.50},
       {"name": "w Lemon", "Cold": 5.00},
       {"name": "w Kit Zai", "Cold": 5.00},
       {"name": "w Milk", "Cold": 5.00},
     ],
     "temp": [
+      {"name": "Hot"},
       {"name": "Cold"}
     ],
   },
@@ -1249,8 +1350,69 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Kon Lou", "price": 10.00},
     ],
   },
-  {"id": "156", "name": "Soup", "category": "Add On", "price": 2.00, "image": "assets/addOn/freshSoup.png"},
-  {"id": "157", "name": "Container", "category": "Add On", "price": 0.50, "image": "assets/addOn/container.png"},
+  {
+    "id": "156",
+    "name": "Fishball",
+    "category": "Add On",
+    "price": 10.00,
+    "image": "assets/addOn/wantan.png",
+    "selection": true,
+    "choices": [
+      {"name": "Fishball", "price": 10.00},
+    ],
+    "soupOrKonLou": [
+      {"name": "Soup", "price": 0.00},
+      {"name": "Kon Lou", "price": 0.00},
+    ],
+  },
+  {
+    "id": "157",
+    "name": "Fresh Soup",
+    "category": "Add On",
+    "price": 3.00,
+    "image": "assets/addOn/freshSoup.png",
+    "selection": true,
+    "choices": [
+      {"name": "Fresh Soup", "price": 3.00},
+    ],
+    "soupOrKonLou": [
+      {"name": "Soup", "price": 0.00},
+      {"name": "Kon Lou", "price": 0.00},
+    ],
+  },
+  {
+    "id": "158",
+    "name": "Soup",
+    "category": "Add On",
+    "price": 5.00,
+    "image": "assets/addOn/freshSoup.png",
+    "selection": true,
+    "choices": [
+      {"name": "Soup", "price": 5.00},
+      {"name": "& Noodles", "price": 6.00},
+    ],
+    "noodlesTypes": [
+      {"name": "None", "price": 0.00},
+      {"name": "Knife Cut Noodles", "price": 0.00},
+      {"name": "Kuey Teow", "price": 0.00},
+      {"name": "Mee Hokkien", "price": 0.00},
+      {"name": "Mee Kuning", "price": 0.00},
+      {"name": "Mihun", "price": 0.00},
+      {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
+    ],
+    "soupOrKonLou": [
+      {"name": "Soup", "price": 0.00},
+      {"name": "Kon Lou", "price": 0.00},
+      {"name": "Spring Onion", "price": 1.00},
+    ],
+    "mee portion": [
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
+    ],
+  },
+  {"id": "159", "name": "Container", "category": "Add On", "price": 0.50, "image": "assets/addOn/container.png"},
   {
     "id": "201",
     "name": "Tauchu Mee",
@@ -1268,27 +1430,28 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
   },
   {
     "id": "202",
     "name": "Chinese Herbal Noodle Soup",
     "category": "Special",
-    "price": 11.00,
+    "price": 13.00,
     "image": "assets/special/chinese_soup.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 11.00},
+      // {"name": "Only", "price": 11.00},
       {"name": "Fish MIXED Chicken", "price": 13.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 14.00},
       {"name": "Seafood", "price": 15.00},
@@ -1308,16 +1471,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -1356,11 +1520,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "203",
     "name": "Peanut Soup",
     "category": "Special",
-    "price": 11.00,
+    "price": 13.00,
     "image": "assets/special/peanut.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 11.00},
+      // {"name": "Only", "price": 11.00},
       {"name": "Fish MIXED Chicken", "price": 13.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 14.00},
       {"name": "Seafood", "price": 15.00},
@@ -1380,16 +1544,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -1428,11 +1593,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "204",
     "name": "Sweet Corn Soup",
     "category": "Special",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/special/sweetCorn.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -1452,16 +1617,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -1500,11 +1666,11 @@ final List<Map<String, dynamic>> menu1 = [
     "id": "205",
     "name": "Pumpkin Soup",
     "category": "Special",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/special/pumpkin.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -1524,16 +1690,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -1580,20 +1747,20 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Curry Chicken Only", "price": 8.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
   },
   {
-    "id": "207",
+    "id": "208",
     "name": "Special Menu",
     "category": "Special",
-    "price": 10.00,
+    "price": 12.00,
     "image": "assets/special/special12.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 10.00},
+      // {"name": "Only", "price": 10.00},
       {"name": "Fish MIXED Chicken", "price": 12.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 13.00},
       {"name": "Seafood", "price": 14.00},
@@ -1613,16 +1780,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},
@@ -1658,14 +1826,14 @@ final List<Map<String, dynamic>> menu1 = [
     ],
   },
   {
-    "id": "208",
+    "id": "209",
     "name": "Special Menu",
     "category": "Special",
-    "price": 11.00,
+    "price": 13.00,
     "image": "assets/special/special13.png",
     "selection": true,
     "choices": [
-      {"name": "Only", "price": 11.00},
+      // {"name": "Only", "price": 11.00},
       {"name": "Fish MIXED Chicken", "price": 13.00},
       {"name": "Fish Mixed Chicken & Seafood", "price": 14.00},
       {"name": "Seafood", "price": 15.00},
@@ -1685,16 +1853,17 @@ final List<Map<String, dynamic>> menu1 = [
       {"name": "Mee Kuning", "price": 0.00},
       {"name": "Mihun", "price": 0.00},
       {"name": "Spring Mee", "price": 0.00},
+      {"name": "Mihun Halus", "price": 0.00},
     ],
     "meat portion": [
-      {"name": "Normal Meat", "price": 0.00},
-      {"name": "Extra Meat", "price": 2.00},
-      {"name": "Less Meat", "price": 0.00}
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 2.00},
+      {"name": "Less", "price": 0.00}
     ],
     "mee portion": [
-      {"name": "Normal Mee", "price": 0.00},
-      {"name": "Extra Mee", "price": 1.00},
-      {"name": "Less Mee", "price": 0.00},
+      {"name": "Normal", "price": 0.00},
+      {"name": "Extra", "price": 1.00},
+      {"name": "Less", "price": 0.00},
     ],
     "sides": [
       {"name": "A", "price": 0.00},

@@ -66,7 +66,11 @@ class Item with ChangeNotifier {
   @HiveField(29)
   List<Map<String, dynamic>> soupOrKonLou;
   @HiveField(30)
+  List<Map<String, dynamic>> setDrinks;
+  @HiveField(31)
   Map<String, dynamic>? selectedSoupOrKonLou;
+  @HiveField(32)
+  Map<String, dynamic>? selectedSetDrink;
 
   Item({
     required this.id,
@@ -97,7 +101,9 @@ class Item with ChangeNotifier {
     this.itemRemarks,
     this.tapao = false,
     required this.soupOrKonLou,
+    required this.setDrinks,
     this.selectedSoupOrKonLou,
+    this.selectedSetDrink,
     required this.originalName,
   })  : originalPrice = price,
         _selectedDrink = selectedDrink,
@@ -138,7 +144,9 @@ class Item with ChangeNotifier {
         '\titemRemarks: ${itemRemarks.toString()}\n'
         '\ttapao: $tapao, \n'
         '\tsoupOrKonlou: ${soupOrKonLou.toString()}, \n'
+        '\tsetDrinks: ${setDrinks.toString()}, \n'
         '\tselectedSoupOrKonLou: $selectedSoupOrKonLou, \n'
+        '\tselectedSetDrink;: $selectedSetDrink;, \n'
         '}';
   }
 
@@ -191,8 +199,10 @@ class Item with ChangeNotifier {
     Map<String, dynamic>? itemRemarks,
     bool? tapao,
     List<Map<String, dynamic>>? soupOrKonLou,
+    List<Map<String, dynamic>>? setDrinks,
     // Use List<Map<String, dynamic>> when you need an ordered collection of maps, and it’s acceptable for maps to be duplicated. This is useful for data where the order matters, like a list of user profiles, transaction history, or ordered items in a cart.
     Map<String, dynamic>? selectedSoupOrKonLou,
+    Map<String, dynamic>? selectedSetDrink,
 
   // •	Map<String, dynamic>: Use for single objects with key-value pairs (e.g., user settings).
 	// •	Set<Map<String, dynamic>>: Use for unique collections where order doesn’t matter (e.g., unique configurations).
@@ -228,7 +238,9 @@ class Item with ChangeNotifier {
       itemRemarks: itemRemarks ?? this.itemRemarks, // This ensures the value is set
       tapao: tapao ?? this.tapao,
       soupOrKonLou: soupOrKonLou ?? List<Map<String, dynamic>>.from(this.soupOrKonLou),
+      setDrinks: setDrinks ?? List<Map<String, dynamic>>.from(this.setDrinks),
       selectedSoupOrKonLou: selectedSoupOrKonLou ?? (this.selectedSoupOrKonLou != null ? Map<String, dynamic>.from(this.selectedSoupOrKonLou!) : null),
+      selectedSetDrink: selectedSetDrink ?? (this.selectedSetDrink != null ? Map<String, dynamic>.from(this.selectedSetDrink!) : null),
     );
   }
 
@@ -263,7 +275,9 @@ class Item with ChangeNotifier {
       'itemRemarks': itemRemarks,
       'tapao': tapao,
       'soupOrKonLou': soupOrKonLou.map((type) => Map<String, dynamic>.from(type)).toList(),
+      'setDrinks': setDrinks.map((type) => Map<String, dynamic>.from(type)).toList(),
       'selectedSoupOrKonLou': selectedSoupOrKonLou != null ? Map<String, dynamic>.from(selectedSoupOrKonLou!) : null,
+      'selectedSetDrink': selectedSetDrink != null ? Map<String, dynamic>.from(selectedSetDrink!) : null,
     };
   }
 }

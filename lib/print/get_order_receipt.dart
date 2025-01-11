@@ -228,13 +228,13 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
 
         String formatMeeAndMeatPortion(item) {
           String meePortionText = '';
-          if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal Mee") {
-            meePortionText = item.selectedMeePortion!["name"];
+          if (item.selectedMeePortion != null && item.selectedMeePortion!["name"] != "Normal") {
+            meePortionText = '${item.selectedMeePortion!["name"]} Mee';
           }
 
           String meatPortionText = '';
-          if (item.selectedMeatPortion != null && item.selectedMeatPortion!["name"] != "Normal Meat") {
-            meatPortionText = item.selectedMeatPortion!["name"];
+          if (item.selectedMeatPortion != null && item.selectedMeatPortion!["name"] != "Normal") {
+            meatPortionText = '${item.selectedMeatPortion!["name"]} Meat';
           }
 
           List<String> portions = [];

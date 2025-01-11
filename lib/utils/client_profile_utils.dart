@@ -1,18 +1,18 @@
 import 'package:jspos/models/client_profile.dart';
 
-ClientProfile mapToClientProfile(Map<String, dynamic> map) {
+ClientProfile mapToClientProfile(Map<String, dynamic> data) {
   return ClientProfile(
-    name: map['name'] as String,
-    businessRegistrationNumber: map['businessRegistrationNumber'] as String,
-    tradingLicense: map['tradingLicense'] as String,
-    tinNumber: map['tinNumber'] as String,
-    address1: map['address1'] as String,
-    address2: map['address2'] as String?,
-    address3: map['address3'] as String?,
-    postcode: map['postcode'] as String,
-    state: map['state'] as String,
-    contactNumber: map['contactNumber'] as String,
-    logoPath: map['logoPath'] as String?,
+    name: data['name'] as String? ?? 'Default Name',
+    businessRegistrationNumber: data['businessRegistrationNumber'] as String? ?? 'Default BRN',
+    tradingLicense: data['tradingLicense'] as String? ?? 'Default License',
+    tinNumber: data['tinNumber'] as String? ?? 'Default TIN',
+    address1: data['address1'] as String? ?? 'Default Address1',
+    address2: data['address2'] as String? ?? 'Default Address2',
+    address3: data['address3'] as String? ?? 'Default Address3',
+    postcode: data['postcode'] as String? ?? '00000',
+    state: data['state'] as String? ?? 'Default State',
+    contactNumber: data['contactNumber'] as String? ?? '000-000-0000',
+    logoPath: data['logoPath'] as String? ?? 'Default Logo Path',
   );
 }
 

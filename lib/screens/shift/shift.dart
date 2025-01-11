@@ -13,47 +13,60 @@ class ShiftPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shifts'),
+        title: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text('Shifts'),
+        ),
       ),
-      body: shifts.isEmpty
-          ? const Center(
-              child: Text(
-                'No shifts recorded.',
-                style: TextStyle(fontSize: 16),
-              ),
-            )
-          : ListView.builder(
-              itemCount: shifts.length,
-              itemBuilder: (context, index) {
-                final shift = shifts[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(shift.userId),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Text('ID: ${shift.id}'),
-                        // Text('UserID: ${shift.userId}'),
-                        Text('Start Time: ${formatDateTime(shift.startTime)}'),
-                        Text('End Time: ${shift.endTime != null ? formatDateTime(shift.endTime!) : 'Ongoing'}'),
-                        Text('Cash Start Amount: RM ${shift.cashStartAmount.toStringAsFixed(2)}'),
-                        if (shift.status == 'closed') ...[
-                          Text('Cash End Amount: RM ${shift.cashEndAmount?.toStringAsFixed(2)}'),
-                          Text('Total Sales: RM ${shift.totalSales}'),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: shifts.isEmpty
+            ? const Center(
+                child: Text(
+                  'No shifts recorded.',
+                  style: TextStyle(fontSize: 16),
+                ),
+              )
+            : ListView.builder(
+                itemCount: shifts.length,
+                itemBuilder: (context, index) {
+                  final shift = shifts[index];
+                  return Card(
+                    child: ListTile(
+                      title: Text(shift.userId),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Text('ID: ${shift.id}'),
+                          // Text('UserID: ${shift.userId}'),
+                          Text('Start Time: ${formatDateTime(shift.startTime)}'),
+                          Text('End Time: ${shift.endTime != null ? formatDateTime(shift.endTime!) : 'Ongoing'}'),
+                          Text('Cash Start Amount: RM ${shift.cashStartAmount.toStringAsFixed(2)}'),
+                          if (shift.status == 'closed') ...[
+                            Text('Cash End Amount: RM ${shift.cashEndAmount?.toStringAsFixed(2)}'),
+                            Text(
+                              'Total Sales: RM ${shift.totalSales}',
+                              style: const TextStyle(
+                                fontSize: 16, // Set the font size
+                                color: Colors.green, // Set the font color
+                                fontWeight: FontWeight.bold, // Optional: Set the font weight
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
-                    trailing: Text(
-                      shift.status == 'closed' ? 'Closed' : 'Active',
-                      style: TextStyle(
-                        color: shift.status == 'closed' ? Colors.grey : Colors.green,
-                        fontSize: 14,
+                      ),
+                      trailing: Text(
+                        shift.status == 'closed' ? 'Closed' : 'Active',
+                        style: TextStyle(
+                          color: shift.status == 'closed' ? Colors.grey : Colors.green,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+      ),
     );
   }
 }

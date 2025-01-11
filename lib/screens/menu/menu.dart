@@ -170,6 +170,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                     addOns: item.addOns,
                     tapao: item.tapao,
                     soupOrKonLou: item.soupOrKonLou,
+                    setDrinks: item.setDrinks,
                   );
                   
                 }).toList(),

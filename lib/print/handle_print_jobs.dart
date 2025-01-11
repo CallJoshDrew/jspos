@@ -106,7 +106,7 @@ Future<void> handlePrintingJobs(
 
                 switch (area) {
                   case 'Kitchen':
-                    if (hasItemsInCategories(selectedOrder!, ['Dishes','Special', 'Add On'])) {
+                    if (hasItemsInCategories(selectedOrder!, ['Breakfast','Dishes','Special','Add On'])) {
                       receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, ["Dishes", "Special", "Add On"]);
                       log('Paper width Kitchen printer is ${printer.paperWidth}');
                     } else {

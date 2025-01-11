@@ -57,10 +57,14 @@ class DineInPageState extends ConsumerState<DineInPage> {
     // orderCounter = ref.read(orderCounterProvider); // Directly read initial order counter
 
     // tables = ref.read(tablesProvider); // Directly read initial tables data
-    Future.microtask(() {
+    Future.microtask(() async {
       ref.read(selectedOrderProvider.notifier).initializeNewOrder();
       ref.read(menuProvider.notifier).loadMenu();
-      ref.read(clientProfileProvider.notifier).loadProfile();
+      await ref.read(clientProfileProvider.notifier).loadProfile();
+
+      // Log the current client profile
+    final clientProfile = ref.read(clientProfileProvider);
+    log('Current client profile: $clientProfile');
     });
 
     isLoading = false; // Set loading flag to false if needed

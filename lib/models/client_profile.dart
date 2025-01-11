@@ -17,13 +17,13 @@ class ClientProfile {
   final String tinNumber;
 
   @HiveField(4)
-  final String address1;
+  final String address1; // Non-nullable field
 
   @HiveField(5)
-  final String? address2;
+  final String? address2; // Nullable field
   
   @HiveField(6)
-  final String? address3;
+  final String? address3; // Nullable field
 
   @HiveField(7)
   final String postcode;
@@ -38,16 +38,16 @@ class ClientProfile {
   final String? logoPath; // Local path to PNG logo
 
   ClientProfile({
-    required this.name,
-    required this.businessRegistrationNumber,
-    required this.tradingLicense,
-    required this.tinNumber,
-    required this.address1,
+    this.name = 'Default Name',
+    this.businessRegistrationNumber = 'Default BRN',
+    this.tradingLicense = 'Default License',
+    this.tinNumber = 'Default TIN',
+    this.address1 = 'Default Address1',
     this.address2,
     this.address3,
-    required this.postcode,
-    required this.state,
-    required this.contactNumber,
+    this.postcode = '00000',
+    this.state = 'Default State',
+    this.contactNumber = '000-000-0000',
     this.logoPath,
   });
 }

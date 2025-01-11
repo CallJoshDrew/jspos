@@ -4,7 +4,7 @@ import 'package:jspos/data/menu1_data.dart';
 
 class TopFivePage extends StatelessWidget {
   // Extract only the necessary details from the menu
-  final List<Map<String, dynamic>> menuItems = menu1.take(5).toList();
+  final List<Map<String, dynamic>> menuItems = menu.take(5).toList();
 
   // Accept getTotalTab widget in the constructor
   final Widget getTotalTab;

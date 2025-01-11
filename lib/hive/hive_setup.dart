@@ -9,6 +9,8 @@ import 'package:jspos/models/daily_sales.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/models/item.dart';
 import 'package:jspos/models/printer.dart';
+import 'package:jspos/providers/client_profile_provider.dart';
+import 'package:riverpod/riverpod.dart'; 
 
 Future<void> initializeHive() async {
   await Hive.initFlutter();
@@ -25,6 +27,7 @@ Future<void> initializeHive() async {
   Hive.registerAdapter(ShiftAdapter());
   
   // Open required Hive boxes
+  await Hive.openBox<ClientProfile>('clientProfiles');
   await Hive.openBox<User>('currentUser');
   await Hive.openBox<Orders>('orders');
   await Hive.openBox('orderCounter');
@@ -36,9 +39,24 @@ Future<void> initializeHive() async {
   await Hive.openBox<Shift>('shifts'); // Open a Hive box for shifts
 
   // Initialize data
+  final container = ProviderContainer();
+  await initializeClientProfile(container); 
   await initializeOrderCounter();
   await initializeDailySales();
   await initializeCategories();
+
+  // Dispose the container to avoid memory leaks
+  container.dispose();
+}
+
+/// Initializes the client profile if it is not already set
+Future<void> initializeClientProfile(ProviderContainer container) async {
+  final clientProfileNotifier = container.read(clientProfileProvider.notifier);
+  await clientProfileNotifier.loadProfile();
+
+  // Log the current client profile
+  final clientProfile = container.read(clientProfileProvider);
+  log('Current client profile: $clientProfile');
 }
 
 /// Initializes the order counter if it is not already set

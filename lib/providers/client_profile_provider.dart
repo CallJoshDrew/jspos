@@ -9,6 +9,7 @@ import 'package:jspos/utils/client_profile_utils.dart'; // Import utility functi
 final clientProfileProvider = StateNotifierProvider<ClientProfileNotifier, ClientProfile?>((ref) {
   return ClientProfileNotifier(ref);
 });
+
 /// Provider to open the Hive box for the single client profile
 final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async {
   final box = await Hive.openBox<ClientProfile>('clientProfiles');
@@ -28,13 +29,18 @@ final clientProfileBoxProvider = FutureProvider<Box<ClientProfile>>((ref) async 
 class ClientProfileNotifier extends StateNotifier<ClientProfile?> {
   final Ref ref;
 
-  ClientProfileNotifier(this.ref) : super(null);
+  ClientProfileNotifier(this.ref) : super(null) {
+    loadProfile();
+  }
 
   /// Load the client profile from Hive
   Future<void> loadProfile() async {
     final box = await ref.read(clientProfileBoxProvider.future);
     if (box.isNotEmpty) {
-      state = box.getAt(0); // Assume a single profile stored
+      state = box.getAt(0);
+      log('Client profile loaded from Hive: $state');
+    } else {
+      log('No client profile found in Hive.');
     }
   }
 
@@ -57,5 +63,3 @@ class ClientProfileNotifier extends StateNotifier<ClientProfile?> {
     log('Client profile cleared from Hive.');
   }
 }
-
-
