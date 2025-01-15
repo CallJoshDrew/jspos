@@ -283,11 +283,13 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                 children: [
                                                                   Row(
                                                                     children: [
-                                                                      item.selection && item.selectedSoupOrKonLou != null && item.selectedSoupOrKonLou!['name'] != "None"
+                                                                      item.selection &&
+                                                                              item.selectedSoupOrKonLou != null &&
+                                                                              item.selectedSoupOrKonLou!['name'] != "None"
                                                                           ? Row(
                                                                               children: [
                                                                                 Text(
-                                                                                  "${item.selectedSoupOrKonLou!['name']} - ",
+                                                                                  "${item.selectedSoupOrKonLou!['name']} ",
                                                                                   style: const TextStyle(
                                                                                     fontSize: 14,
                                                                                     color: Colors.yellow,
@@ -305,7 +307,10 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                               ],
                                                                             )
                                                                           : const SizedBox.shrink(),
-                                                                      item.selection && item.selectedNoodlesType != null && item.selectedSoupOrKonLou!['name'] != "None"
+                                                                      item.selection &&
+                                                                              item.selectedNoodlesType != null &&
+                                                                              item.selectedSoupOrKonLou != null &&
+                                                                              item.selectedSoupOrKonLou!['name'] != "None"
                                                                           ? Wrap(
                                                                               children: [
                                                                                 for (var noodleType in item.selectedNoodlesType!.toList())
@@ -341,31 +346,31 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                     ],
                                                                   ),
                                                                   Row(
-                                                                  children: [
-                                                                    item.selection && item.selectedSetDrink != null
-                                                                        ? Row(
-                                                                            children: [
-                                                                              Text(
-                                                                                "${item.selectedSetDrink!['name']}",
-                                                                                style: const TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  color: Colors.yellow,
-                                                                                ),
-                                                                              ),
-                                                                              // Display price only if it is greater than 0.00
-                                                                              if (item.selectedSetDrink!['price'] != 0.00)
+                                                                    children: [
+                                                                      item.selection && item.selectedSetDrink != null
+                                                                          ? Row(
+                                                                              children: [
                                                                                 Text(
-                                                                                  "( + ${item.selectedSetDrink!['price'].toStringAsFixed(2)} ) ",
+                                                                                  "${item.selectedSetDrink!['name']}",
                                                                                   style: const TextStyle(
                                                                                     fontSize: 14,
-                                                                                    color: Color.fromARGB(255, 114, 226, 118),
+                                                                                    color: Colors.yellow,
                                                                                   ),
-                                                                                )
-                                                                            ],
-                                                                          )
-                                                                        : const SizedBox.shrink(),
-                                                                  ],
-                                                                ),
+                                                                                ),
+                                                                                // Display price only if it is greater than 0.00
+                                                                                if (item.selectedSetDrink!['price'] != 0.00)
+                                                                                  Text(
+                                                                                    "( + ${item.selectedSetDrink!['price'].toStringAsFixed(2)} ) ",
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 14,
+                                                                                      color: Color.fromARGB(255, 114, 226, 118),
+                                                                                    ),
+                                                                                  )
+                                                                              ],
+                                                                            )
+                                                                          : const SizedBox.shrink(),
+                                                                    ],
+                                                                  ),
                                                                   item.selection &&
                                                                           item.selectedMeePortion != null &&
                                                                           item.selectedMeePortion!['name'] != "Normal"
@@ -413,28 +418,7 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
-                                                                  item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk"
-                                                                      ? Row(
-                                                                          children: [
-                                                                            Text(
-                                                                              "Add ${item.selectedAddMilk!['name']} ",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Colors.white,
-                                                                              ),
-                                                                            ),
-                                                                            if (item.selectedAddMilk!['price'] != 0.00)
-                                                                              Text(
-                                                                                "( + ${item.selectedAddMilk!['price'].toStringAsFixed(2)} )",
-                                                                                style: const TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                                ),
-                                                                              )
-                                                                          ],
-                                                                        )
-                                                                      : const SizedBox.shrink(),
-                                                                  item.selection && item.selectedSide!.isNotEmpty
+                                                                  item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty
                                                                       ? Row(
                                                                           children: [
                                                                             Text(
@@ -465,7 +449,7 @@ class HistoryOrderPageState extends ConsumerState<HistoryOrderPage> {
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
-                                                                  item.selection && item.selectedSide != null
+                                                                  item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty
                                                                       ? Wrap(
                                                                           children: [
                                                                             for (var side in item.selectedSide!.toList())

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:jspos/data/categories_data.dart';
 import 'package:jspos/models/printer.dart';
 import 'package:jspos/models/selected_order.dart';
 import 'package:jspos/print/get_order_receipt.dart';
@@ -41,6 +42,27 @@ Future<void> handlePrintingJobs(
     log('Client profile not found. Cannot print Cashier receipt.');
     return;
   }
+
+  List<List<String>> splitCategories(List<String> categories) {
+  List<String> drinksCategory = [];
+  List<String> otherCategories = [];
+
+  for (String category in categories) {
+    if (category == "Drinks") {
+      drinksCategory.add(category);
+    } else {
+      otherCategories.add(category);
+    }
+  }
+
+  return [drinksCategory, otherCategories];
+}
+final List<List<String>> splitCategoriesList = splitCategories(categories);
+final List<String> drinksCategory = splitCategoriesList[0];
+final List<String> otherCategories = splitCategoriesList[1];
+
+// log('drinks category : $drinksCategory');
+// log('others category : $otherCategories');
 
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
   List<BluetoothDevice> availableDevices = [];
@@ -106,8 +128,8 @@ Future<void> handlePrintingJobs(
 
                 switch (area) {
                   case 'Kitchen':
-                    if (hasItemsInCategories(selectedOrder!, ['Breakfast','Dishes','Special','Add On'])) {
-                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, ["Dishes", "Special", "Add On"]);
+                    if (hasItemsInCategories(selectedOrder!, otherCategories)) {
+                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, otherCategories);
                       log('Paper width Kitchen printer is ${printer.paperWidth}');
                     } else {
                       log('No relevant items in the order for the Kitchen area.');
@@ -118,7 +140,7 @@ Future<void> handlePrintingJobs(
 
                   case 'Beverage':
                     if (hasDrinksItems(selectedOrder!)) {
-                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, ["Drinks"]);
+                      receiptContent = orderReceiptGenerator.getOrderReceiptLines(selectedOrder, printer.paperWidth, drinksCategory);
                       log('Paper width Beverage printer is ${printer.paperWidth}');
                     } else {
                       log('No "Drinks" items in the order for the Beverage area.');
@@ -190,8 +212,8 @@ bool hasDrinksItems(SelectedOrder selectedOrder) {
   return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => item.category == 'Drinks');
 }
 
-bool hasItemsInCategories(SelectedOrder selectedOrder, List<String> categories) {
-  return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => categories.contains(item.category));
+bool hasItemsInCategories(SelectedOrder selectedOrder, List<String> otherCategories) {
+  return selectedOrder.items.isNotEmpty && selectedOrder.items.any((item) => otherCategories.contains(item.category));
 }
 
 void _showCherryToast(BuildContext context, String message, {Color? iconColor, IconData? icon}) {

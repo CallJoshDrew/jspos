@@ -251,22 +251,24 @@ class CashierReceiptGenerator {
         ));
       }
 
-      if (item.selection && item.selectedSoupOrKonLou != null) {
-        String addMilkText = '';
-
-        // Check if selectedAddMilk is not null and its name is not 'No Milk'
-        if (item.selectedAddMilk != null && item.selectedAddMilk!['name'] != 'No Milk') {
-          addMilkText = ' + ${item.selectedAddMilk!['name']}';
+      if (item.selection && item.selectedSetDrink != null) {
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: '$prefix${item.selectedSetDrink!["name"]}',
+            align: LineText.ALIGN_LEFT,
+            fontZoom: 1,
+            linefeed: 1,
+          ));
         }
-
-        list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: '$prefix${item.selectedSoupOrKonLou!["name"]}$addMilkText',
-          align: LineText.ALIGN_LEFT,
-          fontZoom: 1,
-          linefeed: 1,
-        ));
-      }
+        if (item.selection && item.selectedSoupOrKonLou != null) {
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: '$prefix${item.selectedSoupOrKonLou!["name"]}',
+            align: LineText.ALIGN_LEFT,
+            fontZoom: 1,
+            linefeed: 1,
+          ));
+        }
 
       String noodlesTypeText = '';
       if (item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty) {
@@ -320,6 +322,24 @@ class CashierReceiptGenerator {
           fontZoom: 1,
         ));
       }
+
+      String sidesText = '';
+      if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
+        for (int i = 0; i < item.selectedSide!.length; i++) {
+          var side = item.selectedSide!.elementAt(i);
+          sidesText += side['name'];
+          if (i != item.selectedSide!.length - 1) {
+            sidesText += ', ';
+          }
+        }
+        list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: formatOneTextLine('$prefix${item.selectedSide!.length} Sides: $sidesText', itemIndex),
+          align: LineText.ALIGN_LEFT,
+          linefeed: 1,
+          fontZoom: 1,
+        ));
+      }
       if (item.selection) {
         final filteredRemarks = filterRemarks(item.itemRemarks);
         if (filteredRemarks.isNotEmpty) {
@@ -340,34 +360,15 @@ class CashierReceiptGenerator {
           }
         }
       }
-
-      String sidesText = '';
-      if (item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty) {
-        for (int i = 0; i < item.selectedSide!.length; i++) {
-          var side = item.selectedSide!.elementAt(i);
-          sidesText += side['name'];
-          if (i != item.selectedSide!.length - 1) {
-            sidesText += ', ';
-          }
-        }
-        list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: formatOneTextLine('$prefix${item.selectedSide!.length} Sides: $sidesText', itemIndex),
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          fontZoom: 1,
-        ));
-
-        if (item.tapao != false) {
+      if (item.tapao != false) {
           list.add(LineText(
             type: LineText.TYPE_TEXT,
-            content: prefix + 'Tapao',
+            content: prefix + 'TAPAO',
             align: LineText.ALIGN_LEFT,
             linefeed: 1,
             fontZoom: 1,
           ));
         }
-      }
       // Increment the index for the next item across all categories
       itemIndex++;
     }

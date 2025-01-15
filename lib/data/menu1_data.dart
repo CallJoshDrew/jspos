@@ -1019,7 +1019,6 @@ final List<Map<String, dynamic>> menu = [
       {"name": "Chicken", "price": 0.00},
       {"name": "Fish", "price": 0.00},
       {"name": "Prawn", "price": 0.00},
-      {"name": "Fish", "price": 0.00},
       {"name": "Century Egg", "price": 1.50},
     ],
   },

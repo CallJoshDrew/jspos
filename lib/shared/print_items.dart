@@ -170,11 +170,13 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
   }
 
 // Printer-Category Mapping
-  static const printerCategories = {
-    'Cashier': ["Cakes", "Dishes", "Drinks", "Special", "Add On"],
-    'Kitchen': ["Dishes", "Special", "Add On"],
-    'Beverage': ["Drinks"],
-  };
+  static final allCategories = categories;
+
+static final printerCategories = {
+  'Cashier': allCategories,
+  'Kitchen': allCategories.where((category) => category != "Drinks").toList(),
+  'Beverage': ["Drinks"],
+};
 
 // Grouping logic: Organize items by their assigned printers
   Map<String, List<Item>> groupItemsByPrinter(Map<String, List<Item>> selectedItems) {
@@ -343,7 +345,6 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
     // Log each item's selectedDrink for debugging
     widget.selectedOrder.items.asMap().forEach((index, item) {
       log('Item $index: ${item.originalName}, selectedDrink: ${item.selectedDrink}');
-      log('Item $index: ${item.selectedAddMilk} from ${item.addMilk}');
     });
 
 // Log the map to see the index and originalName of each item
@@ -613,9 +614,9 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                   ? Row(
                                                                       children: [
                                                                         Text(
-                                                                          item.originalName == item.selectedChoice!['name']
+                                                                          item.originalName == item.selectedChoice?['name']
                                                                               ? '${index + 1}.${item.originalName}'
-                                                                              : '${index + 1}.${item.originalName} ${item.selectedChoice!['name']}',
+                                                                              : '${index + 1}.${item.originalName} ${item.selectedChoice?['name']}',
                                                                           style: const TextStyle(
                                                                             fontSize: 14,
                                                                             color: Colors.white,
@@ -625,7 +626,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                     )
                                                                   : Text(
                                                                       (item.selectedDrink != null && item.selectedDrink!['name']?.isNotEmpty == true)
-                                                                          ? (item.originalName == item.selectedDrink!['name']
+                                                                          ? (item.originalName == item.selectedDrink?['name']
                                                                               ? '${index + 1}.${item.originalName}  - ${item.selectedTemp?["name"]}'
                                                                               : '${index + 1}.${item.originalName} ${item.selectedDrink?['name']} - ${item.selectedTemp?["name"]}')
                                                                           : '${index + 1}.${item.originalName}', // Display originalName if selectedDrink is null or empty
@@ -662,7 +663,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                         ? Row(
                                                                             children: [
                                                                               Text(
-                                                                                "${item.selectedSoupOrKonLou!['name']} - ",
+                                                                                "${item.selectedSoupOrKonLou!['name']} ",
                                                                                 style: const TextStyle(
                                                                                   fontSize: 14,
                                                                                   color: Colors.yellow,
@@ -673,6 +674,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                         : const SizedBox.shrink(),
                                                                     item.selection &&
                                                                             item.selectedNoodlesType != null &&
+                                                                            item.selectedSoupOrKonLou != null &&
                                                                             item.selectedSoupOrKonLou!['name'] != "None"
                                                                         ? Wrap(
                                                                             children: [
@@ -756,20 +758,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk"
-                                                                    ? Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            "Add ${item.selectedAddMilk!['name']} ",
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              color: Colors.white,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    : const SizedBox.shrink(),
-                                                                item.selection && item.selectedSide!.isNotEmpty
+                                                                item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty
                                                                     ? Row(
                                                                         children: [
                                                                           Text(
@@ -791,7 +780,7 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
                                                                         ],
                                                                       )
                                                                     : const SizedBox.shrink(),
-                                                                item.selection && item.selectedSide != null
+                                                                item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty
                                                                     ? Wrap(
                                                                         children: [
                                                                           for (var side in item.selectedSide!.toList())

@@ -77,7 +77,6 @@ class MenuNotifier extends StateNotifier<List<Item>> {
         meatPortion: data['meat portion'] ?? [],
         meePortion: data['mee portion'] ?? [],
         sides: data['sides'] ?? [],
-        addMilk: data['addMilk'] ?? [],
         addOns: data['add on'] ?? [],
         temp: data['temp'] ?? [],
         soupOrKonLou: data['soupOrKonLou'] ?? [],

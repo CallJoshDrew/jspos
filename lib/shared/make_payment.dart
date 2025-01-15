@@ -393,7 +393,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                               ],
                                                                             )
                                                                           : const SizedBox.shrink(),
-                                                                      item.selection && item.selectedNoodlesType != null && item.selectedSoupOrKonLou!['name'] != "None"
+                                                                      item.selection && item.selectedNoodlesType != null && item.selectedSoupOrKonLou != null && item.selectedSoupOrKonLou!['name'] != "None"
                                                                           ? Wrap(
                                                                               children: [
                                                                                 for (var noodleType in item.selectedNoodlesType!.toList())
@@ -522,28 +522,28 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
-                                                                  item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk"
-                                                                      ? Row(
-                                                                          children: [
-                                                                            Text(
-                                                                              "Add ${item.selectedAddMilk!['name']} ",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 14,
-                                                                                color: Colors.white,
-                                                                              ),
-                                                                            ),
-                                                                            if (item.selectedAddMilk!['price'] != 0.00)
-                                                                              Text(
-                                                                                "( + ${item.selectedAddMilk!['price'].toStringAsFixed(2)} )",
-                                                                                style: const TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  color: Color.fromARGB(255, 114, 226, 118),
-                                                                                ),
-                                                                              )
-                                                                          ],
-                                                                        )
-                                                                      : const SizedBox.shrink(),
-                                                                  item.selection && item.selectedSide!.isNotEmpty
+                                                                  // item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk"
+                                                                  //     ? Row(
+                                                                  //         children: [
+                                                                  //           Text(
+                                                                  //             "Add ${item.selectedAddMilk!['name']} ",
+                                                                  //             style: const TextStyle(
+                                                                  //               fontSize: 14,
+                                                                  //               color: Colors.white,
+                                                                  //             ),
+                                                                  //           ),
+                                                                  //           if (item.selectedAddMilk!['price'] != 0.00)
+                                                                  //             Text(
+                                                                  //               "( + ${item.selectedAddMilk!['price'].toStringAsFixed(2)} )",
+                                                                  //               style: const TextStyle(
+                                                                  //                 fontSize: 14,
+                                                                  //                 color: Color.fromARGB(255, 114, 226, 118),
+                                                                  //               ),
+                                                                  //             )
+                                                                  //         ],
+                                                                  //       )
+                                                                  //     : const SizedBox.shrink(),
+                                                                  item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty
                                                                       ? Row(
                                                                           children: [
                                                                             Text(
@@ -574,7 +574,7 @@ class MakePaymentPageState extends ConsumerState<MakePaymentPage> {
                                                                           ],
                                                                         )
                                                                       : const SizedBox.shrink(),
-                                                                  item.selection && item.selectedSide != null
+                                                                  item.selection && item.selectedSide != null && item.selectedSide!.isNotEmpty
                                                                       ? Wrap(
                                                                           children: [
                                                                             for (var side in item.selectedSide!.toList())
