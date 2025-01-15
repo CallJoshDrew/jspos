@@ -172,11 +172,11 @@ class PrintItemsPageState extends ConsumerState<PrintItemsPage> {
 // Printer-Category Mapping
   static final allCategories = categories;
 
-static final printerCategories = {
-  'Cashier': allCategories,
-  'Kitchen': allCategories.where((category) => category != "Drinks").toList(),
-  'Beverage': ["Drinks"],
-};
+  static final printerCategories = {
+    'Cashier': allCategories,
+    'Kitchen': allCategories.where((category) => category != "Drinks").toList(),
+    'Beverage': ["Drinks"],
+  };
 
 // Grouping logic: Organize items by their assigned printers
   Map<String, List<Item>> groupItemsByPrinter(Map<String, List<Item>> selectedItems) {
@@ -750,6 +750,19 @@ static final printerCategories = {
                                                                         children: [
                                                                           Text(
                                                                             "${item.selectedMeatPortion!['name']} Meat",
+                                                                            style: const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
+                                                                item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != "No Milk"
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            "Add ${item.selectedAddMilk!['name']} ",
                                                                             style: const TextStyle(
                                                                               fontSize: 14,
                                                                               color: Colors.white,

@@ -35,38 +35,41 @@ class Item with ChangeNotifier {
   List<Map<String, dynamic>> meePortion;
   @HiveField(14)
   List<Map<String, dynamic>> sides;
-  
   @HiveField(15)
-  List<Map<String, dynamic>> addOns;
+  List<Map<String, dynamic>> addMilk;
   @HiveField(16)
-  Map<String, dynamic>? _selectedDrink;
+  List<Map<String, dynamic>> addOns;
   @HiveField(17)
-  List<Map<String, String>> temp;
+  Map<String, dynamic>? _selectedDrink;
   @HiveField(18)
-  Map<String, String>? selectedTemp;
+  List<Map<String, String>> temp;
   @HiveField(19)
-  Map<String, dynamic>? _selectedChoice;
+  Map<String, String>? selectedTemp;
   @HiveField(20)
-  Set<Map<String, dynamic>>? selectedNoodlesType;
+  Map<String, dynamic>? _selectedChoice;
   @HiveField(21)
-  Map<String, dynamic>? selectedMeatPortion;
+  Set<Map<String, dynamic>>? selectedNoodlesType;
   @HiveField(22)
-  Map<String, dynamic>? selectedMeePortion;
+  Map<String, dynamic>? selectedMeatPortion;
   @HiveField(23)
-  Set<Map<String, dynamic>>? selectedSide;
+  Map<String, dynamic>? selectedMeePortion;
   @HiveField(24)
-  Map<String, dynamic>? selectedAddOn;
+  Set<Map<String, dynamic>>? selectedSide;
   @HiveField(25)
-  Map<String, dynamic>? itemRemarks;
+  Map<String, dynamic>? selectedAddMilk;
   @HiveField(26)
-  bool tapao;
+  Map<String, dynamic>? selectedAddOn;
   @HiveField(27)
-  List<Map<String, dynamic>> soupOrKonLou;
+  Map<String, dynamic>? itemRemarks;
   @HiveField(28)
-  List<Map<String, dynamic>> setDrinks;
+  bool tapao;
   @HiveField(29)
-  Map<String, dynamic>? selectedSoupOrKonLou;
+  List<Map<String, dynamic>> soupOrKonLou;
   @HiveField(30)
+  List<Map<String, dynamic>> setDrinks;
+  @HiveField(31)
+  Map<String, dynamic>? selectedSoupOrKonLou;
+  @HiveField(32)
   Map<String, dynamic>? selectedSetDrink;
 
   Item({
@@ -83,6 +86,7 @@ class Item with ChangeNotifier {
     required this.meatPortion,
     required this.meePortion,
     required this.sides,
+    required this.addMilk,
     required this.addOns,
     Map<String, dynamic>? selectedDrink,
     required this.temp,
@@ -92,6 +96,7 @@ class Item with ChangeNotifier {
     this.selectedMeatPortion,
     this.selectedMeePortion,
     this.selectedSide,
+    this.selectedAddMilk,
     this.selectedAddOn,
     this.itemRemarks,
     this.tapao = false,
@@ -123,6 +128,7 @@ class Item with ChangeNotifier {
         '\tmeatPortion: ${meatPortion.toString()},\n'
         '\tmeePortion: ${meePortion.toString()},\n'
         '\tsides: ${sides.toString()},\n'
+        '\taddMilk: ${addMilk.toString()},\n'
         '\taddOn: ${addOns.toString()},\n'
         '\tselectedDrink: $selectedDrink, \n'
         '\ttemp: $temp, \n'
@@ -132,6 +138,7 @@ class Item with ChangeNotifier {
         '\tselectedMeatPortion: $selectedMeatPortion, \n'
         '\tselectedMeePortion: $selectedMeePortion, \n'
         '\tselectedAddOn: ${selectedSide?.toString()}, \n' // Keep as a Set
+        '\tselectedAddMilk: $selectedAddMilk, \n'
         '\tselectedAddOn: $selectedAddOn,\n' // Keep as a Set
         // '\tselectedAddOn: ${selectedAddOn?.map((addOn) => addOn.toString()).join(', ')},\n'
         '\titemRemarks: ${itemRemarks.toString()}\n'
@@ -175,6 +182,7 @@ class Item with ChangeNotifier {
     List<Map<String, dynamic>>? meatPortion,
     List<Map<String, dynamic>>? meePortion,
     List<Map<String, dynamic>>? sides,
+    List<Map<String, dynamic>>? addMilk,
     List<Map<String, dynamic>>? addOns,
     Map<String, dynamic>? selectedDrink,
     List<Map<String, String>>? temp,
@@ -183,6 +191,7 @@ class Item with ChangeNotifier {
     Set<Map<String, dynamic>>? selectedNoodlesType,
     Map<String, dynamic>? selectedMeatPortion,
     Map<String, dynamic>? selectedMeePortion,
+    Map<String, dynamic>? selectedAddMilk,
     // Use a Map<String, dynamic> when you want to represent a collection of related data where each item can be uniquely identified by a key. It’s especially useful when you need to handle data in key-value pairs or JSON-like structures (e.g., a user profile or settings configuration).
     Set<Map<String, dynamic>>? selectedSide, 
     // Use Set<Map<String, dynamic>> when you need a collection of unique maps, particularly if you don’t care about the order of the elements and want to ensure there are no duplicates. This could be helpful when storing unique configurations or items that shouldn’t repeat.
@@ -214,6 +223,7 @@ class Item with ChangeNotifier {
       meatPortion: meatPortion ?? List<Map<String, dynamic>>.from(this.meatPortion),
       meePortion: meePortion ?? List<Map<String, dynamic>>.from(this.meePortion),
       sides: sides ?? List<Map<String, dynamic>>.from(this.sides),
+      addMilk: addMilk ?? List<Map<String, dynamic>>.from(this.addMilk),
       addOns: addOns ?? List<Map<String, dynamic>>.from(this.addOns),
       selectedDrink: selectedDrink ?? (this.selectedDrink != null ? Map<String, dynamic>.from(this.selectedDrink!) : null),
       temp: temp ?? List<Map<String, String>>.from(this.temp),
@@ -223,6 +233,7 @@ class Item with ChangeNotifier {
       selectedMeatPortion: selectedMeatPortion ?? (this.selectedMeatPortion != null ? Map<String, dynamic>.from(this.selectedMeatPortion!) : null),
       selectedMeePortion: selectedMeePortion ?? (this.selectedMeePortion != null ? Map<String, dynamic>.from(this.selectedMeePortion!) : null),
       selectedSide: selectedSide ?? (this.selectedSide != null ? Set<Map<String, dynamic>>.from(this.selectedSide!) : null),
+      selectedAddMilk: selectedAddMilk ?? (this.selectedAddMilk != null ? Map<String, dynamic>.from(this.selectedAddMilk!) : null),
       selectedAddOn: selectedAddOn ?? (this.selectedAddOn != null ? Map<String, dynamic>.from(this.selectedAddOn!) : null),
       itemRemarks: itemRemarks ?? this.itemRemarks, // This ensures the value is set
       tapao: tapao ?? this.tapao,
@@ -250,6 +261,7 @@ class Item with ChangeNotifier {
       'meatPortion': meatPortion.map((portion) => Map<String, dynamic>.from(portion)).toList(),
       'meePortion': meePortion.map((portion) => Map<String, dynamic>.from(portion)).toList(),
       'sides': sides.map((sides) => Map<String, dynamic>.from(sides)).toList(),
+      'addMilk': addMilk.map((addMilk) => Map<String, dynamic>.from(addMilk)).toList(),
       'addOns': addOns.map((addon) => Map<String, dynamic>.from(addon)).toList(),
       'selectedDrink': selectedDrink != null ? Map<String, dynamic>.from(selectedDrink!) : null,
       'selectedChoice': selectedChoice != null ? Map<String, dynamic>.from(selectedChoice!) : null,
@@ -257,6 +269,7 @@ class Item with ChangeNotifier {
       'selectedMeatPortion': selectedMeatPortion != null ? Map<String, dynamic>.from(selectedMeatPortion!) : null,
       'selectedMeePortion': selectedMeePortion != null ? Map<String, dynamic>.from(selectedMeePortion!) : null,
       'selectedSide': selectedSide?.map((sides) => Map<String, dynamic>.from(sides)).toList(), // Convert set to list for JSON
+      'selectedAddMilk': selectedAddMilk != null ? Map<String, dynamic>.from(selectedAddMilk!) : null,
       'selectedAddOn': selectedAddOn != null ? Map<String, dynamic>.from(selectedAddOn!) : null,
       // for practical purposes in JSON serialization, as JSON does not support sets.
       'itemRemarks': itemRemarks,

@@ -202,6 +202,16 @@ class OrderReceiptGenerator with TotalQuantityCalculator {
             linefeed: 1,
           ));
         }
+        if (item.selection && item.selectedAddMilk !=null && item.selectedAddMilk!['name'] != 'No Milk') {
+          String addMilkText = 'Add ${item.selectedAddMilk!['name']}';
+          list.add(LineText(
+            type: LineText.TYPE_TEXT,
+            content: '$prefix$addMilkText',
+            align: LineText.ALIGN_LEFT,
+            fontZoom: 1,
+            linefeed: 1,
+          ));
+        }
 
         String noodlesTypeText = '';
         if (item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty) {

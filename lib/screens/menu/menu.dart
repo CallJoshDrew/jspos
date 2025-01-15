@@ -1,4 +1,6 @@
 // import 'dart:developer';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jspos/data/categories_data.dart';
@@ -82,6 +84,14 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       return false;
     }).toList();
 
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    log(screenWidth.toString());
+
+    // Determine the crossAxisCount based on the screen width
+    int numberOfItems = screenWidth > 1200 ? 5 : 4;
+
     // log('Filtered Items: ${filteredItems.length}');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -128,9 +138,9 @@ class _MenuPageState extends ConsumerState<MenuPage> {
               //     color: Colors.white,
               //     ),
               child: GridView.count(
-                crossAxisCount: 4,
-                childAspectRatio: (1 / 1.3), // width 1 / height 1.3
-                crossAxisSpacing: 20, // Add horizontal spacing
+                crossAxisCount: numberOfItems,
+                childAspectRatio: (1 / 1.15), // width 1 / height 1.15 previously is 1.3
+                crossAxisSpacing: 14, // Add horizontal spacing
                 mainAxisSpacing: 14, // Add vertical spacing// set the individual container height
                 children:  filteredItems.map((item) {
                   return ProductItem(
@@ -148,6 +158,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                     // meatPortion: item['meat portion'] ?? [],
                     // meePortion: item['mee portion'] ?? [],
                     // sides: item['sides'] ?? [],
+                    // addMilk: item['add milk'] ?? [],
                     // addOns: item['add on'] ?? [],
                     // tapao: item['tapao'] ?? false,
                     // soupOrKonLou: item['soupOrKonLou'] ?? [],
@@ -165,6 +176,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                     meatPortion: item.meatPortion,
                     meePortion: item.meePortion,
                     sides: item.sides,
+                    addMilk: item.addMilk,
                     addOns: item.addOns,
                     tapao: item.tapao,
                     soupOrKonLou: item.soupOrKonLou,

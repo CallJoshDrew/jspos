@@ -42,42 +42,46 @@ class ItemAdapter extends TypeAdapter<Item> {
       sides: (fields[14] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      addOns: (fields[15] as List)
+      addMilk: (fields[15] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      temp: (fields[17] as List)
+      addOns: (fields[16] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
+      temp: (fields[18] as List)
           .map((dynamic e) => (e as Map).cast<String, String>())
           .toList(),
-      selectedTemp: (fields[18] as Map?)?.cast<String, String>(),
-      selectedNoodlesType: (fields[20] as List?)
+      selectedTemp: (fields[19] as Map?)?.cast<String, String>(),
+      selectedNoodlesType: (fields[21] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toSet(),
-      selectedMeatPortion: (fields[21] as Map?)?.cast<String, dynamic>(),
-      selectedMeePortion: (fields[22] as Map?)?.cast<String, dynamic>(),
-      selectedSide: (fields[23] as List?)
+      selectedMeatPortion: (fields[22] as Map?)?.cast<String, dynamic>(),
+      selectedMeePortion: (fields[23] as Map?)?.cast<String, dynamic>(),
+      selectedSide: (fields[24] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toSet(),
-      selectedAddOn: (fields[24] as Map?)?.cast<String, dynamic>(),
-      itemRemarks: (fields[25] as Map?)?.cast<String, dynamic>(),
-      tapao: fields[26] as bool,
-      soupOrKonLou: (fields[27] as List)
+      selectedAddMilk: (fields[25] as Map?)?.cast<String, dynamic>(),
+      selectedAddOn: (fields[26] as Map?)?.cast<String, dynamic>(),
+      itemRemarks: (fields[27] as Map?)?.cast<String, dynamic>(),
+      tapao: fields[28] as bool,
+      soupOrKonLou: (fields[29] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      setDrinks: (fields[28] as List)
+      setDrinks: (fields[30] as List)
           .map((dynamic e) => (e as Map).cast<String, dynamic>())
           .toList(),
-      selectedSoupOrKonLou: (fields[29] as Map?)?.cast<String, dynamic>(),
-      selectedSetDrink: (fields[30] as Map?)?.cast<String, dynamic>(),
+      selectedSoupOrKonLou: (fields[31] as Map?)?.cast<String, dynamic>(),
+      selectedSetDrink: (fields[32] as Map?)?.cast<String, dynamic>(),
       originalName: fields[2] as String,
     )
-      .._selectedDrink = (fields[16] as Map?)?.cast<String, dynamic>()
-      .._selectedChoice = (fields[19] as Map?)?.cast<String, dynamic>();
+      .._selectedDrink = (fields[17] as Map?)?.cast<String, dynamic>()
+      .._selectedChoice = (fields[20] as Map?)?.cast<String, dynamic>();
   }
 
   @override
   void write(BinaryWriter writer, Item obj) {
     writer
-      ..writeByte(31)
+      ..writeByte(33)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -109,36 +113,40 @@ class ItemAdapter extends TypeAdapter<Item> {
       ..writeByte(14)
       ..write(obj.sides)
       ..writeByte(15)
-      ..write(obj.addOns)
+      ..write(obj.addMilk)
       ..writeByte(16)
-      ..write(obj._selectedDrink)
+      ..write(obj.addOns)
       ..writeByte(17)
-      ..write(obj.temp)
+      ..write(obj._selectedDrink)
       ..writeByte(18)
-      ..write(obj.selectedTemp)
+      ..write(obj.temp)
       ..writeByte(19)
-      ..write(obj._selectedChoice)
+      ..write(obj.selectedTemp)
       ..writeByte(20)
-      ..write(obj.selectedNoodlesType?.toList())
+      ..write(obj._selectedChoice)
       ..writeByte(21)
-      ..write(obj.selectedMeatPortion)
+      ..write(obj.selectedNoodlesType?.toList())
       ..writeByte(22)
-      ..write(obj.selectedMeePortion)
+      ..write(obj.selectedMeatPortion)
       ..writeByte(23)
-      ..write(obj.selectedSide?.toList())
+      ..write(obj.selectedMeePortion)
       ..writeByte(24)
-      ..write(obj.selectedAddOn)
+      ..write(obj.selectedSide?.toList())
       ..writeByte(25)
-      ..write(obj.itemRemarks)
+      ..write(obj.selectedAddMilk)
       ..writeByte(26)
-      ..write(obj.tapao)
+      ..write(obj.selectedAddOn)
       ..writeByte(27)
-      ..write(obj.soupOrKonLou)
+      ..write(obj.itemRemarks)
       ..writeByte(28)
-      ..write(obj.setDrinks)
+      ..write(obj.tapao)
       ..writeByte(29)
-      ..write(obj.selectedSoupOrKonLou)
+      ..write(obj.soupOrKonLou)
       ..writeByte(30)
+      ..write(obj.setDrinks)
+      ..writeByte(31)
+      ..write(obj.selectedSoupOrKonLou)
+      ..writeByte(32)
       ..write(obj.selectedSetDrink);
   }
 

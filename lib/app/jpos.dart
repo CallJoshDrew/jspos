@@ -137,13 +137,13 @@ class _MainPageState extends ConsumerState<MainPage> {
         return DineInPage(
           freezeSideMenu: freezeSideMenu,
         );
-      case 'Shift':
-        return const ShiftPage(
-        );
       // case 'Take Out':
       //   return TakeOutPage(freezeSideMenu: freezeSideMenu);
       case 'History':
         return const HistoryPage();
+      case 'Shift':
+        return const ShiftPage(
+        );
       // case 'Reports':
       //   return const ReportsPage();
       // case 'Recommend':
@@ -204,9 +204,9 @@ class _MainPageState extends ConsumerState<MainPage> {
               if (!isCheckIn) _itemMenu(page: 'Check In', icon: Icons.login_rounded),
               if (isCheckIn) ...[
                 _itemMenu(page: 'Dine In', icon: Icons.dinner_dining),
-                _itemMenu(page: 'Shift', icon: Icons.timer),
                 // _itemMenu(page: 'Take Out', icon: Icons.shopping_bag),
                 _itemMenu(page: 'History', icon: Icons.history_sharp),
+                _itemMenu(page: 'Shift', icon: Icons.timer),
                 // _itemMenu(page: 'Reports', icon: Icons.bar_chart),
                 // _itemMenu(page: 'Recommend', icon: Icons.thumb_up),
                 _itemMenu(page: 'Settings', icon: Icons.tune),

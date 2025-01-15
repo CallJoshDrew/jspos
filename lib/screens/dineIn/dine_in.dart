@@ -287,6 +287,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
           !const MapEquality().equals(sortedList1[i].selectedChoice, sortedList2[i].selectedChoice) ||
           !const MapEquality().equals(sortedList1[i].selectedMeePortion, sortedList2[i].selectedMeePortion) ||
           !const MapEquality().equals(sortedList1[i].selectedMeatPortion, sortedList2[i].selectedMeatPortion) ||
+          !const MapEquality().equals(sortedList1[i].selectedAddMilk, sortedList2[i].selectedAddMilk) ||
           !const SetEquality<Map<String, dynamic>>(MapEquality()).equals(sortedList1[i].selectedSide, sortedList2[i].selectedSide)) {
         log('Lists are not equal: Item difference found');
         return false;
@@ -1053,6 +1054,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       //           children: [
                       //             // const Icon(Icons.monetization_on_rounded, size: 20, color: Colors.green),
                       //             // const SizedBox(width: 8),
+                                    // remember to uncomment matchingOrder
                       //             Text(
                       //               'To Collect RM ${totalOrdersPrice.toStringAsFixed(2)}',
                       //               style: const TextStyle(
@@ -1070,7 +1072,7 @@ class DineInPageState extends ConsumerState<DineInPage> {
                       if (isTableSelected) const SizedBox(height: 16),
                       Row(
                         children: [
-                          // // Clear Local Data
+                          // Clear Local Data
                           isTableSelected
                               ? Expanded(
                                   flex: 1,

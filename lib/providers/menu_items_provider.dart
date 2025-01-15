@@ -68,7 +68,7 @@ class MenuNotifier extends StateNotifier<List<Item>> {
         name: data['name'],
         category: data['category'],
         price: data['price'],
-        image: data['image'],
+        image: data['image'], 
         selection: data['selection'] ?? false, // Default to false if missing
         quantity: 0,
         drinks: data['drinks'] ?? [],
@@ -77,6 +77,7 @@ class MenuNotifier extends StateNotifier<List<Item>> {
         meatPortion: data['meat portion'] ?? [],
         meePortion: data['mee portion'] ?? [],
         sides: data['sides'] ?? [],
+        addMilk: data['add milk'] ?? [],
         addOns: data['add on'] ?? [],
         temp: data['temp'] ?? [],
         soupOrKonLou: data['soupOrKonLou'] ?? [],

@@ -141,15 +141,14 @@ class CashierReceiptGenerator {
     //     linefeed: 1,
     //   ));
     // }
-    
-      list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: 'Trading License: ${profile.tradingLicense}',
-        weight: 1,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1,
-      ));
-    
+
+    list.add(LineText(
+      type: LineText.TYPE_TEXT,
+      content: 'Trading License: ${profile.tradingLicense}',
+      weight: 1,
+      align: LineText.ALIGN_CENTER,
+      linefeed: 1,
+    ));
 
     list.add(LineText(
         type: LineText.TYPE_TEXT,
@@ -167,13 +166,19 @@ class CashierReceiptGenerator {
       linefeed: 1,
       fontZoom: 1,
     ));
+
+    String invoiceOrOrderNumber = (selectedOrder.invoiceNumber != null && selectedOrder.invoiceNumber!.isNotEmpty)
+        ? 'Invoice: ${selectedOrder.invoiceNumber}'
+        : 'Order Number: ${selectedOrder.orderNumber}';
+
     list.add(LineText(
       type: LineText.TYPE_TEXT,
-      content: formatTwoTextLine('Invoice: ${selectedOrder.orderNumber}', 'Type: ${selectedOrder.orderType}'),
+      content: formatTwoTextLine(invoiceOrOrderNumber, 'Type: ${selectedOrder.orderType}'),
       align: LineText.ALIGN_LEFT,
       linefeed: 1,
       fontZoom: 1,
     ));
+
     list.add(LineText(
         type: LineText.TYPE_TEXT,
         content: '------------------------------------------------',
@@ -252,23 +257,33 @@ class CashierReceiptGenerator {
       }
 
       if (item.selection && item.selectedSetDrink != null) {
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: '$prefix${item.selectedSetDrink!["name"]}',
-            align: LineText.ALIGN_LEFT,
-            fontZoom: 1,
-            linefeed: 1,
-          ));
-        }
-        if (item.selection && item.selectedSoupOrKonLou != null) {
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: '$prefix${item.selectedSoupOrKonLou!["name"]}',
-            align: LineText.ALIGN_LEFT,
-            fontZoom: 1,
-            linefeed: 1,
-          ));
-        }
+        list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '$prefix${item.selectedSetDrink!["name"]}',
+          align: LineText.ALIGN_LEFT,
+          fontZoom: 1,
+          linefeed: 1,
+        ));
+      }
+      if (item.selection && item.selectedSoupOrKonLou != null) {
+        list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '$prefix${item.selectedSoupOrKonLou!["name"]}',
+          align: LineText.ALIGN_LEFT,
+          fontZoom: 1,
+          linefeed: 1,
+        ));
+      }
+      if (item.selection && item.selectedAddMilk != null && item.selectedAddMilk!['name'] != 'No Milk') {
+        String addMilkText = 'Add ${item.selectedAddMilk!['name']}';
+        list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: '$prefix$addMilkText',
+          align: LineText.ALIGN_LEFT,
+          fontZoom: 1,
+          linefeed: 1,
+        ));
+      }
 
       String noodlesTypeText = '';
       if (item.selectedNoodlesType != null && item.selectedNoodlesType!.isNotEmpty) {
@@ -361,14 +376,14 @@ class CashierReceiptGenerator {
         }
       }
       if (item.tapao != false) {
-          list.add(LineText(
-            type: LineText.TYPE_TEXT,
-            content: prefix + 'TAPAO',
-            align: LineText.ALIGN_LEFT,
-            linefeed: 1,
-            fontZoom: 1,
-          ));
-        }
+        list.add(LineText(
+          type: LineText.TYPE_TEXT,
+          content: prefix + 'TAPAO',
+          align: LineText.ALIGN_LEFT,
+          linefeed: 1,
+          fontZoom: 1,
+        ));
+      }
       // Increment the index for the next item across all categories
       itemIndex++;
     }
