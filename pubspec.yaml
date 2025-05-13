@@ -80,9 +80,10 @@ flutter:
     - assets/items/
     - assets/promo/
     - assets/cakes/
-    - assets/drinks/
+    - assets/drinks/  
     - assets/dishes/
     - assets/special/
+    - assets/fried/
     - assets/addOn/
     - assets/images/
 

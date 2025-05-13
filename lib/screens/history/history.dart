@@ -187,6 +187,30 @@ class HistoryPageState extends ConsumerState<HistoryPage> with SingleTickerProvi
                         height: (ordersForDate.length * 52) + 40,
                         child: _buildOrdersTable(ordersForDate),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                              margin: const EdgeInsets.only(bottom: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.green, // Set your desired background color here
+                                borderRadius: BorderRadius.circular(5), // Optional: Add border radius for rounded corners
+                              ),
+                              child: Text(
+                                'Total Sales: RM ${ordersForDate.fold(0.0, (previousValue, element) => previousValue + element.totalPrice).toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 );

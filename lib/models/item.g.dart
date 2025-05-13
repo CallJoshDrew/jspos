@@ -54,12 +54,12 @@ class ItemAdapter extends TypeAdapter<Item> {
       selectedTemp: (fields[19] as Map?)?.cast<String, String>(),
       selectedNoodlesType: (fields[21] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
-          .toSet(),
+          ?.toSet(),
       selectedMeatPortion: (fields[22] as Map?)?.cast<String, dynamic>(),
       selectedMeePortion: (fields[23] as Map?)?.cast<String, dynamic>(),
       selectedSide: (fields[24] as List?)
           ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
-          .toSet(),
+          ?.toSet(),
       selectedAddMilk: (fields[25] as Map?)?.cast<String, dynamic>(),
       selectedAddOn: (fields[26] as Map?)?.cast<String, dynamic>(),
       itemRemarks: (fields[27] as Map?)?.cast<String, dynamic>(),
