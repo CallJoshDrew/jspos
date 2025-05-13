@@ -78,9 +78,10 @@ flutter:
   assets:
     - assets/icons/
     - assets/items/
+    - assets/sides/
     - assets/promo/
     - assets/cakes/
-    - assets/drinks/  
+    - assets/drinks/
     - assets/dishes/
     - assets/special/
     - assets/fried/
